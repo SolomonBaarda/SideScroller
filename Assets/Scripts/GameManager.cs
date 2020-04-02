@@ -18,7 +18,11 @@ public class GameManager : MonoBehaviour
 
     //[Header("Wall Settings")]
 
-    //[Header("Ground Settings")]
+    [Header("Ground Generation Settings")]
+    public int newTileMaxOffsetX = 6;
+    public int newTileMaxOffsetY = 3;
+
+    private Vector2Int lastGeneratedTile;
 
     [Header("Tilemaps")]
     public Tilemap wall;
@@ -37,37 +41,69 @@ public class GameManager : MonoBehaviour
     public GameObject playerGameObject;
     private Player player;
 
+
+    private System.Random random; 
     private void Awake()
     {
+        int seedHash = seed.GetHashCode();
+        // Get a random seed
+        if (useRandomSeed)
+        {
+            
+        }
+        random = new System.Random(seedHash);
+
         SetupTilemaps();
 
         player = playerGameObject.GetComponent<Player>();
 
         // Move the player to the initial tile
-        Vector3Int initialTile = GenerateInitialTile();
-        Vector3 initialWorldPosition = ground.CellToWorld(initialTile);
+        Vector2Int initialTile = GenerateInitialTile();
+        Vector3 initialWorldPosition = ground.CellToWorld(new Vector3Int(initialTile.x, initialTile.y, 0));
 
         // Get the position of the top, centre of the tile
         initialWorldPosition.x += ground.cellSize.x / 2;
         initialWorldPosition.y += ground.cellSize.y;
         // Move the player to that position
         player.SetPosition(new Vector2(initialWorldPosition.x, initialWorldPosition.y));
+
+        for(int i = 0; i < 20; i++)
+        {
+            GenerateNewTile();
+        }
+    }
+
+
+    public Vector2Int GenerateNewTile()
+    {
+        Vector2Int newTile = lastGeneratedTile;
+
+        newTile.x += random.Next(1, newTileMaxOffsetX);
+        newTile.y += random.Next(-newTileMaxOffsetY, newTileMaxOffsetY);
+
+        SetTile(ground, groundTile, newTile);
+
+        return newTile;
     }
 
 
 
-    private void FixedUpdate()
+    private Vector2Int GenerateInitialTile()
     {
-
-    }
-
-
-    private Vector3Int GenerateInitialTile()
-    {
-        Vector3Int initialPosition = Vector3Int.zero;
-        ground.SetTile(initialPosition, groundTile);
+        // Calculate the initial position
+        Vector2Int initialPosition = Vector2Int.zero;
+        SetTile(ground, groundTile, initialPosition);
 
         return initialPosition;
+    }
+
+
+    private void SetTile(Tilemap tilemap, Tile tileType, Vector2Int tilePosition)
+    {
+        // Set the cell
+        tilemap.SetTile(new Vector3Int(tilePosition.x, tilePosition.y, 0), tileType);
+        // Update the last set tile
+        lastGeneratedTile = tilePosition;
     }
 
 

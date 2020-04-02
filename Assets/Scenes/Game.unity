@@ -806,6 +806,8 @@ MonoBehaviour:
   useRandomSeed: 0
   widthInTiles: 10
   heightInTiles: 10
+  newTileMaxOffsetX: 6
+  newTileMaxOffsetY: 3
   wall: {fileID: 150613069}
   wallDetail: {fileID: 136665800}
   background: {fileID: 59660594}
