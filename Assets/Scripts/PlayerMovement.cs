@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("Velocity settings")]
     public float max_speed = 6f;
     public float terminal_velocity = 20f;
 
-    [Space(8)]
+    [Header("Jump settings")]
     public float jump_power = 6f;
     public int max_double_jumps = 1;
     public int double_jumps_left = 0;
@@ -17,6 +18,8 @@ public class PlayerMovement : MonoBehaviour
     [HideInInspector]
     public Keys keys;
 
+    public bool inputIsAllowed;
+
 
     public class Keys
     {
@@ -24,17 +27,19 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-    public enum Direction { Left, Right };
+    public enum Direction { Left, Right, Forward };
     private Direction facing;
-    private enum JumpState { none, up1, up2, land1, land2, land3 };
+
+    // For animations only
+    private enum JumpState { up, peak, down, none };
     private JumpState jumpState;
+
 
     private void Awake()
     {
-
-
         velocity = new Vector2();
 
+        // Set the keys
         keys = new Keys();
         keys.left = KeyCode.A;
         keys.right = KeyCode.D;
@@ -44,15 +49,20 @@ public class PlayerMovement : MonoBehaviour
         keys.interact = KeyCode.E;
         keys.slow = KeyCode.LeftShift;
 
+        // Face right by default
         facing = Direction.Right;
+
+        inputIsAllowed = true;
     }
 
     private void FixedUpdate()
     {
         bool isInAir = false;
 
+        BoxCollider2D b = GetComponentInChildren<BoxCollider2D>();
+
         // If touching the ground
-        if (transform.GetComponentInChildren<BoxCollider2D>().IsTouchingLayers(LayerMask.GetMask("Ground")))
+        if (b.IsTouchingLayers(LayerMask.GetMask("Ground")))
         {
             // Reset double jump
             double_jumps_left = max_double_jumps;
@@ -60,13 +70,16 @@ public class PlayerMovement : MonoBehaviour
             velocity.x = 0;
             isInAir = false;
 
-            // Do full jump 
-            if (Input.GetKey(keys.jump))
+            if (inputIsAllowed)
             {
-                Jump(jump_power);
+                // Do full jump 
+                if (Input.GetKey(keys.jump))
+                {
+                    Jump(jump_power);
+                }
             }
         }
-        else if (transform.GetComponentInChildren<BoxCollider2D>().IsTouchingLayers(LayerMask.GetMask("Wall")))
+        else if (b.IsTouchingLayers(LayerMask.GetMask("Wall")))
         {
             // Reset double jump
             double_jumps_left = max_double_jumps;
@@ -74,10 +87,13 @@ public class PlayerMovement : MonoBehaviour
             velocity.x = 0;
             isInAir = false;
 
-            // Do wall jump
-            if (Input.GetKey(keys.jump))
+            if (inputIsAllowed)
             {
-                WallJump(jump_power / 10, jump_power);
+                // Do wall jump
+                if (Input.GetKey(keys.jump))
+                {
+                    WallJump(jump_power / 10, jump_power);
+                }
             }
         }
         // Not on ground 
@@ -85,61 +101,85 @@ public class PlayerMovement : MonoBehaviour
         {
             isInAir = true;
 
-            // Do double jump if possible
-            if (Input.GetKeyDown(keys.jump))
+            if (inputIsAllowed)
             {
-                if (double_jumps_left > 0)
+                // Do double jump if possible
+                if (Input.GetKeyDown(keys.jump))
                 {
-                    double_jumps_left--;
-                    Jump(jump_power);
+                    if (double_jumps_left > 0)
+                    {
+                        double_jumps_left--;
+                        Jump(jump_power);
+                    }
                 }
             }
-
         }
 
         bool wasLeft = false;
         bool wasRight = false;
-        // Move left and right
-        if (Input.GetKey(keys.left))
+
+        if (inputIsAllowed)
         {
-            facing = Direction.Left;
-            wasLeft = true;
-        }
-        if (Input.GetKey(keys.right))
-        {
-            facing = Direction.Right;
-            wasRight = true;
-        }
-        // Look down (stop)
-        if (Input.GetKey(keys.down))
-        {
-            wasLeft = true;
-            wasRight = true;
+            // Move left and right
+            if (Input.GetKey(keys.left))
+            {
+                wasLeft = true;
+            }
+            if (Input.GetKey(keys.right))
+            {
+                wasRight = true;
+            }
+            // Both keys pressed
+            if (Input.GetKey(keys.down))
+            {
+                wasLeft = true;
+                wasRight = true;
+            }
         }
 
+        // Velocity should be 0 by default
+        velocity.x = 0;
+
+        // Update if player has moved
+        // Only pressed left
         if (wasLeft && !wasRight)
         {
+            facing = Direction.Left;
             velocity.x = -max_speed * Time.deltaTime;
         }
+        // Only pressed right
         else if (!wasLeft && wasRight)
         {
+            facing = Direction.Right;
             velocity.x = max_speed * Time.deltaTime;
         }
+        // Pressed both keys
         else if (wasLeft && wasRight)
         {
-            velocity.x = 0;
+            facing = Direction.Forward;
+        }
+        else
+        {
+            // Do nothing
+            // This keeps the player facing in the direction they last moved
         }
 
         // Ensure velocity is capped and then apply it
         velocity.x = Mathf.Clamp(velocity.x, -max_speed, max_speed);
         transform.Translate(velocity, Space.World);
 
+
+        // Clamp the max velocities
+        /*
         Vector2 v = GetComponent<Rigidbody2D>().velocity;
         v.y = Mathf.Clamp(v.y, -terminal_velocity, terminal_velocity);
         v.x = Mathf.Clamp(v.x, -max_speed, max_speed);
         GetComponent<Rigidbody2D>().velocity = v;
+        */
 
 
+        // Update animations
+        /*
         Animator a = GetComponentInChildren<Animator>();
         a.SetBool("isJumping", isInAir);
         //a.SetBool("isForward", facing.Equals(Direction.Forward));
@@ -147,6 +187,7 @@ public class PlayerMovement : MonoBehaviour
         a.SetBool("isLeft", facing.Equals(Direction.Left));
         a.SetFloat("velocityX", velocity.x);
         a.SetFloat("velocityY", GetComponent<Rigidbody2D>().velocity.y);
+        */
     }
 
     private void Jump(float power)
@@ -154,9 +195,9 @@ public class PlayerMovement : MonoBehaviour
         Rigidbody2D r = GetComponent<Rigidbody2D>();
 
         // Reset the y velocity of the player
-        Vector2 v = r.velocity;
-        v.y = 0;
-        r.velocity = v;
+        //Vector2 v = r.velocity;
+        //v.y = 0;
+        r.velocity = Vector2.zero;
 
         // Then jump
         r.AddForce(new Vector2(0, power), ForceMode2D.Impulse);
@@ -168,26 +209,38 @@ public class PlayerMovement : MonoBehaviour
         Rigidbody2D r = GetComponent<Rigidbody2D>();
 
         // Reset the y velocity of the player
-        Vector2 v = r.velocity;
-        v.y = 0;
-        r.velocity = v;
+        r.velocity = Vector2.zero;
 
-        int direction = 0;
+        // Jump right
         if (facing.Equals(Direction.Left))
         {
-            direction = 1;
             facing = Direction.Right;
+            Leap(xPower, yPower);
         }
+        // Jump left
         else if (facing.Equals(Direction.Right))
         {
-            direction = -1;
             facing = Direction.Left;
+            Leap(-xPower, yPower);
+        }
+        // Jump up
+        else
+        {
+            Jump(yPower);
         }
 
-        // Then jump
-        r.AddForce(new Vector2(direction * xPower, yPower), ForceMode2D.Impulse);
     }
 
+
+    private void Leap(float xPower, float yPower)
+    {
+        Rigidbody2D r = GetComponent<Rigidbody2D>();
+
+        // Reset the y velocity of the player
+        r.velocity = Vector2.zero;
+
+        r.AddForce(new Vector2(xPower, yPower), ForceMode2D.Impulse);
+    }
 
 
     private float MoveTowards(float value, float target, float amount)

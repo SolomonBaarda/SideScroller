@@ -44,8 +44,13 @@ public class GameManager : MonoBehaviour
         player = playerGameObject.GetComponent<Player>();
 
         // Move the player to the initial tile
-        Vector3Int initialTile = GenerateInitialPlatform();
+        Vector3Int initialTile = GenerateInitialTile();
         Vector3 initialWorldPosition = ground.CellToWorld(initialTile);
+
+        // Get the position of the top, centre of the tile
+        initialWorldPosition.x += ground.cellSize.x / 2;
+        initialWorldPosition.y += ground.cellSize.y;
+        // Move the player to that position
         player.SetPosition(new Vector2(initialWorldPosition.x, initialWorldPosition.y));
     }
 
@@ -57,7 +62,7 @@ public class GameManager : MonoBehaviour
     }
 
 
-    private Vector3Int GenerateInitialPlatform()
+    private Vector3Int GenerateInitialTile()
     {
         Vector3Int initialPosition = Vector3Int.zero;
         ground.SetTile(initialPosition, groundTile);

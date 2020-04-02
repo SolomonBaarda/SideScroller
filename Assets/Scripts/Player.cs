@@ -33,9 +33,10 @@ public class Player : MonoBehaviour
 
     public void SetPosition(Vector2 position)
     {
-        float playerHeightFromCentre = collider.bounds.extents.y;
-        Debug.LogError(playerHeightFromCentre);
-        transform.position = new Vector3(position.x, position.y - playerHeightFromCentre, 0);
+        BoxCollider2D b = GetComponentInChildren<BoxCollider2D>();
+
+        // Add a little to centre the player
+        transform.position = new Vector3(position.x, position.y + b.bounds.extents.y, 0);
     }
 
 
