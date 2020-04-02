@@ -29,8 +29,7 @@ public class PlayerMovement : MonoBehaviour
     private enum JumpState { none, up1, up2, land1, land2, land3 };
     private JumpState jumpState;
 
-    // Start is called before the first frame update
-    private void Start()
+    private void Awake()
     {
         velocity = new Vector2();
 
@@ -46,7 +45,6 @@ public class PlayerMovement : MonoBehaviour
         facing = Direction.Right;
     }
 
-    // Update is called once per frame
     private void FixedUpdate()
     {
         bool isInAir = false;

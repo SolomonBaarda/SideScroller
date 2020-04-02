@@ -10,8 +10,7 @@ public class Player : MonoBehaviour
 
     public PlayerMovement controller;
 
-    // Start is called before the first frame update
-    private void Start()
+    private void Awake()
     {
         // Get reference to the controller script
         controller = GetComponent<PlayerMovement>();
@@ -30,6 +29,15 @@ public class Player : MonoBehaviour
             SetAlive();
         }
     }
+
+
+    public void SetPosition(Vector2 position)
+    {
+        float playerHeightFromCentre = GetComponentInChildren<Collider>().bounds.extents.y;
+        Debug.LogError(playerHeightFromCentre);
+        transform.position = new Vector3(position.x, position.y - playerHeightFromCentre, 0);
+    }
+
 
     public void SetDead()
     {
