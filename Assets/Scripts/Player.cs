@@ -33,7 +33,7 @@ public class Player : MonoBehaviour
 
     public void SetPosition(Vector2 position)
     {
-        float playerHeightFromCentre = GetComponentInChildren<Collider>().bounds.extents.y;
+        float playerHeightFromCentre = collider.bounds.extents.y;
         Debug.LogError(playerHeightFromCentre);
         transform.position = new Vector3(position.x, position.y - playerHeightFromCentre, 0);
     }

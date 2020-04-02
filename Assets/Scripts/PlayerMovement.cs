@@ -31,6 +31,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
+
+
         velocity = new Vector2();
 
         keys = new Keys();
