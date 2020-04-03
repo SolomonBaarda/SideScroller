@@ -18,18 +18,18 @@ public class GameManager : MonoBehaviour
     public GameObject cameraGameObject;
     private MovingCamera camera;
 
-    private TerrainManager terrain;
+    private TerrainManager terrainManager;
 
 
     private void Awake()
     {
         // References to scripts
-        terrain = GetComponent<TerrainManager>();
+        terrainManager = GetComponent<TerrainManager>();
         player = playerGameObject.GetComponent<Player>();
         camera = cameraGameObject.GetComponent<MovingCamera>();
 
         // Generate terrain when the game loads
-        OnGameLoad += terrain.Generate;
+        OnGameLoad += terrainManager.Generate;
 
         // Add the move player method to the event called when the map has been generated
         TerrainManager.OnTerrainGenerated += StartGame;
@@ -43,18 +43,18 @@ public class GameManager : MonoBehaviour
 
     private void StartGame()
     {
-        MovePlayerToInitialTile(terrain.initialTile);
+        MovePlayerToInitialTile(terrainManager.initialTile);
         camera.direction = MovingCamera.Direction.Right;
     }
 
     private void MovePlayerToInitialTile(Vector2Int initialTile)
     {
         // Move the player to the initial tile
-        Vector3 initialWorldPosition = terrain.ground.CellToWorld(new Vector3Int(initialTile.x, initialTile.y, 0));
+        Vector3 initialWorldPosition = terrainManager.terrain.ground.CellToWorld(new Vector3Int(initialTile.x, initialTile.y, 0));
 
         // Get the position of the top, centre of the tile
-        initialWorldPosition.x += terrain.ground.cellSize.x / 2;
-        initialWorldPosition.y += terrain.ground.cellSize.y;
+        initialWorldPosition.x += terrainManager.terrain.ground.cellSize.x / 2;
+        initialWorldPosition.y += terrainManager.terrain.ground.cellSize.y;
         // Move the player to that position
         player.SetPosition(new Vector2(initialWorldPosition.x, initialWorldPosition.y));
     }

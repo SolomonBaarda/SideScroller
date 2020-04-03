@@ -823,13 +823,69 @@ MonoBehaviour:
   heightInTiles: 128
   newTileMaxOffsetX: 6
   newTileMaxOffsetY: 3
-  wall: {fileID: 150613069}
-  wallDetail: {fileID: 136665800}
-  background: {fileID: 59660594}
-  ground: {fileID: 953929492}
+  terrain:
+    wall: {fileID: 150613069}
+    wallDetail: {fileID: 136665800}
+    background: {fileID: 59660594}
+    ground: {fileID: 953929492}
+    allTilemaps:
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
   groundTile: {fileID: 11400000, guid: 35d18aaf6686fb14db4c9674999a5a90, type: 2}
   wallTileMain: {fileID: 11400000, guid: 45c135a7ebe537d4fbe00a937240ad53, type: 2}
   wallTileDetail: {fileID: 11400000, guid: d9f5a8d0d4cac5148bf2c78cb763759d, type: 2}
+  terrainChunks:
+  - terrain:
+      wall: {fileID: 0}
+      wallDetail: {fileID: 0}
+      background: {fileID: 0}
+      ground: {fileID: 0}
+      allTilemaps:
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+    entryPosition: {x: 0, y: 0}
+    exitPosition: {x: 0, y: 0}
+  - terrain:
+      wall: {fileID: 0}
+      wallDetail: {fileID: 0}
+      background: {fileID: 0}
+      ground: {fileID: 0}
+      allTilemaps:
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+    entryPosition: {x: 0, y: 0}
+    exitPosition: {x: 0, y: 0}
+  - terrain:
+      wall: {fileID: 0}
+      wallDetail: {fileID: 0}
+      background: {fileID: 0}
+      ground: {fileID: 0}
+      allTilemaps:
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+    entryPosition: {x: 0, y: 0}
+    exitPosition: {x: 0, y: 0}
+  - terrain:
+      wall: {fileID: 0}
+      wallDetail: {fileID: 0}
+      background: {fileID: 0}
+      ground: {fileID: 0}
+      allTilemaps:
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+    entryPosition: {x: 0, y: 0}
+    exitPosition: {x: 0, y: 0}
+  initialTile: {x: 0, y: 0}
 --- !u!1001 &2032233262
 PrefabInstance:
   m_ObjectHideFlags: 0
