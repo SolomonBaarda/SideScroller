@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class MovingCamera : MonoBehaviour
 {
+    [Header("Movement Settings")]
     public float zoom = 10;
-
     public float speed = 1;
-
     public Direction direction = Direction.Stationary;
 
     public GameObject following;
@@ -41,7 +40,7 @@ public class MovingCamera : MonoBehaviour
 
     public enum Direction
     {
-        left,
+        Left,
         Right,
         Stationary
     }

@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.Events;
 
+
 public class TerrainManager : MonoBehaviour
 {
-    public static UnityAction<Vector2Int> OnTerrainGenerated;
+    public static UnityAction OnTerrainGenerated;
 
     [Header("General Generation Settings")]
     public string seed;
@@ -32,6 +34,7 @@ public class TerrainManager : MonoBehaviour
     public Tile wallTileMain;
     public Tile wallTileDetail;
 
+    public Vector2Int initialTile;
     private Vector2Int lastGeneratedTile;
 
     private System.Random random;
@@ -55,17 +58,22 @@ public class TerrainManager : MonoBehaviour
 
     public void Generate()
     {
+        DateTime before = DateTime.Now;
+
         ClearAllTiles();
 
-        Vector2Int initialTile = GenerateInitialTile();
+        initialTile = GenerateInitialTile();
 
         for (int i = 0; i < 20; i++)
         {
             GenerateNewTile();
         }
 
-        Debug.Log("generate called. initial tile: " + initialTile.x + ", " + initialTile.y);
-        OnTerrainGenerated.Invoke(initialTile);
+        DateTime after = DateTime.Now;
+        TimeSpan time = after - before;
+        Debug.Log("It took " + time.Milliseconds + " ms to generate the starting area.");
+
+        OnTerrainGenerated.Invoke();
     }
 
     private void SetupTilemaps()

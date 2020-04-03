@@ -11,7 +11,7 @@ using UnityEngine.Events;
 public class Menu : MonoBehaviour
 {
     public TMP_Text play_button;
-    private static UnityAction OnMenuClose;
+    public static UnityAction OnMenuClose;
 
     // Start is called before the first frame update
     private void Start()
@@ -29,7 +29,6 @@ public class Menu : MonoBehaviour
     private void Unload()
     {
         SceneManager.UnloadSceneAsync(0);
-        GameManager.OnGameLoad.Invoke();
     }
 
     private void SetMenuText(TMP_Text t)

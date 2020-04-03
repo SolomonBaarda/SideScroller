@@ -14,6 +14,10 @@ public class GameManager : MonoBehaviour
     public GameObject playerGameObject;
     private Player player;
 
+    [Header("Camera Reference")]
+    public GameObject cameraGameObject;
+    private MovingCamera camera;
+
     private TerrainManager terrain;
 
 
@@ -22,12 +26,13 @@ public class GameManager : MonoBehaviour
         // References to scripts
         terrain = GetComponent<TerrainManager>();
         player = playerGameObject.GetComponent<Player>();
+        camera = cameraGameObject.GetComponent<MovingCamera>();
 
         // Generate terrain when the game loads
         OnGameLoad += terrain.Generate;
 
         // Add the move player method to the event called when the map has been generated
-        TerrainManager.OnTerrainGenerated += MovePlayerToInitialTile;
+        TerrainManager.OnTerrainGenerated += StartGame;
     }
 
     private void Start()
@@ -35,6 +40,12 @@ public class GameManager : MonoBehaviour
         OnGameLoad.Invoke();
     }
 
+
+    private void StartGame()
+    {
+        MovePlayerToInitialTile(terrain.initialTile);
+        camera.direction = MovingCamera.Direction.Right;
+    }
 
     private void MovePlayerToInitialTile(Vector2Int initialTile)
     {
