@@ -769,6 +769,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1937427806}
   - component: {fileID: 1937427807}
+  - component: {fileID: 1937427808}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -802,10 +803,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1015e2ef423cfe4438e31bafb92016b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerGameObject: {fileID: 1352398013}
+--- !u!114 &1937427808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1937427805}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b7c5221efba9e40b140fe6b0fa0782, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   seed: 
   useRandomSeed: 0
-  widthInTiles: 10
-  heightInTiles: 10
+  widthInTiles: 128
+  heightInTiles: 128
   newTileMaxOffsetX: 6
   newTileMaxOffsetY: 3
   wall: {fileID: 150613069}
@@ -813,9 +827,8 @@ MonoBehaviour:
   background: {fileID: 59660594}
   ground: {fileID: 953929492}
   groundTile: {fileID: 11400000, guid: 35d18aaf6686fb14db4c9674999a5a90, type: 2}
-  wallTileMain: {fileID: 11400000, guid: 4b8abe547d844e24eb8056efba031cc7, type: 2}
+  wallTileMain: {fileID: 11400000, guid: 45c135a7ebe537d4fbe00a937240ad53, type: 2}
   wallTileDetail: {fileID: 11400000, guid: d9f5a8d0d4cac5148bf2c78cb763759d, type: 2}
-  playerGameObject: {fileID: 1352398013}
 --- !u!1001 &2032233262
 PrefabInstance:
   m_ObjectHideFlags: 0
