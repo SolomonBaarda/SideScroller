@@ -28,7 +28,7 @@ public class PlayerMovement : MonoBehaviour
 
 
     public enum Direction { Left, Right, Forward };
-    private Direction facing;
+    private Direction facing = Direction.Forward;
 
     // For animations only
     private enum JumpState { up, peak, down, none };
@@ -48,9 +48,6 @@ public class PlayerMovement : MonoBehaviour
         keys.jump = KeyCode.Space;
         keys.interact = KeyCode.E;
         keys.slow = KeyCode.LeftShift;
-
-        // Face right by default
-        facing = Direction.Right;
 
         inputIsAllowed = true;
     }
@@ -179,16 +176,21 @@ public class PlayerMovement : MonoBehaviour
 
 
         // Update animations
-        /*
         Animator a = GetComponentInChildren<Animator>();
         a.SetBool("isJumping", isInAir);
-        //a.SetBool("isForward", facing.Equals(Direction.Forward));
         a.SetBool("isRight", facing.Equals(Direction.Right));
         a.SetBool("isLeft", facing.Equals(Direction.Left));
-        a.SetFloat("velocityX", velocity.x);
+        a.SetBool("isForward", facing.Equals(Direction.Forward));
         a.SetFloat("velocityY", GetComponent<Rigidbody2D>().velocity.y);
-        */
     }
+
+    private void OnEnable()
+    {
+        // Face forward by default
+        facing = Direction.Forward;
+    }
+
+
 
     private void Jump(float power)
     {

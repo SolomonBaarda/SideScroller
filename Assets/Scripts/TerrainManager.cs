@@ -14,10 +14,6 @@ public class TerrainManager : MonoBehaviour
     public string seed;
     public bool useRandomSeed;
 
-    [Header("General Tilemap settings")]
-    public int widthInTiles = 128;
-    public int heightInTiles = 128;
-
     [Header("Ground Generation Settings")]
     public int newTileMaxOffsetX = 6;
     public int newTileMaxOffsetY = 3;
@@ -31,7 +27,7 @@ public class TerrainManager : MonoBehaviour
     public Tile wallTileDetail;
 
     [Header("Terrain Chunk Samples")]
-    public List<TerrainChunk> terrainChunks;
+    public TerrainChunks terrainChunks;
 
     [HideInInspector]
     public Vector2Int initialTile;
@@ -129,13 +125,6 @@ public class TerrainManager : MonoBehaviour
     }
 
 
-    [Serializable]
-    public class TerrainChunk
-    {
-        public Terrain terrain = new Terrain();
-        public Vector2Int entryPosition;
-        public Vector2Int exitPosition;
-    }
 }
 
 
