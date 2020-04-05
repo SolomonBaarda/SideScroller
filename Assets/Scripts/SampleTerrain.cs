@@ -38,23 +38,23 @@ public class SampleTerrain : MonoBehaviour
             Tilemap t = g.GetComponent<Tilemap>();
             TilemapRenderer r = g.GetComponent<TilemapRenderer>();
 
-            if (r.sortingLayerName.Equals("Wall"))
+            if (r.sortingLayerName.Equals(TerrainManager.LAYER_NAME_WALL))
             {
                 tilemap_wall = t;
             }
-            else if (r.sortingLayerName.Equals("Wall Detail"))
+            else if (r.sortingLayerName.Equals(TerrainManager.LAYER_NAME_WALL_DETAIL))
             {
                 tilemap_wallDetail = t;
             }
-            else if (r.sortingLayerName.Equals("Background"))
+            else if (r.sortingLayerName.Equals(TerrainManager.LAYER_NAME_BACKGROUND))
             {
                 tilemap_background = t;
             }
-            else if (r.sortingLayerName.Equals("Ground"))
+            else if (r.sortingLayerName.Equals(TerrainManager.LAYER_NAME_GROUND))
             {
                 tilemap_ground = t;
             }
-            else if (r.sortingLayerName.Equals("Dev"))
+            else if (r.sortingLayerName.Equals(TerrainManager.LAYER_NAME_DEV))
             {
                 tilemap_dev = t;
             }
@@ -62,6 +62,18 @@ public class SampleTerrain : MonoBehaviour
 
 
         entryTilePosition = FindEntryTilePosition();
+
+
+        wall = new SampleTerrainLayer(TerrainManager.LAYER_NAME_WALL);
+        wallDetail = new SampleTerrainLayer(TerrainManager.LAYER_NAME_WALL_DETAIL);
+        background = new SampleTerrainLayer(TerrainManager.LAYER_NAME_BACKGROUND);
+        ground = new SampleTerrainLayer(TerrainManager.LAYER_NAME_GROUND);
+
+        // Load all the tiles in the tilemaps into the objects
+        LoadTiles(tilemap_wall, ref wall);
+        LoadTiles(tilemap_wallDetail, ref wallDetail);
+        LoadTiles(tilemap_background, ref background);
+        LoadTiles(tilemap_ground, ref ground);
     }
 
 
@@ -72,10 +84,12 @@ public class SampleTerrain : MonoBehaviour
         while (p.MoveNext())
         {
             Vector3Int current = p.Current;
-            if (tilemap.GetTile(current) != null)
+            // Get the tile
+            Tile t = (Tile)tilemap.GetTile(current);
+            if (t != null)
             {
-                layer
-
+                // Add it to the list of tiles for that layer
+                layer.tilesInThisLayer.Add(new SampleTerrainLayer.SampleTerrainTile(t, new Vector2Int(current.x, current.y)));
             }
         }
     }
@@ -104,19 +118,25 @@ public class SampleTerrain : MonoBehaviour
 
     public class SampleTerrainLayer
     {
-        String layer;
-        List<SampleTerrainTileType> tilesInThisLayer;
+        public string layer;
+        public List<SampleTerrainTile> tilesInThisLayer;
 
-        public SampleTerrainLayer(String layer)
+        public SampleTerrainLayer(string layer)
         {
-            this.layer = layer; 
+            this.layer = layer;
+            tilesInThisLayer = new List<SampleTerrainTile>();
         }
 
-        public class SampleTerrainTileType
+        public class SampleTerrainTile
         {
-            Tile tileType;
-            // List of tile positions (relative to the entry tile position)
-            List<Vector2Int> positions;
+            public SampleTerrainTile(Tile tileType, Vector2Int position)
+            {
+                this.tileType = tileType;
+                this.position = position;
+
+            }
+            public Tile tileType;
+            public Vector2Int position;
         }
     }
 

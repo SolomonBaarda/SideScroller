@@ -43,6 +43,12 @@ public class TerrainManager : MonoBehaviour
     private System.Random random;
 
 
+    public static string LAYER_NAME_WALL = "Wall";
+    public static string LAYER_NAME_WALL_DETAIL = "Wall Detail";
+    public static string LAYER_NAME_BACKGROUND = "Background";
+    public static string LAYER_NAME_GROUND = "Ground";
+    public static string LAYER_NAME_DEV = "Dev";
+
     private void Awake()
     {
         // Set up the random generator
@@ -62,19 +68,19 @@ public class TerrainManager : MonoBehaviour
             Tilemap t = g.GetComponent<Tilemap>();
             TilemapRenderer r = g.GetComponent<TilemapRenderer>();
 
-            if (r.sortingLayerName.Equals("Wall"))
+            if (r.sortingLayerName.Equals(LAYER_NAME_WALL))
             {
                 wall = t;
             }
-            else if (r.sortingLayerName.Equals("Wall Detail"))
+            else if (r.sortingLayerName.Equals(LAYER_NAME_WALL_DETAIL))
             {
                 wallDetail = t;
             }
-            else if (r.sortingLayerName.Equals("Background"))
+            else if (r.sortingLayerName.Equals(LAYER_NAME_BACKGROUND))
             {
                 background = t;
             }
-            else if (r.sortingLayerName.Equals("Ground"))
+            else if (r.sortingLayerName.Equals(LAYER_NAME_GROUND))
             {
                 ground = t;
             }
