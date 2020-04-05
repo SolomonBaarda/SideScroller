@@ -18,16 +18,23 @@ public class TerrainManager : MonoBehaviour
     public int newTileMaxOffsetX = 6;
     public int newTileMaxOffsetY = 3;
 
-    [Header("Tilemap References")]
-    public Terrain terrain = new Terrain();
+    [Header("Grid Reference")]
+    public Grid grid;
+    [HideInInspector]
+    public Tilemap wall;
+    [HideInInspector]
+    public Tilemap wallDetail;
+    [HideInInspector]
+    public Tilemap background;
+    [HideInInspector]
+    public Tilemap ground;
 
     [Header("Tile Prefabs")]
     public Tile groundTile;
     public Tile wallTileMain;
     public Tile wallTileDetail;
 
-    [Header("Terrain Chunk Samples")]
-    public TerrainChunks terrainChunks;
+    //[Header("Terrain Chunk Samples")]
 
     [HideInInspector]
     public Vector2Int initialTile;
@@ -46,6 +53,33 @@ public class TerrainManager : MonoBehaviour
 
         }
         random = new System.Random(seedHash);
+
+
+
+        for (int i = 0; i < grid.transform.childCount; i++)
+        {
+            GameObject g = grid.transform.GetChild(i).gameObject;
+            Tilemap t = g.GetComponent<Tilemap>();
+            TilemapRenderer r = g.GetComponent<TilemapRenderer>();
+
+            if (r.sortingLayerName.Equals("Wall"))
+            {
+                wall = t;
+            }
+            else if (r.sortingLayerName.Equals("Wall Detail"))
+            {
+                wallDetail = t;
+            }
+            else if (r.sortingLayerName.Equals("Background"))
+            {
+                background = t;
+            }
+            else if (r.sortingLayerName.Equals("Ground"))
+            {
+                ground = t;
+            }
+        }
+
     }
 
 
@@ -53,7 +87,7 @@ public class TerrainManager : MonoBehaviour
     {
         DateTime before = DateTime.Now;
 
-        terrain.ClearAllTiles();
+        ClearAllTiles();
 
         initialTile = GenerateInitialTile();
 
@@ -70,6 +104,15 @@ public class TerrainManager : MonoBehaviour
     }
 
 
+    public void ClearAllTiles()
+    {
+        wall.ClearAllTiles();
+        wallDetail.ClearAllTiles();
+        background.ClearAllTiles();
+        ground.ClearAllTiles();
+    }
+
+
 
 
     private Vector2Int GenerateNewTile()
@@ -81,7 +124,7 @@ public class TerrainManager : MonoBehaviour
         newTile.y += random.Next(-newTileMaxOffsetY, newTileMaxOffsetY);
 
         // Set the new tilw
-        SetTile(terrain.ground, groundTile, newTile);
+        SetTile(ground, groundTile, newTile);
 
         return newTile;
     }
@@ -92,7 +135,7 @@ public class TerrainManager : MonoBehaviour
     {
         // Calculate the initial position
         Vector2Int initialPosition = Vector2Int.zero;
-        SetTile(terrain.ground, groundTile, initialPosition);
+        SetTile(ground, groundTile, initialPosition);
 
         return initialPosition;
     }
@@ -106,23 +149,6 @@ public class TerrainManager : MonoBehaviour
         lastGeneratedTile = tilePosition;
     }
 
-
-    [Serializable]
-    public class Terrain
-    {
-        public Tilemap wall;
-        public Tilemap wallDetail;
-        public Tilemap background;
-        public Tilemap ground;
-
-        public void ClearAllTiles()
-        {
-            wall.ClearAllTiles();
-            wallDetail.ClearAllTiles();
-            background.ClearAllTiles();
-            ground.ClearAllTiles();
-        }
-    }
 
 
 }

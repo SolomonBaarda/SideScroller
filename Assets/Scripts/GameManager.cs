@@ -50,11 +50,11 @@ public class GameManager : MonoBehaviour
     private void MovePlayerToInitialTile(Vector2Int initialTile)
     {
         // Move the player to the initial tile
-        Vector3 initialWorldPosition = terrainManager.terrain.ground.CellToWorld(new Vector3Int(initialTile.x, initialTile.y, 0));
+        Vector3 initialWorldPosition = terrainManager.ground.CellToWorld(new Vector3Int(initialTile.x, initialTile.y, 0));
 
         // Get the position of the top, centre of the tile
-        initialWorldPosition.x += terrainManager.terrain.ground.cellSize.x / 2;
-        initialWorldPosition.y += terrainManager.terrain.ground.cellSize.y;
+        initialWorldPosition.x += terrainManager.ground.cellSize.x / 2;
+        initialWorldPosition.y += terrainManager.ground.cellSize.y;
         // Move the player to that position
         player.SetPosition(new Vector2(initialWorldPosition.x, initialWorldPosition.y));
     }

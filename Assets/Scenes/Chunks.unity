@@ -281,16 +281,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0130967819e5a9e45b84d699874f7682, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunks:
-  - terrain: {fileID: 0}
-    entryPosition: {x: 0, y: 0}
-    exitPosition: {x: 0, y: 0}
-  - terrain: {fileID: 0}
-    entryPosition: {x: 0, y: 0}
-    exitPosition: {x: 0, y: 0}
-  - terrain: {fileID: 0}
-    entryPosition: {x: 0, y: 0}
-    exitPosition: {x: 0, y: 0}
+  entryTileType: {fileID: 0}
+  entryTilePosition: {x: 0, y: 0}
+  exitTilePosition: {x: 0, y: 0}
 --- !u!1 &136665797
 GameObject:
   m_ObjectHideFlags: 0
