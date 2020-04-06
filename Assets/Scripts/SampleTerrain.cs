@@ -12,9 +12,7 @@ public class SampleTerrain : MonoBehaviour
     private Tilemap tilemap_ground;
     private Tilemap tilemap_dev;
 
-    [Header("Dev tile textures")]
-    public Tile entryTileType;
-    public Tile exitTileType;
+    private SampleTerrainManager manager;
 
     public SampleTerrainLayer wall;
     public SampleTerrainLayer wallDetail;
@@ -27,6 +25,7 @@ public class SampleTerrain : MonoBehaviour
 
     private void Awake()
     {
+        manager = transform.parent.GetComponent<SampleTerrainManager>();
         grid = GetComponent<Grid>();
 
         for (int i = 0; i < grid.transform.childCount; i++)
@@ -105,7 +104,7 @@ public class SampleTerrain : MonoBehaviour
             if (tilemap_dev.GetTile(current) != null)
             {
                 // Check if the tile matches the entry tile type
-                if (tilemap_dev.GetTile(current).Equals(entryTileType))
+                if (tilemap_dev.GetTile(current).Equals(manager.dev_entryTile))
                 {
                     return new Vector2Int(current.x, current.y);
                 }
@@ -125,7 +124,7 @@ public class SampleTerrain : MonoBehaviour
             if (tilemap_dev.GetTile(current) != null)
             {
                 // Check if the tile matches the entry tile type
-                if (tilemap_dev.GetTile(current).Equals(exitTileType))
+                if (tilemap_dev.GetTile(current).Equals(manager.dev_exitTile))
                 {
                     return (new Vector2Int(current.x, current.y) - entryTilePositionLocal);
                 }

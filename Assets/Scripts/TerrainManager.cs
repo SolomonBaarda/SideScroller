@@ -101,14 +101,18 @@ public class TerrainManager : MonoBehaviour
 
         initialTile = GenerateInitialTile();
 
-        foreach (SampleTerrain t in sampleTerrainManager.allSamples)
+        for (int i = 0; i < 3; i++)
         {
-            for (int i = 0; i < 50; i++)
+            foreach (SampleTerrain t in sampleTerrainManager.allSamples)
             {
-                lastGeneratedTile = CopySampleTerrain(lastGeneratedTile, t);
-            }
+                for (int j = 0; j < 3; j++)
+                {
+                    lastGeneratedTile = CopySampleTerrain(lastGeneratedTile, t);
+                }
 
+            }
         }
+
 
         after = DateTime.Now;
         time = after - before;
