@@ -25,12 +25,6 @@ public class SampleTerrain : MonoBehaviour
     private Vector2Int entryTilePositionLocal;
     public Vector2Int exitTilePosition;
 
-
-    private int width, height;
-
-    private Vector2Int topLeftRelativeToEntry;
-    private Vector2Int bottomRightRelativeToEntry;
-
     private void Awake()
     {
         grid = GetComponent<Grid>();

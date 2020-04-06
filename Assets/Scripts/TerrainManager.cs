@@ -14,32 +14,19 @@ public class TerrainManager : MonoBehaviour
     public string seed;
     public bool useRandomSeed;
 
-    [Header("Ground Generation Settings")]
-    public int newTileMaxOffsetX = 6;
-    public int newTileMaxOffsetY = 3;
-
-
     [Header("Grid Reference")]
     public Grid grid;
-    [HideInInspector]
-    public Tilemap wall;
-    [HideInInspector]
-    public Tilemap wallDetail;
-    [HideInInspector]
-    public Tilemap background;
-    [HideInInspector]
-    public Tilemap ground;
-
-    [Header("Tile Prefabs")]
-    public Tile groundTile;
-    public Tile wallTileMain;
-    public Tile wallTileDetail;
+    private Tilemap wall;
+    private Tilemap wallDetail;
+    private Tilemap background;
+    private Tilemap ground;
 
     [Header("Sample Terrain Manager Reference")]
     public GameObject sampleTerrainManagerObject;
     private SampleTerrainManager sampleTerrainManager;
 
-    //[Header("Terrain Chunk Samples")]
+    [Header("Initial Tile Type")]
+    public Tile groundTile;
 
     [HideInInspector]
     public Vector2Int initialTile;
@@ -116,13 +103,12 @@ public class TerrainManager : MonoBehaviour
 
         foreach (SampleTerrain t in sampleTerrainManager.allSamples)
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 50; i++)
             {
                 lastGeneratedTile = CopySampleTerrain(lastGeneratedTile, t);
             }
 
         }
-
 
         after = DateTime.Now;
         time = after - before;
@@ -147,8 +133,8 @@ public class TerrainManager : MonoBehaviour
         // Copy wall
         foreach (SampleTerrain.SampleTerrainLayer.SampleTerrainTile tile in layer.tilesInThisLayer)
         {
-            Vector3Int newTilePos = new Vector3Int(entryPosition.x, entryPosition.y, wall.cellBounds.z) +
-                new Vector3Int(tile.position.x, tile.position.y, wall.cellBounds.z);
+            Vector3Int newTilePos = new Vector3Int(entryPosition.x, entryPosition.y, tilemap.cellBounds.z) +
+                new Vector3Int(tile.position.x, tile.position.y, tilemap.cellBounds.z);
 
             tilemap.SetTile(newTilePos, tile.tileType);
         }
@@ -164,22 +150,11 @@ public class TerrainManager : MonoBehaviour
     }
 
 
-
-
-    private Vector2Int GenerateNewTile()
+    public Vector3 GetInitialTileWorldPositionForPlayer()
     {
-        Vector2Int newTile = lastGeneratedTile;
-
-        // Get a random position
-        newTile.x += random.Next(1, newTileMaxOffsetX);
-        newTile.y += random.Next(-newTileMaxOffsetY, newTileMaxOffsetY);
-
-        // Set the new tilw
-        SetTile(ground, groundTile, newTile);
-
-        return newTile;
+        // Get the initial position + (half a cell, 1 cell, 0) to point to the top, middle of the cell
+        return ground.CellToWorld(new Vector3Int(initialTile.x, initialTile.y, ground.cellBounds.z)) + new Vector3(ground.cellSize.x / 2, ground.cellSize.y, 0);
     }
-
 
 
     private Vector2Int GenerateInitialTile()

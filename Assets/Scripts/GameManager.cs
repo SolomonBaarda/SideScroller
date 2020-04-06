@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Camera Reference")]
     public GameObject cameraGameObject;
-    private MovingCamera camera;
+    private MovingCamera movingCamera;
 
     private TerrainManager terrainManager;
 
@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
         // References to scripts
         terrainManager = GetComponent<TerrainManager>();
         player = playerGameObject.GetComponent<Player>();
-        camera = cameraGameObject.GetComponent<MovingCamera>();
+        movingCamera = cameraGameObject.GetComponent<MovingCamera>();
 
         // Generate terrain when the game loads
         OnGameLoad += terrainManager.Generate;
@@ -42,22 +42,10 @@ public class GameManager : MonoBehaviour
 
     private void StartGame()
     {
-        MovePlayerToInitialTile(terrainManager.initialTile);
+        player.SetPosition(terrainManager.GetInitialTileWorldPositionForPlayer());
+
         //camera.direction = MovingCamera.Direction.Right;
     }
-
-    private void MovePlayerToInitialTile(Vector2Int initialTile)
-    {
-        // Move the player to the initial tile
-        Vector3 initialWorldPosition = terrainManager.ground.CellToWorld(new Vector3Int(initialTile.x, initialTile.y, 0));
-
-        // Get the position of the top, centre of the tile
-        initialWorldPosition.x += terrainManager.ground.cellSize.x / 2;
-        initialWorldPosition.y += terrainManager.ground.cellSize.y;
-        // Move the player to that position
-        player.SetPosition(new Vector2(initialWorldPosition.x, initialWorldPosition.y));
-    }
-
 
 
 

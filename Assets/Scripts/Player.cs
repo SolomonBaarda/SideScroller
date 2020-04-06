@@ -52,8 +52,6 @@ public class Player : MonoBehaviour
         // Set player to be alive and enable controls
         isAlive = true;
         controller.enabled = true;
-
-        
     }
 
 
