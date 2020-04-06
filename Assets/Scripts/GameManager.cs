@@ -20,7 +20,6 @@ public class GameManager : MonoBehaviour
 
     private TerrainManager terrainManager;
 
-
     private void Awake()
     {
         // References to scripts
@@ -44,7 +43,7 @@ public class GameManager : MonoBehaviour
     private void StartGame()
     {
         MovePlayerToInitialTile(terrainManager.initialTile);
-        camera.direction = MovingCamera.Direction.Right;
+        //camera.direction = MovingCamera.Direction.Right;
     }
 
     private void MovePlayerToInitialTile(Vector2Int initialTile)

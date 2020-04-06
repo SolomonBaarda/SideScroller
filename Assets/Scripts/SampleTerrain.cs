@@ -14,6 +14,7 @@ public class SampleTerrain : MonoBehaviour
 
     [Header("Dev tile textures")]
     public Tile entryTileType;
+    public Tile exitTileType;
 
     public SampleTerrainLayer wall;
     public SampleTerrainLayer wallDetail;
@@ -21,7 +22,9 @@ public class SampleTerrain : MonoBehaviour
     public SampleTerrainLayer ground;
 
     public Vector2Int entryTilePosition;
+    private Vector2Int entryTilePositionLocal;
     public Vector2Int exitTilePosition;
+
 
     private int width, height;
 
@@ -58,11 +61,14 @@ public class SampleTerrain : MonoBehaviour
             {
                 tilemap_dev = t;
             }
+
+            // Disable the rendering of all samples
+            r.enabled = false;
         }
 
-
-        entryTilePosition = FindEntryTilePosition();
-
+        entryTilePositionLocal = FindEntryTilePosition();
+        entryTilePosition = Vector2Int.zero;
+        exitTilePosition = FindExitTilePosition();
 
         wall = new SampleTerrainLayer(TerrainManager.LAYER_NAME_WALL);
         wallDetail = new SampleTerrainLayer(TerrainManager.LAYER_NAME_WALL_DETAIL);
@@ -89,7 +95,7 @@ public class SampleTerrain : MonoBehaviour
             if (t != null)
             {
                 // Add it to the list of tiles for that layer
-                layer.tilesInThisLayer.Add(new SampleTerrainLayer.SampleTerrainTile(t, new Vector2Int(current.x, current.y)));
+                layer.tilesInThisLayer.Add(new SampleTerrainLayer.SampleTerrainTile(t, new Vector2Int(current.x, current.y) - entryTilePositionLocal));
             }
         }
     }
@@ -111,8 +117,27 @@ public class SampleTerrain : MonoBehaviour
                 }
             }
         }
+        throw new Exception("Entry tile could not be found in SampleTerrain.");
+    }
 
-        throw new Exception("Tile entry position could not be found.");
+    // Must be called AFTER entry position has been assigned
+    private Vector2Int FindExitTilePosition()
+    {
+        // Get an iterator for the bounds of the tilemap 
+        BoundsInt.PositionEnumerator p = tilemap_dev.cellBounds.allPositionsWithin.GetEnumerator();
+        while (p.MoveNext())
+        {
+            Vector3Int current = p.Current;
+            if (tilemap_dev.GetTile(current) != null)
+            {
+                // Check if the tile matches the entry tile type
+                if (tilemap_dev.GetTile(current).Equals(exitTileType))
+                {
+                    return (new Vector2Int(current.x, current.y) - entryTilePositionLocal);
+                }
+            }
+        }
+        throw new Exception("Exit tile could not be found in SampleTerrain.");
     }
 
 

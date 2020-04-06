@@ -18,6 +18,7 @@ public class TerrainManager : MonoBehaviour
     public int newTileMaxOffsetX = 6;
     public int newTileMaxOffsetY = 3;
 
+
     [Header("Grid Reference")]
     public Grid grid;
     [HideInInspector]
@@ -33,6 +34,10 @@ public class TerrainManager : MonoBehaviour
     public Tile groundTile;
     public Tile wallTileMain;
     public Tile wallTileDetail;
+
+    [Header("Sample Terrain Manager Reference")]
+    public GameObject sampleTerrainManagerObject;
+    private SampleTerrainManager sampleTerrainManager;
 
     //[Header("Terrain Chunk Samples")]
 
@@ -60,8 +65,9 @@ public class TerrainManager : MonoBehaviour
         }
         random = new System.Random(seedHash);
 
+        sampleTerrainManager = sampleTerrainManagerObject.GetComponent<SampleTerrainManager>();
 
-
+        // Assign the tilemaps semi-dynamically 
         for (int i = 0; i < grid.transform.childCount; i++)
         {
             GameObject g = grid.transform.GetChild(i).gameObject;
@@ -91,22 +97,61 @@ public class TerrainManager : MonoBehaviour
 
     public void Generate()
     {
+        // Load the sample terrain
         DateTime before = DateTime.Now;
+
+        sampleTerrainManager.LoadAllSampleTerrain();
+
+        DateTime after = DateTime.Now;
+        TimeSpan time = after - before;
+        Debug.Log("It took " + time.Milliseconds + " ms to load the sample terrain.");
+
+
+        // Generate the terrain
+        before = DateTime.Now;
 
         ClearAllTiles();
 
         initialTile = GenerateInitialTile();
 
-        for (int i = 0; i < 20; i++)
+        foreach (SampleTerrain t in sampleTerrainManager.allSamples)
         {
-            GenerateNewTile();
+            for (int i = 0; i < 10; i++)
+            {
+                lastGeneratedTile = CopySampleTerrain(lastGeneratedTile, t);
+            }
+
         }
 
-        DateTime after = DateTime.Now;
-        TimeSpan time = after - before;
+
+        after = DateTime.Now;
+        time = after - before;
         Debug.Log("It took " + time.Milliseconds + " ms to generate the starting area.");
 
         OnTerrainGenerated.Invoke();
+    }
+
+
+    private Vector2Int CopySampleTerrain(Vector2Int entryPosition, SampleTerrain terrain)
+    {
+        CopySampleTerrainLayer(entryPosition, terrain.wall, ref wall);
+        CopySampleTerrainLayer(entryPosition, terrain.wallDetail, ref wallDetail);
+        CopySampleTerrainLayer(entryPosition, terrain.background, ref background);
+        CopySampleTerrainLayer(entryPosition, terrain.ground, ref ground);
+
+        return entryPosition + terrain.exitTilePosition;
+    }
+
+    private void CopySampleTerrainLayer(Vector2Int entryPosition, SampleTerrain.SampleTerrainLayer layer, ref Tilemap tilemap)
+    {
+        // Copy wall
+        foreach (SampleTerrain.SampleTerrainLayer.SampleTerrainTile tile in layer.tilesInThisLayer)
+        {
+            Vector3Int newTilePos = new Vector3Int(entryPosition.x, entryPosition.y, wall.cellBounds.z) +
+                new Vector3Int(tile.position.x, tile.position.y, wall.cellBounds.z);
+
+            tilemap.SetTile(newTilePos, tile.tileType);
+        }
     }
 
 
