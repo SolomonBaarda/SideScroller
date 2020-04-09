@@ -25,11 +25,13 @@ public class TerrainManager : MonoBehaviour
     public GameObject sampleTerrainManagerObject;
     private SampleTerrainManager sampleTerrainManager;
 
+    [Header("Chunk Prefab Reference")]
+    public GameObject chunkPrefab;
+
     [Header("Initial Tile Type")]
     public Tile groundTile;
 
-    [HideInInspector]
-    public Vector2Int initialTile;
+    private Vector2Int initialTile;
     private Vector2Int lastGeneratedTile;
 
     private System.Random random;
@@ -101,18 +103,17 @@ public class TerrainManager : MonoBehaviour
 
         initialTile = GenerateInitialTile();
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 2; i++)
         {
             foreach (SampleTerrain t in sampleTerrainManager.allSamples)
             {
-                for (int j = 0; j < 3; j++)
+                for (int j = 0; j < 1; j++)
                 {
                     lastGeneratedTile = CopySampleTerrain(lastGeneratedTile, t);
                 }
 
             }
         }
-
 
         after = DateTime.Now;
         time = after - before;
@@ -124,10 +125,21 @@ public class TerrainManager : MonoBehaviour
 
     private Vector2Int CopySampleTerrain(Vector2Int entryPosition, SampleTerrain terrain)
     {
+        // Copy the terrain, each layer at a time
         CopySampleTerrainLayer(entryPosition, terrain.wall, ref wall);
         CopySampleTerrainLayer(entryPosition, terrain.wallDetail, ref wallDetail);
         CopySampleTerrainLayer(entryPosition, terrain.background, ref background);
         CopySampleTerrainLayer(entryPosition, terrain.ground, ref ground);
+
+
+        // Create a new chunk game object 
+        // This is used for the player, camera path etc
+        GameObject g = Instantiate(chunkPrefab);
+        g.transform.parent = transform;
+        Chunk c = g.GetComponent<Chunk>();
+
+        Vector2Int centreTile = entryPosition + terrain.GetGroundBoundsCentreTile();
+        c.CreateChunk(terrain.GetGroundBounds(), ground.CellToWorld(new Vector3Int(centreTile.x, centreTile.y, ground.cellBounds.z)));
 
         return entryPosition + terrain.exitTilePosition;
     }

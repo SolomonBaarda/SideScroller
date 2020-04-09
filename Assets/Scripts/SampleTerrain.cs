@@ -76,6 +76,16 @@ public class SampleTerrain : MonoBehaviour
     }
 
 
+    public Vector2 GetGroundBounds()
+    {
+        return new Vector2(tilemap_ground.size.x * tilemap_ground.cellSize.x, tilemap_ground.size.y * tilemap_ground.cellSize.y);
+    }
+
+    public Vector2Int GetGroundBoundsCentreTile()
+    {
+        return entryTilePosition + new Vector2Int(tilemap_ground.size.x/2, tilemap_ground.size.y/2);
+    }
+
     private void LoadTiles(Tilemap tilemap, ref SampleTerrainLayer layer)
     {
         // Get an iterator for the bounds of the tilemap 
