@@ -36,11 +36,8 @@ public class Chunk : MonoBehaviour
     {
         if (collision.gameObject.layer.Equals(LayerMask.NameToLayer("Player")))
         {
-            Debug.Log("OnPlayerEnterChunk invoked ");
             OnPlayerEnterChunk.Invoke(chunkID);
-
         }
-
     }
 
     private void OnDrawGizmos()

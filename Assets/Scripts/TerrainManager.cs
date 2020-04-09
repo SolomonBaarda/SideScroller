@@ -27,7 +27,9 @@ public class TerrainManager : MonoBehaviour
 
     [Header("Chunk Prefab Reference")]
     public GameObject chunkPrefab;
-    public Queue<Chunk> chunks;
+    private Dictionary<Vector2Int, Chunk> chunks;
+    private Vector2Int currentChunk;
+    private Vector2Int lastGeneratedChunk;
 
     [Header("Initial Tile Type")]
     public Tile groundTile;
@@ -83,14 +85,20 @@ public class TerrainManager : MonoBehaviour
         }
 
 
-        chunks = new Queue<Chunk>();
+        chunks = new Dictionary<Vector2Int, Chunk>();
         Chunk.OnPlayerEnterChunk += NewChunkEntered;
     }
 
 
     private void NewChunkEntered(Vector2Int chunk)
     {
-        GenerateRandomChunk();
+        currentChunk = chunk;
+
+        if (currentChunk.Equals(lastGeneratedChunk))
+        {
+            GenerateRandomChunk(lastGeneratedChunk);
+        }
+
     }
 
 
@@ -112,8 +120,10 @@ public class TerrainManager : MonoBehaviour
         ClearAllTiles();
 
         initialTile = GenerateInitialTile();
+        currentChunk = Vector2Int.zero;
+        lastGeneratedChunk = currentChunk;
 
-        GenerateRandomChunk();
+        GenerateRandomChunk(lastGeneratedChunk);
 
         after = DateTime.Now;
         time = after - before;
@@ -123,16 +133,18 @@ public class TerrainManager : MonoBehaviour
     }
 
 
-    private void GenerateRandomChunk()
+    private void GenerateRandomChunk(Vector2Int currentChunk)
     {
         int index = random.Next(0, sampleTerrainManager.allSamples.Length);
 
         lastGeneratedTile.x += 1;
-        lastGeneratedTile = CopySampleTerrain(lastGeneratedTile, sampleTerrainManager.allSamples[index]);
+        lastGeneratedTile = GenerateNewTerrainChunk(lastGeneratedTile, sampleTerrainManager.allSamples[index], currentChunk);
     }
 
 
-    private Vector2Int CopySampleTerrain(Vector2Int entryPosition, SampleTerrain terrain)
+
+
+    private Vector2Int GenerateNewTerrainChunk(Vector2Int entryPosition, SampleTerrain terrain, Vector2Int currentChunk)
     {
         // Copy the terrain, each layer at a time
         CopySampleTerrainLayer(entryPosition, terrain.wall, ref wall);
@@ -167,8 +179,9 @@ public class TerrainManager : MonoBehaviour
         Vector2Int exit = entryPosition + terrain.exitTilePosition;
         Vector3 exitWorld = grid.CellToWorld(new Vector3Int(exit.x, exit.y, ground.cellBounds.z)) + new Vector3(tileSize.x / 2, tileSize.y / 2, 0);
 
-        c.CreateChunk(bounds, centre, enteranceWorld, exitWorld, Vector2Int.zero);
-        chunks.Enqueue(c);
+        lastGeneratedChunk.x += 1;
+        c.CreateChunk(bounds, centre, enteranceWorld, exitWorld, lastGeneratedChunk);
+        chunks.Add(lastGeneratedChunk, c);
 
         return exit;
     }
