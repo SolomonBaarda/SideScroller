@@ -27,8 +27,8 @@ public class TerrainManager : MonoBehaviour
 
     [Header("Chunk Prefab Reference")]
     public GameObject chunkPrefab;
-    private Dictionary<Vector2Int, Chunk> chunks;
-    private Vector2Int currentChunk;
+    public Dictionary<Vector2Int, Chunk> chunks;
+    public Vector2Int currentChunk;
     private Vector2Int lastGeneratedChunk;
 
     [Header("Initial Tile Type")]
@@ -180,10 +180,15 @@ public class TerrainManager : MonoBehaviour
         Vector3 exitWorld = grid.CellToWorld(new Vector3Int(exit.x, exit.y, ground.cellBounds.z)) + new Vector3(tileSize.x / 2, tileSize.y / 2, 0);
 
         lastGeneratedChunk.x += 1;
-        c.CreateChunk(bounds, centre, enteranceWorld, exitWorld, lastGeneratedChunk);
+        c.CreateChunk(bounds, grid.cellSize, centre, enteranceWorld, exitWorld, lastGeneratedChunk);
         chunks.Add(lastGeneratedChunk, c);
 
         return exit;
+    }
+
+    public Vector2Int GetNextChunk()
+    {
+        return new Vector2Int(currentChunk.x + 1, currentChunk.y);
     }
 
     private void CopySampleTerrainLayer(Vector2Int entryPosition, SampleTerrain.SampleTerrainLayer layer, ref Tilemap tilemap)

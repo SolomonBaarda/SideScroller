@@ -10,13 +10,17 @@ public class Chunk : MonoBehaviour
     public Vector3 enteranceWorldSpace;
     public Vector3 exitWorldSpace;
 
+    public Vector3 cameraPathStartWorldSpace;
+
     public Vector2 bounds;
+    private Vector3 cellSize;
 
     public Vector2Int chunkID;
 
-    public void CreateChunk(Vector2 bounds, Vector3 centre, Vector3 enteranceWorldSpace, Vector3 exitWorldSpace, Vector2Int chunkID)
+    public void CreateChunk(Vector2 bounds, Vector3 cellSize, Vector3 centre, Vector3 enteranceWorldSpace, Vector3 exitWorldSpace, Vector2Int chunkID)
     {
         this.bounds = bounds;
+        this.cellSize = cellSize;
         this.enteranceWorldSpace = enteranceWorldSpace;
         this.exitWorldSpace = exitWorldSpace;
         this.chunkID = chunkID;
@@ -25,6 +29,10 @@ public class Chunk : MonoBehaviour
         BoxCollider2D b = GetComponent<BoxCollider2D>();
         b.size = bounds;
         transform.position = centre;
+
+        // Move the camera up by 1/2 the playable area
+        cameraPathStartWorldSpace = enteranceWorldSpace;
+        cameraPathStartWorldSpace.y += 2 * cellSize.y;
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -54,10 +62,11 @@ public class Chunk : MonoBehaviour
         Gizmos.DrawLine(b.bounds.min, j);
         Gizmos.DrawLine(b.bounds.max, i);
         Gizmos.DrawLine(b.bounds.max, j);
-
+        
+        // Enterance marker
         Gizmos.color = Color.yellow;
         Gizmos.DrawCube(enteranceWorldSpace, 0.5f * Vector3.one);
-
+        // Exit marker
         Gizmos.color = Color.blue;
         Gizmos.DrawCube(exitWorldSpace, 0.5f * Vector3.one);
     }

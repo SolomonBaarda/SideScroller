@@ -43,9 +43,18 @@ public class GameManager : MonoBehaviour
     private void StartGame()
     {
         player.SetPosition(terrainManager.GetInitialTileWorldPositionForPlayer());
-
-        //camera.direction = MovingCamera.Direction.Right;
     }
+
+    private void FixedUpdate()
+    {
+        Chunk chunk;
+        terrainManager.chunks.TryGetValue(terrainManager.GetNextChunk(), out chunk);
+        Vector3 nextChunkCameraPoint = chunk.cameraPathStartWorldSpace;
+
+        movingCamera.Move(nextChunkCameraPoint);
+    }
+
+
 
 
 
