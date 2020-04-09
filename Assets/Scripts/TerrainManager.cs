@@ -110,6 +110,7 @@ public class TerrainManager : MonoBehaviour
                 for (int j = 0; j < 1; j++)
                 {
                     lastGeneratedTile = CopySampleTerrain(lastGeneratedTile, t);
+                    lastGeneratedTile.x += 1;
                 }
 
             }
@@ -138,8 +139,22 @@ public class TerrainManager : MonoBehaviour
         g.transform.parent = transform;
         Chunk c = g.GetComponent<Chunk>();
 
-        Vector2Int centreTile = entryPosition + terrain.GetGroundBoundsCentreTile();
-        c.CreateChunk(terrain.GetGroundBounds(), ground.CellToWorld(new Vector3Int(centreTile.x, centreTile.y, ground.cellBounds.z)));
+
+        Vector2 bounds = terrain.GetGroundBounds();
+        Vector3 centre = ground.CellToWorld(new Vector3Int((int)(entryPosition.x + (bounds.x / 2)), (int)(entryPosition.y + (bounds.y / 2)), ground.cellBounds.z));
+        Vector3 cellSize = terrain.GetTileSize();
+
+        // Need to add half a cell for odd numbers as it was casted to int
+        if(bounds.x % 2 == 1)
+        {
+            centre.x += cellSize.x / 2;
+        }
+        if (bounds.y % 2 == 1)
+        {
+            centre.y += cellSize.y / 2;
+        }
+
+        c.CreateChunk(bounds, centre);
 
         return entryPosition + terrain.exitTilePosition;
     }

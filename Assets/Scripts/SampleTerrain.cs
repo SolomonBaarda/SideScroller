@@ -76,15 +76,45 @@ public class SampleTerrain : MonoBehaviour
     }
 
 
-    public Vector2 GetGroundBounds()
+    public Vector3 GetTileSize()
     {
-        return new Vector2(tilemap_ground.size.x * tilemap_ground.cellSize.x, tilemap_ground.size.y * tilemap_ground.cellSize.y);
+        return grid.cellSize;
     }
 
-    public Vector2Int GetGroundBoundsCentreTile()
+    public Vector2 GetGroundBounds()
     {
-        return entryTilePosition + new Vector2Int(tilemap_ground.size.x/2, tilemap_ground.size.y/2);
+        // Get array just so we can initialise the variables to the first element 
+        SampleTerrainLayer.SampleTerrainTile[] tiles = ground.tilesInThisLayer.ToArray();
+
+        Vector2Int min = tiles[0].position, max = tiles[0].position;
+
+        // Might as well use the array since we have it lol
+        foreach(SampleTerrainLayer.SampleTerrainTile tile in tiles)
+        {
+            if(tile.position.x < min.x)
+            {
+                min.x = tile.position.x;
+            }
+            if (tile.position.y < min.y)
+            {
+                min.y = tile.position.y;
+            }
+
+            if (tile.position.x > max.x)
+            {
+                max.x = tile.position.x;
+            }
+            if (tile.position.y > max.y)
+            {
+                max.y = tile.position.y;
+            }
+        }
+
+        // Add one to the difference as tilemap is 0 based
+        return max - min + Vector2.one;
     }
+
+
 
     private void LoadTiles(Tilemap tilemap, ref SampleTerrainLayer layer)
     {
