@@ -89,9 +89,9 @@ public class SampleTerrain : MonoBehaviour
         Vector2Int min = tiles[0].position, max = tiles[0].position;
 
         // Might as well use the array since we have it lol
-        foreach(SampleTerrainLayer.SampleTerrainTile tile in tiles)
+        foreach (SampleTerrainLayer.SampleTerrainTile tile in tiles)
         {
-            if(tile.position.x < min.x)
+            if (tile.position.x < min.x)
             {
                 min.x = tile.position.x;
             }

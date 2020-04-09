@@ -1,18 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Chunk : MonoBehaviour
 {
-    public Vector2Int boundsInTiles;
-    public Vector2Int enteranceWorldSpace;
-    public Vector2Int exitWorldSpace;
+    public static UnityAction<Vector2Int> OnPlayerEnterChunk;
+
+    public Vector3 enteranceWorldSpace;
+    public Vector3 exitWorldSpace;
 
     public Vector2 bounds;
 
-    public void CreateChunk(Vector2 bounds, Vector3 centre)
+    public Vector2Int chunkID;
+
+    public void CreateChunk(Vector2 bounds, Vector3 centre, Vector3 enteranceWorldSpace, Vector3 exitWorldSpace, Vector2Int chunkID)
     {
         this.bounds = bounds;
+        this.enteranceWorldSpace = enteranceWorldSpace;
+        this.exitWorldSpace = exitWorldSpace;
+        this.chunkID = chunkID;
+        transform.name = "(" + chunkID.x + "," + chunkID.y + ")";
 
         BoxCollider2D b = GetComponent<BoxCollider2D>();
         b.size = bounds;
@@ -21,7 +29,18 @@ public class Chunk : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        Debug.Log("colliding with layer " + LayerMask.LayerToName(collision.gameObject.layer));
+
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.layer.Equals(LayerMask.NameToLayer("Player")))
+        {
+            Debug.Log("OnPlayerEnterChunk invoked ");
+            OnPlayerEnterChunk.Invoke(chunkID);
+
+        }
+
     }
 
     private void OnDrawGizmos()
@@ -38,5 +57,11 @@ public class Chunk : MonoBehaviour
         Gizmos.DrawLine(b.bounds.min, j);
         Gizmos.DrawLine(b.bounds.max, i);
         Gizmos.DrawLine(b.bounds.max, j);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawCube(enteranceWorldSpace, 0.5f * Vector3.one);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawCube(exitWorldSpace, 0.5f * Vector3.one);
     }
 }

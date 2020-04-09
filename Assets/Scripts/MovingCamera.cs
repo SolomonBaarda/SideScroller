@@ -23,18 +23,29 @@ public class MovingCamera : MonoBehaviour
     // Update is called once per frame
     private void FixedUpdate()
     {
-        float distance = direction == Direction.Right ? speed : -speed;
-        if (direction == Direction.Stationary)
+        Vector3 pos = transform.position;
+
+        if (direction.Equals(Direction.Following))
         {
-            distance = 0;
+            pos.x = following.transform.position.x;
+            pos.y = following.transform.position.y;
+        }
+        else if (direction.Equals(Direction.Stationary))
+        {
+            // Do nothing
+        }
+        else if (direction.Equals(Direction.Left))
+        {
+            pos.x -= speed * Time.deltaTime;
+            pos.y = following.transform.position.y;
+        }
+        else if (direction.Equals(Direction.Right))
+        {
+            pos.x += speed * Time.deltaTime;
+            pos.y = following.transform.position.y;
         }
 
-        transform.Translate(new Vector3(distance * Time.deltaTime, 0, 0));
-
-        if (following != null)
-        {
-            transform.position = new Vector3(transform.position.x, following.transform.position.y, transform.position.z);
-        }
+        transform.position = pos;
 
         GetComponent<Camera>().orthographicSize = zoom;
     }
@@ -43,6 +54,7 @@ public class MovingCamera : MonoBehaviour
     {
         Left,
         Right,
-        Stationary
+        Stationary,
+        Following
     }
 }
