@@ -1993,7 +1993,7 @@ GameObject:
   m_Layer: 0
   m_Name: Sample Terrain Manager
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -2038,10 +2038,11 @@ GameObject:
   m_Component:
   - component: {fileID: 876974041}
   - component: {fileID: 876974040}
+  - component: {fileID: 876974042}
   m_Layer: 0
-  m_Name: Grid
+  m_Name: Terrain Manager
   m_TagString: Untagged
-  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -2073,8 +2074,27 @@ Transform:
   - {fileID: 59660592}
   - {fileID: 953929489}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &876974042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 876974039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b7c5221efba9e40b140fe6b0fa0782, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  seed: 
+  useRandomSeed: 0
+  sampleTerrainManagerObject: {fileID: 709550975}
+  chunkPrefab: {fileID: 7428907093167343083, guid: 2af45392e0c1708469244e0c5424e317,
+    type: 3}
+  currentChunk: {x: 0, y: 0}
+  groundTile: {fileID: 11400000, guid: 35d18aaf6686fb14db4c9674999a5a90, type: 2}
 --- !u!1 &953929488
 GameObject:
   m_ObjectHideFlags: 0
@@ -2636,7 +2656,7 @@ GameObject:
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -4748,7 +4768,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1937427806}
   - component: {fileID: 1937427807}
-  - component: {fileID: 1937427808}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -4768,7 +4787,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1937427807
 MonoBehaviour:
@@ -4784,25 +4803,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerGameObject: {fileID: 1352398013}
   cameraGameObject: {fileID: 1369818825}
---- !u!114 &1937427808
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1937427805}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53b7c5221efba9e40b140fe6b0fa0782, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  seed: 
-  useRandomSeed: 0
-  grid: {fileID: 876974040}
-  sampleTerrainManagerObject: {fileID: 709550975}
-  chunkPrefab: {fileID: 7428907093167343083, guid: 2af45392e0c1708469244e0c5424e317,
-    type: 3}
-  groundTile: {fileID: 11400000, guid: 35d18aaf6686fb14db4c9674999a5a90, type: 2}
+  terrainManagerObject: {fileID: 876974039}
 --- !u!1 &1988168370
 GameObject:
   m_ObjectHideFlags: 0
@@ -5011,7 +5012,7 @@ PrefabInstance:
     - target: {fileID: 692011009459521414, guid: e9724d90806874d459e43c12113d682b,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 692011009459521414, guid: e9724d90806874d459e43c12113d682b,
         type: 3}
@@ -5033,6 +5034,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 692011009459521415, guid: e9724d90806874d459e43c12113d682b,
+        type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000,
+        type: 0}
     - target: {fileID: 692011010476377613, guid: e9724d90806874d459e43c12113d682b,
         type: 3}
       propertyPath: m_Controller

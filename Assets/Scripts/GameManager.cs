@@ -18,14 +18,16 @@ public class GameManager : MonoBehaviour
     public GameObject cameraGameObject;
     private MovingCamera movingCamera;
 
+    [Header("Terrain Manager Reference")]
+    public GameObject terrainManagerObject;
     private TerrainManager terrainManager;
 
     private void Awake()
     {
         // References to scripts
-        terrainManager = GetComponent<TerrainManager>();
         player = playerGameObject.GetComponent<Player>();
         movingCamera = cameraGameObject.GetComponent<MovingCamera>();
+        terrainManager = terrainManagerObject.GetComponent<TerrainManager>();
 
         // Generate terrain when the game loads
         OnGameLoad += terrainManager.Generate;

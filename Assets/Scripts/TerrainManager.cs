@@ -14,8 +14,7 @@ public class TerrainManager : MonoBehaviour
     public string seed;
     public bool useRandomSeed;
 
-    [Header("Grid Reference")]
-    public Grid grid;
+    private Grid grid;
     private Tilemap wall;
     private Tilemap wallDetail;
     private Tilemap background;
@@ -57,6 +56,8 @@ public class TerrainManager : MonoBehaviour
         }
         random = new System.Random(seedHash);
 
+        // Get the references
+        grid = GetComponent<Grid>();
         sampleTerrainManager = sampleTerrainManagerObject.GetComponent<SampleTerrainManager>();
 
         // Assign the tilemaps semi-dynamically 
