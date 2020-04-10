@@ -44,6 +44,16 @@ public class Chunk : MonoBehaviour
         {
             ChunkManager.OnPlayerEnterChunk.Invoke(chunkID);
         }
+
+
+
+
+        // TODO check when the camera is in a chunk
+        if (collision.gameObject.tag.Contains("Camera"))
+        {
+            Debug.LogError("Camera!!");
+            ChunkManager.OnCameraEnterChunk.Invoke(chunkID);
+        }
     }
 
     private void OnDrawGizmos()

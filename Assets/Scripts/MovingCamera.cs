@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using PathCreation;
 
 
 public class MovingCamera : MonoBehaviour
@@ -17,11 +18,15 @@ public class MovingCamera : MonoBehaviour
     public Chunk currentChunk;
     public Chunk nextChunk;
 
+    public PathCreator pathCreator;
+    private float distanceTravelled;
+
     private void Awake()
     {
         Vector3 pos = transform.position;
         pos.z = -zoom;
         transform.position = pos;
+
     }
 
 
@@ -39,11 +44,11 @@ public class MovingCamera : MonoBehaviour
 
     private void FixedUpdate()
     {
+
         Move();
 
         GetComponent<Camera>().orthographicSize = zoom;
     }
-
 
 
     private void Move()
@@ -54,52 +59,33 @@ public class MovingCamera : MonoBehaviour
             // Set position if following 
             if (direction.Equals(Direction.Following))
             {
-                Vector3 position = transform.position;
-                position.x = following.transform.position.x;
-
-                // Check its not null
-                if (nextChunk != null)
-                {
-                    //position.y = Vector3.
-
-
-                }
-
-                transform.position = position;
-            } 
-            // Move towards if moving in a direction
+            }
             else
             {
-                Vector3 destination = transform.position;
                 float distance = 0;
 
-                // Set the correct destination
                 if (direction.Equals(Direction.Left))
                 {
-                    destination = currentChunk.cameraPathStartWorldSpace;
                     distance = -speed;
                 }
                 else if (direction.Equals(Direction.Right))
                 {
-                    destination = nextChunk.cameraPathStartWorldSpace;
                     distance = speed;
                 }
 
-                // Move
-                MoveTowards(destination, distance);
+                // Update distance
+                distanceTravelled += distance * Time.deltaTime;
+
+                // Get the position and zoom it out
+                Vector3 position = pathCreator.path.GetPointAtDistance(distanceTravelled, EndOfPathInstruction.Stop);
+                position.z = -zoom;
+
+                // Update position
+                transform.position = position;
             }
-        }
+        }    
     }
 
-    private void MoveTowards(Vector3 destination, float magnitude)
-    {
-        if (destination != null)
-        {
-            Vector3 distance = Vector3.ClampMagnitude(destination, magnitude * Time.deltaTime);
-            transform.Translate(distance);
-        }
-
-    }
 
     public enum Direction
     {

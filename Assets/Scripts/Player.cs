@@ -10,6 +10,8 @@ public class Player : MonoBehaviour
 
     public PlayerMovement controller;
 
+    public Vector2Int currentChunk;
+
     private void Awake()
     {
         // Get reference to the controller script
@@ -20,6 +22,7 @@ public class Player : MonoBehaviour
         coinCount = 0;
 
         GameManager.OnGameStart += SetAlive;
+        ChunkManager.OnPlayerEnterChunk += SetCurrentChunk;
     }
 
     private void Update()
@@ -30,6 +33,11 @@ public class Player : MonoBehaviour
         }
     }
 
+
+    private void SetCurrentChunk(Vector2Int currentChunk)
+    {
+        this.currentChunk = currentChunk;
+    }
 
     public void SetPosition(Vector2 position)
     {

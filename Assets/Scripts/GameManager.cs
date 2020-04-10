@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
         // Add event calls 
         TerrainManager.OnTerrainGenerated += StartGame;
 
-        ChunkManager.OnPlayerEnterChunk += NewChunkEntered;
+        ChunkManager.OnCameraEnterChunk += NewChunkEntered;
     }
 
     private void Start()

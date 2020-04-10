@@ -6,6 +6,7 @@ using UnityEngine.Events;
 
 public class ChunkManager : MonoBehaviour
 {
+    public static UnityAction<Vector2Int> OnCameraEnterChunk;
     public static UnityAction<Vector2Int> OnPlayerEnterChunk;
 
     [Header("Chunk Prefab Reference")]
@@ -14,9 +15,12 @@ public class ChunkManager : MonoBehaviour
     private Dictionary<Vector2Int, Chunk> chunks;
     public Vector2Int lastGeneratedChunk;
 
+    private CameraPath cameraPath;
 
     private void Awake()
     {
+        cameraPath = GetComponentInChildren<CameraPath>();
+
         chunks = new Dictionary<Vector2Int, Chunk>();
 
         // Generate a new chunk when needed 
@@ -55,6 +59,9 @@ public class ChunkManager : MonoBehaviour
         lastGeneratedChunk.x += 1;
         c.CreateChunk(bounds, grid.cellSize, centre, enteranceWorld, exitWorld, lastGeneratedChunk);
         chunks.Add(lastGeneratedChunk, c);
+
+        cameraPath.AddPoint(c.cameraPathStartWorldSpace);
+        cameraPath.AddPoint(c.cameraPathStartWorldSpace);
     }
 
 
