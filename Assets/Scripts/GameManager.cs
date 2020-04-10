@@ -22,18 +22,26 @@ public class GameManager : MonoBehaviour
     public GameObject terrainManagerObject;
     private TerrainManager terrainManager;
 
+    [Header("Chunk Manager Reference")]
+    public GameObject chunkManagerObject;
+    private ChunkManager chunkManager;
+
     private void Awake()
     {
         // References to scripts
         player = playerGameObject.GetComponent<Player>();
         movingCamera = cameraGameObject.GetComponent<MovingCamera>();
         terrainManager = terrainManagerObject.GetComponent<TerrainManager>();
+        chunkManager = chunkManagerObject.GetComponent<ChunkManager>();
 
         // Generate terrain when the game loads
-        OnGameLoad += terrainManager.Generate;
+        OnGameLoad += terrainManager.Initialise;
 
-        // Add the move player method to the event called when the map has been generated
+        // Add event calls 
         TerrainManager.OnTerrainGenerated += StartGame;
+        ChunkManager.OnPlayerEnterChunk += NewChunkEntered;
+
+        
     }
 
     private void Start()
@@ -47,14 +55,24 @@ public class GameManager : MonoBehaviour
         player.SetPosition(terrainManager.GetInitialTileWorldPositionForPlayer());
     }
 
-    private void FixedUpdate()
-    {
-        Chunk chunk;
-        terrainManager.chunks.TryGetValue(terrainManager.GetNextChunk(), out chunk);
-        Vector3 nextChunkCameraPoint = chunk.cameraPathStartWorldSpace;
 
-        movingCamera.Move(nextChunkCameraPoint);
+
+
+
+    private void NewChunkEntered(Vector2Int chunk)
+    {
+        // Get the current chunk object
+        Chunk c = chunkManager.GetChunk(chunk);
+        // Pass it to the camera
+        movingCamera.UpdateCurrentChunk(c);
+
+
+        if(movingCamera.currentChunk.chunkID.Equals(chunkManager.lastGeneratedChunk))
+        {
+            terrainManager.Generate();
+        }
     }
+
 
 
 

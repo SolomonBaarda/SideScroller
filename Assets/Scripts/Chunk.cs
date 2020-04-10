@@ -5,8 +5,6 @@ using UnityEngine.Events;
 
 public class Chunk : MonoBehaviour
 {
-    public static UnityAction<Vector2Int> OnPlayerEnterChunk;
-
     public Vector3 enteranceWorldSpace;
     public Vector3 exitWorldSpace;
 
@@ -44,7 +42,7 @@ public class Chunk : MonoBehaviour
     {
         if (collision.gameObject.layer.Equals(LayerMask.NameToLayer("Player")))
         {
-            OnPlayerEnterChunk.Invoke(chunkID);
+            ChunkManager.OnPlayerEnterChunk.Invoke(chunkID);
         }
     }
 

@@ -13,7 +13,8 @@ public class MovingCamera : MonoBehaviour
     [Header("GameObject to Follow")]
     public GameObject following;
 
-    
+
+    public Chunk currentChunk;
 
     private void Awake()
     {
@@ -22,7 +23,18 @@ public class MovingCamera : MonoBehaviour
         transform.position = pos;
     }
 
-    public void Move(Vector3 destination) { 
+
+
+
+    public void UpdateCurrentChunk(Chunk chunk)
+    {
+        currentChunk = chunk;
+    }
+
+
+
+    public void Move(Vector3 destination)
+    {
         Vector3 pos = transform.position;
 
         if (!direction.Equals(Direction.Stationary))

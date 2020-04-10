@@ -1641,6 +1641,51 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!1 &489454952
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 489454953}
+  - component: {fileID: 489454954}
+  m_Layer: 0
+  m_Name: Chunk Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &489454953
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 489454952}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &489454954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 489454952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da3c2d115402dd642bc62e0af3f11562, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chunkPrefab: {fileID: 7428907093167343083, guid: 2af45392e0c1708469244e0c5424e317,
+    type: 3}
 --- !u!1 &649344183
 GameObject:
   m_ObjectHideFlags: 0
@@ -2091,9 +2136,6 @@ MonoBehaviour:
   seed: 
   useRandomSeed: 0
   sampleTerrainManagerObject: {fileID: 709550975}
-  chunkPrefab: {fileID: 7428907093167343083, guid: 2af45392e0c1708469244e0c5424e317,
-    type: 3}
-  currentChunk: {x: 0, y: 0}
   groundTile: {fileID: 11400000, guid: 35d18aaf6686fb14db4c9674999a5a90, type: 2}
 --- !u!1 &953929488
 GameObject:
@@ -2741,6 +2783,7 @@ MonoBehaviour:
   speed: 1
   direction: 3
   following: {fileID: 1352398013}
+  currentChunk: {fileID: 0}
 --- !u!1 &1471439585
 GameObject:
   m_ObjectHideFlags: 0
@@ -4804,6 +4847,7 @@ MonoBehaviour:
   playerGameObject: {fileID: 1352398013}
   cameraGameObject: {fileID: 1369818825}
   terrainManagerObject: {fileID: 876974039}
+  chunkManagerObject: {fileID: 489454952}
 --- !u!1 &1988168370
 GameObject:
   m_ObjectHideFlags: 0

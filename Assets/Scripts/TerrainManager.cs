@@ -9,6 +9,7 @@ using UnityEngine.Events;
 public class TerrainManager : MonoBehaviour
 {
     public static UnityAction OnTerrainGenerated;
+    public static UnityAction<Grid, SampleTerrain, Vector2Int> OnTerrainChunkGenerated;
 
     [Header("General Generation Settings")]
     public string seed;
@@ -23,12 +24,6 @@ public class TerrainManager : MonoBehaviour
     [Header("Sample Terrain Manager Reference")]
     public GameObject sampleTerrainManagerObject;
     private SampleTerrainManager sampleTerrainManager;
-
-    [Header("Chunk Prefab Reference")]
-    public GameObject chunkPrefab;
-    public Dictionary<Vector2Int, Chunk> chunks;
-    public Vector2Int currentChunk;
-    private Vector2Int lastGeneratedChunk;
 
     [Header("Initial Tile Type")]
     public Tile groundTile;
@@ -86,24 +81,12 @@ public class TerrainManager : MonoBehaviour
         }
 
 
-        chunks = new Dictionary<Vector2Int, Chunk>();
-        Chunk.OnPlayerEnterChunk += NewChunkEntered;
-    }
-
-
-    private void NewChunkEntered(Vector2Int chunk)
-    {
-        currentChunk = chunk;
-
-        if (currentChunk.Equals(lastGeneratedChunk))
-        {
-            GenerateRandomChunk(lastGeneratedChunk);
-        }
 
     }
 
 
-    public void Generate()
+
+    public void Initialise()
     {
         // Load the sample terrain
         DateTime before = DateTime.Now;
@@ -121,10 +104,8 @@ public class TerrainManager : MonoBehaviour
         ClearAllTiles();
 
         initialTile = GenerateInitialTile();
-        currentChunk = Vector2Int.zero;
-        lastGeneratedChunk = currentChunk;
 
-        GenerateRandomChunk(lastGeneratedChunk);
+        Generate();
 
         after = DateTime.Now;
         time = after - before;
@@ -134,18 +115,18 @@ public class TerrainManager : MonoBehaviour
     }
 
 
-    private void GenerateRandomChunk(Vector2Int currentChunk)
+    public void Generate()
     {
         int index = random.Next(0, sampleTerrainManager.allSamples.Length);
 
         lastGeneratedTile.x += 1;
-        lastGeneratedTile = GenerateNewTerrainChunk(lastGeneratedTile, sampleTerrainManager.allSamples[index], currentChunk);
+        lastGeneratedTile = GenerateNewTerrainChunk(lastGeneratedTile, sampleTerrainManager.allSamples[index]);
     }
 
 
 
 
-    private Vector2Int GenerateNewTerrainChunk(Vector2Int entryPosition, SampleTerrain terrain, Vector2Int currentChunk)
+    private Vector2Int GenerateNewTerrainChunk(Vector2Int entryPosition, SampleTerrain terrain)
     {
         // Copy the terrain, each layer at a time
         CopySampleTerrainLayer(entryPosition, terrain.wall, ref wall);
@@ -153,44 +134,15 @@ public class TerrainManager : MonoBehaviour
         CopySampleTerrainLayer(entryPosition, terrain.background, ref background);
         CopySampleTerrainLayer(entryPosition, terrain.ground, ref ground);
 
+        Vector2Int exitTile = entryPosition + terrain.exitTilePosition;
 
-        // Create a new chunk game object 
-        // This is used for the player, camera path etc
-        GameObject g = Instantiate(chunkPrefab);
-        g.transform.parent = transform;
-        Chunk c = g.GetComponent<Chunk>();
+        OnTerrainChunkGenerated.Invoke(grid, terrain, entryPosition);
 
-
-        Vector2 bounds = terrain.GetGroundBounds();
-        Vector3 centre = grid.CellToWorld(new Vector3Int((int)(entryPosition.x + (bounds.x / 2)), (int)(entryPosition.y + (bounds.y / 2)), ground.cellBounds.z));
-        Vector3 tileSize = terrain.GetTileSize();
-
-        // Need to add half a cell for odd numbers as it was casted to int
-        if (bounds.x % 2 == 1)
-        {
-            centre.x += tileSize.x / 2;
-        }
-        if (bounds.y % 2 == 1)
-        {
-            centre.y += tileSize.y / 2;
-        }
-
-        // Add half a cell to centre the position
-        Vector3 enteranceWorld = grid.CellToWorld(new Vector3Int(entryPosition.x, entryPosition.y, ground.cellBounds.z)) + new Vector3(tileSize.x / 2, tileSize.y / 2, 0);
-        Vector2Int exit = entryPosition + terrain.exitTilePosition;
-        Vector3 exitWorld = grid.CellToWorld(new Vector3Int(exit.x, exit.y, ground.cellBounds.z)) + new Vector3(tileSize.x / 2, tileSize.y / 2, 0);
-
-        lastGeneratedChunk.x += 1;
-        c.CreateChunk(bounds, grid.cellSize, centre, enteranceWorld, exitWorld, lastGeneratedChunk);
-        chunks.Add(lastGeneratedChunk, c);
-
-        return exit;
+        
+        return exitTile;
     }
 
-    public Vector2Int GetNextChunk()
-    {
-        return new Vector2Int(currentChunk.x + 1, currentChunk.y);
-    }
+
 
     private void CopySampleTerrainLayer(Vector2Int entryPosition, SampleTerrain.SampleTerrainLayer layer, ref Tilemap tilemap)
     {
