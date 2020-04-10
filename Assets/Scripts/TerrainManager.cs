@@ -138,7 +138,6 @@ public class TerrainManager : MonoBehaviour
 
         OnTerrainChunkGenerated.Invoke(grid, terrain, entryPosition);
 
-        
         return exitTile;
     }
 

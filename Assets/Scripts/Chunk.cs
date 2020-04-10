@@ -28,7 +28,7 @@ public class Chunk : MonoBehaviour
         b.size = bounds;
         transform.position = centre;
 
-        // Move the camera up by 1/2 the playable area
+        // Move the camera up by 2 cells
         cameraPathStartWorldSpace = enteranceWorldSpace;
         cameraPathStartWorldSpace.y += 2 * cellSize.y;
     }
@@ -50,12 +50,11 @@ public class Chunk : MonoBehaviour
     {
         BoxCollider2D b = GetComponent<BoxCollider2D>();
 
-        Gizmos.color = Color.red;
-
         Vector3 i = new Vector3(b.bounds.max.x, b.bounds.min.y, b.bounds.center.z);
         Vector3 j = new Vector3(b.bounds.min.x, b.bounds.max.y, b.bounds.center.z);
 
         // Draw a red border to the collision area
+        Gizmos.color = Color.red;
         Gizmos.DrawLine(b.bounds.min, i);
         Gizmos.DrawLine(b.bounds.min, j);
         Gizmos.DrawLine(b.bounds.max, i);
@@ -67,5 +66,8 @@ public class Chunk : MonoBehaviour
         // Exit marker
         Gizmos.color = Color.blue;
         Gizmos.DrawCube(exitWorldSpace, 0.5f * Vector3.one);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawCube(cameraPathStartWorldSpace, 0.5f * Vector3.one);
     }
 }

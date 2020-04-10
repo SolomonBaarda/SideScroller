@@ -13,8 +13,9 @@ public class MovingCamera : MonoBehaviour
     [Header("GameObject to Follow")]
     public GameObject following;
 
-
+    //private Chunk lastChunk;
     public Chunk currentChunk;
+    public Chunk nextChunk;
 
     private void Awake()
     {
@@ -24,41 +25,80 @@ public class MovingCamera : MonoBehaviour
     }
 
 
-
-
-    public void UpdateCurrentChunk(Chunk chunk)
+    public void UpdateCurrentChunk(Chunk currentChunk)
     {
-        currentChunk = chunk;
+        this.currentChunk = currentChunk;
+    }
+
+    public void UpdateNextChunk(Chunk nextChunk)
+    {
+        this.nextChunk = nextChunk;
     }
 
 
 
-    public void Move(Vector3 destination)
+    private void FixedUpdate()
     {
-        Vector3 pos = transform.position;
-
-        if (!direction.Equals(Direction.Stationary))
-        {
-            Vector3 snapshot = (destination - pos) * speed * Time.deltaTime;
-            pos.y += snapshot.y;
-
-            if (direction.Equals(Direction.Following))
-            {
-                pos.x = following.transform.position.x;
-            }
-            else if (direction.Equals(Direction.Left))
-            {
-                pos.x -= snapshot.x;
-            }
-            else if (direction.Equals(Direction.Right))
-            {
-                pos.x += snapshot.x;
-            }
-        }
-
-        transform.position = pos;
+        Move();
 
         GetComponent<Camera>().orthographicSize = zoom;
+    }
+
+
+
+    private void Move()
+    {
+        // Don't move if stationary
+        if (!direction.Equals(Direction.Stationary))
+        {
+            // Set position if following 
+            if (direction.Equals(Direction.Following))
+            {
+                Vector3 position = transform.position;
+                position.x = following.transform.position.x;
+
+                // Check its not null
+                if (nextChunk != null)
+                {
+                    //position.y = Vector3.
+
+
+                }
+
+                transform.position = position;
+            } 
+            // Move towards if moving in a direction
+            else
+            {
+                Vector3 destination = transform.position;
+                float distance = 0;
+
+                // Set the correct destination
+                if (direction.Equals(Direction.Left))
+                {
+                    destination = currentChunk.cameraPathStartWorldSpace;
+                    distance = -speed;
+                }
+                else if (direction.Equals(Direction.Right))
+                {
+                    destination = nextChunk.cameraPathStartWorldSpace;
+                    distance = speed;
+                }
+
+                // Move
+                MoveTowards(destination, distance);
+            }
+        }
+    }
+
+    private void MoveTowards(Vector3 destination, float magnitude)
+    {
+        if (destination != null)
+        {
+            Vector3 distance = Vector3.ClampMagnitude(destination, magnitude * Time.deltaTime);
+            transform.Translate(distance);
+        }
+
     }
 
     public enum Direction

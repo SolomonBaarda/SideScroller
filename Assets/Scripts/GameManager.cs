@@ -39,9 +39,8 @@ public class GameManager : MonoBehaviour
 
         // Add event calls 
         TerrainManager.OnTerrainGenerated += StartGame;
-        ChunkManager.OnPlayerEnterChunk += NewChunkEntered;
 
-        
+        ChunkManager.OnPlayerEnterChunk += NewChunkEntered;
     }
 
     private void Start()
@@ -62,15 +61,30 @@ public class GameManager : MonoBehaviour
     private void NewChunkEntered(Vector2Int chunk)
     {
         // Get the current chunk object
-        Chunk c = chunkManager.GetChunk(chunk);
+        Chunk current = chunkManager.GetChunk(chunk);
+
         // Pass it to the camera
-        movingCamera.UpdateCurrentChunk(c);
+        movingCamera.UpdateCurrentChunk(current);
 
-
-        if(movingCamera.currentChunk.chunkID.Equals(chunkManager.lastGeneratedChunk))
+        // Generate a new chunk if needed
+        if (movingCamera.currentChunk.chunkID.Equals(chunkManager.lastGeneratedChunk))
         {
             terrainManager.Generate();
         }
+
+
+
+        // Update the next chunk if we can
+        try
+        {
+            Chunk next = chunkManager.GetChunk(new Vector2Int(chunk.x + 1, chunk.y));
+            movingCamera.UpdateNextChunk(next);
+        }
+        catch (Exception)
+        {
+        }
+
+
     }
 
 
