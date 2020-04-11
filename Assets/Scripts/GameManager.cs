@@ -66,12 +66,28 @@ public class GameManager : MonoBehaviour
         // Pass it to the camera
         movingCamera.UpdateCurrentChunk(current);
 
+        foreach(Vector2Int nextChunk in current.GetNextChunks())
+        {
+            // Update the next chunk if we can
+            try
+            {
+                // Chunk already exists 
+                Chunk next = chunkManager.GetChunk(nextChunk);
+                movingCamera.UpdateNextChunk(next);
+            }
+            catch (Exception)
+            {
+                // Does not exist, so generate it
+                terrainManager.Generate(chunkManager);
+
+            }
+        }
+
         // Generate a new chunk if needed
         if (movingCamera.currentChunk.chunkID.Equals(chunkManager.lastGeneratedChunk))
         {
-            terrainManager.Generate();
+            
         }
-
 
 
         // Update the next chunk if we can

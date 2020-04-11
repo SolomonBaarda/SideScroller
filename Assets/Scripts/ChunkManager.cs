@@ -54,7 +54,7 @@ public class ChunkManager : MonoBehaviour
         // Add half a cell to centre the position for both
         Vector3 enteranceWorld = grid.CellToWorld(new Vector3Int(entryPositionWorld.x, entryPositionWorld.y, 0)) + new Vector3(tileSize.x / 2, tileSize.y / 2, 0);
         List<Vector3> exitWorldPositions = new List<Vector3>();
-        foreach(Vector2Int pos in terrain.exitTilePositions)
+        foreach (Vector2Int pos in terrain.exitTilePositions)
         {
             Vector2Int exit = entryPositionWorld + pos;
             exitWorldPositions.Add(grid.CellToWorld(new Vector3Int(exit.x, exit.y, 0)) + new Vector3(tileSize.x / 2, tileSize.y / 2, 0));
@@ -62,7 +62,7 @@ public class ChunkManager : MonoBehaviour
 
         // Assign the direction
         int direction = 0;
-        if(terrain.direction.Equals(TerrainManager.TerrainDirection.Left))
+        if (terrain.direction.Equals(TerrainManager.TerrainDirection.Left))
         {
             direction = -1;
         }
@@ -70,29 +70,73 @@ public class ChunkManager : MonoBehaviour
         {
             direction = 1;
         }
-        if (terrain.direction.Equals(TerrainManager.TerrainDirection.Undefined))
+        else if (terrain.direction.Equals(TerrainManager.TerrainDirection.Undefined))
         {
             throw new Exception("Terrain direction is undefined in chunk generation.");
         }
         lastGeneratedChunk.x += direction;
 
         // Create the chunk
-        c.CreateChunk(bounds, grid.cellSize, centre, enteranceWorld, exitWorldPositions, lastGeneratedChunk);
+        c.CreateChunk(bounds, grid.cellSize, centre, enteranceWorld, exitWorldPositions, terrain.direction, lastGeneratedChunk);
         chunks.Add(lastGeneratedChunk, c);
 
 
-        cameraPath.AddPoint(c.cameraPathStartWorldSpace);
+        if (terrain.direction.Equals(TerrainManager.TerrainDirection.Left))
+        {
+            cameraPath.AddPointLeft(c.cameraPathStartWorldSpace);
+        }
+        else if (terrain.direction.Equals(TerrainManager.TerrainDirection.Right))
+        {
+            cameraPath.AddPointRight(c.cameraPathStartWorldSpace);
+        }
+
     }
 
 
- 
+
+    public Vector3 GetNextChunkStartPositionFromChunk(Vector2Int currentChunkID, Vector2Int neighbourChunkID, TerrainManager.TerrainDirection direction)
+    {
+        try
+        {
+            Chunk current = GetChunk(currentChunkID);
+
+            // Valid neighbour chunk for current
+            if (current.GetNextChunks().Contains(neighbourChunkID) && current.directions.Contains(direction))
+            {
+                Vector2Int chunkDirection = neighbourChunkID - currentChunkID;
+
+                Vector3[] exitSpaces = current.exitWorldSpaces.ToArray();
+                float[] components = new float[current.exitWorldSpaces.Count];
+                for(int i = 0; i < components.Length; i++)
+                {
+                    float val = 0;
+
+                    // Decide which world point is the valid neighbour chunk
+                    if(chunkDirection.x > chunkDirection.y)
+
+                    components[i] = val;
+                }
+
+                
+
+                Vector3 worldPosition = currentCHunkExitpos + chunkDirection;
+            }
+        }
+        catch (Exception)
+        {
+        }
+
+        throw new Exception("Chunk (" + neighbourChunkID.x + "," + neighbourChunkID.y + ") is not a valid " +
+            " neighbour for chunk (" + currentChunkID.x + "," + currentChunkID.y + ").");
+    }
+
 
     public Chunk GetChunk(Vector2Int chunkID)
     {
         Chunk chunk;
-        if(!chunks.TryGetValue(chunkID, out chunk))
+        if (!chunks.TryGetValue(chunkID, out chunk))
         {
-            throw new Exception("Chunk (" + chunkID.x + "," + chunkID.y +") could not be found.");
+            throw new Exception("Chunk (" + chunkID.x + "," + chunkID.y + ") could not be found.");
         }
 
         return chunk;

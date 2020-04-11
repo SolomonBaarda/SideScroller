@@ -101,7 +101,11 @@ public class TerrainManager : MonoBehaviour
 
         ClearAllTiles();
         initialTile = GenerateInitialTile();
-        Generate();
+        initialTile.x += 1;
+
+        // Generate one to the right
+        Generate(grid.CellToWorld(new Vector3Int(initialTile.x, initialTile.y, 0)), TerrainDirection.Right);
+        // Left TODO
 
         after = DateTime.Now;
         time = after - before;
@@ -111,7 +115,7 @@ public class TerrainManager : MonoBehaviour
     }
 
 
-    public void Generate()
+    public void Generate(Vector3 startTileWorldSpace, TerrainDirection directionToGenerate)
     {
         int index = random.Next(0, sampleTerrainManager.allSamples.Length);
         SampleTerrain chosen = sampleTerrainManager.allSamples[index];

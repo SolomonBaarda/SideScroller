@@ -15,16 +15,17 @@ public class CameraPath : MonoBehaviour
     }
 
 
-    public void InitialisePath(Vector3 start)
-    {
-        AddPoint(start);
-    }
-
-
-    public void AddPoint(Vector3 point)
+    public void AddPointRight(Vector3 point)
     {
         points.Add(point);
         pathCreator.bezierPath.AddSegmentToEnd(point);
+        pathCreator.TriggerPathUpdate();
+    }
+
+    public void AddPointLeft(Vector3 point)
+    {
+        points.Add(point);
+        pathCreator.bezierPath.AddSegmentToStart(point);
         pathCreator.TriggerPathUpdate();
     }
 
