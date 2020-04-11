@@ -47,7 +47,7 @@ public class TerrainManager : MonoBehaviour
         // Get a random seed
         if (useRandomSeed)
         {
-
+            // TODO
         }
         random = new System.Random(seedHash);
 
@@ -55,7 +55,7 @@ public class TerrainManager : MonoBehaviour
         grid = GetComponent<Grid>();
         sampleTerrainManager = sampleTerrainManagerObject.GetComponent<SampleTerrainManager>();
 
-        // Assign the tilemaps semi-dynamically 
+        // Assign the tilemaps
         for (int i = 0; i < grid.transform.childCount; i++)
         {
             GameObject g = grid.transform.GetChild(i).gameObject;
@@ -80,8 +80,6 @@ public class TerrainManager : MonoBehaviour
             }
         }
 
-
-
     }
 
 
@@ -102,9 +100,7 @@ public class TerrainManager : MonoBehaviour
         before = DateTime.Now;
 
         ClearAllTiles();
-
         initialTile = GenerateInitialTile();
-
         Generate();
 
         after = DateTime.Now;
@@ -118,27 +114,52 @@ public class TerrainManager : MonoBehaviour
     public void Generate()
     {
         int index = random.Next(0, sampleTerrainManager.allSamples.Length);
+        SampleTerrain chosen = sampleTerrainManager.allSamples[index];
 
-        lastGeneratedTile.x += 1;
-        lastGeneratedTile = GenerateNewTerrainChunk(lastGeneratedTile, sampleTerrainManager.allSamples[index]);
+        int direction = 0;
+        if (chosen.direction.Equals(TerrainDirection.Left))
+        {
+            direction = -1;
+        }
+        else if (chosen.direction.Equals(TerrainDirection.Right))
+        {
+            direction = 1;
+        }
+        else if (chosen.direction.Equals(TerrainDirection.Undefined))
+        {
+            throw new Exception("Sample terrain direction undefined for child " + index + ".");
+        }
+
+        // Move the point by 1 in the correct direction
+        lastGeneratedTile.x += direction;
+        // Generate the new chunk and update the tile reference
+        lastGeneratedTile = GenerateNewTerrainChunk(lastGeneratedTile, chosen).ToArray()[0];
     }
 
 
 
 
-    private Vector2Int GenerateNewTerrainChunk(Vector2Int entryPosition, SampleTerrain terrain)
+    private List<Vector2Int> GenerateNewTerrainChunk(Vector2Int entryPosition, SampleTerrain terrain)
     {
+        // TODO check direction and invert blocks if going left
+
         // Copy the terrain, each layer at a time
         CopySampleTerrainLayer(entryPosition, terrain.wall, ref wall);
         CopySampleTerrainLayer(entryPosition, terrain.wallDetail, ref wallDetail);
         CopySampleTerrainLayer(entryPosition, terrain.background, ref background);
         CopySampleTerrainLayer(entryPosition, terrain.ground, ref ground);
 
-        Vector2Int exitTile = entryPosition + terrain.exitTilePosition;
+        // Calculate the world space of all the exit positions
+        List<Vector2Int> exitTiles = new List<Vector2Int>();
+        foreach(Vector2Int exit in terrain.exitTilePositions)
+        {
+            exitTiles.Add(entryPosition + exit);
+        }
 
+        // Tell the ChunkManager that the terrain has been generated
         OnTerrainChunkGenerated.Invoke(grid, terrain, entryPosition);
 
-        return exitTile;
+        return exitTiles;
     }
 
 
@@ -191,6 +212,12 @@ public class TerrainManager : MonoBehaviour
     }
 
 
+    public enum TerrainDirection
+    {
+        Undefined,
+        Left,
+        Right
+    }
 
 }
 

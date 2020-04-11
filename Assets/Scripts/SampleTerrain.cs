@@ -21,13 +21,18 @@ public class SampleTerrain : MonoBehaviour
 
     public Vector2Int entryTilePosition;
     private Vector2Int entryTilePositionLocal;
-    public Vector2Int exitTilePosition;
+    public List<Vector2Int> exitTilePositions;
+
+    public TerrainManager.TerrainDirection direction = TerrainManager.TerrainDirection.Undefined;
 
     private void Awake()
     {
         manager = transform.parent.GetComponent<SampleTerrainManager>();
         grid = GetComponent<Grid>();
 
+        exitTilePositions = new List<Vector2Int>();
+
+        // Assign the tilemaps 
         for (int i = 0; i < grid.transform.childCount; i++)
         {
             GameObject g = grid.transform.GetChild(i).gameObject;
@@ -59,14 +64,16 @@ public class SampleTerrain : MonoBehaviour
             r.enabled = false;
         }
 
-        entryTilePositionLocal = FindEntryTilePosition();
-        entryTilePosition = Vector2Int.zero;
-        exitTilePosition = FindExitTilePosition();
+        // Create new objects to store the tile data
+        wall = new SampleTerrainLayer();
+        wallDetail = new SampleTerrainLayer();
+        background = new SampleTerrainLayer();
+        ground = new SampleTerrainLayer();
 
-        wall = new SampleTerrainLayer(TerrainManager.LAYER_NAME_WALL);
-        wallDetail = new SampleTerrainLayer(TerrainManager.LAYER_NAME_WALL_DETAIL);
-        background = new SampleTerrainLayer(TerrainManager.LAYER_NAME_BACKGROUND);
-        ground = new SampleTerrainLayer(TerrainManager.LAYER_NAME_GROUND);
+        // Find the tile positions
+        FindEntryTilePosition(ref entryTilePositionLocal);
+        entryTilePosition = Vector2Int.zero;
+        FindExitTilePosition(ref exitTilePositions);
 
         // Load all the tiles in the tilemaps into the objects
         LoadTiles(tilemap_wall, ref wall);
@@ -81,6 +88,11 @@ public class SampleTerrain : MonoBehaviour
         return grid.cellSize;
     }
 
+
+    /// <summary>
+    /// Get the bounds in world space for the playable area in this Sample Terrain.
+    /// </summary>
+    /// <returns>The bounds</returns>
     public Vector2 GetGroundBounds()
     {
         // Get array just so we can initialise the variables to the first element 
@@ -134,7 +146,7 @@ public class SampleTerrain : MonoBehaviour
     }
 
 
-    private Vector2Int FindEntryTilePosition()
+    private void FindEntryTilePosition(ref Vector2Int tile)
     {
         // Get an iterator for the bounds of the tilemap 
         BoundsInt.PositionEnumerator p = tilemap_dev.cellBounds.allPositionsWithin.GetEnumerator();
@@ -146,16 +158,21 @@ public class SampleTerrain : MonoBehaviour
                 // Check if the tile matches the entry tile type
                 if (tilemap_dev.GetTile(current).Equals(manager.dev_entryTile))
                 {
-                    return new Vector2Int(current.x, current.y);
+                    tile = new Vector2Int(current.x, current.y);
+                    return;
                 }
             }
         }
         throw new Exception("Entry tile could not be found in SampleTerrain.");
     }
 
-    // Must be called AFTER entry position has been assigned
-    private Vector2Int FindExitTilePosition()
+    /// <summary>
+    /// Must be called AFTER entry position has been assigned
+    /// </summary>
+    private void FindExitTilePosition(ref List<Vector2Int> tiles)
     {
+        tiles.Clear();
+
         // Get an iterator for the bounds of the tilemap 
         BoundsInt.PositionEnumerator p = tilemap_dev.cellBounds.allPositionsWithin.GetEnumerator();
         while (p.MoveNext())
@@ -166,38 +183,47 @@ public class SampleTerrain : MonoBehaviour
                 // Check if the tile matches the entry tile type
                 if (tilemap_dev.GetTile(current).Equals(manager.dev_exitTile))
                 {
-                    return (new Vector2Int(current.x, current.y) - entryTilePositionLocal);
+                    tiles.Add(new Vector2Int(current.x, current.y) - entryTilePositionLocal);
                 }
             }
         }
-        throw new Exception("Exit tile could not be found in SampleTerrain.");
+
+        if (tiles.Count == 0)
+        {
+            throw new Exception("Could not find any exit tiles in SampleTerrain.");
+        }
     }
 
 
+    /// <summary>
+    /// Class for storing the tiles in a specific layer of Sample Terrain.
+    /// </summary>
     public class SampleTerrainLayer
     {
-        public string layer;
         public List<SampleTerrainTile> tilesInThisLayer;
 
-        public SampleTerrainLayer(string layer)
+        public SampleTerrainLayer()
         {
-            this.layer = layer;
             tilesInThisLayer = new List<SampleTerrainTile>();
         }
 
+        /// <summary>
+        /// Class for storing an induvidual tile of Sample Terrain.
+        /// </summary>
         public class SampleTerrainTile
         {
+            public Tile tileType;
+            public Vector2Int position;
+
             public SampleTerrainTile(Tile tileType, Vector2Int position)
             {
                 this.tileType = tileType;
                 this.position = position;
 
             }
-            public Tile tileType;
-            public Vector2Int position;
         }
-    }
 
+    }
 
 
 }

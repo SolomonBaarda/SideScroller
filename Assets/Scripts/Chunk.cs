@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class Chunk : MonoBehaviour
 {
     public Vector3 enteranceWorldSpace;
-    public Vector3 exitWorldSpace;
+    public List<Vector3> exitWorldSpaces;
 
     public Vector3 cameraPathStartWorldSpace;
 
@@ -15,12 +15,12 @@ public class Chunk : MonoBehaviour
 
     public Vector2Int chunkID;
 
-    public void CreateChunk(Vector2 bounds, Vector3 cellSize, Vector3 centre, Vector3 enteranceWorldSpace, Vector3 exitWorldSpace, Vector2Int chunkID)
+    public void CreateChunk(Vector2 bounds, Vector3 cellSize, Vector3 centre, Vector3 enteranceWorldSpace, List<Vector3> exitWorldSpaces, Vector2Int chunkID)
     {
         this.bounds = bounds;
         this.cellSize = cellSize;
         this.enteranceWorldSpace = enteranceWorldSpace;
-        this.exitWorldSpace = exitWorldSpace;
+        this.exitWorldSpaces = exitWorldSpaces;
         this.chunkID = chunkID;
         transform.name = "(" + chunkID.x + "," + chunkID.y + ")";
 
@@ -31,6 +31,15 @@ public class Chunk : MonoBehaviour
         // Move the camera up by 2 cells
         cameraPathStartWorldSpace = enteranceWorldSpace;
         cameraPathStartWorldSpace.y += 2 * cellSize.y;
+    }
+
+
+    private void Update()
+    {
+        BoxCollider2D b = GetComponent<BoxCollider2D>();
+
+
+
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -48,12 +57,7 @@ public class Chunk : MonoBehaviour
 
 
 
-        // TODO check when the camera is in a chunk
-        if (collision.gameObject.tag.Contains("Camera"))
-        {
-            Debug.LogError("Camera!!");
-            ChunkManager.OnCameraEnterChunk.Invoke(chunkID);
-        }
+
     }
 
     private void OnDrawGizmos()
@@ -73,10 +77,14 @@ public class Chunk : MonoBehaviour
         // Enterance marker
         Gizmos.color = Color.yellow;
         Gizmos.DrawCube(enteranceWorldSpace, 0.5f * Vector3.one);
-        // Exit marker
+        // Exit markers
         Gizmos.color = Color.blue;
-        Gizmos.DrawCube(exitWorldSpace, 0.5f * Vector3.one);
+        foreach(Vector3 pos in exitWorldSpaces)
+        {
+            Gizmos.DrawCube(pos, 0.5f * Vector3.one);
+        }
 
+        // Camera point 
         Gizmos.color = Color.green;
         Gizmos.DrawCube(cameraPathStartWorldSpace, 0.5f * Vector3.one);
     }

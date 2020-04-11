@@ -51,16 +51,36 @@ public class ChunkManager : MonoBehaviour
             centre.y += tileSize.y / 2;
         }
 
-        // Add half a cell to centre the position
+        // Add half a cell to centre the position for both
         Vector3 enteranceWorld = grid.CellToWorld(new Vector3Int(entryPositionWorld.x, entryPositionWorld.y, 0)) + new Vector3(tileSize.x / 2, tileSize.y / 2, 0);
-        Vector2Int exit = entryPositionWorld + terrain.exitTilePosition;
-        Vector3 exitWorld = grid.CellToWorld(new Vector3Int(exit.x, exit.y, 0)) + new Vector3(tileSize.x / 2, tileSize.y / 2, 0);
+        List<Vector3> exitWorldPositions = new List<Vector3>();
+        foreach(Vector2Int pos in terrain.exitTilePositions)
+        {
+            Vector2Int exit = entryPositionWorld + pos;
+            exitWorldPositions.Add(grid.CellToWorld(new Vector3Int(exit.x, exit.y, 0)) + new Vector3(tileSize.x / 2, tileSize.y / 2, 0));
+        }
 
-        lastGeneratedChunk.x += 1;
-        c.CreateChunk(bounds, grid.cellSize, centre, enteranceWorld, exitWorld, lastGeneratedChunk);
+        // Assign the direction
+        int direction = 0;
+        if(terrain.direction.Equals(TerrainManager.TerrainDirection.Left))
+        {
+            direction = -1;
+        }
+        else if (terrain.direction.Equals(TerrainManager.TerrainDirection.Right))
+        {
+            direction = 1;
+        }
+        if (terrain.direction.Equals(TerrainManager.TerrainDirection.Undefined))
+        {
+            throw new Exception("Terrain direction is undefined in chunk generation.");
+        }
+        lastGeneratedChunk.x += direction;
+
+        // Create the chunk
+        c.CreateChunk(bounds, grid.cellSize, centre, enteranceWorld, exitWorldPositions, lastGeneratedChunk);
         chunks.Add(lastGeneratedChunk, c);
 
-        cameraPath.AddPoint(c.cameraPathStartWorldSpace);
+
         cameraPath.AddPoint(c.cameraPathStartWorldSpace);
     }
 
