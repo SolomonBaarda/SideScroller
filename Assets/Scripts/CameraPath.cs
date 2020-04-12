@@ -8,10 +8,27 @@ public class CameraPath : MonoBehaviour
     private PathCreator pathCreator;
     private List<Vector3> points;
 
-    void Awake()
+    public float autoControlLength = 0.4f;
+
+    private void Awake()
     {
         pathCreator = GetComponent<PathCreator>();
         points = new List<Vector3>();
+
+        pathCreator.bezierPath.ControlPointMode = BezierPath.ControlMode.Automatic;
+        pathCreator.bezierPath.AutoControlLength = autoControlLength;
+
+        for(int i = 0; i < pathCreator.bezierPath.NumPoints; i++)
+        {
+            pathCreator.bezierPath.MovePoint(i, Vector3.zero);
+        }
+        
+    }
+
+
+    private void CheckRemoveFirstTwoPoints()
+    {
+        
     }
 
 

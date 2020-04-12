@@ -10,6 +10,7 @@ public class SampleTerrain : MonoBehaviour
     private Tilemap tilemap_wall;
     private Tilemap tilemap_wallDetail;
     private Tilemap tilemap_background;
+    private Tilemap tilemap_hazard;
     private Tilemap tilemap_ground;
     private Tilemap tilemap_dev;
 
@@ -20,6 +21,7 @@ public class SampleTerrain : MonoBehaviour
     public SampleTerrainLayer wall;
     public SampleTerrainLayer wallDetail;
     public SampleTerrainLayer background;
+    public SampleTerrainLayer hazard;
     public SampleTerrainLayer ground;
 
     // Reference to the entry tile
@@ -55,6 +57,10 @@ public class SampleTerrain : MonoBehaviour
             {
                 tilemap_background = t;
             }
+            else if (r.sortingLayerName.Equals(TerrainManager.LAYER_NAME_HAZARD))
+            {
+                tilemap_hazard = t;
+            }
             else if (r.sortingLayerName.Equals(TerrainManager.LAYER_NAME_GROUND))
             {
                 tilemap_ground = t;
@@ -72,6 +78,7 @@ public class SampleTerrain : MonoBehaviour
         wall = new SampleTerrainLayer();
         wallDetail = new SampleTerrainLayer();
         background = new SampleTerrainLayer();
+        hazard = new SampleTerrainLayer();
         ground = new SampleTerrainLayer();
 
         // Find the tile positions
@@ -83,6 +90,7 @@ public class SampleTerrain : MonoBehaviour
         LoadTiles(tilemap_wall, ref wall);
         LoadTiles(tilemap_wallDetail, ref wallDetail);
         LoadTiles(tilemap_background, ref background);
+        LoadTiles(tilemap_hazard, ref hazard);
         LoadTiles(tilemap_ground, ref ground);
 
         if(direction.Equals(null))

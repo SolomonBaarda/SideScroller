@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7428907093167343080}
   - component: {fileID: 7428907093167343081}
   - component: {fileID: 7428907093167343082}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Chunk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,6 +70,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 183f5b2b34ac9c2409e010b9d68d1426, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boundsInTiles: {x: 0, y: 0}
-  enteranceWorldSpace: {x: 0, y: 0}
-  exitWorldSpace: {x: 0, y: 0}
+  enteranceWorldSpace: {x: 0, y: 0, z: 0}
+  direction: 0
+  cameraPathStartWorldSpace: {x: 0, y: 0, z: 0}
+  bounds: {x: 0, y: 0}
+  chunkID: {x: 0, y: 0}

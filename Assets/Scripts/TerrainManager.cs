@@ -25,6 +25,7 @@ public class TerrainManager : MonoBehaviour
     private Tilemap wall;
     private Tilemap wallDetail;
     private Tilemap background;
+    private Tilemap hazard;
     private Tilemap ground;
 
     [Header("Sample Terrain Manager Reference")]
@@ -42,6 +43,7 @@ public class TerrainManager : MonoBehaviour
     public static string LAYER_NAME_WALL = "Wall";
     public static string LAYER_NAME_WALL_DETAIL = "Wall Detail";
     public static string LAYER_NAME_BACKGROUND = "Background";
+    public static string LAYER_NAME_HAZARD = "Hazard";
     public static string LAYER_NAME_GROUND = "Ground";
     public static string LAYER_NAME_DEV = "Dev";
 
@@ -78,6 +80,10 @@ public class TerrainManager : MonoBehaviour
             else if (r.sortingLayerName.Equals(LAYER_NAME_BACKGROUND))
             {
                 background = t;
+            }
+            else if (r.sortingLayerName.Equals(LAYER_NAME_HAZARD))
+            {
+                hazard = t;
             }
             else if (r.sortingLayerName.Equals(LAYER_NAME_GROUND))
             {
@@ -139,10 +145,9 @@ public class TerrainManager : MonoBehaviour
 
     private void GenerateNewTerrainChunk(Vector2Int entryPosition, TerrainDirection directionToGenerate, SampleTerrain terrain, Vector2Int chunkID)
     {
-        // TODO check direction and invert blocks if going left
-        if(directionToGenerate.Equals(null))
+        if(!directionToGenerate.Equals(terrain.direction))
         {
-
+            // TODO call method with reversed tile position
         }
 
         // Copy the terrain, each layer at a time

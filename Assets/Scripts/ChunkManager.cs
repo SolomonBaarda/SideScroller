@@ -103,6 +103,7 @@ public class ChunkManager : MonoBehaviour
         c.CreateChunk(bounds, grid.cellSize, centre, enteranceWorld, exits, terrain.direction, chunkID);
         chunks.Add(chunkID, c);
 
+
         // Add the new camera point
         if (terrain.direction.Equals(TerrainManager.TerrainDirection.Left))
         {

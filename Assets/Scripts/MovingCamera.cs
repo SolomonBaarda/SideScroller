@@ -44,7 +44,6 @@ public class MovingCamera : MonoBehaviour
 
     private void FixedUpdate()
     {
-
         Move();
 
         GetComponent<Camera>().orthographicSize = zoom;
@@ -56,9 +55,12 @@ public class MovingCamera : MonoBehaviour
         // Don't move if stationary
         if (!direction.Equals(Direction.Stationary))
         {
+            Vector3 position = transform.position;
+
             // Set position if following 
             if (direction.Equals(Direction.Following))
             {
+                position = pathCreator.path.GetClosestPointOnPath(following.transform.position);
             }
             else
             {
@@ -75,14 +77,16 @@ public class MovingCamera : MonoBehaviour
 
                 // Update distance
                 distanceTravelled += distance * Time.deltaTime;
+                distanceTravelled = Mathf.Clamp(distanceTravelled, 0, pathCreator.path.length);
 
                 // Get the position and zoom it out
-                Vector3 position = pathCreator.path.GetPointAtDistance(distanceTravelled, EndOfPathInstruction.Stop);
-                position.z = -zoom;
-
-                // Update position
-                transform.position = position;
+                position = pathCreator.path.GetPointAtDistance(distanceTravelled, EndOfPathInstruction.Stop);
             }
+
+            position.z = -zoom;
+
+            // Update position
+            transform.position = position;
         }    
     }
 
