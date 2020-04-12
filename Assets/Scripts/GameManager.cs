@@ -40,7 +40,8 @@ public class GameManager : MonoBehaviour
         // Add event calls 
         TerrainManager.OnTerrainGenerated += StartGame;
 
-        ChunkManager.OnCameraEnterChunk += NewChunkEntered;
+        //ChunkManager.OnCameraEnterChunk += NewChunkEntered;
+        ChunkManager.OnPlayerEnterChunk += NewChunkEntered;
     }
 
     private void Start()
@@ -52,9 +53,8 @@ public class GameManager : MonoBehaviour
     private void StartGame()
     {
         player.SetPosition(terrainManager.GetInitialTileWorldPositionForPlayer());
+        player.controller.enabled = true;
     }
-
-
 
 
 
@@ -66,39 +66,26 @@ public class GameManager : MonoBehaviour
         // Pass it to the camera
         movingCamera.UpdateCurrentChunk(current);
 
-        foreach(Vector2Int nextChunk in current.GetNextChunks())
+
+        // See if any of the neighbour chunks exists
+        foreach (Chunk.ChunkExit exit in current.exits)
         {
-            // Update the next chunk if we can
             try
             {
-                // Chunk already exists 
-                Chunk next = chunkManager.GetChunk(nextChunk);
-                movingCamera.UpdateNextChunk(next);
+                // Chunk already exists, do nothing
+                Chunk neighbour = chunkManager.GetChunk(exit.newChunkID);
             }
             catch (Exception)
             {
+                //Debug.Log("Generating new chunk " + exit.newChunkID.x + ", " + exit.newChunkID.y);
                 // Does not exist, so generate it
-                terrainManager.Generate(chunkManager);
-
+                terrainManager.Generate(exit.newChunkPositionWorld, current.direction, exit.newChunkID);
             }
-        }
 
-        // Generate a new chunk if needed
-        if (movingCamera.currentChunk.chunkID.Equals(chunkManager.lastGeneratedChunk))
-        {
-            
         }
 
 
-        // Update the next chunk if we can
-        try
-        {
-            Chunk next = chunkManager.GetChunk(new Vector2Int(chunk.x + 1, chunk.y));
-            movingCamera.UpdateNextChunk(next);
-        }
-        catch (Exception)
-        {
-        }
+
 
 
     }

@@ -581,12 +581,12 @@ Tilemap:
   m_AnimatedTiles: {}
   m_TileAssetArray:
   - m_RefCount: 1
-    m_Data: {fileID: 11400000, guid: cff3073e05c7d304a8ff1d7522b26e56, type: 2}
+    m_Data: {fileID: 11400000, guid: 9cff3fc3e3aa4bc49812ad135a82ede6, type: 2}
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: 3dea37ccd726ee54cbad43718add5de6, type: 2}
   m_TileSpriteArray:
   - m_RefCount: 1
-    m_Data: {fileID: 21300000, guid: 4af11387f2f26784b8ad40cb379d29f3, type: 3}
+    m_Data: {fileID: 21300000, guid: 8a342f136f345ed46bc35dd70f8169eb, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: 21300000, guid: 4aa1401d8634e244999fc3c2f682f13b, type: 3}
   m_TileMatrixArray:
@@ -611,6 +611,8 @@ Tilemap:
   m_TileColorArray:
   - m_RefCount: 2
     m_Data: {r: 1, g: 1, b: 1, a: 1}
+  - m_RefCount: 0
+    m_Data: {r: 0, g: 0, b: 0, a: 0}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1687,7 +1689,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chunkPrefab: {fileID: 7428907093167343083, guid: 2af45392e0c1708469244e0c5424e317,
     type: 3}
-  lastGeneratedChunk: {x: 0, y: 0}
 --- !u!1 &649344183
 GameObject:
   m_ObjectHideFlags: 0
@@ -1750,8 +1751,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entryTilePosition: {x: 0, y: 0}
-  exitTilePositions: []
-  direction: 2
+  direction: 1
 --- !u!1 &693090749
 GameObject:
   m_ObjectHideFlags: 0
@@ -2075,7 +2075,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allSamples: []
   dev_entryTile: {fileID: 11400000, guid: 3dea37ccd726ee54cbad43718add5de6, type: 2}
-  dev_exitTile: {fileID: 11400000, guid: cff3073e05c7d304a8ff1d7522b26e56, type: 2}
+  dev_exitHorizontal: {fileID: 11400000, guid: 9cff3fc3e3aa4bc49812ad135a82ede6, type: 2}
+  dev_exitUp: {fileID: 11400000, guid: da18acd80e8bd3a4ba7a85efbaeeeffd, type: 2}
+  dev_exitDown: {fileID: 11400000, guid: c86293b34fc3a084d876cc2abe8c3be6, type: 2}
 --- !u!1 &876974039
 GameObject:
   m_ObjectHideFlags: 0
@@ -4793,8 +4795,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entryTilePosition: {x: 0, y: 0}
-  exitTilePositions: []
-  direction: 2
+  direction: 1
 --- !u!156049354 &1698493134
 Grid:
   m_ObjectHideFlags: 0
@@ -4871,7 +4872,7 @@ MonoBehaviour:
       - 0
       globalNormalsAngle: 0
       flipNormals: 0
-    vertexPathUpToDate: 1
+    vertexPathUpToDate: 0
     vertexPathMaxAngleError: 0.3
     vertexPathMinVertexSpacing: 0.01
     showTransformTool: 1
@@ -5062,12 +5063,12 @@ Tilemap:
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: 3dea37ccd726ee54cbad43718add5de6, type: 2}
   - m_RefCount: 1
-    m_Data: {fileID: 11400000, guid: cff3073e05c7d304a8ff1d7522b26e56, type: 2}
+    m_Data: {fileID: 11400000, guid: 9cff3fc3e3aa4bc49812ad135a82ede6, type: 2}
   m_TileSpriteArray:
   - m_RefCount: 1
     m_Data: {fileID: 21300000, guid: 4aa1401d8634e244999fc3c2f682f13b, type: 3}
   - m_RefCount: 1
-    m_Data: {fileID: 21300000, guid: 4af11387f2f26784b8ad40cb379d29f3, type: 3}
+    m_Data: {fileID: 21300000, guid: 8a342f136f345ed46bc35dd70f8169eb, type: 3}
   m_TileMatrixArray:
   - m_RefCount: 2
     m_Data:
@@ -5090,6 +5091,8 @@ Tilemap:
   m_TileColorArray:
   - m_RefCount: 2
     m_Data: {r: 1, g: 1, b: 1, a: 1}
+  - m_RefCount: 0
+    m_Data: {r: 0, g: 0, b: 0, a: 0}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}

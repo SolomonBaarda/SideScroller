@@ -5,6 +5,7 @@ using UnityEngine.Tilemaps;
 
 public class SampleTerrain : MonoBehaviour
 {
+    // Tilemaps 
     private Grid grid;
     private Tilemap tilemap_wall;
     private Tilemap tilemap_wallDetail;
@@ -12,25 +13,28 @@ public class SampleTerrain : MonoBehaviour
     private Tilemap tilemap_ground;
     private Tilemap tilemap_dev;
 
+    // Reference to manager
     private SampleTerrainManager manager;
 
+    // Objects for storing the tiles
     public SampleTerrainLayer wall;
     public SampleTerrainLayer wallDetail;
     public SampleTerrainLayer background;
     public SampleTerrainLayer ground;
 
+    // Reference to the entry tile
     public Vector2Int entryTilePosition;
     private Vector2Int entryTilePositionLocal;
-    public List<Vector2Int> exitTilePositions;
+    public List<SampleTerrainExit> exitTilePositions;
 
-    public TerrainManager.TerrainDirection direction = TerrainManager.TerrainDirection.Undefined;
+    public TerrainManager.TerrainDirection direction;
 
     private void Awake()
     {
         manager = transform.parent.GetComponent<SampleTerrainManager>();
         grid = GetComponent<Grid>();
 
-        exitTilePositions = new List<Vector2Int>();
+        exitTilePositions = new List<SampleTerrainExit>();
 
         // Assign the tilemaps 
         for (int i = 0; i < grid.transform.childCount; i++)
@@ -80,6 +84,11 @@ public class SampleTerrain : MonoBehaviour
         LoadTiles(tilemap_wallDetail, ref wallDetail);
         LoadTiles(tilemap_background, ref background);
         LoadTiles(tilemap_ground, ref ground);
+
+        if(direction.Equals(null))
+        {
+            throw new Exception("Sample Terrain direction has not been defined.");
+        }
     }
 
 
@@ -169,7 +178,7 @@ public class SampleTerrain : MonoBehaviour
     /// <summary>
     /// Must be called AFTER entry position has been assigned
     /// </summary>
-    private void FindExitTilePosition(ref List<Vector2Int> tiles)
+    private void FindExitTilePosition(ref List<SampleTerrainExit> tiles)
     {
         tiles.Clear();
 
@@ -180,10 +189,18 @@ public class SampleTerrain : MonoBehaviour
             Vector3Int current = p.Current;
             if (tilemap_dev.GetTile(current) != null)
             {
-                // Check if the tile matches the entry tile type
-                if (tilemap_dev.GetTile(current).Equals(manager.dev_exitTile))
+                // Check if it is an exit tile type
+                if (tilemap_dev.GetTile(current).Equals(manager.dev_exitHorizontal))
                 {
-                    tiles.Add(new Vector2Int(current.x, current.y) - entryTilePositionLocal);
+                    tiles.Add(new SampleTerrainExit(ExitDirection.Horizontal, new Vector2Int(current.x, current.y) - entryTilePositionLocal));
+                }
+                else if (tilemap_dev.GetTile(current).Equals(manager.dev_exitUp))
+                {
+                    tiles.Add(new SampleTerrainExit(ExitDirection.Up, new Vector2Int(current.x, current.y) - entryTilePositionLocal));
+                }
+                else if (tilemap_dev.GetTile(current).Equals(manager.dev_exitDown))
+                {
+                    tiles.Add(new SampleTerrainExit(ExitDirection.Down, new Vector2Int(current.x, current.y) - entryTilePositionLocal));
                 }
             }
         }
@@ -219,10 +236,32 @@ public class SampleTerrain : MonoBehaviour
             {
                 this.tileType = tileType;
                 this.position = position;
-
             }
         }
 
+    }
+
+    public class SampleTerrainExit
+    {
+        /// <summary>
+        /// The direction of the exit, relative to the enterance
+        /// </summary>
+        public ExitDirection exitDirection;
+        public Vector2Int exitPositionRelative;
+
+        public SampleTerrainExit(ExitDirection exitDirection, Vector2Int exitPositionRelative)
+        {
+            this.exitDirection = exitDirection;
+            this.exitPositionRelative = exitPositionRelative;
+        }
+    }
+
+
+    public enum ExitDirection
+    {
+        Horizontal,
+        Up,
+        Down
     }
 
 

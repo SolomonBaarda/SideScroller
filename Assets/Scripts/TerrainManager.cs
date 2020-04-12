@@ -8,8 +8,14 @@ using UnityEngine.Events;
 
 public class TerrainManager : MonoBehaviour
 {
+    /// <summary>
+    /// Called when the initial terrain has been generated at the start of the game.
+    /// </summary>
     public static UnityAction OnTerrainGenerated;
-    public static UnityAction<Grid, SampleTerrain, Vector2Int> OnTerrainChunkGenerated;
+    /// <summary>
+    /// Called when a terrain chunk has been generated.  
+    /// </summary>
+    public static UnityAction<Grid, SampleTerrain, Vector2Int, Vector2Int> OnTerrainChunkGenerated;
 
     [Header("General Generation Settings")]
     public string seed;
@@ -29,7 +35,6 @@ public class TerrainManager : MonoBehaviour
     public Tile groundTile;
 
     private Vector2Int initialTile;
-    private Vector2Int lastGeneratedTile;
 
     private System.Random random;
 
@@ -101,10 +106,12 @@ public class TerrainManager : MonoBehaviour
 
         ClearAllTiles();
         initialTile = GenerateInitialTile();
-        initialTile.x += 1;
+
+        Vector3 tileRight = grid.CellToWorld(new Vector3Int(initialTile.x + 1, initialTile.y, 0));
 
         // Generate one to the right
-        Generate(grid.CellToWorld(new Vector3Int(initialTile.x, initialTile.y, 0)), TerrainDirection.Right);
+        Generate(tileRight, TerrainDirection.Right, Vector2Int.zero);
+
         // Left TODO
 
         after = DateTime.Now;
@@ -115,37 +122,28 @@ public class TerrainManager : MonoBehaviour
     }
 
 
-    public void Generate(Vector3 startTileWorldSpace, TerrainDirection directionToGenerate)
+    public void Generate(Vector3 startTileWorldSpace, TerrainDirection directionToGenerate, Vector2Int chunkID)
     {
+        // Calculate what we are going to generate 
         int index = random.Next(0, sampleTerrainManager.allSamples.Length);
         SampleTerrain chosen = sampleTerrainManager.allSamples[index];
 
-        int direction = 0;
-        if (chosen.direction.Equals(TerrainDirection.Left))
-        {
-            direction = -1;
-        }
-        else if (chosen.direction.Equals(TerrainDirection.Right))
-        {
-            direction = 1;
-        }
-        else if (chosen.direction.Equals(TerrainDirection.Undefined))
-        {
-            throw new Exception("Sample terrain direction undefined for child " + index + ".");
-        }
+        Vector3Int entryPos = grid.WorldToCell(startTileWorldSpace);
 
-        // Move the point by 1 in the correct direction
-        lastGeneratedTile.x += direction;
         // Generate the new chunk and update the tile reference
-        lastGeneratedTile = GenerateNewTerrainChunk(lastGeneratedTile, chosen).ToArray()[0];
+        GenerateNewTerrainChunk(new Vector2Int(entryPos.x, entryPos.y), directionToGenerate, chosen, chunkID);
     }
 
 
 
 
-    private List<Vector2Int> GenerateNewTerrainChunk(Vector2Int entryPosition, SampleTerrain terrain)
+    private void GenerateNewTerrainChunk(Vector2Int entryPosition, TerrainDirection directionToGenerate, SampleTerrain terrain, Vector2Int chunkID)
     {
         // TODO check direction and invert blocks if going left
+        if(directionToGenerate.Equals(null))
+        {
+
+        }
 
         // Copy the terrain, each layer at a time
         CopySampleTerrainLayer(entryPosition, terrain.wall, ref wall);
@@ -153,17 +151,8 @@ public class TerrainManager : MonoBehaviour
         CopySampleTerrainLayer(entryPosition, terrain.background, ref background);
         CopySampleTerrainLayer(entryPosition, terrain.ground, ref ground);
 
-        // Calculate the world space of all the exit positions
-        List<Vector2Int> exitTiles = new List<Vector2Int>();
-        foreach(Vector2Int exit in terrain.exitTilePositions)
-        {
-            exitTiles.Add(entryPosition + exit);
-        }
-
         // Tell the ChunkManager that the terrain has been generated
-        OnTerrainChunkGenerated.Invoke(grid, terrain, entryPosition);
-
-        return exitTiles;
+        OnTerrainChunkGenerated.Invoke(grid, terrain, entryPosition, chunkID);
     }
 
 
@@ -211,14 +200,11 @@ public class TerrainManager : MonoBehaviour
     {
         // Set the cell
         tilemap.SetTile(new Vector3Int(tilePosition.x, tilePosition.y, 0), tileType);
-        // Update the last set tile
-        lastGeneratedTile = tilePosition;
     }
 
 
     public enum TerrainDirection
     {
-        Undefined,
         Left,
         Right
     }

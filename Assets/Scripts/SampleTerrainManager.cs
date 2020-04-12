@@ -8,7 +8,9 @@ public class SampleTerrainManager : MonoBehaviour
 
     [Header("Dev Tile references")]
     public Tile dev_entryTile;
-    public Tile dev_exitTile;
+    public Tile dev_exitHorizontal;
+    public Tile dev_exitUp;
+    public Tile dev_exitDown;
 
 
     public void LoadAllSampleTerrain()
