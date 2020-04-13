@@ -15,7 +15,7 @@ public class TerrainManager : MonoBehaviour
     /// <summary>
     /// Called when a terrain chunk has been generated.  
     /// </summary>
-    public static UnityAction<Grid, SampleTerrain, Vector2Int, Vector2Int> OnTerrainChunkGenerated;
+    public static UnityAction<TerrainChunk> OnTerrainChunkGenerated;
 
     [Header("General Generation Settings")]
     public string seed;
@@ -114,11 +114,11 @@ public class TerrainManager : MonoBehaviour
         initialTile = GenerateInitialTile();
 
         Vector3 tileRight = grid.CellToWorld(new Vector3Int(initialTile.x + 1, initialTile.y, 0));
+        Vector3 tileLeft = grid.CellToWorld(new Vector3Int(initialTile.x - 1, initialTile.y, 0));
 
         // Generate one to the right
         Generate(tileRight, TerrainDirection.Right, Vector2Int.zero);
-
-        // Left TODO
+        Generate(tileLeft, TerrainDirection.Left, new Vector2Int(-1, 0));
 
         after = DateTime.Now;
         time = after - before;
@@ -137,38 +137,126 @@ public class TerrainManager : MonoBehaviour
         Vector3Int entryPos = grid.WorldToCell(startTileWorldSpace);
 
         // Generate the new chunk and update the tile reference
-        GenerateNewTerrainChunk(new Vector2Int(entryPos.x, entryPos.y), directionToGenerate, chosen, chunkID);
+        GenerateFromSampleTerrain(new Vector2Int(entryPos.x, entryPos.y), directionToGenerate, chosen, chunkID);
     }
 
 
 
 
-    private void GenerateNewTerrainChunk(Vector2Int entryPosition, TerrainDirection directionToGenerate, SampleTerrain terrain, Vector2Int chunkID)
+    private void GenerateFromSampleTerrain(Vector2Int entryTile, TerrainDirection directionToGenerate, SampleTerrain terrain, Vector2Int chunkID)
     {
-        if(!directionToGenerate.Equals(terrain.direction))
+        bool flipAxisX = false;
+
+        // Check if we need to invert the x pos of the tile
+        if (!directionToGenerate.Equals(terrain.direction))
         {
-            // TODO call method with reversed tile position
+            flipAxisX = true;
         }
 
         // Copy the terrain, each layer at a time
-        CopySampleTerrainLayer(entryPosition, terrain.wall, ref wall);
-        CopySampleTerrainLayer(entryPosition, terrain.wallDetail, ref wallDetail);
-        CopySampleTerrainLayer(entryPosition, terrain.background, ref background);
-        CopySampleTerrainLayer(entryPosition, terrain.ground, ref ground);
+        CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wall, ref wall);
+        CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wallDetail, ref wallDetail);
+        CopySampleTerrainLayer(entryTile, flipAxisX, terrain.background, ref background);
+        CopySampleTerrainLayer(entryTile, flipAxisX, terrain.hazard, ref hazard);
+        CopySampleTerrainLayer(entryTile, flipAxisX, terrain.ground, ref ground);
 
         // Tell the ChunkManager that the terrain has been generated
-        OnTerrainChunkGenerated.Invoke(grid, terrain, entryPosition, chunkID);
+        OnTerrainChunkGenerated.Invoke(GenerateTerrainChunk(entryTile, flipAxisX, directionToGenerate, terrain, chunkID));
+    }
+
+    private TerrainChunk GenerateTerrainChunk(Vector2Int entryTile, bool flipAxisX, TerrainDirection directionToGenerate, SampleTerrain terrain, Vector2Int chunkID)
+    {
+        // Get the inverse multiplier
+        int invert = 1;
+        if (flipAxisX)
+        {
+            invert = -1;
+        }
+
+        // Calculate some important values
+        Vector2 bounds = terrain.GetGroundBounds();
+        Vector2 extents = bounds / 2;
+        Vector3 entryPositionWorld = grid.CellToWorld(new Vector3Int(entryTile.x, entryTile.y, 0)) + (grid.cellSize / 2);
+        Vector3 centre = grid.CellToWorld(new Vector3Int((int)(entryTile.x + invert * extents.x), (int)(entryTile.y + extents.y), 0));
+        // Need to add half a cell for odd numbers as it was casted to int
+        if (bounds.x % 2 == 1)
+        {
+            centre.x += grid.cellSize.x / 2;
+        }
+        if (bounds.y % 2 == 1)
+        {
+            centre.y += grid.cellSize.y / 2;
+        }
+
+
+        // Loop through each sample terrain exit
+        List<Chunk.ChunkExit> exits = new List<Chunk.ChunkExit>();
+        foreach (SampleTerrain.SampleTerrainExit sampleExit in terrain.exitTilePositions)
+        {
+            // Calculate where the exit should be
+            Vector2Int exitTile = entryTile + new Vector2Int(invert * sampleExit.exitPositionRelative.x, sampleExit.exitPositionRelative.y);
+            Vector3 exitPositionWorld = grid.CellToWorld(new Vector3Int(exitTile.x, exitTile.y, 0)) + (grid.cellSize / 2);
+
+            // Move by 1 tile in correct direction
+            Vector2Int newChunkTile = exitTile;
+            Vector2Int newChunkID = chunkID;
+
+            switch (sampleExit.exitDirection)
+            {
+                // Exit is up
+                case (SampleTerrain.ExitDirection.Up):
+                    newChunkTile.y++;
+                    newChunkID.y++;
+                    break;
+                // Exit is down
+                case (SampleTerrain.ExitDirection.Down):
+                    newChunkTile.y--;
+                    newChunkID.y--;
+                    break;
+                case (SampleTerrain.ExitDirection.Horizontal):
+                    // Exit is left
+                    if (directionToGenerate.Equals(TerrainDirection.Left))
+                    {
+                        newChunkTile.x--;
+                        newChunkID.x--;
+                    }
+                    // Exit is right
+                    else if (directionToGenerate.Equals(TerrainDirection.Right))
+                    {
+                        newChunkTile.x++;
+                        newChunkID.x++;
+                    }
+                    break;
+            }
+
+            // World position of the start of the new chunk
+            Vector3 newChunkPositionWorld = grid.CellToWorld(new Vector3Int(newChunkTile.x, newChunkTile.y, 0)) + (grid.cellSize / 2);
+
+            // Add the exit to list of exits for this chunk
+            exits.Add(new Chunk.ChunkExit(sampleExit.exitDirection, exitPositionWorld, newChunkPositionWorld, newChunkID));
+        }
+
+        // Return the TerrainChunk object for use in the ChunkManager
+        return new TerrainChunk(bounds, grid.cellSize, centre, entryPositionWorld, exits, directionToGenerate, chunkID);
     }
 
 
 
-    private void CopySampleTerrainLayer(Vector2Int entryPosition, SampleTerrain.SampleTerrainLayer layer, ref Tilemap tilemap)
+    private void CopySampleTerrainLayer(Vector2Int entryPosition, bool flipAxisX, SampleTerrain.SampleTerrainLayer layer, ref Tilemap tilemap)
     {
+        Vector3Int entry = new Vector3Int(entryPosition.x, entryPosition.y, 0);
+
+        int invert = 1;
+        if (flipAxisX)
+        {
+            invert = -1;
+        }
+
         // Copy wall
         foreach (SampleTerrain.SampleTerrainLayer.SampleTerrainTile tile in layer.tilesInThisLayer)
         {
-            Vector3Int newTilePos = new Vector3Int(entryPosition.x, entryPosition.y, tilemap.cellBounds.z) +
-                new Vector3Int(tile.position.x, tile.position.y, tilemap.cellBounds.z);
+            // Position of the new tile
+            Vector3Int newTilePos = entry + new Vector3Int(invert * tile.position.x, tile.position.y, 0);
 
             tilemap.SetTile(newTilePos, tile.tileType);
         }
@@ -212,6 +300,33 @@ public class TerrainManager : MonoBehaviour
     {
         Left,
         Right
+    }
+
+
+    /// <summary>
+    /// Class between Sample Terrain and Chunk.  Used to store values when passed as an event.
+    /// </summary>
+    public class TerrainChunk
+    {
+        public Vector2 bounds;
+        public Vector3 cellSize;
+        public Vector3 centre;
+        public Vector3 enteranceWorldPosition;
+        public List<Chunk.ChunkExit> exits;
+        public TerrainDirection direction;
+        public Vector2Int chunkID;
+
+        public TerrainChunk(Vector2 bounds, Vector3 cellSize, Vector3 centre, Vector3 enteranceWorldPosition,
+                List<Chunk.ChunkExit> exits, TerrainDirection direction, Vector2Int chunkID)
+        {
+            this.bounds = bounds;
+            this.cellSize = cellSize;
+            this.centre = centre;
+            this.enteranceWorldPosition = enteranceWorldPosition;
+            this.exits = exits;
+            this.direction = direction;
+            this.chunkID = chunkID;
+        }
     }
 
 }

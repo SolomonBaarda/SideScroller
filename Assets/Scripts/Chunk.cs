@@ -9,27 +9,23 @@ public class Chunk : MonoBehaviour
     public List<ChunkExit> exits;
 
     public TerrainManager.TerrainDirection direction;
+    public Vector2 bounds;
+    public Vector2Int chunkID;
 
     public Vector3 cameraPathStartWorldSpace;
-
-    public Vector2 bounds;
-    private Vector3 cellSize;
-
-    public Vector2Int chunkID;
 
     public void CreateChunk(Vector2 bounds, Vector3 cellSize, Vector3 centre, Vector3 enteranceWorldSpace,
         List<ChunkExit> exits, TerrainManager.TerrainDirection direction, Vector2Int chunkID)
     {
         // Assign variables 
         this.bounds = bounds;
-        this.cellSize = cellSize;
         this.enteranceWorldSpace = enteranceWorldSpace;
         this.exits = exits;
         this.direction = direction;
         this.chunkID = chunkID;
 
         // Set the name 
-        transform.name = "(" + chunkID.x + "," + chunkID.y + ")";
+        transform.name = ToString();
 
         // Exit collider
         BoxCollider2D b = GetComponent<BoxCollider2D>();
@@ -74,10 +70,12 @@ public class Chunk : MonoBehaviour
         Gizmos.DrawCube(enteranceWorldSpace, 0.5f * Vector3.one);
 
         // Exit markers
-        Gizmos.color = Color.blue;
         foreach (ChunkExit exit in exits)
         {
+            Gizmos.color = Color.blue;
             Gizmos.DrawCube(exit.exitPositionWorld, 0.5f * Vector3.one);
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawCube(exit.newChunkPositionWorld, 0.5f * Vector3.one);
         }
 
         // Camera point 

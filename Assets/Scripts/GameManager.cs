@@ -72,12 +72,14 @@ public class GameManager : MonoBehaviour
         {
             try
             {
+                Debug.Log("Trying to get " + exit.newChunkID.x + ", " + exit.newChunkID.y);
+
                 // Chunk already exists, do nothing
                 Chunk neighbour = chunkManager.GetChunk(exit.newChunkID);
             }
             catch (Exception)
             {
-                //Debug.Log("Generating new chunk " + exit.newChunkID.x + ", " + exit.newChunkID.y);
+                Debug.Log("Not found. Generating new chunk " + exit.newChunkID.x + ", " + exit.newChunkID.y);
                 // Does not exist, so generate it
                 terrainManager.Generate(exit.newChunkPositionWorld, current.direction, exit.newChunkID);
             }
