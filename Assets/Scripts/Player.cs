@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
 
     public Vector2Int currentChunk;
 
+    public static string PLAYER = "Player";
+
     private void Awake()
     {
         // Get reference to the controller script
