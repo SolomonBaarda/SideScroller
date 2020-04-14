@@ -15,35 +15,40 @@ public class CameraPath : MonoBehaviour
         pathCreator = GetComponent<PathCreator>();
         points = new List<Vector3>();
 
+        // Set the mode
         pathCreator.bezierPath.ControlPointMode = BezierPath.ControlMode.Automatic;
         pathCreator.bezierPath.AutoControlLength = autoControlLength;
+        pathCreator.bezierPath.Space = PathSpace.xy;
 
-        for(int i = 0; i < pathCreator.bezierPath.NumPoints; i++)
+        // Move points to 00
+        for (int i = 0; i < pathCreator.bezierPath.NumPoints; i++)
         {
             pathCreator.bezierPath.MovePoint(i, Vector3.zero);
         }
-        
     }
 
 
-    private void CheckRemoveFirstTwoPoints()
+    public float GetPathLength()
     {
-        
+        return pathCreator.path.length;
     }
 
 
-    public void AddPointRight(Vector3 point)
+    public void AddPoint(Vector3 point)
     {
         points.Add(point);
         pathCreator.bezierPath.AddSegmentToEnd(point);
-        pathCreator.TriggerPathUpdate();
+        //pathCreator.TriggerPathUpdate();
     }
 
-    public void AddPointLeft(Vector3 point)
+    public Vector3 GetPositionAtDistance(float distance)
     {
-        points.Add(point);
-        pathCreator.bezierPath.AddSegmentToStart(point);
-        pathCreator.TriggerPathUpdate();
+        return pathCreator.path.GetPointAtDistance(Mathf.Abs(distance));
+    }
+
+    public Vector3 GetClosestPosition(Vector3 position)
+    {
+        return pathCreator.path.GetClosestPointOnPath(position);
     }
 
 

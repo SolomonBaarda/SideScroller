@@ -116,9 +116,12 @@ public class TerrainManager : MonoBehaviour
         Vector3 tileRight = grid.CellToWorld(new Vector3Int(initialTile.x + 1, initialTile.y, 0));
         Vector3 tileLeft = grid.CellToWorld(new Vector3Int(initialTile.x - 1, initialTile.y, 0));
 
+        // Generate the spawn room
+        GenerateFromSampleTerrain(initialTile, TerrainDirection.Both, sampleTerrainManager.startingArea, Vector2Int.zero);
+
         // Generate one to the right
-        Generate(tileRight, TerrainDirection.Right, Vector2Int.zero);
-        Generate(tileLeft, TerrainDirection.Left, new Vector2Int(-1, 0));
+        //Generate(tileRight, TerrainDirection.Right, Vector2Int.zero);
+        //Generate(tileLeft, TerrainDirection.Left, new Vector2Int(-1, 0));
 
         after = DateTime.Now;
         time = after - before;
@@ -177,10 +180,10 @@ public class TerrainManager : MonoBehaviour
         SampleTerrain.GroundBounds b = terrain.GetGroundBounds();
         Vector3 entryPositionWorld = grid.CellToWorld(new Vector3Int(entryTile.x, entryTile.y, 0)) + (grid.cellSize / 2);
 
-        // To fix centre
+        // Centre position
         Vector2Int centreTile = entryTile + new Vector2Int(b.minTile.x * invert, b.minTile.y) + new Vector2Int(b.boundsTile.x * invert / 2, b.boundsTile.y / 2);
         Vector3 centre = grid.CellToWorld(new Vector3Int(centreTile.x, centreTile.y, 0));
-        // Need to add half a cell for odd numbers as it was casted to int
+        // Need to add half a cell for odd numbers
         if (b.boundsTile.x % 2 == 1)
         {
             centre.x += grid.cellSize.x / 2;
@@ -227,6 +230,23 @@ public class TerrainManager : MonoBehaviour
                     {
                         newChunkTile.x++;
                         newChunkID.x++;
+                    }
+                    // Exits both ways, need to check both
+                    else if (directionToGenerate.Equals(TerrainDirection.Both))
+                    {
+                        if(terrain.terrainType.Equals(SampleTerrain.SampleTerrainType.Spawn))
+                        {
+                            if(newChunkTile.x > terrain.entryTilePosition.x)
+                            {
+                                newChunkTile.x++;
+                                newChunkID.x++;
+                            }
+                            else if (newChunkTile.x < terrain.entryTilePosition.x)
+                            {
+                                newChunkTile.x--;
+                                newChunkID.x--;
+                            }
+                        }
                     }
                     break;
             }
@@ -303,9 +323,9 @@ public class TerrainManager : MonoBehaviour
     /// </summary>
     public enum TerrainDirection
     {
-
         Left,
-        Right
+        Right,
+        Both
     }
 
 

@@ -6,38 +6,36 @@ using PathCreation;
 
 public class MovingCamera : MonoBehaviour
 {
+    public Chunk currentChunk;
+
     [Header("Movement Settings")]
-    public float zoom = 10;
-    public float speed = 1;
+    public float zoom = 7;
+    public float speed = 4;
     public Direction direction = Direction.Stationary;
 
     [Header("GameObject to Follow")]
     public GameObject following;
 
-    //private Chunk lastChunk;
-    public Chunk currentChunk;
-    public Chunk nextChunk;
-
-    public PathCreator pathCreator;
-    private float distanceTravelled;
+    [Header("Camera Path Manager Reference")]
+    public GameObject cameraPathManagerObject;
+    [HideInInspector]
+    public CameraPathManager path;
+    private float distanceFromOrigin;
 
     private void Awake()
     {
         Vector3 pos = transform.position;
         pos.z = -zoom;
         transform.position = pos;
+        distanceFromOrigin = 0;
 
+        path = cameraPathManagerObject.GetComponent<CameraPathManager>();
     }
 
 
     public void UpdateCurrentChunk(Chunk currentChunk)
     {
         this.currentChunk = currentChunk;
-    }
-
-    public void UpdateNextChunk(Chunk nextChunk)
-    {
-        this.nextChunk = nextChunk;
     }
 
 
@@ -60,7 +58,7 @@ public class MovingCamera : MonoBehaviour
             // Set position if following 
             if (direction.Equals(Direction.Following))
             {
-                position = pathCreator.path.GetClosestPointOnPath(following.transform.position);
+                position = path.GetClosestPoint(following.transform.position);
             }
             else
             {
@@ -76,18 +74,19 @@ public class MovingCamera : MonoBehaviour
                 }
 
                 // Update distance
-                distanceTravelled += distance * Time.deltaTime;
-                distanceTravelled = Mathf.Clamp(distanceTravelled, 0, pathCreator.path.length);
+                distanceFromOrigin += distance * Time.deltaTime;
+                Vector2 length = path.GetPathLength();
+                distanceFromOrigin = Mathf.Clamp(distanceFromOrigin, -length.x, length.y);
 
                 // Get the position and zoom it out
-                position = pathCreator.path.GetPointAtDistance(distanceTravelled, EndOfPathInstruction.Stop);
+                position = path.GetPointAtDistance(distanceFromOrigin);
             }
 
             position.z = -zoom;
 
             // Update position
             transform.position = position;
-        }    
+        }
     }
 
 

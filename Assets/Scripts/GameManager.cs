@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
     [Header("Camera Reference")]
     public GameObject cameraGameObject;
     private MovingCamera movingCamera;
+    public GameObject cameraPathManagerObject;
+    private CameraPathManager cameraPathManager;
 
     [Header("Terrain Manager Reference")]
     public GameObject terrainManagerObject;
@@ -34,6 +36,7 @@ public class GameManager : MonoBehaviour
         // References to scripts
         player = playerGameObject.GetComponent<Player>();
         movingCamera = cameraGameObject.GetComponent<MovingCamera>();
+        cameraPathManager = cameraPathManagerObject.GetComponent<CameraPathManager>();
         terrainManager = terrainManagerObject.GetComponent<TerrainManager>();
         chunkManager = chunkManagerObject.GetComponent<ChunkManager>();
 
@@ -45,6 +48,8 @@ public class GameManager : MonoBehaviour
 
         //ChunkManager.OnCameraEnterChunk += NewChunkEntered;
         ChunkManager.OnPlayerEnterChunk += NewChunkEntered;
+
+        TerrainManager.OnTerrainChunkGenerated += UpdateCamera;
 
         isGameOver = true;
     }
@@ -72,6 +77,25 @@ public class GameManager : MonoBehaviour
     }
 
 
+    private void UpdateCamera(TerrainManager.TerrainChunk chunk)
+    {
+        Chunk c = chunkManager.GetChunk(chunk.chunkID);
+
+        // Add the new camera point
+        if (c.direction.Equals(TerrainManager.TerrainDirection.Left))
+        {
+            cameraPathManager.AddPointLeft(c.cameraPathStartWorldSpace);
+        }
+        else if (c.direction.Equals(TerrainManager.TerrainDirection.Right))
+        {
+            cameraPathManager.AddPointRight(c.cameraPathStartWorldSpace);
+        }
+        else if (c.direction.Equals(TerrainManager.TerrainDirection.Both))
+        {
+            
+        }
+    }
+
 
     private void NewChunkEntered(Vector2Int chunk)
     {
@@ -80,7 +104,6 @@ public class GameManager : MonoBehaviour
 
         // Pass it to the camera
         movingCamera.UpdateCurrentChunk(current);
-
 
         // See if any of the neighbour chunks exists
         foreach (Chunk.ChunkExit exit in current.exits)

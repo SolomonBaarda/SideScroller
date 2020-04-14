@@ -31,9 +31,12 @@ public class SampleTerrain : MonoBehaviour
 
     public TerrainManager.TerrainDirection direction;
 
+    public SampleTerrainType terrainType;
+
     private void Awake()
     {
-        manager = transform.parent.GetComponent<SampleTerrainManager>();
+        manager = transform.root.GetComponent<SampleTerrainManager>();
+
         grid = GetComponent<Grid>();
 
         exitTilePositions = new List<SampleTerrainExit>();
@@ -81,8 +84,9 @@ public class SampleTerrain : MonoBehaviour
         hazard = new SampleTerrainLayer();
         ground = new SampleTerrainLayer();
 
-        // Find the tile positions
+
         FindEntryTilePosition(ref entryTilePositionLocal);
+
         entryTilePosition = Vector2Int.zero;
         FindExitTilePosition(ref exitTilePositions);
 
@@ -286,6 +290,12 @@ public class SampleTerrain : MonoBehaviour
 
     }
 
+
+    public enum SampleTerrainType
+    {
+        Terrain,
+        Spawn
+    }
 
     public enum ExitDirection
     {

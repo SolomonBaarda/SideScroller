@@ -14,12 +14,8 @@ public class ChunkManager : MonoBehaviour
 
     private Dictionary<Vector2Int, Chunk> chunks;
 
-    private CameraPath cameraPath;
-
     private void Awake()
     {
-        cameraPath = GetComponentInChildren<CameraPath>();
-
         chunks = new Dictionary<Vector2Int, Chunk>();
 
         // Generate a new chunk when needed 
@@ -39,19 +35,6 @@ public class ChunkManager : MonoBehaviour
         c.CreateChunk(terrainChunk.bounds, terrainChunk.cellSize, terrainChunk.centre, terrainChunk.enteranceWorldPosition,
                 terrainChunk.exits, terrainChunk.direction, terrainChunk.chunkID);
         chunks.Add(terrainChunk.chunkID, c);
-
-
-
-        // Add the new camera point
-        if (terrainChunk.direction.Equals(TerrainManager.TerrainDirection.Left))
-        {
-            cameraPath.AddPointLeft(c.cameraPathStartWorldSpace);
-        }
-        else if (terrainChunk.direction.Equals(TerrainManager.TerrainDirection.Right))
-        {
-            cameraPath.AddPointRight(c.cameraPathStartWorldSpace);
-        }
-
     }
 
 
