@@ -26,6 +26,9 @@ public class GameManager : MonoBehaviour
     public GameObject chunkManagerObject;
     private ChunkManager chunkManager;
 
+    private bool isGameOver;
+    public float gameTimeSeconds;
+
     private void Awake()
     {
         // References to scripts
@@ -42,6 +45,8 @@ public class GameManager : MonoBehaviour
 
         //ChunkManager.OnCameraEnterChunk += NewChunkEntered;
         ChunkManager.OnPlayerEnterChunk += NewChunkEntered;
+
+        isGameOver = true;
     }
 
     private void Start()
@@ -50,10 +55,20 @@ public class GameManager : MonoBehaviour
     }
 
 
+    private void FixedUpdate()
+    {
+        if(!isGameOver)
+        {
+            gameTimeSeconds += Time.deltaTime;
+        }
+    }
+
     private void StartGame()
     {
         player.SetPosition(terrainManager.GetInitialTileWorldPositionForPlayer());
         player.controller.enabled = true;
+
+        isGameOver = false;
     }
 
 
@@ -72,14 +87,11 @@ public class GameManager : MonoBehaviour
         {
             try
             {
-                //Debug.Log("Trying to get " + exit.newChunkID.x + ", " + exit.newChunkID.y);
-
                 // Chunk already exists, do nothing
                 Chunk neighbour = chunkManager.GetChunk(exit.newChunkID);
             }
             catch (Exception)
             {
-                //Debug.Log("Not found. Generating new chunk " + exit.newChunkID.x + ", " + exit.newChunkID.y);
                 // Does not exist, so generate it
                 terrainManager.Generate(exit.newChunkPositionWorld, current.direction, exit.newChunkID);
             }
@@ -87,14 +99,7 @@ public class GameManager : MonoBehaviour
         }
 
 
-
-
-
     }
-
-
-
-
 
 
 }

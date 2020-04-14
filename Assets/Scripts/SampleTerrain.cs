@@ -93,7 +93,7 @@ public class SampleTerrain : MonoBehaviour
         LoadTiles(tilemap_hazard, ref hazard);
         LoadTiles(tilemap_ground, ref ground);
 
-        if(direction.Equals(null))
+        if (direction.Equals(null))
         {
             throw new Exception("Sample Terrain direction has not been defined.");
         }
@@ -107,10 +107,9 @@ public class SampleTerrain : MonoBehaviour
 
 
     /// <summary>
-    /// Get the bounds in world space for the playable area in this Sample Terrain.
+    /// Get the bounds in tiles for the playable area in this Sample Terrain.
     /// </summary>
-    /// <returns>The bounds</returns>
-    public Vector2 GetGroundBounds()
+    public GroundBounds GetGroundBounds()
     {
         // Get array just so we can initialise the variables to the first element 
         SampleTerrainLayer.SampleTerrainTile[] tiles = ground.tilesInThisLayer.ToArray();
@@ -139,8 +138,7 @@ public class SampleTerrain : MonoBehaviour
             }
         }
 
-        // Add one to the difference as tilemap is 0 based
-        return max - min + Vector2.one;
+        return new GroundBounds(min, max, grid.cellSize);
     }
 
 
@@ -262,6 +260,30 @@ public class SampleTerrain : MonoBehaviour
             this.exitDirection = exitDirection;
             this.exitPositionRelative = exitPositionRelative;
         }
+    }
+
+
+
+    /// <summary>
+    /// The bounds of the ground tiles in a Sample Terrain. Values relative to the enterance position.
+    /// </summary>
+    public class GroundBounds
+    {
+        public Vector2Int minTile, maxTile;
+
+        public Vector2Int boundsTile;
+        public Vector2 boundsReal;
+
+        public GroundBounds(Vector2Int minTile, Vector2Int maxTile, Vector2 cellSize)
+        {
+            this.minTile = minTile;
+            this.maxTile = maxTile;
+
+            boundsTile = maxTile - minTile + Vector2Int.one;
+            boundsReal = boundsTile * cellSize;
+        }
+
+
     }
 
 

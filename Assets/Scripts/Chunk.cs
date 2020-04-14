@@ -65,6 +65,10 @@ public class Chunk : MonoBehaviour
         Gizmos.DrawLine(b.bounds.max, i);
         Gizmos.DrawLine(b.bounds.max, j);
 
+        // Centre
+        Gizmos.color = Color.white;
+        Gizmos.DrawCube(transform.position, 0.5f * Vector3.one);
+
         // Enterance marker
         Gizmos.color = Color.yellow;
         Gizmos.DrawCube(enteranceWorldSpace, 0.5f * Vector3.one);

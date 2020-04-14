@@ -174,16 +174,18 @@ public class TerrainManager : MonoBehaviour
         }
 
         // Calculate some important values
-        Vector2 bounds = terrain.GetGroundBounds();
-        Vector2 extents = bounds / 2;
+        SampleTerrain.GroundBounds b = terrain.GetGroundBounds();
         Vector3 entryPositionWorld = grid.CellToWorld(new Vector3Int(entryTile.x, entryTile.y, 0)) + (grid.cellSize / 2);
-        Vector3 centre = grid.CellToWorld(new Vector3Int((int)(entryTile.x + invert * extents.x), (int)(entryTile.y + extents.y), 0));
+
+        // To fix centre
+        Vector2Int centreTile = entryTile + new Vector2Int(b.minTile.x * invert, b.minTile.y) + new Vector2Int(b.boundsTile.x * invert / 2, b.boundsTile.y / 2);
+        Vector3 centre = grid.CellToWorld(new Vector3Int(centreTile.x, centreTile.y, 0));
         // Need to add half a cell for odd numbers as it was casted to int
-        if (bounds.x % 2 == 1)
+        if (b.boundsTile.x % 2 == 1)
         {
             centre.x += grid.cellSize.x / 2;
         }
-        if (bounds.y % 2 == 1)
+        if (b.boundsTile.y % 2 == 1)
         {
             centre.y += grid.cellSize.y / 2;
         }
@@ -237,7 +239,7 @@ public class TerrainManager : MonoBehaviour
         }
 
         // Return the TerrainChunk object for use in the ChunkManager
-        return new TerrainChunk(bounds, grid.cellSize, centre, entryPositionWorld, exits, directionToGenerate, chunkID);
+        return new TerrainChunk(b.boundsReal, grid.cellSize, centre, entryPositionWorld, exits, directionToGenerate, chunkID);
     }
 
 
@@ -296,8 +298,12 @@ public class TerrainManager : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// The direction that the terrain is facing. Camera should move in that direction.
+    /// </summary>
     public enum TerrainDirection
     {
+
         Left,
         Right
     }
