@@ -126,6 +126,11 @@ public class Chunk : MonoBehaviour
 
 
 
+    public override string ToString()
+    {
+        return "(" + chunkID.x + "," + chunkID.y + ")";
+    }
+
 
     public class ChunkExit
     {
@@ -133,19 +138,19 @@ public class Chunk : MonoBehaviour
         public Vector3 exitPositionWorld;
 
         public Vector3 newChunkPositionWorld;
+        public TerrainManager.TerrainDirection newChunkDirection;
         public Vector2Int newChunkID;
 
-        public ChunkExit(SampleTerrain.ExitDirection exitDirection, Vector3 exitPositionWorld, Vector3 newChunkPositionWorld, Vector2Int newChunkID)
+        public ChunkExit(SampleTerrain.ExitDirection exitDirection, Vector3 exitPositionWorld, Vector3 newChunkPositionWorld,
+                TerrainManager.TerrainDirection newChunkDirection, Vector2Int newChunkID)
         {
             this.exitDirection = exitDirection;
             this.exitPositionWorld = exitPositionWorld;
             this.newChunkPositionWorld = newChunkPositionWorld;
+            this.newChunkDirection = newChunkDirection;
             this.newChunkID = newChunkID;
         }
     }
 
-    public override string ToString()
-    {
-        return "(" + chunkID.x + "," + chunkID.y + ")";
-    }
+
 }
