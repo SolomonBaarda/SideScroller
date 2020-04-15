@@ -17,8 +17,6 @@ public class GameManager : MonoBehaviour
     [Header("Camera Reference")]
     public GameObject cameraGameObject;
     private MovingCamera movingCamera;
-    public GameObject cameraPathManagerObject;
-    private CameraPathManager cameraPathManager;
 
     [Header("Terrain Manager Reference")]
     public GameObject terrainManagerObject;
@@ -36,7 +34,6 @@ public class GameManager : MonoBehaviour
         // References to scripts
         player = playerGameObject.GetComponent<Player>();
         movingCamera = cameraGameObject.GetComponent<MovingCamera>();
-        cameraPathManager = cameraPathManagerObject.GetComponent<CameraPathManager>();
         terrainManager = terrainManagerObject.GetComponent<TerrainManager>();
         chunkManager = chunkManagerObject.GetComponent<ChunkManager>();
 
@@ -60,7 +57,7 @@ public class GameManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(!isGameOver)
+        if (!isGameOver)
         {
             gameTimeSeconds += Time.deltaTime;
         }
@@ -70,6 +67,8 @@ public class GameManager : MonoBehaviour
     {
         player.SetPosition(terrainManager.GetInitialTileWorldPositionForPlayer());
         player.controller.enabled = true;
+
+        movingCamera.direction = MovingCamera.Direction.Following;
 
         isGameOver = false;
     }

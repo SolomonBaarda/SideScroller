@@ -16,10 +16,6 @@ public class MovingCamera : MonoBehaviour
     [Header("GameObject to Follow")]
     public GameObject following;
 
-    [Header("Camera Path Manager Reference")]
-    public GameObject cameraPathManagerObject;
-    [HideInInspector]
-    public CameraPathManager path;
     private float distanceFromOrigin;
 
     private void Awake()
@@ -27,15 +23,19 @@ public class MovingCamera : MonoBehaviour
         Vector3 pos = transform.position;
         pos.z = -zoom;
         transform.position = pos;
-        distanceFromOrigin = 0;
 
-        path = cameraPathManagerObject.GetComponent<CameraPathManager>();
+        distanceFromOrigin = 0;
     }
 
 
     public void UpdateCurrentChunk(Chunk currentChunk)
     {
         this.currentChunk = currentChunk;
+    }
+
+    public Vector2Int GetCurrentChunk()
+    {
+        return currentChunk.chunkID;
     }
 
 
@@ -58,7 +58,7 @@ public class MovingCamera : MonoBehaviour
             // Set position if following 
             if (direction.Equals(Direction.Following))
             {
-                position = CameraPathManager.GetClosestPoint(following.transform.position, currentChunk);
+                position = GetClosestPoint(following.transform.position, currentChunk);
             }
             else
             {
@@ -87,6 +87,31 @@ public class MovingCamera : MonoBehaviour
             // Update position
             transform.position = position;
         }
+    }
+
+
+
+
+    public static Vector3 GetClosestPoint(Vector3 position, Chunk chunk)
+    {
+        CameraPath[] paths = chunk.cameraPaths.ToArray();
+        Vector3 point = paths[0].GetClosestPosition(position);
+
+        // Loop through each path
+        foreach (CameraPath path in paths)
+        {
+            float posToPoint = Vector3.Distance(position, point);
+            Vector3 newPoint = path.GetClosestPosition(position);
+            float posToNewPoint = Vector3.Distance(position, newPoint);
+
+            // Find the closest point of all the paths
+            if (posToNewPoint < posToPoint)
+            {
+                point = newPoint;
+            }
+        }
+
+        return point;
     }
 
 

@@ -589,49 +589,6 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!1 &161575217
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 161575218}
-  - component: {fileID: 161575219}
-  m_Layer: 0
-  m_Name: Path Manager
-  m_TagString: Untagged
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &161575218
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 161575217}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &161575219
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 161575217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f9f576f5495c67488efd1dfdeb05b21, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &165341391
 GameObject:
   m_ObjectHideFlags: 0
@@ -6647,7 +6604,7 @@ Transform:
   - {fileID: 1805137222}
   - {fileID: 1318712397}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &709550977
 MonoBehaviour:
@@ -8350,10 +8307,8 @@ MonoBehaviour:
   currentChunk: {fileID: 0}
   zoom: 8
   speed: 4
-  direction: 2
+  direction: 3
   following: {fileID: 1352398013}
-  cameraPathManagerObject: {fileID: 161575217}
-  path: {fileID: 0}
 --- !u!1 &1377571845
 GameObject:
   m_ObjectHideFlags: 0
@@ -14515,7 +14470,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerGameObject: {fileID: 1352398013}
   cameraGameObject: {fileID: 1369818825}
-  cameraPathManagerObject: {fileID: 161575217}
   terrainManagerObject: {fileID: 876974039}
   chunkManagerObject: {fileID: 489454952}
   gameTimeSeconds: 0

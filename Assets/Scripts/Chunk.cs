@@ -17,6 +17,7 @@ public class Chunk : MonoBehaviour
 
     [Header("Camera Path Prefab Reference")]
     public GameObject cameraPathPrefab;
+
     public List<CameraPath> cameraPaths;
 
     private Transform cameraPathChild;
@@ -55,18 +56,73 @@ public class Chunk : MonoBehaviour
 
         // Find the start position
         Vector3 cameraPathStartWorldSpace = enteranceWorldSpace;
+        // Add a little to centre it 
+        switch (direction)
+        {
+            case TerrainManager.TerrainDirection.Left:
+                cameraPathStartWorldSpace.x += cellSize.x / 2;
+                break;
+            case TerrainManager.TerrainDirection.Right:
+                cameraPathStartWorldSpace.x -= cellSize.x / 2;
+                break;
+            case TerrainManager.TerrainDirection.Both:
+                // Do nothing as already in centre
+                break;
+        }
         cameraPathStartWorldSpace.y += offset;
 
+
+        // Loop through each exit
         foreach (ChunkExit exit in exits)
         {
             // Instantiate the new object
             GameObject pathObject = Instantiate(cameraPathPrefab, cameraPathChild);
-            pathObject.name = "path";
+            pathObject.name = "Path " + (pathObject.transform.GetSiblingIndex() + 1) + "/" + exits.Count;
             CameraPath path = pathObject.GetComponent<CameraPath>();
 
             // Find its end position
             Vector3 cameraPathEndWorldSpace = exit.exitPositionWorld;
             cameraPathEndWorldSpace.y += offset;
+
+
+            // Add a little to make the transition smoother
+            switch (exit.exitDirection)
+            {
+                case (SampleTerrain.ExitDirection.Up):
+                    cameraPathEndWorldSpace.y += cellSize.y / 2;
+                    break;
+                case (SampleTerrain.ExitDirection.Down):
+                    cameraPathEndWorldSpace.y -= cellSize.y / 2;
+                    break;
+                case (SampleTerrain.ExitDirection.Horizontal):
+                    switch (direction)
+                    {
+                        case (TerrainManager.TerrainDirection.Left):
+                            cameraPathEndWorldSpace.x -= cellSize.x / 2;
+                            break;
+                        case (TerrainManager.TerrainDirection.Right):
+                            cameraPathEndWorldSpace.x += cellSize.x / 2;
+                            break;
+                        case (TerrainManager.TerrainDirection.Both):
+                            if (cameraPathEndWorldSpace.x > cameraPathStartWorldSpace.x)
+                            {
+                                cameraPathEndWorldSpace.x += cellSize.x / 2;
+
+                                // Temp fix
+                                cameraPathStartWorldSpace.x = 4 * cellSize.x + (cellSize.x);
+                            }
+                            else if (cameraPathEndWorldSpace.x < cameraPathStartWorldSpace.x)
+                            {
+                                cameraPathEndWorldSpace.x -= cellSize.x / 2;
+
+                                // Temp fix
+                                cameraPathStartWorldSpace.x = - 4 * cellSize.x;
+                            }
+                            break;
+                    }
+                    break;
+            }
+
 
             // Set the path and add it
             path.SetPath(cameraPathStartWorldSpace, cameraPathEndWorldSpace);
@@ -76,13 +132,18 @@ public class Chunk : MonoBehaviour
 
 
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         // Player has entered the chunk
         if (collision.gameObject.layer.Equals(LayerMask.NameToLayer("Player")))
         {
-            //Debug.Log("Player in chunk " + transform.name);
-            ChunkManager.OnPlayerEnterChunk.Invoke(chunkID);
+            Vector2Int playerChunk = collision.transform.root.GetComponent<Player>().GetCurrentChunk();
+
+            // Entered for the first time 
+            if (playerChunk.x != chunkID.x || playerChunk.y != chunkID.y)
+            {
+                ChunkManager.OnPlayerEnterChunk.Invoke(chunkID);
+            }
         }
     }
 

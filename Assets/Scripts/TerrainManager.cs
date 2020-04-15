@@ -119,10 +119,6 @@ public class TerrainManager : MonoBehaviour
         // Generate the spawn room
         GenerateFromSampleTerrain(initialTile, TerrainDirection.Both, sampleTerrainManager.startingArea, Vector2Int.zero);
 
-        // Generate one to the right
-        //Generate(tileRight, TerrainDirection.Right, Vector2Int.zero);
-        //Generate(tileLeft, TerrainDirection.Left, new Vector2Int(-1, 0));
-
         after = DateTime.Now;
         time = after - before;
         Debug.Log("It took " + time.Milliseconds + " ms to generate the starting area.");
@@ -211,45 +207,46 @@ public class TerrainManager : MonoBehaviour
             switch (sampleExit.exitDirection)
             {
                 // Exit is up
-                case (SampleTerrain.ExitDirection.Up):
+                case SampleTerrain.ExitDirection.Up:
                     newChunkTile.y++;
                     newChunkID.y++;
                     exitDirection = SampleTerrain.ExitDirection.Up;
                     break;
                 // Exit is down
-                case (SampleTerrain.ExitDirection.Down):
+                case SampleTerrain.ExitDirection.Down:
                     newChunkTile.y--;
                     newChunkID.y--;
                     exitDirection = SampleTerrain.ExitDirection.Down;
                     break;
-                case (SampleTerrain.ExitDirection.Horizontal):
-                    // Exit is left
-                    if (directionToGenerate.Equals(TerrainDirection.Left))
+                    // Horizontal, need to check which type
+                case SampleTerrain.ExitDirection.Horizontal:
+                    switch (directionToGenerate)
                     {
-                        newChunkTile.x--;
-                        newChunkID.x--;
-                    }
-                    // Exit is right
-                    else if (directionToGenerate.Equals(TerrainDirection.Right))
-                    {
-                        newChunkTile.x++;
-                        newChunkID.x++;
-                    }
-                    // Exits both ways, need to check both
-                    else if (directionToGenerate.Equals(TerrainDirection.Both))
-                    {
-                        if (exitTile.x > entryTile.x)
-                        {
-                            newChunkTile.x++;
-                            newChunkID.x++;
-                            newChunkDirection = TerrainDirection.Right;
-                        }
-                        else if (exitTile.x < entryTile.x)
-                        {
+                        // Exit is left
+                        case TerrainDirection.Left:
                             newChunkTile.x--;
                             newChunkID.x--;
-                            newChunkDirection = TerrainDirection.Left;
-                        }
+                            break;
+                        // Exit is right
+                        case TerrainDirection.Right:
+                            newChunkTile.x++;
+                            newChunkID.x++;
+                            break;
+                        // Exits both ways, need to check both
+                        case TerrainDirection.Both:
+                            if (exitTile.x > entryTile.x)
+                            {
+                                newChunkTile.x++;
+                                newChunkID.x++;
+                                newChunkDirection = TerrainDirection.Right;
+                            }
+                            else if (exitTile.x < entryTile.x)
+                            {
+                                newChunkTile.x--;
+                                newChunkID.x--;
+                                newChunkDirection = TerrainDirection.Left;
+                            }
+                            break;
                     }
                     break;
             }

@@ -20,8 +20,9 @@ public class Player : MonoBehaviour
         controller = GetComponent<PlayerMovement>();
         //controller.enabled = false;
 
-        isAlive = true;
+        isAlive = false;
         coinCount = 0;
+        currentChunk = Vector2Int.one;
 
         GameManager.OnGameStart += SetAlive;
         ChunkManager.OnPlayerEnterChunk += SetCurrentChunk;
@@ -39,6 +40,11 @@ public class Player : MonoBehaviour
     private void SetCurrentChunk(Vector2Int currentChunk)
     {
         this.currentChunk = currentChunk;
+    }
+
+    public Vector2Int GetCurrentChunk()
+    {
+        return currentChunk;
     }
 
     public void SetPosition(Vector2 position)

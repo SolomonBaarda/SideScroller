@@ -5,32 +5,29 @@ using PathCreation;
 
 public class CameraPath : MonoBehaviour
 {
-    private BezierPath bezierPath;
     private VertexPath path;
     public List<Vector3> points;
+    public Vector3[] actualPoints;
 
     public const float autoControlLength = 0.4f;
 
-    private void Awake()
-    {
-        points = new List<Vector3>();
-    }
-
-
     public void SetPath(Vector3 start, Vector3 end)
     {
+        points = new List<Vector3>();
         points.Add(start);
         points.Add(end);
 
         // Create a new path with those points
-        bezierPath = new BezierPath(points, false, PathSpace.xy);
+        BezierPath b = new BezierPath(points, false, PathSpace.xy);
 
         // Set the correct modes
-        bezierPath.ControlPointMode = BezierPath.ControlMode.Automatic;
-        bezierPath.AutoControlLength = autoControlLength;
+        b.ControlPointMode = BezierPath.ControlMode.Automatic;
+        b.AutoControlLength = autoControlLength;
 
         // Reference to the path
-        path = new VertexPath(bezierPath, transform.root);
+        path = new VertexPath(b, transform.root);
+
+        actualPoints = path.localPoints;
     }
 
 
