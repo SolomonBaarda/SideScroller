@@ -49,8 +49,6 @@ public class GameManager : MonoBehaviour
         //ChunkManager.OnCameraEnterChunk += NewChunkEntered;
         ChunkManager.OnPlayerEnterChunk += NewChunkEntered;
 
-        TerrainManager.OnTerrainChunkGenerated += UpdateCamera;
-
         isGameOver = true;
     }
 
@@ -77,25 +75,6 @@ public class GameManager : MonoBehaviour
     }
 
 
-    private void UpdateCamera(TerrainManager.TerrainChunk chunk)
-    {
-        Chunk c = chunkManager.GetChunk(chunk.chunkID);
-
-        // Add the new camera point
-        if (c.direction.Equals(TerrainManager.TerrainDirection.Left))
-        {
-            cameraPathManager.AddPointLeft(c.cameraPathStartWorldSpace);
-        }
-        else if (c.direction.Equals(TerrainManager.TerrainDirection.Right))
-        {
-            cameraPathManager.AddPointRight(c.cameraPathStartWorldSpace);
-        }
-        else if (c.direction.Equals(TerrainManager.TerrainDirection.Both))
-        {
-            
-        }
-    }
-
 
     private void NewChunkEntered(Vector2Int chunk)
     {
@@ -105,6 +84,7 @@ public class GameManager : MonoBehaviour
         // Pass it to the camera
         movingCamera.UpdateCurrentChunk(current);
 
+
         // See if any of the neighbour chunks exists
         foreach (Chunk.ChunkExit exit in current.exits)
         {
@@ -112,11 +92,13 @@ public class GameManager : MonoBehaviour
             {
                 // Chunk already exists, do nothing
                 Chunk neighbour = chunkManager.GetChunk(exit.newChunkID);
+                Debug.Log("Neighbour chunk already exists " + neighbour);
             }
             catch (Exception)
             {
                 // Does not exist, so generate it
                 terrainManager.Generate(exit.newChunkPositionWorld, current.direction, exit.newChunkID);
+                Debug.Log("Generating new chunk");
             }
 
         }

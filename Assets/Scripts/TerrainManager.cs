@@ -205,6 +205,7 @@ public class TerrainManager : MonoBehaviour
             // Move by 1 tile in correct direction
             Vector2Int newChunkTile = exitTile;
             Vector2Int newChunkID = chunkID;
+            SampleTerrain.ExitDirection exitDirection = SampleTerrain.ExitDirection.Horizontal;
 
             switch (sampleExit.exitDirection)
             {
@@ -212,11 +213,13 @@ public class TerrainManager : MonoBehaviour
                 case (SampleTerrain.ExitDirection.Up):
                     newChunkTile.y++;
                     newChunkID.y++;
+                    exitDirection = SampleTerrain.ExitDirection.Up;
                     break;
                 // Exit is down
                 case (SampleTerrain.ExitDirection.Down):
                     newChunkTile.y--;
                     newChunkID.y--;
+                    exitDirection = SampleTerrain.ExitDirection.Down;
                     break;
                 case (SampleTerrain.ExitDirection.Horizontal):
                     // Exit is left
@@ -234,18 +237,15 @@ public class TerrainManager : MonoBehaviour
                     // Exits both ways, need to check both
                     else if (directionToGenerate.Equals(TerrainDirection.Both))
                     {
-                        if(terrain.terrainType.Equals(SampleTerrain.SampleTerrainType.Spawn))
+                        if (newChunkTile.x > terrain.entryTilePosition.x)
                         {
-                            if(newChunkTile.x > terrain.entryTilePosition.x)
-                            {
-                                newChunkTile.x++;
-                                newChunkID.x++;
-                            }
-                            else if (newChunkTile.x < terrain.entryTilePosition.x)
-                            {
-                                newChunkTile.x--;
-                                newChunkID.x--;
-                            }
+                            newChunkTile.x++;
+                            newChunkID.x++;
+                        }
+                        else if (newChunkTile.x < terrain.entryTilePosition.x)
+                        {
+                            newChunkTile.x--;
+                            newChunkID.x--;
                         }
                     }
                     break;
@@ -255,7 +255,7 @@ public class TerrainManager : MonoBehaviour
             Vector3 newChunkPositionWorld = grid.CellToWorld(new Vector3Int(newChunkTile.x, newChunkTile.y, 0)) + (grid.cellSize / 2);
 
             // Add the exit to list of exits for this chunk
-            exits.Add(new Chunk.ChunkExit(sampleExit.exitDirection, exitPositionWorld, newChunkPositionWorld, newChunkID));
+            exits.Add(new Chunk.ChunkExit(exitDirection, exitPositionWorld, newChunkPositionWorld, newChunkID));
         }
 
         // Return the TerrainChunk object for use in the ChunkManager
@@ -341,6 +341,10 @@ public class TerrainManager : MonoBehaviour
         public List<Chunk.ChunkExit> exits;
         public TerrainDirection direction;
         public Vector2Int chunkID;
+
+        public Vector3 cameraPathStartWorldSpace;
+        public Vector3 cameraPathEndWorldSpace;
+
 
         public TerrainChunk(Vector2 bounds, Vector3 cellSize, Vector3 centre, Vector3 enteranceWorldPosition,
                 List<Chunk.ChunkExit> exits, TerrainDirection direction, Vector2Int chunkID)

@@ -2,23 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using PathCreation;
 
 public class Chunk : MonoBehaviour
 {
+    [Header("Chunk Information")]
     public Vector3 enteranceWorldSpace;
     public List<ChunkExit> exits;
 
     public TerrainManager.TerrainDirection direction;
     public Vector2 bounds;
+    private Vector3 cellSize;
     public Vector2Int chunkID;
 
-    public Vector3 cameraPathStartWorldSpace;
+    [Header("Camera Path Prefab Reference")]
+    public GameObject cameraPathPrefab;
+    public List<CameraPath> cameraPaths;
+
+    private Transform cameraPathChild;
+    private Transform itemChild;
+    private const float CAMERA_POINT_OFFSET_TILES = 3f;
 
     public void CreateChunk(Vector2 bounds, Vector3 cellSize, Vector3 centre, Vector3 enteranceWorldSpace,
         List<ChunkExit> exits, TerrainManager.TerrainDirection direction, Vector2Int chunkID)
     {
         // Assign variables 
         this.bounds = bounds;
+        this.cellSize = cellSize;
         this.enteranceWorldSpace = enteranceWorldSpace;
         this.exits = exits;
         this.direction = direction;
@@ -32,10 +42,38 @@ public class Chunk : MonoBehaviour
         b.size = bounds;
         transform.position = centre;
 
-        // Move the camera up by 2 cells
-        cameraPathStartWorldSpace = enteranceWorldSpace;
-        cameraPathStartWorldSpace.y += 2 * cellSize.y;
+        // Get the camera paths
+        cameraPathChild = transform.Find("Camera Paths");
+        cameraPaths = new List<CameraPath>();
+        InitialiseCameraPaths();
     }
+
+
+    private void InitialiseCameraPaths()
+    {
+        float offset = CAMERA_POINT_OFFSET_TILES * cellSize.y;
+
+        // Find the start position
+        Vector3 cameraPathStartWorldSpace = enteranceWorldSpace;
+        cameraPathStartWorldSpace.y += offset;
+
+        foreach (ChunkExit exit in exits)
+        {
+            // Instantiate the new object
+            GameObject pathObject = Instantiate(cameraPathPrefab, cameraPathChild);
+            pathObject.name = "path";
+            CameraPath path = pathObject.GetComponent<CameraPath>();
+
+            // Find its end position
+            Vector3 cameraPathEndWorldSpace = exit.exitPositionWorld;
+            cameraPathEndWorldSpace.y += offset;
+
+            // Set the path and add it
+            path.SetPath(cameraPathStartWorldSpace, cameraPathEndWorldSpace);
+            cameraPaths.Add(path);
+        }
+    }
+
 
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -46,9 +84,11 @@ public class Chunk : MonoBehaviour
             //Debug.Log("Player in chunk " + transform.name);
             ChunkManager.OnPlayerEnterChunk.Invoke(chunkID);
         }
+    }
 
-
-
+    private void OnDestroy()
+    {
+        ChunkManager.OnChunkDestroyed.Invoke(chunkID);
     }
 
     private void OnDrawGizmos()
@@ -82,10 +122,9 @@ public class Chunk : MonoBehaviour
             Gizmos.DrawCube(exit.newChunkPositionWorld, 0.5f * Vector3.one);
         }
 
-        // Camera point 
-        Gizmos.color = Color.green;
-        Gizmos.DrawCube(cameraPathStartWorldSpace, 0.5f * Vector3.one);
     }
+
+
 
 
     public class ChunkExit
@@ -103,7 +142,6 @@ public class Chunk : MonoBehaviour
             this.newChunkPositionWorld = newChunkPositionWorld;
             this.newChunkID = newChunkID;
         }
-
     }
 
     public override string ToString()

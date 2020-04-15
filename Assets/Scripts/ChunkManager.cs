@@ -9,6 +9,8 @@ public class ChunkManager : MonoBehaviour
     public static UnityAction<Vector2Int> OnCameraEnterChunk;
     public static UnityAction<Vector2Int> OnPlayerEnterChunk;
 
+    public static UnityAction<Vector2Int> OnChunkDestroyed;
+
     [Header("Chunk Prefab Reference")]
     public GameObject chunkPrefab;
 
@@ -20,6 +22,8 @@ public class ChunkManager : MonoBehaviour
 
         // Generate a new chunk when needed 
         TerrainManager.OnTerrainChunkGenerated += GenerateNewChunk;
+
+        OnChunkDestroyed += RemoveChunk;
     }
 
 
@@ -27,8 +31,7 @@ public class ChunkManager : MonoBehaviour
     {
         // Create a new chunk game object 
         // This is used for the player, camera path etc
-        GameObject g = Instantiate(chunkPrefab);
-        g.transform.parent = transform;
+        GameObject g = Instantiate(chunkPrefab, transform);
         Chunk c = g.GetComponent<Chunk>();
 
         // Create the chunk
@@ -37,6 +40,18 @@ public class ChunkManager : MonoBehaviour
         chunks.Add(terrainChunk.chunkID, c);
     }
 
+
+    private void RemoveChunk(Vector2Int chunkID)
+    {
+        try
+        {
+            Chunk c = GetChunk(chunkID);
+            chunks.Remove(chunkID);
+        }
+        catch (Exception)
+        {
+        }
+    }
 
 
     public Chunk GetChunk(Vector2Int chunkID)

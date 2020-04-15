@@ -9,7 +9,7 @@ public class MovingCamera : MonoBehaviour
     public Chunk currentChunk;
 
     [Header("Movement Settings")]
-    public float zoom = 7;
+    public float zoom = 8;
     public float speed = 4;
     public Direction direction = Direction.Stationary;
 
@@ -58,7 +58,7 @@ public class MovingCamera : MonoBehaviour
             // Set position if following 
             if (direction.Equals(Direction.Following))
             {
-                position = path.GetClosestPoint(following.transform.position);
+                position = CameraPathManager.GetClosestPoint(following.transform.position, currentChunk);
             }
             else
             {
@@ -75,11 +75,11 @@ public class MovingCamera : MonoBehaviour
 
                 // Update distance
                 distanceFromOrigin += distance * Time.deltaTime;
-                Vector2 length = path.GetPathLength();
-                distanceFromOrigin = Mathf.Clamp(distanceFromOrigin, -length.x, length.y);
+                //Vector2 length = path.GetPathLength();
+                //distanceFromOrigin = Mathf.Clamp(distanceFromOrigin, -length.x, length.y);
 
                 // Get the position and zoom it out
-                position = path.GetPointAtDistance(distanceFromOrigin);
+                //position = path.GetPointAtDistance(distanceFromOrigin);
             }
 
             position.z = -zoom;
