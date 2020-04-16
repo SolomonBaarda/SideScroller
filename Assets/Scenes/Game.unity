@@ -10990,7 +10990,8 @@ GameObject:
   - component: {fileID: 1369818827}
   - component: {fileID: 1369818826}
   - component: {fileID: 1369818829}
-  m_Layer: 0
+  - component: {fileID: 1369818830}
+  m_Layer: 13
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
@@ -11079,6 +11080,23 @@ MonoBehaviour:
   speed: 4
   direction: 2
   following: {fileID: 1352398013}
+  distanceFromOrigin: 0
+--- !u!58 &1369818830
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1369818825}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
 --- !u!1 &1377571845
 GameObject:
   m_ObjectHideFlags: 0
