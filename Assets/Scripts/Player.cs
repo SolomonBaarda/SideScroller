@@ -18,7 +18,6 @@ public class Player : MonoBehaviour
     {
         // Get reference to the controller script
         controller = GetComponent<PlayerMovement>();
-        //controller.enabled = false;
 
         isAlive = false;
         coinCount = 0;
@@ -27,6 +26,13 @@ public class Player : MonoBehaviour
         GameManager.OnGameStart += SetAlive;
         ChunkManager.OnPlayerEnterChunk += SetCurrentChunk;
     }
+
+
+    private void Start()
+    {
+        controller.enabled = false;
+    }
+
 
     private void Update()
     {
@@ -50,6 +56,10 @@ public class Player : MonoBehaviour
     public void SetPosition(Vector2 position)
     {
         BoxCollider2D b = GetComponentInChildren<BoxCollider2D>();
+        Rigidbody2D r = GetComponent<Rigidbody2D>();
+        Vector2 vel = r.velocity;
+        vel.y = 0;
+        r.velocity = vel;
 
         // Add a little to centre the player
         transform.position = new Vector3(position.x, position.y + b.bounds.extents.y, 0);

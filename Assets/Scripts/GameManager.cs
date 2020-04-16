@@ -7,7 +7,6 @@ using UnityEngine.Tilemaps;
 
 public class GameManager : MonoBehaviour
 {
-    public static UnityAction OnGameLoad;
     public static UnityAction OnGameStart;
 
     [Header("Player Reference")]
@@ -37,11 +36,9 @@ public class GameManager : MonoBehaviour
         terrainManager = terrainManagerObject.GetComponent<TerrainManager>();
         chunkManager = chunkManagerObject.GetComponent<ChunkManager>();
 
-        // Generate terrain when the game loads
-        OnGameLoad += terrainManager.Initialise;
-
         // Add event calls 
-        TerrainManager.OnTerrainGenerated += StartGame;
+        //TerrainManager.OnTerrainGenerated += StartGame;
+        Menu.OnMenuClose += StartGame;
 
         //ChunkManager.OnCameraEnterChunk += NewChunkEntered;
         ChunkManager.OnPlayerEnterChunk += NewChunkEntered;
@@ -51,7 +48,14 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        OnGameLoad.Invoke();
+        // Generate terrain when the game loads
+        terrainManager.Initialise();
+    }
+
+    private void OnDestroy()
+    {
+        Menu.OnMenuClose -= StartGame;
+        ChunkManager.OnPlayerEnterChunk -= NewChunkEntered;
     }
 
 
@@ -60,6 +64,11 @@ public class GameManager : MonoBehaviour
         if (!isGameOver)
         {
             gameTimeSeconds += Time.deltaTime;
+        }
+
+        if(Input.GetKey(player.controller.keys.escape))
+        {
+            Application.Quit();
         }
     }
 

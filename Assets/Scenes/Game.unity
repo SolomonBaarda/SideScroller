@@ -11077,7 +11077,7 @@ MonoBehaviour:
   currentChunk: {fileID: 0}
   zoom: 8
   speed: 4
-  direction: 3
+  direction: 2
   following: {fileID: 1352398013}
 --- !u!1 &1377571845
 GameObject:
