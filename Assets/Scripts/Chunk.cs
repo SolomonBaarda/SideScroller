@@ -14,6 +14,7 @@ public class Chunk : MonoBehaviour
     public Vector2 bounds;
     private Vector3 cellSize;
     public Vector2Int chunkID;
+    public float distanceFromOrigin;
 
     [Header("Camera Path Prefab Reference")]
     public GameObject cameraPathPrefab;
@@ -25,7 +26,7 @@ public class Chunk : MonoBehaviour
     private const float CAMERA_POINT_OFFSET_TILES = 3f;
 
     public void CreateChunk(Vector2 bounds, Vector3 cellSize, Vector3 centre, Vector3 enteranceWorldSpace,
-        List<ChunkExit> exits, TerrainManager.TerrainDirection direction, Vector2Int chunkID)
+        List<ChunkExit> exits, TerrainManager.TerrainDirection direction, float distanceFromOrigin, Vector2Int chunkID)
     {
         // Assign variables 
         this.bounds = bounds;
@@ -33,6 +34,7 @@ public class Chunk : MonoBehaviour
         this.enteranceWorldSpace = enteranceWorldSpace;
         this.exits = exits;
         this.direction = direction;
+        this.distanceFromOrigin = distanceFromOrigin;
         this.chunkID = chunkID;
 
         // Set the name 
@@ -47,6 +49,13 @@ public class Chunk : MonoBehaviour
         cameraPathChild = transform.Find("Camera Paths");
         cameraPaths = new List<CameraPath>();
         InitialiseCameraPaths();
+    }
+
+
+
+    public float CalculateNewChunkDistanceFromOrigin(CameraPath chosen)
+    {
+        return distanceFromOrigin + chosen.GetPathLength();
     }
 
 
@@ -116,7 +125,7 @@ public class Chunk : MonoBehaviour
                                 cameraPathEndWorldSpace.x -= cellSize.x / 2;
 
                                 // Temp fix
-                                cameraPathStartWorldSpace.x = - 4 * cellSize.x;
+                                cameraPathStartWorldSpace.x = -4 * cellSize.x;
                             }
                             break;
                     }

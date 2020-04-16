@@ -36,7 +36,7 @@ public class ChunkManager : MonoBehaviour
 
         // Create the chunk
         c.CreateChunk(terrainChunk.bounds, terrainChunk.cellSize, terrainChunk.centre, terrainChunk.enteranceWorldPosition,
-                terrainChunk.exits, terrainChunk.direction, terrainChunk.chunkID);
+                terrainChunk.exits, terrainChunk.direction, terrainChunk.distanceFromOrigin, terrainChunk.chunkID);
         chunks.Add(terrainChunk.chunkID, c);
     }
 

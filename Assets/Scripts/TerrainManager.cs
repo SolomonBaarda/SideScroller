@@ -117,7 +117,7 @@ public class TerrainManager : MonoBehaviour
         Vector3 tileLeft = grid.CellToWorld(new Vector3Int(initialTile.x - 1, initialTile.y, 0));
 
         // Generate the spawn room
-        GenerateFromSampleTerrain(initialTile, TerrainDirection.Both, sampleTerrainManager.startingArea, Vector2Int.zero);
+        GenerateFromSampleTerrain(initialTile, TerrainDirection.Both, sampleTerrainManager.startingArea, 0, Vector2Int.zero);
 
         after = DateTime.Now;
         time = after - before;
@@ -127,7 +127,7 @@ public class TerrainManager : MonoBehaviour
     }
 
 
-    public void Generate(Vector3 startTileWorldSpace, TerrainDirection directionToGenerate, Vector2Int chunkID)
+    public void Generate(Vector3 startTileWorldSpace, TerrainDirection directionToGenerate, float distanceFromOrigin, Vector2Int chunkID)
     {
         // Calculate what we are going to generate 
         int index = random.Next(0, sampleTerrainManager.allSamples.Length);
@@ -136,13 +136,13 @@ public class TerrainManager : MonoBehaviour
         Vector3Int entryPos = grid.WorldToCell(startTileWorldSpace);
 
         // Generate the new chunk and update the tile reference
-        GenerateFromSampleTerrain(new Vector2Int(entryPos.x, entryPos.y), directionToGenerate, chosen, chunkID);
+        GenerateFromSampleTerrain(new Vector2Int(entryPos.x, entryPos.y), directionToGenerate, chosen, distanceFromOrigin, chunkID);
     }
 
 
 
 
-    private void GenerateFromSampleTerrain(Vector2Int entryTile, TerrainDirection directionToGenerate, SampleTerrain terrain, Vector2Int chunkID)
+    private void GenerateFromSampleTerrain(Vector2Int entryTile, TerrainDirection directionToGenerate, SampleTerrain terrain, float distanceFromOrigin, Vector2Int chunkID)
     {
         bool flipAxisX = false;
 
@@ -160,10 +160,10 @@ public class TerrainManager : MonoBehaviour
         CopySampleTerrainLayer(entryTile, flipAxisX, terrain.ground, ref ground);
 
         // Tell the ChunkManager that the terrain has been generated
-        OnTerrainChunkGenerated.Invoke(GenerateTerrainChunk(entryTile, flipAxisX, directionToGenerate, terrain, chunkID));
+        OnTerrainChunkGenerated.Invoke(GenerateTerrainChunk(entryTile, flipAxisX, directionToGenerate, terrain, distanceFromOrigin, chunkID));
     }
 
-    private TerrainChunk GenerateTerrainChunk(Vector2Int entryTile, bool flipAxisX, TerrainDirection directionToGenerate, SampleTerrain terrain, Vector2Int chunkID)
+    private TerrainChunk GenerateTerrainChunk(Vector2Int entryTile, bool flipAxisX, TerrainDirection directionToGenerate, SampleTerrain terrain, float distanceFromOrigin, Vector2Int chunkID)
     {
         // Get the inverse multiplier
         int invert = 1;
@@ -259,7 +259,7 @@ public class TerrainManager : MonoBehaviour
         }
 
         // Return the TerrainChunk object for use in the ChunkManager
-        return new TerrainChunk(b.boundsReal, grid.cellSize, centre, entryPositionWorld, exits, directionToGenerate, chunkID);
+        return new TerrainChunk(b.boundsReal, grid.cellSize, centre, entryPositionWorld, exits, directionToGenerate, distanceFromOrigin, chunkID);
     }
 
 
@@ -340,6 +340,7 @@ public class TerrainManager : MonoBehaviour
         public Vector3 enteranceWorldPosition;
         public List<Chunk.ChunkExit> exits;
         public TerrainDirection direction;
+        public float distanceFromOrigin;
         public Vector2Int chunkID;
 
         public Vector3 cameraPathStartWorldSpace;
@@ -347,7 +348,7 @@ public class TerrainManager : MonoBehaviour
 
 
         public TerrainChunk(Vector2 bounds, Vector3 cellSize, Vector3 centre, Vector3 enteranceWorldPosition,
-                List<Chunk.ChunkExit> exits, TerrainDirection direction, Vector2Int chunkID)
+                List<Chunk.ChunkExit> exits, TerrainDirection direction, float distanceFromOrigin, Vector2Int chunkID)
         {
             this.bounds = bounds;
             this.cellSize = cellSize;
@@ -355,6 +356,7 @@ public class TerrainManager : MonoBehaviour
             this.enteranceWorldPosition = enteranceWorldPosition;
             this.exits = exits;
             this.direction = direction;
+            this.distanceFromOrigin = distanceFromOrigin;
             this.chunkID = chunkID;
         }
     }

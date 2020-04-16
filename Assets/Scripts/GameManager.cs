@@ -37,8 +37,8 @@ public class GameManager : MonoBehaviour
         chunkManager = chunkManagerObject.GetComponent<ChunkManager>();
 
         // Add event calls 
-        //TerrainManager.OnTerrainGenerated += StartGame;
-        Menu.OnMenuClose += StartGame;
+        TerrainManager.OnTerrainGenerated += StartGame;
+        //Menu.OnMenuClose += StartGame;
 
         //ChunkManager.OnCameraEnterChunk += NewChunkEntered;
         ChunkManager.OnPlayerEnterChunk += NewChunkEntered;
@@ -105,7 +105,10 @@ public class GameManager : MonoBehaviour
             catch (Exception)
             {
                 // Does not exist, so generate it
-                terrainManager.Generate(exit.newChunkPositionWorld, exit.newChunkDirection, exit.newChunkID);
+                // Calculate how far along the camera path the new chunk is
+                float distanceFromOrigin = current.distanceFromOrigin + current.CalculateNewChunkDistanceFromOrigin(MovingCamera.GetClosestCameraPath(exit.exitPositionWorld, current));
+                // Generate the new chunk
+                terrainManager.Generate(exit.newChunkPositionWorld, exit.newChunkDirection, distanceFromOrigin, exit.newChunkID);
                 //Debug.Log("Generating new chunk");
             }
 

@@ -16,7 +16,7 @@ public class MovingCamera : MonoBehaviour
     [Header("GameObject to Follow")]
     public GameObject following;
 
-    private float distanceFromOrigin;
+    public float distanceFromOrigin;
 
     private void Awake()
     {
@@ -62,26 +62,21 @@ public class MovingCamera : MonoBehaviour
             }
             else
             {
-                float distance = 0;
-
-                if (direction.Equals(Direction.Left))
-                {
-                    distance = -speed;
-                }
-                else if (direction.Equals(Direction.Right))
-                {
-                    distance = speed;
-                }
-
                 // Update distance
-                distanceFromOrigin += distance * Time.deltaTime;
-                //Vector2 length = path.GetPathLength();
-                //distanceFromOrigin = Mathf.Clamp(distanceFromOrigin, -length.x, length.y);
+                distanceFromOrigin += speed * Time.deltaTime;
 
-                // Get the position and zoom it out
-                //position = path.GetPointAtDistance(distanceFromOrigin);
+                // Get the local distance
+                float distanceInChunk = distanceFromOrigin - currentChunk.distanceFromOrigin;
+
+                // Get the position in the chunk
+                CameraPath path = GetClosestCameraPath(following.transform.position, currentChunk);
+
+                //distanceInChunk = Mathf.Clamp(distanceFromOrigin, 0, path.GetPathLength());
+
+                position = path.GetPositionAtDistance(distanceInChunk);
             }
 
+            // Force zoom out
             position.z = -zoom;
 
             // Update position
@@ -90,35 +85,45 @@ public class MovingCamera : MonoBehaviour
     }
 
 
+    public static CameraPath GetClosestCameraPath(Vector3 position, Chunk chunk)
+    {
+        // Get array of camera paths
+        CameraPath[] paths = chunk.cameraPaths.ToArray();
+        // Get first point
+        Vector3 point = paths[0].GetClosestPosition(position);
+        int index = 0;
+
+        // Loop through each other path
+        for (int i = 1; i < paths.Length; i++)
+        {
+            // Calculate the distance
+            float posToPoint = Vector3.Distance(position, point);
+            // Calculate current new point
+            Vector3 newPoint = paths[i].GetClosestPosition(position);
+            float posToNewPoint = Vector3.Distance(position, newPoint);
+
+            // Find the closest point of the two
+            if (posToNewPoint < posToPoint)
+            {
+                // Update it and the index
+                point = newPoint;
+                index = i;
+            }
+        }
+
+        return paths[index];
+    }
 
 
     public static Vector3 GetClosestPoint(Vector3 position, Chunk chunk)
     {
-        CameraPath[] paths = chunk.cameraPaths.ToArray();
-        Vector3 point = paths[0].GetClosestPosition(position);
-
-        // Loop through each path
-        foreach (CameraPath path in paths)
-        {
-            float posToPoint = Vector3.Distance(position, point);
-            Vector3 newPoint = path.GetClosestPosition(position);
-            float posToNewPoint = Vector3.Distance(position, newPoint);
-
-            // Find the closest point of all the paths
-            if (posToNewPoint < posToPoint)
-            {
-                point = newPoint;
-            }
-        }
-
-        return point;
+        return GetClosestCameraPath(position, chunk).GetClosestPosition(position);
     }
 
 
     public enum Direction
     {
-        Left,
-        Right,
+        Terrain,
         Stationary,
         Following
     }
