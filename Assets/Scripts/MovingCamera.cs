@@ -15,6 +15,9 @@ public class MovingCamera : MonoBehaviour
 
     [Header("GameObject to Follow")]
     public GameObject following;
+    private Player player;
+    private CircleCollider2D collision;
+    private Rigidbody2D rigid;
 
     public float distanceFromOrigin;
 
@@ -23,6 +26,23 @@ public class MovingCamera : MonoBehaviour
         Vector3 pos = transform.position;
         pos.z = -zoom;
         transform.position = pos;
+
+        collision = GetComponentInChildren<CircleCollider2D>();
+        rigid = GetComponentInChildren<Rigidbody2D>();
+        rigid.isKinematic = true;
+
+        try
+        {
+            player = following.GetComponent<Player>();
+        }
+        catch (System.Exception)
+        {
+        }
+
+        // Update the colliders position
+        Vector3 colliderPos = transform.position;
+        colliderPos.z = 0;
+        collision.transform.position = colliderPos;
 
         distanceFromOrigin = 0;
     }
@@ -42,7 +62,10 @@ public class MovingCamera : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Move();
+        if (currentChunk != null)
+        {
+            Move();
+        }
 
         GetComponent<Camera>().orthographicSize = zoom;
     }
@@ -58,7 +81,12 @@ public class MovingCamera : MonoBehaviour
             // Set position if following 
             if (direction.Equals(Direction.Following))
             {
-                position = GetClosestPoint(following.transform.position, currentChunk);
+                Chunk c = currentChunk;
+                if (player != null)
+                {
+                    c = player.currentChunk;
+                }
+                position = GetClosestPoint(following.transform.position, c);
             }
             else
             {
@@ -81,6 +109,11 @@ public class MovingCamera : MonoBehaviour
 
             // Update position
             transform.position = position;
+
+            // Update the colliders position
+            Vector3 colliderPos = transform.position;
+            colliderPos.z = 0;
+            collision.transform.position = colliderPos;
         }
     }
 

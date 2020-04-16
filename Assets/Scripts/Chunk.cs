@@ -146,12 +146,38 @@ public class Chunk : MonoBehaviour
         // Player has entered the chunk
         if (collision.gameObject.layer.Equals(LayerMask.NameToLayer("Player")))
         {
-            Vector2Int playerChunk = collision.transform.root.GetComponent<Player>().GetCurrentChunk();
+            try
+            {
+                Vector2Int playerChunk = collision.transform.root.GetComponent<Player>().GetCurrentChunk().chunkID;
 
-            // Entered for the first time 
-            if (playerChunk.x != chunkID.x || playerChunk.y != chunkID.y)
+                // Entered for the first time 
+                if (playerChunk.x != chunkID.x || playerChunk.y != chunkID.y)
+                {
+                    ChunkManager.OnPlayerEnterChunk.Invoke(chunkID);
+                }
+            }
+            catch (System.Exception)
             {
                 ChunkManager.OnPlayerEnterChunk.Invoke(chunkID);
+            }
+        }
+        // Camera in chunk
+        if (collision.gameObject.layer.Equals(LayerMask.NameToLayer("Camera")))
+        {
+            try
+            {
+                Vector2Int cameraChunk = collision.transform.root.GetComponent<MovingCamera>().GetCurrentChunk();
+
+                // Entered for the first time 
+                if (cameraChunk.x != chunkID.x || cameraChunk.y != chunkID.y)
+                {
+                    ChunkManager.OnCameraEnterChunk.Invoke(chunkID);
+                }
+            }
+            // Current chunk may have not been defined
+            catch (System.Exception)
+            {
+                ChunkManager.OnCameraEnterChunk.Invoke(chunkID);
             }
         }
     }

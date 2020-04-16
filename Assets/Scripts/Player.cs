@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
 
     public PlayerMovement controller;
 
-    public Vector2Int currentChunk;
+    public Chunk currentChunk;
 
     public static string PLAYER = "Player";
 
@@ -21,10 +21,8 @@ public class Player : MonoBehaviour
 
         isAlive = false;
         coinCount = 0;
-        currentChunk = Vector2Int.one;
 
         GameManager.OnGameStart += SetAlive;
-        ChunkManager.OnPlayerEnterChunk += SetCurrentChunk;
     }
 
 
@@ -43,12 +41,12 @@ public class Player : MonoBehaviour
     }
 
 
-    private void SetCurrentChunk(Vector2Int currentChunk)
+    public void SetCurrentChunk(Chunk currentChunk)
     {
         this.currentChunk = currentChunk;
     }
 
-    public Vector2Int GetCurrentChunk()
+    public Chunk GetCurrentChunk()
     {
         return currentChunk;
     }

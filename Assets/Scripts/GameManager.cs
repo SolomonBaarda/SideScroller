@@ -40,8 +40,8 @@ public class GameManager : MonoBehaviour
         TerrainManager.OnTerrainGenerated += StartGame;
         //Menu.OnMenuClose += StartGame;
 
-        //ChunkManager.OnCameraEnterChunk += NewChunkEntered;
-        ChunkManager.OnPlayerEnterChunk += NewChunkEntered;
+        ChunkManager.OnCameraEnterChunk += CameraEnteredNewChunk;
+        ChunkManager.OnPlayerEnterChunk += PlayerEnteredNewChunk;
 
         isGameOver = true;
     }
@@ -55,7 +55,8 @@ public class GameManager : MonoBehaviour
     private void OnDestroy()
     {
         Menu.OnMenuClose -= StartGame;
-        ChunkManager.OnPlayerEnterChunk -= NewChunkEntered;
+        ChunkManager.OnCameraEnterChunk -= CameraEnteredNewChunk;
+        ChunkManager.OnPlayerEnterChunk -= PlayerEnteredNewChunk;
     }
 
 
@@ -66,7 +67,7 @@ public class GameManager : MonoBehaviour
             gameTimeSeconds += Time.deltaTime;
         }
 
-        if(Input.GetKey(player.controller.keys.escape))
+        if (Input.GetKey(player.controller.keys.escape))
         {
             Application.Quit();
         }
@@ -83,8 +84,20 @@ public class GameManager : MonoBehaviour
     }
 
 
+    private void PlayerEnteredNewChunk(Vector2Int chunk)
+    {
+        try
+        {
+            Chunk c = chunkManager.GetChunk(chunk);
+            player.SetCurrentChunk(c);
+        }
+        catch (Exception)
+        {
+        }
 
-    private void NewChunkEntered(Vector2Int chunk)
+    }
+
+    private void CameraEnteredNewChunk(Vector2Int chunk)
     {
         // Get the current chunk object
         Chunk current = chunkManager.GetChunk(chunk);
