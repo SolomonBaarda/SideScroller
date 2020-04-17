@@ -81,6 +81,7 @@ public class MovingCamera : MonoBehaviour
             // Set position if following 
             if (direction.Equals(Direction.Following))
             {
+                // Get the chunk closest to the player if we can
                 Chunk c = currentChunk;
                 if (player != null)
                 {
@@ -88,7 +89,8 @@ public class MovingCamera : MonoBehaviour
                 }
                 position = GetClosestPoint(following.transform.position, c);
             }
-            else
+            // Move along terrain camera path
+            else if (direction.Equals(Direction.Terrain))
             {
                 // Update distance
                 distanceFromOrigin += speed * Time.deltaTime;
@@ -99,8 +101,10 @@ public class MovingCamera : MonoBehaviour
                 // Get the position in the chunk
                 CameraPath path = GetClosestCameraPath(following.transform.position, currentChunk);
 
-                //distanceInChunk = Mathf.Clamp(distanceFromOrigin, 0, path.GetPathLength());
+                // Clamp the value
+                distanceInChunk = Mathf.Clamp(distanceInChunk, 0, path.GetPathLength());
 
+                // Get the position in the chunk
                 position = path.GetPositionAtDistance(distanceInChunk);
             }
 
