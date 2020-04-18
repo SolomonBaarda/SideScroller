@@ -11,7 +11,8 @@ public class SampleTerrainManager : MonoBehaviour
 
     [Header("Dev Tile references")]
     public Tile dev_entryTile;
-    public Tile dev_exitHorizontal;
+    public Tile dev_exitRight;
+    public Tile dev_exitLeft;
     public Tile dev_exitUp;
     public Tile dev_exitDown;
 

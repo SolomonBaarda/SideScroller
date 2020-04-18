@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
     private ItemManager itemManager;
 
     [Header("Game Settings")]
-    public float gameTimeSeconds; 
+    public float gameTimeSeconds;
     private bool isGameOver;
 
     private void Awake()
@@ -115,7 +115,6 @@ public class GameManager : MonoBehaviour
         catch (Exception)
         {
         }
-
     }
 
     private void CameraEnteredNewChunk(Vector2Int chunk)
@@ -129,8 +128,9 @@ public class GameManager : MonoBehaviour
             movingCamera.UpdateCurrentChunk(current);
 
             // See if any of the neighbour chunks exists
-            foreach (Chunk.ChunkExit exit in current.exits)
+            foreach (TerrainManager.TerrainChunk.Exit exit in current.exits)
             {
+                Debug.Log(exit.newChunkID);
                 try
                 {
                     // Chunk already exists, do nothing
@@ -142,13 +142,20 @@ public class GameManager : MonoBehaviour
                     // Calculate how far along the camera path the new chunk is
                     float distanceFromOrigin = current.CalculateNewChunkDistanceFromOrigin(MovingCamera.GetClosestCameraPath(exit.exitPositionWorld, current));
                     // Generate the new chunk
-                    terrainManager.Generate(exit.newChunkPositionWorld, exit.newChunkDirection, distanceFromOrigin, exit.newChunkID);
+                    terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, distanceFromOrigin, exit.newChunkID);
                 }
             }
         }
         catch (Exception)
         {
         }
+    }
+
+
+
+    private void CheckGenerateNew(Vector2Int chunk)
+    {
+        // TODO MOVE TO HERE
     }
 
 

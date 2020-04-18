@@ -88,7 +88,7 @@ public class SampleTerrain : MonoBehaviour
         FindEntryTilePosition(ref entryTilePositionLocal);
 
         entryTilePosition = Vector2Int.zero;
-        FindExitTilePosition(ref exitTilePositions);
+        FindExitTilePositions(ref exitTilePositions);
 
         // Load all the tiles in the tilemaps into the objects
         LoadTiles(tilemap_wall, ref wall);
@@ -188,7 +188,7 @@ public class SampleTerrain : MonoBehaviour
     /// <summary>
     /// Must be called AFTER entry position has been assigned
     /// </summary>
-    private void FindExitTilePosition(ref List<SampleTerrainExit> tiles)
+    private void FindExitTilePositions(ref List<SampleTerrainExit> tiles)
     {
         tiles.Clear();
 
@@ -199,19 +199,34 @@ public class SampleTerrain : MonoBehaviour
             Vector3Int current = p.Current;
             if (tilemap_dev.GetTile(current) != null)
             {
+                ExitDirection direction;
+
                 // Check if it is an exit tile type
-                if (tilemap_dev.GetTile(current).Equals(manager.dev_exitHorizontal))
+                if (tilemap_dev.GetTile(current).Equals(manager.dev_exitLeft))
                 {
-                    tiles.Add(new SampleTerrainExit(ExitDirection.Horizontal, new Vector2Int(current.x, current.y) - entryTilePositionLocal));
+                    direction = ExitDirection.Left;
+                }
+                else if (tilemap_dev.GetTile(current).Equals(manager.dev_exitRight))
+                {
+                    direction = ExitDirection.Right;
                 }
                 else if (tilemap_dev.GetTile(current).Equals(manager.dev_exitUp))
                 {
-                    tiles.Add(new SampleTerrainExit(ExitDirection.Up, new Vector2Int(current.x, current.y) - entryTilePositionLocal));
+                    direction = ExitDirection.Up;
                 }
                 else if (tilemap_dev.GetTile(current).Equals(manager.dev_exitDown))
                 {
-                    tiles.Add(new SampleTerrainExit(ExitDirection.Down, new Vector2Int(current.x, current.y) - entryTilePositionLocal));
+                    direction = ExitDirection.Down;
                 }
+                // Do nothing if not (for now)
+                else
+                {
+                    continue;
+                }
+
+                // Add the new exit
+                Vector2Int tile = new Vector2Int(current.x, current.y) - entryTilePositionLocal;
+                tiles.Add(new SampleTerrainExit(direction, tile));
             }
         }
 
@@ -299,7 +314,8 @@ public class SampleTerrain : MonoBehaviour
 
     public enum ExitDirection
     {
-        Horizontal,
+        Left,
+        Right,
         Up,
         Down
     }
