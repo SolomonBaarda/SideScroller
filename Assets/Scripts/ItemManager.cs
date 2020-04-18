@@ -5,6 +5,8 @@ using UnityEngine.Events;
 
 public class ItemManager : MonoBehaviour
 {
+    //public static UnityAction<> OnGenerateItems;
+
     public static UnityAction<Vector2> OnPotBroken;
     public static UnityAction<Vector2> OnChestOpened;
 
@@ -21,14 +23,18 @@ public class ItemManager : MonoBehaviour
     }
 
 
+    private void GenerateLootForChunk()
+    {
+
+    }
+
 
     private void SpawnRandomLoot(Vector2 pos, GameObject[] loot)
     {
         int index = Mathf.FloorToInt(random.Next(0, loot.Length));
 
-        GameObject g = Instantiate(loot[index]) as GameObject;
+        GameObject g = Instantiate(loot[index], transform);
         g.transform.position = pos;
-        g.transform.SetParent(transform);
     }
 
 

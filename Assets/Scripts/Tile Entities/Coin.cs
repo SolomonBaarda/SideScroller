@@ -16,7 +16,7 @@ public class Coin : MonoBehaviour
         StartCoroutine(InitialDisable());
     }
 
-    public void OnTriggerStay2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         // Player is colliding with this object 
         if (collision.gameObject.layer == LayerMask.NameToLayer(Player.PLAYER))
@@ -29,7 +29,7 @@ public class Coin : MonoBehaviour
         }
     }
 
-    IEnumerator InitialDisable()
+    private IEnumerator InitialDisable()
     {
         yield return new WaitForSeconds(initialSetup);
         GetComponent<BoxCollider2D>().enabled = true;

@@ -7,9 +7,13 @@ public class Chest : MonoBehaviour
     public enum ChestState { Locked, Closed, Open };
     public ChestState state;
 
+    public enum ChestContents { Full, Empty };
+    public ChestContents contents;
+
     private void Awake()
     {
         state = ChestState.Closed;
+        contents = ChestContents.Full;
     }
 
     // Update is called once per frame
@@ -20,7 +24,7 @@ public class Chest : MonoBehaviour
         a.SetBool("isOpen", state.Equals(ChestState.Open));
     }
 
-    public void OnTriggerStay2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         // Player is colliding with this object 
         if (collision.gameObject.layer == LayerMask.NameToLayer(Player.PLAYER))
@@ -50,6 +54,11 @@ public class Chest : MonoBehaviour
         if (state.Equals(ChestState.Closed))
         {
             state = ChestState.Open;
+            if (contents.Equals(ChestContents.Full))
+            {
+                contents = ChestContents.Empty;
+                ItemManager.OnChestOpened.Invoke(transform.position);
+            }
         }
     }
 

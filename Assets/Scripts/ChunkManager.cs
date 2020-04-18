@@ -27,7 +27,7 @@ public class ChunkManager : MonoBehaviour
     }
 
 
-    public void GenerateNewChunk(TerrainManager.TerrainChunk terrainChunk)
+    private void GenerateNewChunk(TerrainManager.TerrainChunk terrainChunk)
     {
         // Create a new chunk game object 
         // This is used for the player, camera path etc
@@ -64,7 +64,6 @@ public class ChunkManager : MonoBehaviour
 
         return chunk;
     }
-
 
 
 }

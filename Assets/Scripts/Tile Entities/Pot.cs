@@ -7,12 +7,12 @@ public class Pot : MonoBehaviour
     private enum PotState { Whole, Broken };
     private PotState state;
 
-    private void Start()
+    private void Awake()
     {
         state = PotState.Whole;
     }
 
-    public void OnTriggerStay2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         // Player is colliding with this object 
         if (collision.gameObject.layer == LayerMask.NameToLayer(Player.PLAYER))
@@ -29,11 +29,7 @@ public class Pot : MonoBehaviour
                     Animator a = GetComponent<Animator>();
                     a.SetBool("isBroken", state.Equals(PotState.Broken));
 
-                    Vector2 pos = new Vector2();
-                    pos.x = transform.position.x;
-                    pos.y = transform.position.y;
-
-                    ItemManager.OnPotBroken.Invoke(pos);
+                    ItemManager.OnPotBroken.Invoke(transform.position);
                 }
 
             }
