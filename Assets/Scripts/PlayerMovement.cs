@@ -23,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
 
     public class Keys
     {
-        public KeyCode left, right, up, down, jump, interact, slow, escape;
+        public KeyCode left, right, up, down, jump, interact1, interact2, slow, escape;
     }
 
 
@@ -46,7 +46,8 @@ public class PlayerMovement : MonoBehaviour
         keys.up = KeyCode.W;
         keys.down = KeyCode.S;
         keys.jump = KeyCode.Space;
-        keys.interact = KeyCode.E;
+        keys.interact1 = KeyCode.E;
+        keys.interact2 = KeyCode.Q;
         keys.slow = KeyCode.LeftShift;
         keys.escape = KeyCode.Escape;
 

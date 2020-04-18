@@ -71,6 +71,12 @@ public class MovingCamera : MonoBehaviour
     }
 
 
+    private float GetDistanceFromOrigin(Vector3 point, Chunk chunk)
+    {
+        return chunk.distanceFromOrigin + GetClosestCameraPath(point, chunk).GetLengthAtPoint(point);
+    }
+
+
     private void Move()
     {
         // Don't move if stationary
@@ -87,7 +93,10 @@ public class MovingCamera : MonoBehaviour
                 {
                     c = player.currentChunk;
                 }
+                // Update the position and update the distance along the path
                 position = GetClosestPoint(following.transform.position, c);
+                distanceFromOrigin = GetDistanceFromOrigin(transform.position, currentChunk);
+
             }
             // Move along terrain camera path
             else if (direction.Equals(Direction.Terrain))

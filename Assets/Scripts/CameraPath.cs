@@ -37,7 +37,10 @@ public class CameraPath : MonoBehaviour
         return path.length;
     }
 
-
+    public float GetLengthAtPoint(Vector3 point)
+    {
+        return path.GetClosestDistanceAlongPath(GetClosestPosition(point));
+    }
 
     public Vector3 GetPositionAtDistance(float distance)
     {

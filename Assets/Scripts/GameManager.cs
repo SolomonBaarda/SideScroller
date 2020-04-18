@@ -68,9 +68,24 @@ public class GameManager : MonoBehaviour
             gameTimeSeconds += Time.deltaTime;
         }
 
-        if (Input.GetKey(player.controller.keys.escape))
+        if (Input.GetKeyDown(player.controller.keys.escape))
         {
             Application.Quit();
+        }
+        if (Input.GetKeyDown(player.controller.keys.interact2))
+        {
+            switch (movingCamera.direction)
+            {
+                case MovingCamera.Direction.Terrain:
+                    movingCamera.direction = MovingCamera.Direction.Following;
+                    break;
+                case MovingCamera.Direction.Stationary:
+                    movingCamera.direction = MovingCamera.Direction.Terrain;
+                    break;
+                case MovingCamera.Direction.Following:
+                    movingCamera.direction = MovingCamera.Direction.Stationary;
+                    break;
+            }
         }
     }
 
