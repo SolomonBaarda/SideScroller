@@ -6,20 +6,23 @@ public class Coin : MonoBehaviour
 {
     public float initialSetup = 0.25f;
 
-    private void Start()
+    private void Awake()
     {
         GetComponent<BoxCollider2D>().enabled = false;
+    }
+
+    private void Start()
+    {
         StartCoroutine(InitialDisable());
     }
 
     public void OnTriggerStay2D(Collider2D collision)
     {
         // Player is colliding with this object 
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer(Player.PLAYER))
         {
             // Reference to player and controller script
-            Transform parent = collision.gameObject.transform.parent;
-            Player p = parent.GetComponent<Player>();
+            Player p = collision.transform.root.GetComponent<Player>();
 
             p.PickedUpCoin();
             Destroy(gameObject);

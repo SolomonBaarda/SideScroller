@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Pot : MonoBehaviour
 {
-    public enum PotState { Whole, Broken };
-    public PotState state;
+    private enum PotState { Whole, Broken };
+    private PotState state;
 
     private void Start()
     {
@@ -15,11 +15,10 @@ public class Pot : MonoBehaviour
     public void OnTriggerStay2D(Collider2D collision)
     {
         // Player is colliding with this object 
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer(Player.PLAYER))
         {
             // Reference to player and controller script
-            Transform parent = collision.gameObject.transform.parent;
-            Player p = parent.GetComponent<Player>();
+            Player p = collision.transform.root.GetComponent<Player>();
 
             // Open the chest 
             if (Input.GetKeyDown(p.controller.keys.interact1))

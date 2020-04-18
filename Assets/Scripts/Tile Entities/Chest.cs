@@ -7,8 +7,7 @@ public class Chest : MonoBehaviour
     public enum ChestState { Locked, Closed, Open };
     public ChestState state;
 
-    // Start is called before the first frame update
-    private void Start()
+    private void Awake()
     {
         state = ChestState.Closed;
     }
@@ -24,11 +23,10 @@ public class Chest : MonoBehaviour
     public void OnTriggerStay2D(Collider2D collision)
     {
         // Player is colliding with this object 
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer(Player.PLAYER))
         {
             // Reference to player and controller script
-            Transform parent = collision.gameObject.transform.parent;
-            Player p = parent.GetComponent<Player>();
+            Player p = collision.transform.root.GetComponent<Player>();
 
             // Open the chest 
             if (Input.GetKeyDown(p.controller.keys.interact1))
@@ -46,12 +44,12 @@ public class Chest : MonoBehaviour
         }
     }
 
+
     public void Open()
     {
         if (state.Equals(ChestState.Closed))
         {
             state = ChestState.Open;
-            Debug.Log("open");
         }
     }
 
@@ -60,9 +58,9 @@ public class Chest : MonoBehaviour
         if (state.Equals(ChestState.Open))
         {
             state = ChestState.Closed;
-            Debug.Log("open");
         }
     }
+
 
     public void Unlock()
     {

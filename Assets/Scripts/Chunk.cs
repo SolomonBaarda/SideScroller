@@ -144,7 +144,7 @@ public class Chunk : MonoBehaviour
     private void OnTriggerStay2D(Collider2D collision)
     {
         // Player has entered the chunk
-        if (collision.gameObject.layer.Equals(LayerMask.NameToLayer("Player")))
+        if (collision.gameObject.layer.Equals(LayerMask.NameToLayer(Player.PLAYER)))
         {
             try
             {

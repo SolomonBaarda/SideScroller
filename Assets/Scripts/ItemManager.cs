@@ -8,24 +8,23 @@ public class ItemManager : MonoBehaviour
     public static UnityAction<Vector2> OnPotBroken;
     public static UnityAction<Vector2> OnChestOpened;
 
-    public string seed;
+    private System.Random random;
 
-    public GameObject[] lootTable;
+    public GameObject[] lootTablePrefabs;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         OnPotBroken += PotBroken;
         OnChestOpened += ChestOpened;
+
+        random = new System.Random(0);
     }
 
 
 
     private void SpawnRandomLoot(Vector2 pos, GameObject[] loot)
     {
-        System.Random r = new System.Random(seed.GetHashCode());
-
-        int index = Mathf.FloorToInt(r.Next(0, loot.Length));
+        int index = Mathf.FloorToInt(random.Next(0, loot.Length));
 
         GameObject g = Instantiate(loot[index]) as GameObject;
         g.transform.position = pos;
@@ -35,11 +34,11 @@ public class ItemManager : MonoBehaviour
 
     private void PotBroken(Vector2 pos)
     {
-        SpawnRandomLoot(pos, lootTable);
+        SpawnRandomLoot(pos, lootTablePrefabs);
     }
 
     private void ChestOpened(Vector2 pos)
     {
-        SpawnRandomLoot(pos, lootTable);
+        SpawnRandomLoot(pos, lootTablePrefabs);
     }
 }

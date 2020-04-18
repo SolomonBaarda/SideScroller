@@ -9,25 +9,29 @@ public class GameManager : MonoBehaviour
 {
     public static UnityAction OnGameStart;
 
-    [Header("Player Reference")]
+    [Header("Player")]
     public GameObject playerGameObject;
     private Player player;
 
-    [Header("Camera Reference")]
+    [Header("Camera")]
     public GameObject cameraGameObject;
     private MovingCamera movingCamera;
 
-    [Header("Terrain Manager Reference")]
+    [Header("Terrain Manager")]
     public GameObject terrainManagerObject;
     private TerrainManager terrainManager;
 
-    [Header("Chunk Manager Reference")]
+    [Header("Chunk Manager")]
     public GameObject chunkManagerObject;
     private ChunkManager chunkManager;
 
+    [Header("Item Manager")]
+    public GameObject itemManagerObject;
+    private ItemManager itemManager;
+
     [Header("Game Settings")]
+    public float gameTimeSeconds; 
     private bool isGameOver;
-    public float gameTimeSeconds;
 
     private void Awake()
     {
@@ -36,6 +40,7 @@ public class GameManager : MonoBehaviour
         movingCamera = cameraGameObject.GetComponent<MovingCamera>();
         terrainManager = terrainManagerObject.GetComponent<TerrainManager>();
         chunkManager = chunkManagerObject.GetComponent<ChunkManager>();
+        itemManager = itemManagerObject.GetComponent<ItemManager>();
 
         // Add event calls 
         TerrainManager.OnTerrainGenerated += StartGame;
