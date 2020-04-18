@@ -155,7 +155,7 @@ public class SampleTerrain : MonoBehaviour
         {
             Vector3Int current = p.Current;
             // Get the tile
-            Tile t = (Tile)tilemap.GetTile(current);
+            TileBase t = tilemap.GetTile(current);
             if (t != null)
             {
                 // Add it to the list of tiles for that layer
@@ -239,10 +239,10 @@ public class SampleTerrain : MonoBehaviour
         /// </summary>
         public class SampleTerrainTile
         {
-            public Tile tileType;
+            public TileBase tileType;
             public Vector2Int position;
 
-            public SampleTerrainTile(Tile tileType, Vector2Int position)
+            public SampleTerrainTile(TileBase tileType, Vector2Int position)
             {
                 this.tileType = tileType;
                 this.position = position;
