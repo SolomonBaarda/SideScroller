@@ -92,6 +92,15 @@ public class GameManager : MonoBehaviour
                     break;
             }
         }
+
+        // Generate any new chunks if necessary
+        /*
+        List<Chunk> nearbyChunksToCamera = movingCamera.GetAllNearbyChunks();
+        foreach (Chunk c in nearbyChunksToCamera)
+        {
+            CheckGenerateNewChunks(c);
+        }
+        */
     }
 
     private void StartGame()
@@ -105,53 +114,47 @@ public class GameManager : MonoBehaviour
     }
 
 
-    private void PlayerEnteredNewChunk(Vector2Int chunk)
+    private void PlayerEnteredNewChunk(Vector2Int chunkID)
     {
         try
         {
-            Chunk c = chunkManager.GetChunk(chunk);
+            Chunk c = chunkManager.GetChunk(chunkID);
             player.SetCurrentChunk(c);
+
+            CheckGenerateNewChunks(c);
         }
         catch (Exception)
         {
         }
     }
 
-    private void CameraEnteredNewChunk(Vector2Int chunk)
+
+    private void CameraEnteredNewChunk(Vector2Int chunkID)
     {
+        CheckGenerateNewChunks(chunkManager.GetChunk(chunkID));
+    }
 
-            // Get the current chunk object
-            Chunk current = chunkManager.GetChunk(chunk);
 
-            // Pass it to the camera
-            movingCamera.UpdateCurrentChunk(current);
 
-            // See if any of the neighbour chunks exists
-            foreach (TerrainManager.TerrainChunk.Exit exit in current.exits)
+    private void CheckGenerateNewChunks(Chunk current)
+    {
+        // See if any of the neighbour chunks exists
+        foreach (TerrainManager.TerrainChunk.Exit exit in current.exits)
+        {
+            try
             {
-                try
-                {
-                    // Chunk already exists, do nothing
-                    Chunk neighbour = chunkManager.GetChunk(exit.newChunkID);
-                }
-                catch (Exception)
-                {
-                    // Does not exist, so generate it
-                    // Calculate how far along the camera path the new chunk is
-                    float distanceFromOrigin = current.CalculateNewChunkDistanceFromOrigin(MovingCamera.GetClosestCameraPath(exit.exitPositionWorld, current));
-                    // Generate the new chunk
-                    terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, distanceFromOrigin, exit.newChunkID);
-                }
+                // Chunk already exists, do nothing
+                Chunk neighbour = chunkManager.GetChunk(exit.newChunkID);
             }
-
+            catch (Exception)
+            {
+                // Does not exist, so generate it
+                // Calculate how far along the camera path the new chunk is
+                float distanceFromOrigin = current.CalculateNewChunkDistanceFromOrigin(MovingCamera.GetClosestCameraPath(exit.exitPositionWorld, current));
+                // Generate the new chunk
+                terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, distanceFromOrigin, exit.newChunkID);
+            }
+        }
     }
-
-
-
-    private void CheckGenerateNew(Vector2Int chunk)
-    {
-        // TODO MOVE TO HERE
-    }
-
 
 }

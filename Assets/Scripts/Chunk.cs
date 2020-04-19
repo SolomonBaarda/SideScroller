@@ -154,26 +154,8 @@ public class Chunk : MonoBehaviour
                 ChunkManager.OnPlayerEnterChunk.Invoke(chunkID);
             }
         }
-        // Camera in chunk
-        if (collision.gameObject.layer.Equals(LayerMask.NameToLayer("Camera")))
-        {
-            try
-            {
-                Vector2Int cameraChunk = collision.transform.root.GetComponent<MovingCamera>().GetCurrentChunk();
-
-                // Entered for the first time 
-                if (cameraChunk.x != chunkID.x || cameraChunk.y != chunkID.y)
-                {
-                    ChunkManager.OnCameraEnterChunk.Invoke(chunkID);
-                }
-            }
-            // Current chunk may have not been defined
-            catch (System.Exception)
-            {
-                ChunkManager.OnCameraEnterChunk.Invoke(chunkID);
-            }
-        }
     }
+
 
     private void OnDestroy()
     {
@@ -193,7 +175,10 @@ public class Chunk : MonoBehaviour
         Gizmos.DrawLine(b.bounds.min, j);
         Gizmos.DrawLine(b.bounds.max, i);
         Gizmos.DrawLine(b.bounds.max, j);
+    }
 
+    private void OnDrawGizmosSelected()
+    {
         // Centre
         Gizmos.color = Color.white;
         Gizmos.DrawCube(transform.position, 0.5f * Vector2.one);
@@ -210,7 +195,6 @@ public class Chunk : MonoBehaviour
             Gizmos.color = Color.cyan;
             Gizmos.DrawCube(exit.newChunkPositionWorld, 0.5f * Vector2.one);
         }
-
     }
 
 
