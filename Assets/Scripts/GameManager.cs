@@ -43,8 +43,8 @@ public class GameManager : MonoBehaviour
         itemManager = itemManagerObject.GetComponent<ItemManager>();
 
         // Add event calls 
-        TerrainManager.OnTerrainGenerated += StartGame;
-        //Menu.OnMenuClose += StartGame;
+        //TerrainManager.OnTerrainGenerated += StartGame;
+        Menu.OnMenuClose += StartGame;
 
         ChunkManager.OnCameraEnterChunk += CameraEnteredNewChunk;
         ChunkManager.OnPlayerEnterChunk += PlayerEnteredNewChunk;
@@ -119,8 +119,7 @@ public class GameManager : MonoBehaviour
 
     private void CameraEnteredNewChunk(Vector2Int chunk)
     {
-        try
-        {
+
             // Get the current chunk object
             Chunk current = chunkManager.GetChunk(chunk);
 
@@ -130,7 +129,6 @@ public class GameManager : MonoBehaviour
             // See if any of the neighbour chunks exists
             foreach (TerrainManager.TerrainChunk.Exit exit in current.exits)
             {
-                Debug.Log(exit.newChunkID);
                 try
                 {
                     // Chunk already exists, do nothing
@@ -145,10 +143,7 @@ public class GameManager : MonoBehaviour
                     terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, distanceFromOrigin, exit.newChunkID);
                 }
             }
-        }
-        catch (Exception)
-        {
-        }
+
     }
 
 

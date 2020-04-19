@@ -10,7 +10,11 @@ public class SampleTerrainManager : MonoBehaviour
     public SampleTerrain startingArea;
 
     [Header("Dev Tile references")]
-    public Tile dev_entryTile;
+    public Tile dev_entryRight;
+    public Tile dev_entryLeft;
+    public Tile dev_entryUp;
+    public Tile dev_entryDown;
+    [Space(8)]
     public Tile dev_exitRight;
     public Tile dev_exitLeft;
     public Tile dev_exitUp;
@@ -22,10 +26,15 @@ public class SampleTerrainManager : MonoBehaviour
         // Load terrain
         Transform terrain = transform.Find("Terrain");
         allSamples = terrain.GetComponentsInChildren<SampleTerrain>();
+        foreach (SampleTerrain t in allSamples)
+        {
+            t.LoadSample();
+        }
 
 
         // Load spawn
         Transform spawn = transform.Find("Spawn");
         startingArea = spawn.GetComponentInChildren<SampleTerrain>();
+        startingArea.LoadSample();
     }
 }

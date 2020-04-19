@@ -117,7 +117,7 @@ public class TerrainManager : MonoBehaviour
         Vector3 tileLeft = grid.CellToWorld(new Vector3Int(initialTile.x - 1, initialTile.y, 0));
 
         // Generate the spawn room
-        GenerateFromSampleTerrain(initialTile, TerrainDirection.Both, sampleTerrainManager.startingArea, 0, Vector2Int.zero);
+        GenerateFromSampleTerrain(initialTile, false, TerrainDirection.Both, sampleTerrainManager.startingArea, 0, Vector2Int.zero);
 
         after = DateTime.Now;
         time = after - before;
@@ -127,47 +127,59 @@ public class TerrainManager : MonoBehaviour
     }
 
 
+    private bool IsValidDirection(TerrainDirection directionToGenerate, TerrainDirection sampleTerrainDirection)
+    {
+        // Terrain is already the correct direction
+        return directionToGenerate.Equals(sampleTerrainDirection)
+            // Terrain can go both ways
+            || (directionToGenerate.Equals(TerrainDirection.Both) && (sampleTerrainDirection.Equals(TerrainDirection.Left) || (sampleTerrainDirection.Equals(TerrainDirection.Right))))
+            // Terrain will need to be flipped
+            || (directionToGenerate.Equals(TerrainDirection.Left) && sampleTerrainDirection.Equals(TerrainDirection.Right))
+            || (directionToGenerate.Equals(TerrainDirection.Right) && sampleTerrainDirection.Equals(TerrainDirection.Left));
+    }
+
+
     public void Generate(Vector3 startTileWorldSpace, TerrainDirection directionToGenerate, float distanceFromOrigin, Vector2Int chunkID)
     {
-        // Randomly choose a Sample Terrain to generate
-        int index;
-        SampleTerrain chosen;
-        int tries = 0;
-        do
+        // Get a list of only the valid sample terrain
+        List<SampleTerrain> allValidSamples = new List<SampleTerrain>();
+        foreach (SampleTerrain t in sampleTerrainManager.allSamples)
         {
-            index = random.Next(0, sampleTerrainManager.allSamples.Length);
-            chosen = sampleTerrainManager.allSamples[index];
-            tries++;
-
-            if (tries > sampleTerrainManager.allSamples.Length)
+            if (IsValidDirection(directionToGenerate, t.direction))
             {
-                throw new Exception("Could not find Sample Terrain with correct direction for new chunk " + chunkID);
+                allValidSamples.Add(t);
             }
         }
-        // Ensure the direction is correct
-        while (!chosen.direction.Equals(directionToGenerate));
 
+        Debug.Log("all samples " + sampleTerrainManager.allSamples.Length);
+        Debug.Log("valid samples " + allValidSamples.Count);
 
+        if(allValidSamples.Count.Equals(0))
+        {
+            throw new Exception("No valid Sample Terrain for generation direction " + directionToGenerate);
+        }
+
+        // Randomly choose one to generate
+        SampleTerrain[] validSamples = allValidSamples.ToArray();
+        int index = random.Next(0, validSamples.Length);
+        SampleTerrain chosen = validSamples[index];
+        bool flipAxisX = false;
+        if((directionToGenerate.Equals(TerrainDirection.Left) && chosen.direction.Equals(TerrainDirection.Right))
+            || (directionToGenerate.Equals(TerrainDirection.Right) && chosen.direction.Equals(TerrainDirection.Left))) {
+            flipAxisX = true;
+        }
 
         Vector3Int entryPos = grid.WorldToCell(startTileWorldSpace);
 
         // Generate the new chunk and update the tile reference
-        GenerateFromSampleTerrain(new Vector2Int(entryPos.x, entryPos.y), directionToGenerate, chosen, distanceFromOrigin, chunkID);
+        GenerateFromSampleTerrain(new Vector2Int(entryPos.x, entryPos.y), flipAxisX, directionToGenerate, chosen, distanceFromOrigin, chunkID);
     }
 
 
 
 
-    private void GenerateFromSampleTerrain(Vector2Int entryTile, TerrainDirection directionToGenerate, SampleTerrain terrain, float distanceFromOrigin, Vector2Int chunkID)
+    private void GenerateFromSampleTerrain(Vector2Int entryTile, bool flipAxisX, TerrainDirection directionToGenerate, SampleTerrain terrain, float distanceFromOrigin, Vector2Int chunkID)
     {
-        bool flipAxisX = false;
-
-        // Check if we need to invert the x pos of the tile
-        if (!directionToGenerate.Equals(terrain.direction))
-        {
-            flipAxisX = true;
-        }
-
         // Copy the terrain, each layer at a time
         CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wall, ref wall);
         CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wallDetail, ref wallDetail);

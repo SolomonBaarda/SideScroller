@@ -33,7 +33,7 @@ public class SampleTerrain : MonoBehaviour
 
     public SampleTerrainType terrainType;
 
-    private void Awake()
+    public void LoadSample()
     {
         manager = transform.root.GetComponent<SampleTerrainManager>();
 
@@ -96,11 +96,6 @@ public class SampleTerrain : MonoBehaviour
         LoadTiles(tilemap_background, ref background);
         LoadTiles(tilemap_hazard, ref hazard);
         LoadTiles(tilemap_ground, ref ground);
-
-        if (direction.Equals(null))
-        {
-            throw new Exception("Sample Terrain direction has not been defined.");
-        }
     }
 
 
@@ -175,11 +170,30 @@ public class SampleTerrain : MonoBehaviour
             if (tilemap_dev.GetTile(current) != null)
             {
                 // Check if the tile matches the entry tile type
-                if (tilemap_dev.GetTile(current).Equals(manager.dev_entryTile))
+                if (tilemap_dev.GetTile(current).Equals(manager.dev_entryLeft))
                 {
-                    tile = new Vector2Int(current.x, current.y);
-                    return;
+                    direction = TerrainManager.TerrainDirection.Left;
                 }
+                else if (tilemap_dev.GetTile(current).Equals(manager.dev_entryRight))
+                {
+                    direction = TerrainManager.TerrainDirection.Right;
+                }
+                else if (tilemap_dev.GetTile(current).Equals(manager.dev_entryUp))
+                {
+                    direction = TerrainManager.TerrainDirection.Up;
+                }
+                else if (tilemap_dev.GetTile(current).Equals(manager.dev_entryDown))
+                {
+                    direction = TerrainManager.TerrainDirection.Down;
+                }
+                else
+                {
+                    // Do nothing
+                    continue;
+                }
+                // Set the tile and return 
+                tile = new Vector2Int(current.x, current.y);
+                return;
             }
         }
         throw new Exception("Entry tile could not be found in SampleTerrain.");
