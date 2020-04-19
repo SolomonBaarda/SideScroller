@@ -99,7 +99,7 @@ public class SampleTerrain : MonoBehaviour
     }
 
 
-    public Vector3 GetTileSize()
+    public Vector2 GetTileSize()
     {
         return grid.cellSize;
     }

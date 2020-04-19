@@ -113,9 +113,6 @@ public class TerrainManager : MonoBehaviour
         ClearAllTiles();
         initialTile = GenerateInitialTile();
 
-        Vector3 tileRight = grid.CellToWorld(new Vector3Int(initialTile.x + 1, initialTile.y, 0));
-        Vector3 tileLeft = grid.CellToWorld(new Vector3Int(initialTile.x - 1, initialTile.y, 0));
-
         // Generate the spawn room
         GenerateFromSampleTerrain(initialTile, false, TerrainDirection.Both, sampleTerrainManager.startingArea, 0, Vector2Int.zero);
 
@@ -139,7 +136,7 @@ public class TerrainManager : MonoBehaviour
     }
 
 
-    public void Generate(Vector3 startTileWorldSpace, TerrainDirection directionToGenerate, float distanceFromOrigin, Vector2Int chunkID)
+    public void Generate(Vector2 startTileWorldSpace, TerrainDirection directionToGenerate, float distanceFromOrigin, Vector2Int chunkID)
     {
         // Get a list of only the valid sample terrain
         List<SampleTerrain> allValidSamples = new List<SampleTerrain>();
@@ -202,11 +199,11 @@ public class TerrainManager : MonoBehaviour
 
         // Calculate some important values
         SampleTerrain.GroundBounds b = terrain.GetGroundBounds();
-        Vector3 entryPositionWorld = grid.CellToWorld(new Vector3Int(entryTile.x, entryTile.y, 0)) + (grid.cellSize / 2);
+        Vector2 entryPositionWorld = grid.CellToWorld(new Vector3Int(entryTile.x, entryTile.y, 0)) + (grid.cellSize / 2);
 
         // Centre position
         Vector2Int centreTile = entryTile + new Vector2Int(b.minTile.x * invert, b.minTile.y) + new Vector2Int(b.boundsTile.x * invert / 2, b.boundsTile.y / 2);
-        Vector3 centre = grid.CellToWorld(new Vector3Int(centreTile.x, centreTile.y, 0));
+        Vector2 centre = grid.CellToWorld(new Vector3Int(centreTile.x, centreTile.y, 0));
         // Need to add half a cell for odd numbers
         if (b.boundsTile.x % 2 == 1)
         {
@@ -224,7 +221,7 @@ public class TerrainManager : MonoBehaviour
         {
             // Calculate where the exit should be
             Vector2Int exitTile = entryTile + new Vector2Int(invert * sampleExit.exitPositionRelative.x, sampleExit.exitPositionRelative.y);
-            Vector3 exitPositionWorld = grid.CellToWorld(new Vector3Int(exitTile.x, exitTile.y, 0)) + (grid.cellSize / 2);
+            Vector2 exitPositionWorld = grid.CellToWorld(new Vector3Int(exitTile.x, exitTile.y, 0)) + (grid.cellSize / 2);
 
             Vector2Int newChunkTile = exitTile;
             Vector2Int newChunkID = chunkID;
@@ -260,7 +257,7 @@ public class TerrainManager : MonoBehaviour
             }
 
             // World position of the start of the new chunk
-            Vector3 newChunkPositionWorld = grid.CellToWorld(new Vector3Int(newChunkTile.x, newChunkTile.y, 0)) + (grid.cellSize / 2);
+            Vector2 newChunkPositionWorld = grid.CellToWorld(new Vector3Int(newChunkTile.x, newChunkTile.y, 0)) + (grid.cellSize / 2);
 
             // Add the exit to list of exits for this chunk
             exits.Add(new TerrainChunk.Exit(newChunkDirection, exitPositionWorld, newChunkPositionWorld, newChunkID));
@@ -302,7 +299,7 @@ public class TerrainManager : MonoBehaviour
     }
 
 
-    public Vector3 GetInitialTileWorldPositionForPlayer()
+    public Vector2 GetInitialTileWorldPositionForPlayer()
     {
         // Get the initial position + (half a cell, 1 cell, 0) to point to the top, middle of the cell
         return ground.CellToWorld(new Vector3Int(initialTile.x, initialTile.y, ground.cellBounds.z)) + new Vector3(ground.cellSize.x / 2, ground.cellSize.y, 0);
@@ -345,20 +342,20 @@ public class TerrainManager : MonoBehaviour
     public class TerrainChunk
     {
         public Vector2 bounds;
-        public Vector3 cellSize;
-        public Vector3 centre;
+        public Vector2 cellSize;
+        public Vector2 centre;
 
-        public Vector3 enteranceWorldPosition;
+        public Vector2 enteranceWorldPosition;
         public List<Exit> exits;
         public TerrainDirection direction;
         public float distanceFromOrigin;
         public Vector2Int chunkID;
 
-        public Vector3 cameraPathStartWorldSpace;
-        public Vector3 cameraPathEndWorldSpace;
+        public Vector2 cameraPathStartWorldSpace;
+        public Vector2 cameraPathEndWorldSpace;
 
 
-        public TerrainChunk(Vector2 bounds, Vector3 cellSize, Vector3 centre, Vector3 enteranceWorldPosition,
+        public TerrainChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldPosition,
                 List<Exit> exits, TerrainDirection direction, float distanceFromOrigin, Vector2Int chunkID)
         {
             this.bounds = bounds;
@@ -374,12 +371,12 @@ public class TerrainManager : MonoBehaviour
         public class Exit
         {
             public TerrainDirection exitDirection;
-            public Vector3 exitPositionWorld;
+            public Vector2 exitPositionWorld;
 
-            public Vector3 newChunkPositionWorld;
+            public Vector2 newChunkPositionWorld;
             public Vector2Int newChunkID;
 
-            public Exit(TerrainDirection exitDirection, Vector3 exitPositionWorld, Vector3 newChunkPositionWorld, Vector2Int newChunkID)
+            public Exit(TerrainDirection exitDirection, Vector2 exitPositionWorld, Vector2 newChunkPositionWorld, Vector2Int newChunkID)
             {
                 this.exitDirection = exitDirection;
                 this.exitPositionWorld = exitPositionWorld;

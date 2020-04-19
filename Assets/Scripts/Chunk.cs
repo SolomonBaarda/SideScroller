@@ -7,12 +7,12 @@ using PathCreation;
 public class Chunk : MonoBehaviour
 {
     [Header("Chunk Information")]
-    public Vector3 enteranceWorldSpace;
+    public Vector2 enteranceWorldSpace;
     public List<TerrainManager.TerrainChunk.Exit> exits;
 
     public TerrainManager.TerrainDirection direction;
     public Vector2 bounds;
-    private Vector3 cellSize;
+    private Vector2 cellSize;
     public Vector2Int chunkID;
     public float distanceFromOrigin;
 
@@ -25,7 +25,7 @@ public class Chunk : MonoBehaviour
     private Transform itemChild;
     private const float CAMERA_POINT_OFFSET_TILES = 3f;
 
-    public void CreateChunk(Vector2 bounds, Vector3 cellSize, Vector3 centre, Vector3 enteranceWorldSpace,
+    public void CreateChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldSpace,
         List<TerrainManager.TerrainChunk.Exit> exits, TerrainManager.TerrainDirection direction, float distanceFromOrigin, Vector2Int chunkID)
     {
         // Assign variables 
@@ -64,7 +64,7 @@ public class Chunk : MonoBehaviour
         float offset = CAMERA_POINT_OFFSET_TILES * cellSize.y;
 
         // Find the start position
-        Vector3 cameraPathStartWorldSpace = enteranceWorldSpace;
+        Vector2 cameraPathStartWorldSpace = enteranceWorldSpace;
         // Add a little to centre it 
         switch (direction)
         {
@@ -90,7 +90,7 @@ public class Chunk : MonoBehaviour
             CameraPath path = pathObject.GetComponent<CameraPath>();
 
             // Find its end position
-            Vector3 cameraPathEndWorldSpace = exit.exitPositionWorld;
+            Vector2 cameraPathEndWorldSpace = exit.exitPositionWorld;
             cameraPathEndWorldSpace.y += offset;
 
 
@@ -111,7 +111,7 @@ public class Chunk : MonoBehaviour
                     break;
             }
 
-            if(direction.Equals(TerrainManager.TerrainDirection.Both))
+            if (direction.Equals(TerrainManager.TerrainDirection.Both))
             {
                 // Move the start point away from 00
                 // TEMP FIX
@@ -184,8 +184,8 @@ public class Chunk : MonoBehaviour
     {
         BoxCollider2D b = GetComponent<BoxCollider2D>();
 
-        Vector3 i = new Vector3(b.bounds.max.x, b.bounds.min.y, b.bounds.center.z);
-        Vector3 j = new Vector3(b.bounds.min.x, b.bounds.max.y, b.bounds.center.z);
+        Vector2 i = new Vector2(b.bounds.max.x, b.bounds.min.y);
+        Vector2 j = new Vector2(b.bounds.min.x, b.bounds.max.y);
 
         // Draw a red border to the collision area
         Gizmos.color = Color.red;
@@ -196,19 +196,19 @@ public class Chunk : MonoBehaviour
 
         // Centre
         Gizmos.color = Color.white;
-        Gizmos.DrawCube(transform.position, 0.5f * Vector3.one);
+        Gizmos.DrawCube(transform.position, 0.5f * Vector2.one);
 
         // Enterance marker
         Gizmos.color = Color.yellow;
-        Gizmos.DrawCube(enteranceWorldSpace, 0.5f * Vector3.one);
+        Gizmos.DrawCube(enteranceWorldSpace, 0.5f * Vector2.one);
 
         // Exit markers
         foreach (TerrainManager.TerrainChunk.Exit exit in exits)
         {
             Gizmos.color = Color.blue;
-            Gizmos.DrawCube(exit.exitPositionWorld, 0.5f * Vector3.one);
+            Gizmos.DrawCube(exit.exitPositionWorld, 0.5f * Vector2.one);
             Gizmos.color = Color.cyan;
-            Gizmos.DrawCube(exit.newChunkPositionWorld, 0.5f * Vector3.one);
+            Gizmos.DrawCube(exit.newChunkPositionWorld, 0.5f * Vector2.one);
         }
 
     }

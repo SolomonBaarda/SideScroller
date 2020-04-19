@@ -1073,7 +1073,7 @@ GameObject:
   - component: {fileID: 1727077218}
   - component: {fileID: 1727077221}
   - component: {fileID: 1727077220}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Tilemap Hazard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
