@@ -92,13 +92,18 @@ public class MovingCamera : MonoBehaviour
 
     public List<Chunk> GetAllNearbyChunks()
     {
-        return GetAllNearbyChunks(c.ViewportToWorldPoint(new Vector3(0, 0, zoom)), c.ViewportToWorldPoint(new Vector3(1, 1, zoom)));
+        Vector2 bl = c.ViewportToWorldPoint(new Vector3(0, 0, zoom));
+        Vector2 tr = c.ViewportToWorldPoint(new Vector3(1, 1, zoom));
+        Debug.DrawLine(bl, tr);
+
+        return GetAllNearbyChunks(bl, tr);
     }
 
     public List<Chunk> GetAllNearbyChunks(Vector2 bottomLeft, Vector2 topRight)
     {
+        Vector2 size = topRight - bottomLeft;
         // Get a list of colliders
-        Collider2D[] collisions = Physics2D.OverlapBoxAll(bottomLeft, topRight - bottomLeft, 0, LayerMask.GetMask("Chunk"));
+        Collider2D[] collisions = Physics2D.OverlapBoxAll(bottomLeft + (size / 2), size, 0, LayerMask.GetMask("Chunk"));
         List<Chunk> chunks = new List<Chunk>();
 
         // Get each chunk from them

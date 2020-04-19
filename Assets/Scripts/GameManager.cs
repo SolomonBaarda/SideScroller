@@ -92,16 +92,21 @@ public class GameManager : MonoBehaviour
                     break;
             }
         }
+    }
 
+
+
+    private void LateUpdate()
+    {
         // Generate any new chunks if necessary
-        /*
         List<Chunk> nearbyChunksToCamera = movingCamera.GetAllNearbyChunks();
         foreach (Chunk c in nearbyChunksToCamera)
         {
             CheckGenerateNewChunks(c);
         }
-        */
     }
+
+
 
     private void StartGame()
     {
@@ -121,7 +126,7 @@ public class GameManager : MonoBehaviour
             Chunk c = chunkManager.GetChunk(chunkID);
             player.SetCurrentChunk(c);
 
-            CheckGenerateNewChunks(c);
+            //CheckGenerateNewChunks(c);
         }
         catch (Exception)
         {
@@ -131,7 +136,7 @@ public class GameManager : MonoBehaviour
 
     private void CameraEnteredNewChunk(Vector2Int chunkID)
     {
-        CheckGenerateNewChunks(chunkManager.GetChunk(chunkID));
+        //CheckGenerateNewChunks(chunkManager.GetChunk(chunkID));
     }
 
 
