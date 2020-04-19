@@ -43,8 +43,8 @@ public class GameManager : MonoBehaviour
         itemManager = itemManagerObject.GetComponent<ItemManager>();
 
         // Add event calls 
-        //TerrainManager.OnTerrainGenerated += StartGame;
-        Menu.OnMenuClose += StartGame;
+        TerrainManager.OnTerrainGenerated += StartGame;
+        //Menu.OnMenuClose += StartGame;
 
         ChunkManager.OnCameraEnterChunk += CameraEnteredNewChunk;
         ChunkManager.OnPlayerEnterChunk += PlayerEnteredNewChunk;

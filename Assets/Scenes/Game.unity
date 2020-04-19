@@ -1399,7 +1399,7 @@ GameObject:
   - component: {fileID: 2065742301}
   - component: {fileID: 2065742302}
   m_Layer: 13
-  m_Name: Collision
+  m_Name: Centre
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

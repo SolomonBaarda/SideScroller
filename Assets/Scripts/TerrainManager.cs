@@ -151,8 +151,8 @@ public class TerrainManager : MonoBehaviour
             }
         }
 
-        Debug.Log("all samples " + sampleTerrainManager.allSamples.Length);
-        Debug.Log("valid samples " + allValidSamples.Count);
+        //Debug.Log("all samples " + sampleTerrainManager.allSamples.Length);
+        //Debug.Log("valid samples " + allValidSamples.Count);
 
         if(allValidSamples.Count.Equals(0))
         {

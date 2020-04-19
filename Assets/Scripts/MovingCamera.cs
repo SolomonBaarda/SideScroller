@@ -16,8 +16,14 @@ public class MovingCamera : MonoBehaviour
     [Header("GameObject to Follow")]
     public GameObject following;
     private Player player;
-    private CircleCollider2D collision;
-    private Rigidbody2D rigid;
+
+    private CircleCollider2D centreCollision;
+    private Rigidbody2D centreRigid;
+
+    private Camera c;
+    public static string cameraLayer = "Camera";
+    private Vector2 cameraSize;
+    private Vector2 cameraPos;
 
     public float distanceFromOrigin;
 
@@ -27,9 +33,19 @@ public class MovingCamera : MonoBehaviour
         pos.z = -zoom;
         transform.position = pos;
 
-        collision = GetComponentInChildren<CircleCollider2D>();
-        rigid = GetComponentInChildren<Rigidbody2D>();
-        rigid.isKinematic = true;
+        Transform centre = transform.Find("Centre");
+        centreCollision = centre.GetComponent<CircleCollider2D>();
+        centreRigid = centre.GetComponent<Rigidbody2D>();
+        centreRigid.isKinematic = true;
+
+        c = GetComponent<Camera>();
+        c.orthographic = true;
+        c.orthographicSize = zoom;
+
+        float height = 2f * c.orthographicSize;
+        float width = height * c.aspect;
+        cameraSize = new Vector2(width, height);
+        cameraPos = new Vector2(transform.position.x - (cameraSize.x / 2), transform.position.y - (cameraSize.y / 2));
 
         try
         {
@@ -42,7 +58,7 @@ public class MovingCamera : MonoBehaviour
         // Update the colliders position
         Vector3 colliderPos = transform.position;
         colliderPos.z = 0;
-        collision.transform.position = colliderPos;
+        centreCollision.transform.position = colliderPos;
 
         distanceFromOrigin = 0;
     }
@@ -60,14 +76,40 @@ public class MovingCamera : MonoBehaviour
 
 
 
+    public List<Collider2D> GetAllNearbyChunks(Vector2 pos, Vector2 size)
+    {
+        List<Collider2D> collisions = new List<Collider2D>(Physics2D.OverlapBoxAll(pos, size, 0, LayerMask.GetMask("Chunk")));
+
+        Debug.Log(collisions.Count + " collisions ");
+        return collisions;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Vector2 pos = new Vector2(transform.position.x - (cameraSize.x / 2), transform.position.y - (cameraSize.y / 2));
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(pos, new Vector2(pos.x + cameraSize.x, pos.y));
+        Gizmos.DrawLine(pos, new Vector2(pos.x, pos.y + cameraSize.y));
+
+    }
+
+
     private void FixedUpdate()
     {
+        // Values used in physics2D calculations
+        float height = 2f * c.orthographicSize;
+        float width = height * c.aspect;
+        cameraSize = new Vector2(width, height);
+        cameraPos = new Vector2(transform.position.x - (cameraSize.x / 2), transform.position.y - (cameraSize.y / 2));
+
         if (currentChunk != null)
         {
             Move();
         }
 
         GetComponent<Camera>().orthographicSize = zoom;
+
+        GetAllNearbyChunks(cameraPos, cameraSize);
     }
 
 
@@ -126,7 +168,7 @@ public class MovingCamera : MonoBehaviour
             // Update the colliders position
             Vector3 colliderPos = transform.position;
             colliderPos.z = 0;
-            collision.transform.position = colliderPos;
+            centreCollision.transform.position = colliderPos;
         }
     }
 
