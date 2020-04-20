@@ -68,11 +68,11 @@ public class GameManager : MonoBehaviour
             gameTimeSeconds += Time.deltaTime;
         }
 
-        if (Input.GetKeyDown(player.controller.keys.escape))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             Application.Quit();
         }
-        if (Input.GetKeyDown(player.controller.keys.interact2))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             switch (movingCamera.direction)
             {

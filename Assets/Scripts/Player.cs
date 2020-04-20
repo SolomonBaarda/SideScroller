@@ -4,20 +4,17 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public PlayerMovement controller;
+
     public bool isAlive;
-
     public int coinCount;
-
-    public PlayerController controller;
-
     public Chunk currentChunk;
 
     public static string PLAYER = "Player";
 
     private void Awake()
     {
-        // Get reference to the controller script
-        controller = GetComponent<PlayerController>();
+        controller = GetComponent<PlayerMovement>();
 
         isAlive = false;
         coinCount = 0;
@@ -25,11 +22,6 @@ public class Player : MonoBehaviour
         GameManager.OnGameStart += SetAlive;
     }
 
-
-    private void Start()
-    {
-        controller.enabled = false;
-    }
 
 
     private void FixedUpdate()
@@ -46,7 +38,7 @@ public class Player : MonoBehaviour
         }
 
 
-        if (Input.GetKey(controller.keys.slow))
+        if (Input.GetKey(KeyCode.LeftShift))
         {
             SetAlive();
         }

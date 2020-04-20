@@ -33,7 +33,7 @@ public class Chest : MonoBehaviour
             Player p = collision.transform.root.GetComponent<Player>();
 
             // Open the chest 
-            if (Input.GetKeyDown(p.controller.keys.interact1))
+            if (Input.GetKeyDown(KeyCode.E))
             {
                 if (state.Equals(ChestState.Closed))
                 {

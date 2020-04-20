@@ -1,194 +1,60 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("Velocity settings")]
+    [Header("Movement Settings")]
+    //[SerializeField] private float max_speed = 6f;
+    [SerializeField] private float jump_force = 400f;
+    [SerializeField] private int max_double_jumps = 1;
+    [SerializeField] private int double_jumps_left = 0;
+    [Range(0, 1)] [SerializeField] private float crouch_speed_reduction = .4f;
+
+    [Header("Controller Settings")]
+    [Range(0, .3f)] [SerializeField] private float movementSmoothing = .05f;
+    [SerializeField] private bool allowAirControl = true;
+    private const float collisionCheckRadius = .2f;
+    private bool isGrounded;
+    private Rigidbody2D rigid;
+    private Collider2D mainCollider;
+    private Collider2D feetCollider;
+
+    private Vector2 velocity = Vector2.zero;
     [SerializeField]
-    private float max_speed = 6f;
-    [SerializeField]
-    private float terminal_velocity = 20f;
+    private Direction facing;
+    [SerializeField] private Transform headPos;
+    [SerializeField] private Transform feetPos;
 
-    [Header("Jump settings")]
-    [SerializeField]
-    private float jump_force = 6f;
-    [SerializeField]
-    private int max_double_jumps = 1;
-    [SerializeField]
-    private int double_jumps_left = 0;
+    [Header("Events")]
+    [Space]
+    public UnityEvent OnPlayerland;
 
-    private Vector2 velocity;
+    [System.Serializable]
+    public class BoolEvent : UnityEvent<bool> { }
 
-    [HideInInspector]
-    public Keys keys;
-
-    public bool inputIsAllowed;
+    public BoolEvent OnPlayerCrouch;
+    private bool isCrouching = false;
 
 
-    public class Keys
-    {
-        public KeyCode left, right, up, down, jump, interact1, interact2, slow, escape;
-    }
-
-
-    public enum Direction { Left, Right, Forward };
-    private Direction facing = Direction.Forward;
-
-    // For animations only
-    private enum JumpState { up, peak, down, none };
-    private JumpState jumpState;
-
+    private enum Direction { Left, Right, Forward };
 
     private void Awake()
     {
-        velocity = new Vector2();
+        mainCollider = GetComponent<BoxCollider2D>();
+        feetCollider = GetComponent<CircleCollider2D>();
+        rigid = GetComponent<Rigidbody2D>();
 
-        // Set the keys
-        keys = new Keys();
-        keys.left = KeyCode.A;
-        keys.right = KeyCode.D;
-        keys.up = KeyCode.W;
-        keys.down = KeyCode.S;
-        keys.jump = KeyCode.Space;
-        keys.interact1 = KeyCode.E;
-        keys.interact2 = KeyCode.Q;
-        keys.slow = KeyCode.LeftShift;
-        keys.escape = KeyCode.Escape;
-
-        inputIsAllowed = true;
-    }
-
-    private void FixedUpdate()
-    {
-        bool isInAir = false;
-
-        BoxCollider2D b = GetComponentInChildren<BoxCollider2D>();
-
-        // If touching the ground
-        if (b.IsTouchingLayers(LayerMask.GetMask("Ground")))
+        if (OnPlayerland == null)
         {
-            // Reset double jump
-            double_jumps_left = max_double_jumps;
-
-            velocity.x = 0;
-            isInAir = false;
-
-            if (inputIsAllowed)
-            {
-                // Do full jump 
-                if (Input.GetKey(keys.jump))
-                {
-                    Jump(jump_force);
-                }
-            }
+            OnPlayerland = new UnityEvent();
         }
-        else if (b.IsTouchingLayers(LayerMask.GetMask("Wall")))
+        if (OnPlayerCrouch == null)
         {
-            // Reset double jump
-            double_jumps_left = max_double_jumps;
-
-            velocity.x = 0;
-            isInAir = false;
-
-            if (inputIsAllowed)
-            {
-                // Do wall jump
-                if (Input.GetKey(keys.jump))
-                {
-                    WallJump(jump_force / 10, jump_force);
-                }
-            }
-        }
-        // Not on ground 
-        else
-        {
-            isInAir = true;
-
-            if (inputIsAllowed)
-            {
-                // Do double jump if possible
-                if (Input.GetKeyDown(keys.jump))
-                {
-                    if (double_jumps_left > 0)
-                    {
-                        double_jumps_left--;
-                        Jump(jump_force);
-                    }
-                }
-            }
+            OnPlayerCrouch = new BoolEvent();
         }
 
-        bool wasLeft = false;
-        bool wasRight = false;
-
-        if (inputIsAllowed)
-        {
-            // Move left and right
-            if (Input.GetKey(keys.left))
-            {
-                wasLeft = true;
-            }
-            if (Input.GetKey(keys.right))
-            {
-                wasRight = true;
-            }
-            // Both keys pressed
-            if (Input.GetKey(keys.down))
-            {
-                wasLeft = true;
-                wasRight = true;
-            }
-        }
-
-        // Velocity should be 0 by default
-        velocity.x = 0;
-
-        // Update if player has moved
-        // Only pressed left
-        if (wasLeft && !wasRight)
-        {
-            facing = Direction.Left;
-            velocity.x = -max_speed * Time.deltaTime;
-        }
-        // Only pressed right
-        else if (!wasLeft && wasRight)
-        {
-            facing = Direction.Right;
-            velocity.x = max_speed * Time.deltaTime;
-        }
-        // Pressed both keys
-        else if (wasLeft && wasRight)
-        {
-            facing = Direction.Forward;
-        }
-        else
-        {
-            // Do nothing
-            // This keeps the player facing in the direction they last moved
-        }
-
-        // Ensure velocity is capped and then apply it
-        velocity.x = Mathf.Clamp(velocity.x, -max_speed, max_speed);
-        transform.Translate(velocity, Space.World);
-
-
-        // Clamp the max velocities
-        /*
-        Vector2 v = GetComponent<Rigidbody2D>().velocity;
-        v.y = Mathf.Clamp(v.y, -terminal_velocity, terminal_velocity);
-        v.x = Mathf.Clamp(v.x, -max_speed, max_speed);
-        GetComponent<Rigidbody2D>().velocity = v;
-        */
-
-
-        // Update animations
-        Animator a = GetComponentInChildren<Animator>();
-        a.SetBool("isJumping", isInAir);
-        a.SetBool("isRight", facing.Equals(Direction.Right));
-        a.SetBool("isLeft", facing.Equals(Direction.Left));
-        a.SetBool("isForward", facing.Equals(Direction.Forward));
-        a.SetFloat("velocityY", GetComponent<Rigidbody2D>().velocity.y);
     }
 
     private void OnEnable()
@@ -198,80 +64,129 @@ public class PlayerController : MonoBehaviour
     }
 
 
-
-    private void Jump(float power)
+    private void OnDisable()
     {
-        Rigidbody2D r = GetComponent<Rigidbody2D>();
-
-        // Reset the y velocity of the player
-        //Vector2 v = r.velocity;
-        //v.y = 0;
-        r.velocity = Vector2.zero;
-
-        // Then jump
-        r.AddForce(new Vector2(0, power), ForceMode2D.Impulse);
+        rigid.velocity = Vector2.zero;
     }
 
 
-    private void WallJump(float xPower, float yPower)
+    private void FixedUpdate()
     {
-        Rigidbody2D r = GetComponent<Rigidbody2D>();
+        bool wasGrounded = isGrounded;
+        isGrounded = false;
 
-        // Reset the y velocity of the player
-        r.velocity = Vector2.zero;
-
-        // Jump right
-        if (facing.Equals(Direction.Left))
+        // Get all collisions
+        Collider2D[] collisions = Physics2D.OverlapCircleAll(feetPos.position, collisionCheckRadius, LayerMask.GetMask("Ground"));
+        for (int i = 0; i < collisions.Length; i++)
         {
-            facing = Direction.Right;
-            Leap(xPower, yPower);
-        }
-        // Jump left
-        else if (facing.Equals(Direction.Right))
-        {
-            facing = Direction.Left;
-            Leap(-xPower, yPower);
-        }
-        // Jump up
-        else
-        {
-            Jump(yPower);
-        }
-
-    }
-
-
-    private void Leap(float xPower, float yPower)
-    {
-        Rigidbody2D r = GetComponent<Rigidbody2D>();
-
-        // Reset the y velocity of the player
-        r.velocity = Vector2.zero;
-
-        r.AddForce(new Vector2(xPower, yPower), ForceMode2D.Impulse);
-    }
-
-
-    private float MoveTowards(float value, float target, float amount)
-    {
-        if (value < target)
-        {
-            value += amount;
-            if (value > target)
+            if (collisions[i].gameObject != gameObject)
             {
-                value = target;
+                isGrounded = true;
+                if (!wasGrounded)
+                {
+                    OnPlayerland.Invoke();
+                }
             }
         }
-        else if (value > target)
+    }
+
+
+    public void Move(float move, bool crouch, bool jump)
+    {
+        // If crouching, check to see if the character can stand up
+        if (!crouch)
         {
-            value -= amount;
-            if (value < target)
+            // If the character has a ceiling preventing them from standing up, keep them crouching
+            if (Physics2D.OverlapCircle(headPos.position, collisionCheckRadius, LayerMask.GetMask("Ground")))
             {
-                value = target;
+                crouch = true;
             }
         }
 
-        return value;
+        // only control the player if grounded or airControl is turned on
+        if (isGrounded || allowAirControl)
+        {
+            // Player has just crouched
+            if (crouch)
+            {
+                if (!isCrouching)
+                {
+                    isCrouching = true;
+                    OnPlayerCrouch.Invoke(true);
+                }
+
+                // Reduce the speed by the crouchSpeed multiplier
+                move *= crouch_speed_reduction;
+
+                // Disable one of the colliders when crouching
+                if (mainCollider != null)
+                {
+                    //mainCollider.enabled = false;
+                }
+            }
+            else
+            {
+                // Enable the collider when not crouching
+                if (mainCollider != null)
+                {
+                    mainCollider.enabled = true;
+                }
+
+                // Player has just uncrouched
+                if (isCrouching)
+                {
+                    isCrouching = false;
+                    OnPlayerCrouch.Invoke(false);
+                }
+            }
+
+            // Move the character by finding the target velocity
+            Vector2 targetVelocity = new Vector2(move * 10f, rigid.velocity.y);
+            // And then smoothing it out and applying it to the character
+            rigid.velocity = Vector2.SmoothDamp(rigid.velocity, targetVelocity, ref velocity, movementSmoothing);
+
+            // If the input is moving the player right and the player is facing left...
+            if (move > 0 && !facing.Equals(Direction.Right))
+            {
+                facing = Direction.Right;
+                Flip();
+            }
+            // Otherwise if the input is moving the player left and the player is facing right...
+            else if (move < 0 && !facing.Equals(Direction.Left))
+            {
+                facing = Direction.Left;
+                Flip();
+            }
+        }
+        // If the player should jump...
+        if (isGrounded && jump)
+        {
+            // Add a vertical force to the player.
+            isGrounded = false;
+            rigid.AddForce(new Vector2(0f, jump_force));
+        }
     }
+
+
+    private void Flip()
+    {
+        // Multiply the player's x local scale by -1.
+        /*
+        Vector3 theScale = transform.localScale;
+        theScale.x *= -1;
+        transform.localScale = theScale;
+        */
+        // Will use this next time
+    }
+
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(headPos.position, collisionCheckRadius);
+        Gizmos.DrawSphere(feetPos.position, collisionCheckRadius);
+    }
+
+
 
 }
