@@ -48,7 +48,7 @@ public class Chunk : MonoBehaviour
         // Get the camera paths
         cameraPathChild = transform.Find("Camera Paths");
         cameraPaths = new List<CameraPath>();
-        InitialiseCameraPaths();
+        InitialiseCameraPaths(exits);
     }
 
 
@@ -59,76 +59,27 @@ public class Chunk : MonoBehaviour
     }
 
 
-    private void InitialiseCameraPaths()
+    private void InitialiseCameraPaths(List<TerrainManager.TerrainChunk.Exit> exits)
     {
-        float offset = CAMERA_POINT_OFFSET_TILES * cellSize.y;
-
-        // Find the start position
-        Vector2 cameraPathStartWorldSpace = enteranceWorldSpace;
-        // Add a little to centre it 
-        switch (direction)
-        {
-            case TerrainManager.TerrainDirection.Left:
-                cameraPathStartWorldSpace.x += cellSize.x / 2;
-                break;
-            case TerrainManager.TerrainDirection.Right:
-                cameraPathStartWorldSpace.x -= cellSize.x / 2;
-                break;
-            case TerrainManager.TerrainDirection.Both:
-                // Do nothing as already in centre
-                break;
-        }
-        cameraPathStartWorldSpace.y += offset;
-
-
         // Loop through each exit
         foreach (TerrainManager.TerrainChunk.Exit exit in exits)
         {
-            // Instantiate the new object
-            GameObject pathObject = Instantiate(cameraPathPrefab, cameraPathChild);
-            pathObject.name = "Path " + (pathObject.transform.GetSiblingIndex() + 1) + "/" + exits.Count;
-            CameraPath path = pathObject.GetComponent<CameraPath>();
-
-            // Find its end position
-            Vector2 cameraPathEndWorldSpace = exit.exitPositionWorld;
-            cameraPathEndWorldSpace.y += offset;
-
-
-            // Add a little to make the transition smoother
-            switch (exit.exitDirection)
+            if (exit.cameraPathPoints.Count >= 2)
             {
-                case (TerrainManager.TerrainDirection.Up):
-                    cameraPathEndWorldSpace.y += cellSize.y / 2;
-                    break;
-                case (TerrainManager.TerrainDirection.Down):
-                    cameraPathEndWorldSpace.y -= cellSize.y / 2;
-                    break;
-                case (TerrainManager.TerrainDirection.Left):
-                    cameraPathEndWorldSpace.x -= cellSize.x / 2;
-                    break;
-                case (TerrainManager.TerrainDirection.Right):
-                    cameraPathEndWorldSpace.x += cellSize.x / 2;
-                    break;
+                // Instantiate the new object
+                GameObject pathObject = Instantiate(cameraPathPrefab, cameraPathChild);
+                pathObject.name = "Path " + (pathObject.transform.GetSiblingIndex() + 1) + "/" + exits.Count;
+                CameraPath path = pathObject.GetComponent<CameraPath>();
+
+                // Set the path and add it
+                path.SetPath(exit.cameraPathPoints);
+                cameraPaths.Add(path);
+            }
+            else
+            {
+                Debug.LogError("Chunk " + this + " exit " + exit.exitDirection + " camera path does not contain enough points." + exit.cameraPathPoints.Count);
             }
 
-            if (direction.Equals(TerrainManager.TerrainDirection.Both))
-            {
-                // Move the start point away from 00
-                // TEMP FIX
-                if (cameraPathEndWorldSpace.x > cameraPathStartWorldSpace.x)
-                {
-                    cameraPathStartWorldSpace.x = 4 * cellSize.x + (cellSize.x);
-                }
-                else if (cameraPathEndWorldSpace.x < cameraPathStartWorldSpace.x)
-                {
-                    cameraPathStartWorldSpace.x = -4 * cellSize.x;
-                }
-            }
-
-
-            // Set the path and add it
-            path.SetPath(cameraPathStartWorldSpace, cameraPathEndWorldSpace);
-            cameraPaths.Add(path);
         }
     }
 

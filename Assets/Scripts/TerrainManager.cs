@@ -151,7 +151,7 @@ public class TerrainManager : MonoBehaviour
         //Debug.Log("all samples " + sampleTerrainManager.allSamples.Length);
         //Debug.Log("valid samples " + allValidSamples.Count);
 
-        if(allValidSamples.Count.Equals(0))
+        if (allValidSamples.Count.Equals(0))
         {
             throw new Exception("No valid Sample Terrain for generation direction " + directionToGenerate);
         }
@@ -161,8 +161,9 @@ public class TerrainManager : MonoBehaviour
         int index = random.Next(0, validSamples.Length);
         SampleTerrain chosen = validSamples[index];
         bool flipAxisX = false;
-        if((directionToGenerate.Equals(TerrainDirection.Left) && chosen.direction.Equals(TerrainDirection.Right))
-            || (directionToGenerate.Equals(TerrainDirection.Right) && chosen.direction.Equals(TerrainDirection.Left))) {
+        if ((directionToGenerate.Equals(TerrainDirection.Left) && chosen.direction.Equals(TerrainDirection.Right))
+            || (directionToGenerate.Equals(TerrainDirection.Right) && chosen.direction.Equals(TerrainDirection.Left)))
+        {
             flipAxisX = true;
         }
 
@@ -259,8 +260,19 @@ public class TerrainManager : MonoBehaviour
             // World position of the start of the new chunk
             Vector2 newChunkPositionWorld = grid.CellToWorld(new Vector3Int(newChunkTile.x, newChunkTile.y, 0)) + (grid.cellSize / 2);
 
+            // Make the exit
+            TerrainChunk.Exit e = new TerrainChunk.Exit(newChunkDirection, exitPositionWorld, newChunkPositionWorld, newChunkID);
+            // Get the camera path points
+            foreach (Vector2Int point in sampleExit.cameraPathPoints)
+            {
+                e.cameraPathPoints.Add(grid.CellToWorld(new Vector3Int(entryTile.x + invert * point.x, entryTile.y + point.y, 0)));
+            }
+
+            // Sort the lists by distance from entry tile pos
+            e.cameraPathPoints.Sort((x, y) => Vector2.Distance(entryPositionWorld, x).CompareTo(Vector2.Distance(entryPositionWorld, y)));
+
             // Add the exit to list of exits for this chunk
-            exits.Add(new TerrainChunk.Exit(newChunkDirection, exitPositionWorld, newChunkPositionWorld, newChunkID));
+            exits.Add(e);
         }
 
         // Return the TerrainChunk object for use in the ChunkManager
@@ -376,12 +388,16 @@ public class TerrainManager : MonoBehaviour
             public Vector2 newChunkPositionWorld;
             public Vector2Int newChunkID;
 
+            public List<Vector2> cameraPathPoints;
+
             public Exit(TerrainDirection exitDirection, Vector2 exitPositionWorld, Vector2 newChunkPositionWorld, Vector2Int newChunkID)
             {
                 this.exitDirection = exitDirection;
                 this.exitPositionWorld = exitPositionWorld;
                 this.newChunkPositionWorld = newChunkPositionWorld;
                 this.newChunkID = newChunkID;
+
+                cameraPathPoints = new List<Vector2>();
             }
         }
     }

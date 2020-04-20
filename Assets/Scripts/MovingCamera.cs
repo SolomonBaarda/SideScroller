@@ -180,32 +180,37 @@ public class MovingCamera : MonoBehaviour
         {
             // Get array of camera paths
             CameraPath[] paths = chunk.cameraPaths.ToArray();
-            // Get first point
-            Vector3 point = paths[0].GetClosestPosition(position);
-            int index = 0;
 
-            // Loop through each other path
-            for (int i = 1; i < paths.Length; i++)
+            if (paths.Length > 0)
             {
-                // Calculate the distance
-                float posToPoint = Vector3.Distance(position, point);
-                // Calculate current new point
-                Vector3 newPoint = paths[i].GetClosestPosition(position);
-                float posToNewPoint = Vector3.Distance(position, newPoint);
+                // Get first point
+                Vector3 point = paths[0].GetClosestPosition(position);
+                int index = 0;
 
-                // Find the closest point of the two
-                if (posToNewPoint < posToPoint)
+                // Loop through each other path
+                for (int i = 1; i < paths.Length; i++)
                 {
-                    // Update it and the index
-                    point = newPoint;
-                    index = i;
+                    // Calculate the distance
+                    float posToPoint = Vector3.Distance(position, point);
+                    // Calculate current new point
+                    Vector3 newPoint = paths[i].GetClosestPosition(position);
+                    float posToNewPoint = Vector3.Distance(position, newPoint);
+
+                    // Find the closest point of the two
+                    if (posToNewPoint < posToPoint)
+                    {
+                        // Update it and the index
+                        point = newPoint;
+                        index = i;
+                    }
                 }
+
+                return paths[index];
             }
 
-            return paths[index];
         }
 
-        throw new System.Exception("Cannot calculate camera path for null chunk");
+        throw new System.Exception("Cannot calculate camera path for null chunk or null path");
     }
 
 

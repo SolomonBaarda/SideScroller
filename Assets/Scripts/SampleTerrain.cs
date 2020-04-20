@@ -13,6 +13,7 @@ public class SampleTerrain : MonoBehaviour
     private Tilemap tilemap_hazard;
     private Tilemap tilemap_ground;
     private Tilemap tilemap_dev;
+    private List<Tilemap> tilemap_devCameraPath;
 
     // Reference to manager
     private SampleTerrainManager manager;
@@ -35,11 +36,13 @@ public class SampleTerrain : MonoBehaviour
 
     public void LoadSample()
     {
+        // References 
         manager = transform.root.GetComponent<SampleTerrainManager>();
-
         grid = GetComponent<Grid>();
 
         exitTilePositions = new List<SampleTerrainExit>();
+
+        tilemap_devCameraPath = new List<Tilemap>();
 
         // Assign the tilemaps 
         for (int i = 0; i < grid.transform.childCount; i++)
@@ -70,7 +73,16 @@ public class SampleTerrain : MonoBehaviour
             }
             else if (r.sortingLayerName.Equals(TerrainManager.LAYER_NAME_DEV))
             {
-                tilemap_dev = t;
+                // Add the camera path tilemaps
+                if (g.name.Contains("Camera"))
+                {
+                    tilemap_devCameraPath.Add(t);
+                }
+                else
+                {
+                    tilemap_dev = t;
+                }
+
             }
 
             // Disable the rendering of all samples
@@ -84,11 +96,14 @@ public class SampleTerrain : MonoBehaviour
         hazard = new SampleTerrainLayer();
         ground = new SampleTerrainLayer();
 
-
+        // Find the entry tile (must be first)
         FindEntryTilePosition(ref entryTilePositionLocal);
-
         entryTilePosition = Vector2Int.zero;
+
+        // Find all the exit tile positions
         FindExitTilePositions(ref exitTilePositions);
+        // And their extra camera paths 
+        FindCameraPathPositions(ref exitTilePositions, tilemap_devCameraPath);
 
         // Load all the tiles in the tilemaps into the objects
         LoadTiles(tilemap_wall, ref wall);
@@ -202,9 +217,9 @@ public class SampleTerrain : MonoBehaviour
     /// <summary>
     /// Must be called AFTER entry position has been assigned
     /// </summary>
-    private void FindExitTilePositions(ref List<SampleTerrainExit> tiles)
+    private void FindExitTilePositions(ref List<SampleTerrainExit> exits)
     {
-        tiles.Clear();
+        exits.Clear();
 
         // Get an iterator for the bounds of the tilemap 
         BoundsInt.PositionEnumerator p = tilemap_dev.cellBounds.allPositionsWithin.GetEnumerator();
@@ -240,15 +255,78 @@ public class SampleTerrain : MonoBehaviour
 
                 // Add the new exit
                 Vector2Int tile = new Vector2Int(current.x, current.y) - entryTilePositionLocal;
-                tiles.Add(new SampleTerrainExit(direction, tile));
+                exits.Add(new SampleTerrainExit(direction, tile));
             }
         }
 
-        if (tiles.Count == 0)
+        if (exits.Count == 0)
         {
             throw new Exception("Could not find any exit tiles in SampleTerrain.");
         }
     }
+
+
+    private void FindCameraPathPositions(ref List<SampleTerrainExit> exits, List<Tilemap> cameraPaths)
+    {
+        if (exits.Count == 0)
+        {
+            throw new Exception("Sample Terrain has no exits");
+        }
+        if (cameraPaths.Count == 0)
+        {
+            throw new Exception("Sample Terrain has no camera path tilemaps");
+        }
+
+        foreach (Tilemap tilemap in cameraPaths)
+        {
+            // Get an iterator for the bounds of the tilemap 
+            BoundsInt.PositionEnumerator p = tilemap.cellBounds.allPositionsWithin.GetEnumerator();
+            while (p.MoveNext())
+            {
+                // Ensure a valid tile
+                Vector3Int current = p.Current;
+                TileBase t = tilemap.GetTile(current);
+                if (t != null)
+                {
+                    ExitDirection d = ExitDirection.Right;
+                    // Check direction
+                    if (t.Equals(manager.dev_cameraPathLeft))
+                    {
+                        d = ExitDirection.Left;
+                    }
+                    else if (t.Equals(manager.dev_cameraPathRight))
+                    {
+                        d = ExitDirection.Right;
+                    }
+                    else if (t.Equals(manager.dev_cameraPathUp))
+                    {
+                        d = ExitDirection.Up;
+                    }
+                    else if (t.Equals(manager.dev_cameraPathDown))
+                    {
+                        d = ExitDirection.Down;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+
+                    // Find the exit
+                    foreach (SampleTerrainExit e in exits)
+                    {
+                        if (e.exitDirection.Equals(d))
+                        {
+                            // Add the extra point to it
+                            e.cameraPathPoints.Add(new Vector2Int(current.x, current.y) - entryTilePositionLocal);
+                            break;
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
 
 
     /// <summary>
@@ -287,11 +365,14 @@ public class SampleTerrain : MonoBehaviour
         /// </summary>
         public ExitDirection exitDirection;
         public Vector2Int exitPositionRelative;
+        public List<Vector2Int> cameraPathPoints;
 
         public SampleTerrainExit(ExitDirection exitDirection, Vector2Int exitPositionRelative)
         {
             this.exitDirection = exitDirection;
             this.exitPositionRelative = exitPositionRelative;
+
+            cameraPathPoints = new List<Vector2Int>();
         }
     }
 

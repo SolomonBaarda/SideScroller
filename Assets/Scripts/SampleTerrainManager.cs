@@ -4,11 +4,13 @@ using UnityEngine.Tilemaps;
 
 public class SampleTerrainManager : MonoBehaviour
 {
+    // Arrays for storing the Sample Terrain
+    [HideInInspector]
     public SampleTerrain[] allSamples;
-
     [HideInInspector]
     public SampleTerrain startingArea;
 
+    // Dev tile types used 
     [Header("Dev Tile references")]
     public Tile dev_entryRight;
     public Tile dev_entryLeft;
@@ -19,7 +21,15 @@ public class SampleTerrainManager : MonoBehaviour
     public Tile dev_exitLeft;
     public Tile dev_exitUp;
     public Tile dev_exitDown;
-
+    [Space(8)]
+    public Tile dev_cameraPathRight;
+    public Tile dev_cameraPathLeft;
+    public Tile dev_cameraPathUp;
+    public Tile dev_cameraPathDown;
+    [Space(8)]
+    public Tile dev_itemCoin;
+    public Tile dev_itemPot;
+    public Tile dev_itemChest;
 
     public void LoadAllSampleTerrain()
     {

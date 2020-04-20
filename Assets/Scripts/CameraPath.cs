@@ -6,16 +6,14 @@ using PathCreation;
 public class CameraPath : MonoBehaviour
 {
     private VertexPath path;
-    public List<Vector3> points;
+    public List<Vector2> points;
     public Vector3[] actualPoints;
 
     public const float autoControlLength = 0.4f;
 
-    public void SetPath(Vector3 start, Vector3 end)
+    public void SetPath(List<Vector2> points)
     {
-        points = new List<Vector3>();
-        points.Add(start);
-        points.Add(end);
+        this.points = points;
 
         // Create a new path with those points
         BezierPath b = new BezierPath(points, false, PathSpace.xy);

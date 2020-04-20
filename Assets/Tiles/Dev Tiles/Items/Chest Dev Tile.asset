@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: Chest Dev Tile
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: 534d3a7453340b049b6862aeda12af26, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7e48e52b7207d1b4c9a2139713f48ece, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1

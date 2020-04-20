@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: Coin Dev Tile
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: 4551b16657fa2c04ca95380507c0cc69, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0068cefb0645eaa468709ab4986faa2a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
