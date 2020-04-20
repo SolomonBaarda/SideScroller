@@ -51,11 +51,10 @@ public class MovingCamera : MonoBehaviour
         Chunk current = CalculateCurrentChunk();
         if (current != null)
         {
-            // New chunk, invoke event
+            // New chunk
             if (current != currentChunk)
             {
                 currentChunk = current;
-                ChunkManager.OnCameraEnterChunk.Invoke(current.chunkID);
             }
         }
 
@@ -73,7 +72,7 @@ public class MovingCamera : MonoBehaviour
     private Chunk CalculateCurrentChunk()
     {
         // Find the chunk at the centre point
-        Collider2D collision = Physics2D.OverlapPoint(transform.position, LayerMask.GetMask("Chunk"));
+        Collider2D collision = Physics2D.OverlapPoint(transform.position, LayerMask.GetMask(Chunk.CHUNK));
         if (collision != null)
         {
             return collision.gameObject.GetComponent<Chunk>();
@@ -94,7 +93,7 @@ public class MovingCamera : MonoBehaviour
     {
         Vector2 bl = c.ViewportToWorldPoint(new Vector3(0, 0, zoom));
         Vector2 tr = c.ViewportToWorldPoint(new Vector3(1, 1, zoom));
-        Debug.DrawLine(bl, tr);
+        //Debug.DrawLine(bl, tr);
 
         return GetAllNearbyChunks(bl, tr);
     }

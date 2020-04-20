@@ -46,9 +46,6 @@ public class GameManager : MonoBehaviour
         TerrainManager.OnTerrainGenerated += StartGame;
         //Menu.OnMenuClose += StartGame;
 
-        ChunkManager.OnCameraEnterChunk += CameraEnteredNewChunk;
-        ChunkManager.OnPlayerEnterChunk += PlayerEnteredNewChunk;
-
         isGameOver = true;
     }
 
@@ -61,8 +58,6 @@ public class GameManager : MonoBehaviour
     private void OnDestroy()
     {
         Menu.OnMenuClose -= StartGame;
-        ChunkManager.OnCameraEnterChunk -= CameraEnteredNewChunk;
-        ChunkManager.OnPlayerEnterChunk -= PlayerEnteredNewChunk;
     }
 
 
@@ -116,27 +111,6 @@ public class GameManager : MonoBehaviour
         movingCamera.direction = MovingCamera.Direction.Following;
 
         isGameOver = false;
-    }
-
-
-    private void PlayerEnteredNewChunk(Vector2Int chunkID)
-    {
-        try
-        {
-            Chunk c = chunkManager.GetChunk(chunkID);
-            player.SetCurrentChunk(c);
-
-            //CheckGenerateNewChunks(c);
-        }
-        catch (Exception)
-        {
-        }
-    }
-
-
-    private void CameraEnteredNewChunk(Vector2Int chunkID)
-    {
-        //CheckGenerateNewChunks(chunkManager.GetChunk(chunkID));
     }
 
 

@@ -6,6 +6,8 @@ using PathCreation;
 
 public class Chunk : MonoBehaviour
 {
+    public static string CHUNK = "Chunk";
+
     [Header("Chunk Information")]
     public Vector2 enteranceWorldSpace;
     public List<TerrainManager.TerrainChunk.Exit> exits;
@@ -23,7 +25,7 @@ public class Chunk : MonoBehaviour
 
     private Transform cameraPathChild;
     private Transform itemChild;
-    private const float CAMERA_POINT_OFFSET_TILES = 3f;
+
 
     public void CreateChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldSpace,
         List<TerrainManager.TerrainChunk.Exit> exits, TerrainManager.TerrainDirection direction, float distanceFromOrigin, Vector2Int chunkID)
@@ -124,29 +126,6 @@ public class Chunk : MonoBehaviour
         }
     }
 
-
-
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        // Player has entered the chunk
-        if (collision.gameObject.layer.Equals(LayerMask.NameToLayer(Player.PLAYER)))
-        {
-            try
-            {
-                Vector2Int playerChunk = collision.transform.root.GetComponent<Player>().GetCurrentChunk().chunkID;
-
-                // Entered for the first time 
-                if (playerChunk.x != chunkID.x || playerChunk.y != chunkID.y)
-                {
-                    ChunkManager.OnPlayerEnterChunk.Invoke(chunkID);
-                }
-            }
-            catch (System.Exception)
-            {
-                ChunkManager.OnPlayerEnterChunk.Invoke(chunkID);
-            }
-        }
-    }
 
 
     private void OnDestroy()

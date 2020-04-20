@@ -35,24 +35,25 @@ public class CameraPath : MonoBehaviour
         return path.length;
     }
 
-    public float GetLengthAtPoint(Vector3 point)
+    public float GetLengthAtPoint(Vector2 point)
     {
         return path.GetClosestDistanceAlongPath(GetClosestPosition(point));
     }
 
-    public Vector3 GetPositionAtDistance(float distance)
+    public Vector2 GetPositionAtDistance(float distance)
     {
         return path.GetPointAtDistance(distance);
     }
 
-    public Vector3 GetClosestPosition(Vector3 position)
+    public Vector2 GetClosestPosition(Vector2 position)
     {
         return path.GetClosestPointOnPath(position);
     }
 
+
     private void OnDrawGizmos()
     {
-        foreach (Vector3 point in points)
+        foreach (Vector2 point in points)
         {
             // Draw the paths
             for (int w = 1; w < path.localPoints.Length; w++)
@@ -63,7 +64,7 @@ public class CameraPath : MonoBehaviour
 
             // Draw all the points
             Gizmos.color = Color.green;
-            Gizmos.DrawCube(point, 0.5f * Vector3.one);
+            Gizmos.DrawCube(point, 0.5f * Vector2.one);
         }
 
     }

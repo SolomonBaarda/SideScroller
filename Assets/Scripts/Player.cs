@@ -32,8 +32,20 @@ public class Player : MonoBehaviour
     }
 
 
-    private void Update()
+    private void FixedUpdate()
     {
+        // Get the chunk
+        Chunk current = CalculateCurrentChunk();
+        if (current != null)
+        {
+            // New chunk
+            if (current != currentChunk)
+            {
+                currentChunk = current;
+            }
+        }
+
+
         if (Input.GetKey(controller.keys.slow))
         {
             SetAlive();
@@ -41,9 +53,17 @@ public class Player : MonoBehaviour
     }
 
 
-    public void SetCurrentChunk(Chunk currentChunk)
+
+    private Chunk CalculateCurrentChunk()
     {
-        this.currentChunk = currentChunk;
+        // Find the chunk at the centre point
+        Collider2D collision = Physics2D.OverlapPoint(transform.position, LayerMask.GetMask(Chunk.CHUNK));
+        if (collision != null)
+        {
+            return collision.gameObject.GetComponent<Chunk>();
+        }
+
+        return null;
     }
 
     public Chunk GetCurrentChunk()
