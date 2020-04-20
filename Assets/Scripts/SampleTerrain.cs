@@ -325,6 +325,12 @@ public class SampleTerrain : MonoBehaviour
                 }
             }
         }
+
+        // Sort the lists by distance from entry tile pos
+        foreach (SampleTerrainExit exit in exits)
+        {
+            exit.cameraPathPoints.Sort((x, y) => Vector2Int.Distance(entryTilePosition, x).CompareTo(Vector2Int.Distance(entryTilePosition, y)));
+        }
     }
 
 

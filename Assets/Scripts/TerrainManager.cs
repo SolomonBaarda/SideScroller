@@ -265,7 +265,16 @@ public class TerrainManager : MonoBehaviour
             // Get the camera path points
             foreach (Vector2Int point in sampleExit.cameraPathPoints)
             {
-                e.cameraPathPoints.Add(grid.CellToWorld(new Vector3Int(entryTile.x + invert * point.x, entryTile.y + point.y, 0)));
+                // Get the world pos
+                Vector3Int pointTile = new Vector3Int(entryTile.x + invert * point.x, entryTile.y + point.y, 0);
+                Vector2 worldPos = grid.CellToWorld(pointTile);
+
+                // Add a little to centre it
+                worldPos.x += grid.cellSize.x / 2;
+                worldPos.y += grid.cellSize.y / 2;
+
+                // Add the point 
+                e.cameraPathPoints.Add(worldPos);
             }
 
             // Sort the lists by distance from entry tile pos

@@ -6,12 +6,12 @@ using PathCreation;
 public class CameraPath : MonoBehaviour
 {
     private VertexPath path;
-    public List<Vector2> points;
+    public Vector2[] points;
     public Vector3[] actualPoints;
 
-    public const float autoControlLength = 0.4f;
+    public const float autoControlLength = 0.2f;
 
-    public void SetPath(List<Vector2> points)
+    public void SetPath(Vector2[] points)
     {
         this.points = points;
 

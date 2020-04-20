@@ -71,8 +71,49 @@ public class Chunk : MonoBehaviour
                 pathObject.name = "Path " + (pathObject.transform.GetSiblingIndex() + 1) + "/" + exits.Count;
                 CameraPath path = pathObject.GetComponent<CameraPath>();
 
+
+                // Move the first and last point to exactly the edge of the chunk
+                Vector2[] pathPoints = exit.cameraPathPoints.ToArray();
+                // Get the first point
+                Vector2 pos = pathPoints[0];
+                switch (direction)
+                {
+                    case TerrainManager.TerrainDirection.Left:
+                        pos.x += cellSize.x / 2;
+                        break;
+                    case TerrainManager.TerrainDirection.Right:
+                        pos.x -= cellSize.x / 2;
+                        break;
+                    case TerrainManager.TerrainDirection.Up:
+                        pos.y -= cellSize.y / 2;
+                        break;
+                    case TerrainManager.TerrainDirection.Down:
+                        pos.y += cellSize.y / 2;
+                        break;
+                }
+                pathPoints[0] = pos;
+                // Get the last point
+                pos = pathPoints[pathPoints.Length - 1];
+                switch (exit.exitDirection)
+                {
+                    case TerrainManager.TerrainDirection.Left:
+                        pos.x -= cellSize.x / 2;
+                        break;
+                    case TerrainManager.TerrainDirection.Right:
+                        pos.x += cellSize.x / 2;
+                        break;
+                    case TerrainManager.TerrainDirection.Up:
+                        pos.y += cellSize.y / 2;
+                        break;
+                    case TerrainManager.TerrainDirection.Down:
+                        pos.y -= cellSize.y / 2;
+                        break;
+                }
+                pathPoints[pathPoints.Length - 1] = pos;
+
+
                 // Set the path and add it
-                path.SetPath(exit.cameraPathPoints);
+                path.SetPath(pathPoints);
                 cameraPaths.Add(path);
             }
             else
