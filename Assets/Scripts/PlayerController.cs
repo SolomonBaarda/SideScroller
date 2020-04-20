@@ -2,16 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     [Header("Velocity settings")]
-    public float max_speed = 6f;
-    public float terminal_velocity = 20f;
+    [SerializeField]
+    private float max_speed = 6f;
+    [SerializeField]
+    private float terminal_velocity = 20f;
 
     [Header("Jump settings")]
-    public float jump_power = 6f;
-    public int max_double_jumps = 1;
-    public int double_jumps_left = 0;
+    [SerializeField]
+    private float jump_force = 6f;
+    [SerializeField]
+    private int max_double_jumps = 1;
+    [SerializeField]
+    private int double_jumps_left = 0;
 
     private Vector2 velocity;
 
@@ -74,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
                 // Do full jump 
                 if (Input.GetKey(keys.jump))
                 {
-                    Jump(jump_power);
+                    Jump(jump_force);
                 }
             }
         }
@@ -91,7 +96,7 @@ public class PlayerMovement : MonoBehaviour
                 // Do wall jump
                 if (Input.GetKey(keys.jump))
                 {
-                    WallJump(jump_power / 10, jump_power);
+                    WallJump(jump_force / 10, jump_force);
                 }
             }
         }
@@ -108,7 +113,7 @@ public class PlayerMovement : MonoBehaviour
                     if (double_jumps_left > 0)
                     {
                         double_jumps_left--;
-                        Jump(jump_power);
+                        Jump(jump_force);
                     }
                 }
             }

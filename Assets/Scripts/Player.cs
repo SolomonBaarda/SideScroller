@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
 
     public int coinCount;
 
-    public PlayerMovement controller;
+    public PlayerController controller;
 
     public Chunk currentChunk;
 
@@ -17,7 +17,7 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         // Get reference to the controller script
-        controller = GetComponent<PlayerMovement>();
+        controller = GetComponent<PlayerController>();
 
         isAlive = false;
         coinCount = 0;
