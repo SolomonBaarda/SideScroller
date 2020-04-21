@@ -5,19 +5,19 @@ using UnityEngine;
 public abstract class InteractableItem : MonoBehaviour
 {
     [SerializeField]
-    public LootTable lootTable;
+    private LootTable lootTable;
 
-    private void Awake()
+    public bool isInteractable = false;
+    public bool canBePickedUp = false;
+
+
+    public LootTable GetLootTable()
     {
         if (lootTable == null)
         {
             throw new System.Exception("Loot table not defined for " + this);
         }
-    }
 
-
-    public LootTable GetLootTable()
-    {
         return lootTable;
     }
 
@@ -27,6 +27,13 @@ public abstract class InteractableItem : MonoBehaviour
     /// </summary>
     /// <returns></returns>
     public abstract bool Interact();
+
+
+    /// <summary>
+    /// Method to be called when the item is collided with. Return true if an item from the LootTable should be spawned.
+    /// </summary>
+    /// <returns></returns>
+    public abstract bool PickUp(Player player);
 
 
 }

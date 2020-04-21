@@ -10,6 +10,8 @@ public class Pot : InteractableItem
     private void Awake()
     {
         state = PotState.Whole;
+
+        isInteractable = true;
     }
 
     public override bool Interact()
@@ -25,4 +27,9 @@ public class Pot : InteractableItem
         return true;
     }
 
+
+    public override bool PickUp(Player player)
+    {
+        return false;
+    }
 }

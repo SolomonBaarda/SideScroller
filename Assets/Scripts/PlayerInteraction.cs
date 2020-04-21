@@ -59,37 +59,50 @@ public class PlayerInteraction : MonoBehaviour
             }
         }
 
+        // Remove all elements that arent interactable items
+        collisionItems.RemoveAll(c => c.gameObject.GetComponent<InteractableItem>() == null);
+
         // Only bother if there are items
         if (collisionItems.Count > 0)
         {
             // Check if any items can be picked up by the player
             foreach (Collider2D c in collisionItems)
             {
-                GameObject g = c.gameObject;
-                if (g.tag.Equals(ItemManager.ITEM_CAN_PICK_UP_TAG))
+                InteractableItem item = c.gameObject.GetComponent<InteractableItem>();
+
+                if (item != null)
                 {
-                    // Pick them up
-                    g.SendMessage("PickUp", gameObject);
+                    if (item.canBePickedUp)
+                    {
+                        item.PickUp(GetComponent<Player>());
+                    }
                 }
             }
 
-            // Remove all elements that can be picked up
-            collisionItems.RemoveAll(c => c.gameObject.CompareTag(ItemManager.ITEM_CAN_PICK_UP_TAG));
-        }
-
-        // Only bother if there are items
-        if (collisionItems.Count > 0)
-        {
             // Check if it is a valid time to interact
             if (interact && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)
             {
                 // Get the closest item to the player
-                GameObject closest = collisionItems.ToArray()[0].gameObject;
                 collisionItems.Sort((x, y) => Vector2.Distance(transform.position, x.transform.position).CompareTo(Vector2.Distance(transform.position, y.transform.position)));
 
-                // Invoke the event
-                ItemManager.OnPlayerInteractWithItem.Invoke(closest);
-                interact_timeout = 0;
+                Collider2D[] collisionArray = collisionItems.ToArray();
+
+                for (int i = 0; i < collisionArray.Length; i++)
+                {
+                    GameObject chosen = collisionArray[i].gameObject;
+                    InteractableItem item = chosen.GetComponent<InteractableItem>();
+
+                    if (item != null)
+                    {
+                        if (item.Interact())
+                        {
+                            // Invoke the event
+                            ItemManager.OnPlayerInteractWithItem.Invoke(item);
+                            interact_timeout = 0;
+                            break;
+                        }
+                    }
+                }
             }
         }
 

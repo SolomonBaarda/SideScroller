@@ -6,7 +6,7 @@ using System;
 
 public class ItemManager : MonoBehaviour
 {
-    public static UnityAction<GameObject> OnPlayerInteractWithItem;
+    public static UnityAction<InteractableItem> OnPlayerInteractWithItem;
 
     private System.Random random;
 
@@ -33,25 +33,20 @@ public class ItemManager : MonoBehaviour
 
 
 
-    private void InteractWithItem(GameObject o)
+    private void InteractWithItem(InteractableItem item)
     {
-        InteractableItem item = o.GetComponent<InteractableItem>();
+        LootTable table = item.GetLootTable();
+        int value = random.Next(0, table.GetTotalWeight());
+        Item drop = table.GetLoot(value);
 
-        // Ensure its valid first
-        if (item != null)
+        GameObject g;
+        itemPrefabs.TryGetValue(drop, out g);
+
+        if (item.Interact())
         {
-            LootTable table = item.GetLootTable();
-            int value = random.Next(0, table.GetTotalWeight());
-            Item drop = table.GetLoot(value);
-
-            GameObject g;
-            itemPrefabs.TryGetValue(drop, out g);
-
-            if (item.Interact())
-            {
-                SpawnItem(g, item.transform.position, drop.ToString());
-            }
+            SpawnItem(g, item.transform.position, drop.ToString());
         }
+
     }
 
 

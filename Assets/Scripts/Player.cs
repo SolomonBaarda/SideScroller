@@ -82,8 +82,6 @@ public class Player : MonoBehaviour
     {
         isAlive = false;
         controller.enabled = false;
-
-        Debug.Log("Set dead called");
     }
 
 

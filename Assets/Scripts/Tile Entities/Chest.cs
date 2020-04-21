@@ -14,6 +14,8 @@ public class Chest : InteractableItem
     {
         state = ChestState.Closed;
         contents = ChestContents.Full;
+
+        isInteractable = true;
     }
 
     // Update is called once per frame
@@ -40,6 +42,12 @@ public class Chest : InteractableItem
             Close();
         }
 
+        return false;
+    }
+
+
+    public override bool PickUp(Player player)
+    {
         return false;
     }
 

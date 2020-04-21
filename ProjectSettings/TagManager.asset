@@ -3,9 +3,7 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - ITEM_CanPickUp
-  - ITEM_Interactable
+  tags: []
   layers:
   - Default
   - TransparentFX
@@ -51,6 +49,15 @@ TagManager:
     locked: 0
   - name: Background
     uniqueID: 2231643803
+    locked: 0
+  - name: Item_Inventory
+    uniqueID: 94643921
+    locked: 0
+  - name: Item_Collision
+    uniqueID: 3972413987
+    locked: 0
+  - name: Item_Inventory_Front
+    uniqueID: 2183198855
     locked: 0
   - name: Hazard
     uniqueID: 1024329537
