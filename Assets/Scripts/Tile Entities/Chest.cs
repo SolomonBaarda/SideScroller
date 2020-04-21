@@ -5,12 +5,10 @@ using UnityEngine;
 public class Chest : InteractableItem
 {
     private enum ChestState { Locked, Closed, Open };
-    [SerializeField]
-    private ChestState state;
+    [SerializeField] private ChestState state;
 
     private enum ChestContents { Full, Empty };
-    [SerializeField]
-    private ChestContents contents;
+    [SerializeField] private ChestContents contents;
 
     private void Awake()
     {
@@ -27,12 +25,26 @@ public class Chest : InteractableItem
     }
 
 
-    public override void Interact()
+    public override bool Interact()
     {
-        
+        if (state == ChestState.Locked)
+        {
+            Unlock();
+        }
+        else if (state == ChestState.Closed)
+        {
+            return Open();
+        }
+        else if (state == ChestState.Open)
+        {
+            Close();
+        }
+
+        return false;
     }
 
-    private void Open()
+
+    private bool Open()
     {
         if (state.Equals(ChestState.Closed))
         {
@@ -40,8 +52,10 @@ public class Chest : InteractableItem
             if (contents.Equals(ChestContents.Full))
             {
                 contents = ChestContents.Empty;
+                return true;
             }
         }
+        return false;
     }
 
     private void Close()

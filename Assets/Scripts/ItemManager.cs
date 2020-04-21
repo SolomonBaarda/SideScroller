@@ -46,10 +46,11 @@ public class ItemManager : MonoBehaviour
 
             GameObject g;
             itemPrefabs.TryGetValue(drop, out g);
-            SpawnItem(g, item.transform.position, "New item!!");
 
-            // Then brodcast the message to react
-            item.SendMessage("Interact");
+            if (item.Interact())
+            {
+                SpawnItem(g, item.transform.position, drop.ToString());
+            }
         }
     }
 

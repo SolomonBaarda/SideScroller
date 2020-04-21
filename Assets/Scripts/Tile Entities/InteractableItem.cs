@@ -22,7 +22,11 @@ public abstract class InteractableItem : MonoBehaviour
     }
 
 
-    public abstract void Interact();
+    /// <summary>
+    /// Method to be called when the item is interacted with. Return true if an item from the LootTable should be spawned.
+    /// </summary>
+    /// <returns></returns>
+    public abstract bool Interact();
 
 
 }

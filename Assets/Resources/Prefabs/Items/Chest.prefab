@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1f5b3b5a36855242a4c6eaaedb2a910, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lootTable: {fileID: 11400000, guid: 278f265d381851045bd452b3f5ce5eeb, type: 2}
   state: 0
   contents: 0
 --- !u!212 &4393830106549497754
