@@ -545,8 +545,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3852e760dca4e784c98bb297fe1bcea5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lootTablePrefabs:
-  - {fileID: 3703472953814519117, guid: e892fb5038d66e64d9878bf5aa4927d8, type: 3}
+  g: {fileID: 0}
 --- !u!1 &489454952
 GameObject:
   m_ObjectHideFlags: 0
@@ -604,6 +603,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 002ca988d702b69418b622db169a5ca4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 40
   jump_force: 600
   max_double_jumps: 1
   double_jumps_left: 0
@@ -1254,6 +1254,7 @@ GameObject:
   - component: {fileID: 692011009574956205}
   - component: {fileID: 692011009574956208}
   - component: {fileID: 700096400}
+  - component: {fileID: 692011009574956209}
   m_Layer: 10
   m_Name: Player
   m_TagString: Player
@@ -1421,4 +1422,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89ec7fb21dd955144b75e343573e93fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 40
+--- !u!114 &692011009574956209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 692011009574956201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d8947cf5bb2fc64488ca5a9da3708a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DEFAULT_INTERACT_TIMEOUT: 0.25

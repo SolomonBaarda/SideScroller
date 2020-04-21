@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class Coin : MonoBehaviour
 {
-    public float initialSetup = 0.25f;
+    [SerializeField]
+    private float initialSetup = 0.25f;
+    private Collider2D col;
 
     private void Awake()
     {
-        GetComponent<BoxCollider2D>().enabled = false;
+        gameObject.tag = ItemManager.ITEM_CAN_PICK_UP_TAG;
+        col = GetComponent<BoxCollider2D>();
+
+        col.enabled = false;
     }
 
     private void Start()
@@ -16,23 +21,23 @@ public class Coin : MonoBehaviour
         StartCoroutine(InitialDisable());
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        // Player is colliding with this object 
-        if (collision.gameObject.layer == LayerMask.NameToLayer(Player.PLAYER))
-        {
-            // Reference to player and controller script
-            Player p = collision.transform.root.GetComponent<Player>();
 
-            p.PickedUpCoin();
-            Destroy(gameObject);
-        }
+
+    private void PickUpThis(GameObject player)
+    {
+        col.enabled = false;
+
+        player.GetComponent<Player>().PickedUpCoin();
+
+        Destroy(gameObject);
     }
+
+
 
     private IEnumerator InitialDisable()
     {
         yield return new WaitForSeconds(initialSetup);
-        GetComponent<BoxCollider2D>().enabled = true;
+        col.enabled = true;
     }
 
 }

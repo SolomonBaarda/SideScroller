@@ -6,14 +6,15 @@ using System;
 
 public class ItemManager : MonoBehaviour
 {
-    public static UnityAction<Vector2> OnPotBroken;
-    public static UnityAction<Vector2> OnChestOpened;
+    public static UnityAction<GameObject> OnPlayerInteractWithItem;
 
     private System.Random random;
 
     public GameObject g;
     public Dictionary<Item, GameObject> itemPrefabs;
 
+    public static string ITEM_LAYER = "Item";
+    public static string ITEM_CAN_PICK_UP_TAG = "CanPickUp";
 
     private void Awake()
     {
@@ -22,9 +23,21 @@ public class ItemManager : MonoBehaviour
         //Debug.Log("item prefab size " + itemPrefabs.Count);
 
         TerrainManager.OnTerrainChunkGenerated += GenerateItemsForChunk;
+        OnPlayerInteractWithItem += InteractWithItem;
 
         random = new System.Random(0);
     }
+
+
+
+
+
+    private void InteractWithItem(GameObject item)
+    {
+        Debug.Log("Interact with item invoked");
+    }
+
+
 
     private void LoadAllItemPrefabs(ref Dictionary<Item, GameObject> prefabs)
     {
@@ -69,29 +82,10 @@ public class ItemManager : MonoBehaviour
     private void SpawnItem(GameObject item, Vector2 position, string name)
     {
         GameObject g = Instantiate(item, position, Quaternion.identity, transform);
+        g.layer = LayerMask.NameToLayer(ITEM_LAYER);
         g.name = name;
     }
 
-
-
-
-    private void SpawnRandomLoot(Vector2 pos, GameObject[] loot)
-    {
-        int index = Mathf.FloorToInt(random.Next(0, loot.Length));
-
-
-    }
-
-
-    private void PotBroken(Vector2 pos)
-    {
-        //SpawnRandomLoot(pos, lootTablePrefabs);
-    }
-
-    private void ChestOpened(Vector2 pos)
-    {
-        //SpawnRandomLoot(pos, lootTablePrefabs);
-    }
 
 
 

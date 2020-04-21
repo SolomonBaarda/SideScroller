@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3703472953814519112}
   m_Layer: 14
   m_Name: Coin
-  m_TagString: Untagged
+  m_TagString: CanPickUp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -58,10 +58,12 @@ public class Player : MonoBehaviour
         return null;
     }
 
+
     public Chunk GetCurrentChunk()
     {
         return currentChunk;
     }
+
 
     public void SetPosition(Vector2 position)
     {
@@ -80,6 +82,8 @@ public class Player : MonoBehaviour
     {
         isAlive = false;
         controller.enabled = false;
+
+        Debug.Log("Set dead called");
     }
 
 

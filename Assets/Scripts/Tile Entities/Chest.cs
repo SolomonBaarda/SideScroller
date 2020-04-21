@@ -24,29 +24,7 @@ public class Chest : MonoBehaviour
         a.SetBool("isOpen", state.Equals(ChestState.Open));
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        // Player is colliding with this object 
-        if (collision.gameObject.layer == LayerMask.NameToLayer(Player.PLAYER))
-        {
-            // Reference to player and controller script
-            Player p = collision.transform.root.GetComponent<Player>();
 
-            // Open the chest 
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                if (state.Equals(ChestState.Closed))
-                {
-                    Open();
-                }
-                else if (state.Equals(ChestState.Open))
-                {
-                    Close();
-                }
-
-            }
-        }
-    }
 
 
     public void Open()
@@ -57,7 +35,6 @@ public class Chest : MonoBehaviour
             if (contents.Equals(ChestContents.Full))
             {
                 contents = ChestContents.Empty;
-                ItemManager.OnChestOpened.Invoke(transform.position);
             }
         }
     }
