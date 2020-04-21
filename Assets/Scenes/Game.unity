@@ -604,11 +604,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 002ca988d702b69418b622db169a5ca4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jump_force: 400
+  jump_force: 600
   max_double_jumps: 1
   double_jumps_left: 0
   crouch_speed_reduction: 0.4
-  movementSmoothing: 0.05
+  movementSmoothing: 0.02
   allowAirControl: 1
   facing: 0
   headPos: {fileID: 242332447}

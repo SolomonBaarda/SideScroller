@@ -6,16 +6,15 @@ using UnityEngine.Events;
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
-    //[SerializeField] private float max_speed = 6f;
-    [SerializeField] private float jump_force = 400f;
+    [SerializeField] private float jump_force = 600f;
     [SerializeField] private int max_double_jumps = 1;
     [SerializeField] private int double_jumps_left = 0;
     [Range(0, 1)] [SerializeField] private float crouch_speed_reduction = .4f;
 
     [Header("Controller Settings")]
-    [Range(0, .3f)] [SerializeField] private float movementSmoothing = .05f;
+    [Range(0, .3f)] [SerializeField] private float movementSmoothing = .02f;
     [SerializeField] private bool allowAirControl = true;
-    private const float collisionCheckRadius = .2f;
+    private const float collisionCheckRadius = .1f;
     private bool isGrounded;
     private Rigidbody2D rigid;
     private Collider2D mainCollider;
@@ -82,6 +81,7 @@ public class PlayerController : MonoBehaviour
             if (collisions[i].gameObject != gameObject)
             {
                 isGrounded = true;
+                double_jumps_left = max_double_jumps;
                 if (!wasGrounded)
                 {
                     OnPlayerland.Invoke();
@@ -93,22 +93,25 @@ public class PlayerController : MonoBehaviour
 
     public void Move(float move, bool crouch, bool jump)
     {
-        // If crouching, check to see if the character can stand up
+        // If crouch has just been let go of
         if (!crouch)
         {
-            // If the character has a ceiling preventing them from standing up, keep them crouching
-            if (Physics2D.OverlapCircle(headPos.position, collisionCheckRadius, LayerMask.GetMask("Ground")))
+            if(isCrouching)
             {
-                crouch = true;
+                // If the character has a ceiling preventing them from standing up, keep them crouching
+                if (Physics2D.OverlapCircle(headPos.position, collisionCheckRadius, LayerMask.GetMask("Ground")))
+                {
+                    crouch = true;
+                }
             }
         }
 
-        // only control the player if grounded or airControl is turned on
         if (isGrounded || allowAirControl)
         {
-            // Player has just crouched
+            // Crouching
             if (crouch)
             {
+                // Player has just crouched this frame
                 if (!isCrouching)
                 {
                     isCrouching = true;
@@ -116,14 +119,15 @@ public class PlayerController : MonoBehaviour
                 }
 
                 // Reduce the speed by the crouchSpeed multiplier
-                move *= crouch_speed_reduction;
+                move *= (1 - crouch_speed_reduction);
 
-                // Disable one of the colliders when crouching
+                // Disable the top collider when crouching
                 if (mainCollider != null)
                 {
-                    //mainCollider.enabled = false;
+                    mainCollider.enabled = false;
                 }
             }
+            // Not crouching
             else
             {
                 // Enable the collider when not crouching
@@ -140,31 +144,82 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
+
             // Move the character by finding the target velocity
             Vector2 targetVelocity = new Vector2(move * 10f, rigid.velocity.y);
+
             // And then smoothing it out and applying it to the character
             rigid.velocity = Vector2.SmoothDamp(rigid.velocity, targetVelocity, ref velocity, movementSmoothing);
 
-            // If the input is moving the player right and the player is facing left...
+            // If the input is moving the player right and the player is facing left
             if (move > 0 && !facing.Equals(Direction.Right))
             {
+                // Face right
                 facing = Direction.Right;
                 Flip();
             }
-            // Otherwise if the input is moving the player left and the player is facing right...
+            // Otherwise if the input is moving the player left and the player is facing right
             else if (move < 0 && !facing.Equals(Direction.Left))
             {
+                // Face left
                 facing = Direction.Left;
                 Flip();
             }
         }
-        // If the player should jump...
-        if (isGrounded && jump)
+
+        // Regular jump
+        if (isGrounded && jump && !crouch)
         {
             // Add a vertical force to the player.
             isGrounded = false;
-            rigid.AddForce(new Vector2(0f, jump_force));
+            Jump(jump_force);
         }
+        // Crouch jump
+        else if (isGrounded && jump && crouch)
+        {
+            // Jump forwards
+            // TODO
+            isGrounded = false;
+            float force = 2 * jump_force;
+            if(facing == Direction.Left)
+            {
+                force *= -1;
+            } 
+            else if(facing == Direction.Forward)
+            {
+                force = 0;
+            }
+            ForwardJump(force, jump_force);
+        }
+        // Double jump
+        else if (!isGrounded && jump && double_jumps_left > 0)
+        {
+            double_jumps_left--;
+            Jump(jump_force);
+        }
+    }
+
+
+
+    private void Jump(float force)
+    {
+        // Set y vel to 0
+        Vector2 vel = rigid.velocity;
+        vel.y = 0;
+        rigid.velocity = vel;
+
+        // Then jump
+        rigid.AddForce(new Vector2(0, force));
+    }
+
+
+    private void ForwardJump(float forceX, float forceY)
+    {
+        // Set y vel to 0
+        rigid.velocity = Vector2.zero;
+
+        // Then jump
+        rigid.AddForce(new Vector2(forceX, forceY));
     }
 
 

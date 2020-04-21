@@ -24,7 +24,7 @@ public class Player : MonoBehaviour
 
 
 
-    private void FixedUpdate()
+    private void Update()
     {
         // Get the chunk
         Chunk current = CalculateCurrentChunk();

@@ -218,7 +218,7 @@ public class TerrainManager : MonoBehaviour
 
         // Loop through each sample terrain exit
         List<TerrainChunk.Exit> exits = new List<TerrainChunk.Exit>();
-        foreach (SampleTerrain.SampleTerrainExit sampleExit in terrain.exitTilePositions)
+        foreach (SampleTerrain.Exit sampleExit in terrain.exitTilePositions)
         {
             // Calculate where the exit should be
             Vector2Int exitTile = entryTile + new Vector2Int(invert * sampleExit.exitPositionRelative.x, sampleExit.exitPositionRelative.y);
@@ -284,13 +284,24 @@ public class TerrainManager : MonoBehaviour
             exits.Add(e);
         }
 
+        List<TerrainChunk.Item> allItemPositions = new List<TerrainChunk.Item>();
+
+        // Calculate the Items
+        foreach (SampleTerrain.SampleItem item in terrain.items)
+        {
+            // Get position of the centre of the tile
+            Vector2 pos = grid.CellToWorld(new Vector3Int(entryTile.x + invert * item.tilePos.x, entryTile.y + item.tilePos.y, 0)) + grid.cellSize / 2;
+            // And add it
+            allItemPositions.Add(new TerrainChunk.Item(item.type, pos));
+        }
+
         // Return the TerrainChunk object for use in the ChunkManager
-        return new TerrainChunk(b.boundsReal, grid.cellSize, centre, entryPositionWorld, exits, directionToGenerate, distanceFromOrigin, chunkID);
+        return new TerrainChunk(b.boundsReal, grid.cellSize, centre, entryPositionWorld, exits, allItemPositions, terrain.itemChance, directionToGenerate, distanceFromOrigin, chunkID);
     }
 
 
 
-    private void CopySampleTerrainLayer(Vector2Int entryPosition, bool flipAxisX, SampleTerrain.SampleTerrainLayer layer, ref Tilemap tilemap)
+    private void CopySampleTerrainLayer(Vector2Int entryPosition, bool flipAxisX, SampleTerrain.Layer layer, ref Tilemap tilemap)
     {
         Vector3Int entry = new Vector3Int(entryPosition.x, entryPosition.y, 0);
 
@@ -301,7 +312,7 @@ public class TerrainManager : MonoBehaviour
         }
 
         // Copy wall
-        foreach (SampleTerrain.SampleTerrainLayer.SampleTerrainTile tile in layer.tilesInThisLayer)
+        foreach (SampleTerrain.Layer.SampleTile tile in layer.tilesInThisLayer)
         {
             // Position of the new tile
             Vector3Int newTilePos = entry + new Vector3Int(invert * tile.position.x, tile.position.y, 0);
@@ -375,15 +386,19 @@ public class TerrainManager : MonoBehaviour
         public Vector2 cameraPathStartWorldSpace;
         public Vector2 cameraPathEndWorldSpace;
 
+        public List<Item> items;
+        public float itemChance;
 
         public TerrainChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldPosition,
-                List<Exit> exits, TerrainDirection direction, float distanceFromOrigin, Vector2Int chunkID)
+                List<Exit> exits, List<Item> items, float itemChance, TerrainDirection direction, float distanceFromOrigin, Vector2Int chunkID)
         {
             this.bounds = bounds;
             this.cellSize = cellSize;
             this.centre = centre;
             this.enteranceWorldPosition = enteranceWorldPosition;
             this.exits = exits;
+            this.items = items;
+            this.itemChance = itemChance;
             this.direction = direction;
             this.distanceFromOrigin = distanceFromOrigin;
             this.chunkID = chunkID;
@@ -407,6 +422,19 @@ public class TerrainManager : MonoBehaviour
                 this.newChunkID = newChunkID;
 
                 cameraPathPoints = new List<Vector2>();
+            }
+        }
+
+
+        public class Item
+        {
+            public ItemManager.Item itemType;
+            public Vector2 centreOfTile;
+
+            public Item(ItemManager.Item itemType, Vector2 centreOfTile)
+            {
+                this.itemType = itemType;
+                this.centreOfTile = centreOfTile;
             }
         }
     }

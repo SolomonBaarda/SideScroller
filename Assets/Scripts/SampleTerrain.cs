@@ -19,20 +19,24 @@ public class SampleTerrain : MonoBehaviour
     private SampleTerrainManager manager;
 
     // Objects for storing the tiles
-    public SampleTerrainLayer wall;
-    public SampleTerrainLayer wallDetail;
-    public SampleTerrainLayer background;
-    public SampleTerrainLayer hazard;
-    public SampleTerrainLayer ground;
+    public Layer wall;
+    public Layer wallDetail;
+    public Layer background;
+    public Layer hazard;
+    public Layer ground;
 
     // Reference to the entry tile
     public Vector2Int entryTilePosition;
     private Vector2Int entryTilePositionLocal;
-    public List<SampleTerrainExit> exitTilePositions;
+    public List<Exit> exitTilePositions;
 
+    // Terrain direction and type
     public TerrainManager.TerrainDirection direction;
-
     public SampleTerrainType terrainType;
+
+    public List<SampleItem> items;
+
+    [Range(0, 1)] public float itemChance = 1;
 
     public void LoadSample()
     {
@@ -40,7 +44,8 @@ public class SampleTerrain : MonoBehaviour
         manager = transform.root.GetComponent<SampleTerrainManager>();
         grid = GetComponent<Grid>();
 
-        exitTilePositions = new List<SampleTerrainExit>();
+        exitTilePositions = new List<Exit>();
+        items = new List<SampleItem>();
 
         tilemap_devCameraPath = new List<Tilemap>();
 
@@ -90,11 +95,11 @@ public class SampleTerrain : MonoBehaviour
         }
 
         // Create new objects to store the tile data
-        wall = new SampleTerrainLayer();
-        wallDetail = new SampleTerrainLayer();
-        background = new SampleTerrainLayer();
-        hazard = new SampleTerrainLayer();
-        ground = new SampleTerrainLayer();
+        wall = new Layer();
+        wallDetail = new Layer();
+        background = new Layer();
+        hazard = new Layer();
+        ground = new Layer();
 
         // Find the entry tile (must be first)
         FindEntryTilePosition(ref entryTilePositionLocal);
@@ -105,6 +110,9 @@ public class SampleTerrain : MonoBehaviour
         // And their extra camera paths 
         FindCameraPathPositions(ref exitTilePositions, tilemap_devCameraPath);
 
+        // Load the item types and positions
+        LoadItems(ref items, tilemap_dev);
+
         // Load all the tiles in the tilemaps into the objects
         LoadTiles(tilemap_wall, ref wall);
         LoadTiles(tilemap_wallDetail, ref wallDetail);
@@ -114,11 +122,6 @@ public class SampleTerrain : MonoBehaviour
     }
 
 
-    public Vector2 GetTileSize()
-    {
-        return grid.cellSize;
-    }
-
 
     /// <summary>
     /// Get the bounds in tiles for the playable area in this Sample Terrain.
@@ -126,12 +129,12 @@ public class SampleTerrain : MonoBehaviour
     public GroundBounds GetGroundBounds()
     {
         // Get array just so we can initialise the variables to the first element 
-        SampleTerrainLayer.SampleTerrainTile[] tiles = ground.tilesInThisLayer.ToArray();
+        Layer.SampleTile[] tiles = ground.tilesInThisLayer.ToArray();
 
         Vector2Int min = tiles[0].position, max = tiles[0].position;
 
         // Might as well use the array since we have it lol
-        foreach (SampleTerrainLayer.SampleTerrainTile tile in tiles)
+        foreach (Layer.SampleTile tile in tiles)
         {
             if (tile.position.x < min.x)
             {
@@ -157,7 +160,7 @@ public class SampleTerrain : MonoBehaviour
 
 
 
-    private void LoadTiles(Tilemap tilemap, ref SampleTerrainLayer layer)
+    private void LoadTiles(Tilemap tilemap, ref Layer layer)
     {
         // Get an iterator for the bounds of the tilemap 
         BoundsInt.PositionEnumerator p = tilemap.cellBounds.allPositionsWithin.GetEnumerator();
@@ -169,7 +172,7 @@ public class SampleTerrain : MonoBehaviour
             if (t != null)
             {
                 // Add it to the list of tiles for that layer
-                layer.tilesInThisLayer.Add(new SampleTerrainLayer.SampleTerrainTile(t, new Vector2Int(current.x, current.y) - entryTilePositionLocal));
+                layer.tilesInThisLayer.Add(new Layer.SampleTile(t, new Vector2Int(current.x, current.y) - entryTilePositionLocal));
             }
         }
     }
@@ -217,7 +220,7 @@ public class SampleTerrain : MonoBehaviour
     /// <summary>
     /// Must be called AFTER entry position has been assigned
     /// </summary>
-    private void FindExitTilePositions(ref List<SampleTerrainExit> exits)
+    private void FindExitTilePositions(ref List<Exit> exits)
     {
         exits.Clear();
 
@@ -255,7 +258,7 @@ public class SampleTerrain : MonoBehaviour
 
                 // Add the new exit
                 Vector2Int tile = new Vector2Int(current.x, current.y) - entryTilePositionLocal;
-                exits.Add(new SampleTerrainExit(direction, tile));
+                exits.Add(new Exit(direction, tile));
             }
         }
 
@@ -266,7 +269,7 @@ public class SampleTerrain : MonoBehaviour
     }
 
 
-    private void FindCameraPathPositions(ref List<SampleTerrainExit> exits, List<Tilemap> cameraPaths)
+    private void FindCameraPathPositions(ref List<Exit> exits, List<Tilemap> cameraPaths)
     {
         if (exits.Count == 0)
         {
@@ -312,7 +315,7 @@ public class SampleTerrain : MonoBehaviour
                     }
 
                     // Find the exit
-                    foreach (SampleTerrainExit e in exits)
+                    foreach (Exit e in exits)
                     {
                         if (e.exitDirection.Equals(d))
                         {
@@ -327,9 +330,51 @@ public class SampleTerrain : MonoBehaviour
         }
 
         // Sort the lists by distance from entry tile pos
-        foreach (SampleTerrainExit exit in exits)
+        foreach (Exit exit in exits)
         {
             exit.cameraPathPoints.Sort((x, y) => Vector2Int.Distance(entryTilePosition, x).CompareTo(Vector2Int.Distance(entryTilePosition, y)));
+        }
+    }
+
+
+
+    private void LoadItems(ref List<SampleItem> items, Tilemap tilemap)
+    {
+        items.Clear();
+
+        // Get an iterator for the bounds of the tilemap 
+        BoundsInt.PositionEnumerator p = tilemap.cellBounds.allPositionsWithin.GetEnumerator();
+        while (p.MoveNext())
+        {
+            Vector3Int current = p.Current;
+            TileBase t = tilemap.GetTile(current);
+            if (t != null)
+            {
+                ItemManager.Item itemType = ItemManager.Item.Coin;
+                Vector2Int tilePos = new Vector2Int(current.x, current.y) - entryTilePositionLocal;
+
+                // Assign the correct type
+                if(t.Equals(manager.dev_itemCoin))
+                {
+                    itemType = ItemManager.Item.Coin;
+                }
+                else if (t.Equals(manager.dev_itemPot))
+                {
+                    itemType = ItemManager.Item.Pot;
+                }
+                else if (t.Equals(manager.dev_itemChest))
+                {
+                    itemType = ItemManager.Item.Chest;
+                }
+                else
+                {
+                    // If not an item, do nothing
+                    continue;
+                }
+
+                // Add the new item
+                items.Add(new SampleItem(itemType, tilePos));
+            }
         }
     }
 
@@ -338,33 +383,45 @@ public class SampleTerrain : MonoBehaviour
     /// <summary>
     /// Class for storing the tiles in a specific layer of Sample Terrain.
     /// </summary>
-    public class SampleTerrainLayer
+    public class Layer
     {
-        public List<SampleTerrainTile> tilesInThisLayer;
+        public List<SampleTile> tilesInThisLayer;
 
-        public SampleTerrainLayer()
+        public Layer()
         {
-            tilesInThisLayer = new List<SampleTerrainTile>();
+            tilesInThisLayer = new List<SampleTile>();
         }
 
         /// <summary>
         /// Class for storing an induvidual tile of Sample Terrain.
         /// </summary>
-        public class SampleTerrainTile
+        public class SampleTile
         {
             public TileBase tileType;
             public Vector2Int position;
 
-            public SampleTerrainTile(TileBase tileType, Vector2Int position)
+            public SampleTile(TileBase tileType, Vector2Int position)
             {
                 this.tileType = tileType;
                 this.position = position;
             }
         }
-
     }
 
-    public class SampleTerrainExit
+    public class SampleItem
+    {
+        public ItemManager.Item type;
+        public Vector2Int tilePos;
+
+        public SampleItem(ItemManager.Item type, Vector2Int tilePos)
+        {
+            this.type = type;
+            this.tilePos = tilePos;
+        }
+    }
+
+
+    public class Exit
     {
         /// <summary>
         /// The direction of the exit, relative to the enterance
@@ -373,7 +430,7 @@ public class SampleTerrain : MonoBehaviour
         public Vector2Int exitPositionRelative;
         public List<Vector2Int> cameraPathPoints;
 
-        public SampleTerrainExit(ExitDirection exitDirection, Vector2Int exitPositionRelative)
+        public Exit(ExitDirection exitDirection, Vector2Int exitPositionRelative)
         {
             this.exitDirection = exitDirection;
             this.exitPositionRelative = exitPositionRelative;
