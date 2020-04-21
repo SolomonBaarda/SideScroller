@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chest : MonoBehaviour
+public class Chest : InteractableItem
 {
-    public enum ChestState { Locked, Closed, Open };
-    public ChestState state;
+    private enum ChestState { Locked, Closed, Open };
+    [SerializeField]
+    private ChestState state;
 
-    public enum ChestContents { Full, Empty };
-    public ChestContents contents;
+    private enum ChestContents { Full, Empty };
+    [SerializeField]
+    private ChestContents contents;
 
     private void Awake()
     {
@@ -25,9 +27,12 @@ public class Chest : MonoBehaviour
     }
 
 
+    public override void Interact()
+    {
+        
+    }
 
-
-    public void Open()
+    private void Open()
     {
         if (state.Equals(ChestState.Closed))
         {
@@ -39,7 +44,7 @@ public class Chest : MonoBehaviour
         }
     }
 
-    public void Close()
+    private void Close()
     {
         if (state.Equals(ChestState.Open))
         {
@@ -48,11 +53,13 @@ public class Chest : MonoBehaviour
     }
 
 
-    public void Unlock()
+    private void Unlock()
     {
         if (state.Equals(ChestState.Locked))
         {
             state = ChestState.Closed;
         }
     }
+
+
 }

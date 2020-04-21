@@ -14,7 +14,8 @@ public class ItemManager : MonoBehaviour
     public Dictionary<Item, GameObject> itemPrefabs;
 
     public static string ITEM_LAYER = "Item";
-    public static string ITEM_CAN_PICK_UP_TAG = "CanPickUp";
+    public static string ITEM_CAN_PICK_UP_TAG = "ITEM_CanPickUp";
+    public static string ITEM_INTERACTABLE_TAG = "ITEM_Interactable";
 
     private void Awake()
     {
@@ -32,9 +33,24 @@ public class ItemManager : MonoBehaviour
 
 
 
-    private void InteractWithItem(GameObject item)
+    private void InteractWithItem(GameObject o)
     {
-        Debug.Log("Interact with item invoked");
+        InteractableItem item = o.GetComponent<InteractableItem>();
+
+        // Ensure its valid first
+        if (item != null)
+        {
+            LootTable table = item.GetLootTable();
+            int value = random.Next(0, table.GetTotalWeight());
+            Item drop = table.GetLoot(value);
+
+            GameObject g;
+            itemPrefabs.TryGetValue(drop, out g);
+            SpawnItem(g, item.transform.position, "New item!!");
+
+            // Then brodcast the message to react
+            item.SendMessage("Interact");
+        }
     }
 
 
@@ -42,7 +58,7 @@ public class ItemManager : MonoBehaviour
     private void LoadAllItemPrefabs(ref Dictionary<Item, GameObject> prefabs)
     {
         // Load all item prefabs from "Assets/Resources/ItemPrefabs"
-        GameObject[] allItemPrefabs = Resources.LoadAll<GameObject>("ItemPrefabs");
+        GameObject[] allItemPrefabs = Resources.LoadAll<GameObject>("Prefabs/Items");
 
         // Loop through each object
         foreach (GameObject g in allItemPrefabs)
@@ -71,7 +87,7 @@ public class ItemManager : MonoBehaviour
             GameObject prefab;
             if (itemPrefabs.TryGetValue(item.itemType, out prefab))
             {
-                if(random.Next(0, 1) <= itemChance)
+                if (random.Next(0, 1) <= itemChance)
                 {
                     SpawnItem(prefab, item.centreOfTile, item.itemType.ToString());
                 }

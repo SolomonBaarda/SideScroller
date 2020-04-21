@@ -10,7 +10,6 @@ public class Coin : MonoBehaviour
 
     private void Awake()
     {
-        gameObject.tag = ItemManager.ITEM_CAN_PICK_UP_TAG;
         col = GetComponent<BoxCollider2D>();
 
         col.enabled = false;
@@ -23,7 +22,7 @@ public class Coin : MonoBehaviour
 
 
 
-    private void PickUpThis(GameObject player)
+    private void PickUp(GameObject player)
     {
         col.enabled = false;
 

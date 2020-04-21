@@ -69,7 +69,7 @@ public class PlayerInteraction : MonoBehaviour
                 if (g.tag.Equals(ItemManager.ITEM_CAN_PICK_UP_TAG))
                 {
                     // Pick them up
-                    g.SendMessage("PickUpThis", gameObject);
+                    g.SendMessage("PickUp", gameObject);
                 }
             }
 

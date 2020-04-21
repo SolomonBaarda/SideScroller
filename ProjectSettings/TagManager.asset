@@ -4,7 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - CanPickUp
+  - ITEM_CanPickUp
+  - ITEM_Interactable
   layers:
   - Default
   - TransparentFX
