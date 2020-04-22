@@ -97,7 +97,7 @@ public class PlayerInteraction : MonoBehaviour
                         if (item.Interact())
                         {
                             // Invoke the event
-                            ItemManager.OnPlayerInteractWithItem.Invoke(item);
+                            ItemManager.OnPlayerInteractWithItem.Invoke(item, chosen.transform.position);
                             interact_timeout = 0;
                             break;
                         }

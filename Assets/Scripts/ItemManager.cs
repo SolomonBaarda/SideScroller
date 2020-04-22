@@ -6,11 +6,10 @@ using System;
 
 public class ItemManager : MonoBehaviour
 {
-    public static UnityAction<InteractableItem> OnPlayerInteractWithItem;
+    public static UnityAction<InteractableItem, Vector2> OnPlayerInteractWithItem;
 
     private System.Random random;
 
-    public GameObject g;
     public Dictionary<Item, GameObject> itemPrefabs;
 
     public static string ITEM_LAYER = "Item";
@@ -33,7 +32,7 @@ public class ItemManager : MonoBehaviour
 
 
 
-    private void InteractWithItem(InteractableItem item)
+    private void InteractWithItem(InteractableItem item, Vector2 position)
     {
         LootTable table = item.GetLootTable();
         int value = random.Next(0, table.GetTotalWeight());
@@ -44,7 +43,7 @@ public class ItemManager : MonoBehaviour
 
         if (item.Interact())
         {
-            SpawnItem(g, item.transform.position, drop.ToString());
+            SpawnItem(g, position, drop.ToString());
         }
 
     }
