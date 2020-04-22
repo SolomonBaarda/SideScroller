@@ -6,21 +6,37 @@ using System;
 
 public class ItemManager : MonoBehaviour
 {
+    public static string ITEM_LAYER = "Item";
     public static UnityAction<InteractableItem, Vector2> OnPlayerInteractWithItem;
 
     private System.Random random;
 
-    public Dictionary<Item, GameObject> itemPrefabs;
+    private Dictionary<Loot, GameObject> lootPrefabs;
+    private Dictionary<InteractableItem.Name, GameObject> interactableItemWorldObjectPrefabs;
+    private Dictionary<Weapon.Name, GameObject> weaponScriptableObjectPrefabs;
+    private Dictionary<Buff.Name, GameObject> buffScriptableObjectPrefabs;
 
-    public static string ITEM_LAYER = "Item";
-    public static string ITEM_CAN_PICK_UP_TAG = "ITEM_CanPickUp";
-    public static string ITEM_INTERACTABLE_TAG = "ITEM_Interactable";
+    public GameObject worlditemPrefab;
 
     private void Awake()
     {
-        itemPrefabs = new Dictionary<Item, GameObject>();
-        LoadAllItemPrefabs(ref itemPrefabs);
-        //Debug.Log("item prefab size " + itemPrefabs.Count);
+        DateTime before = DateTime.Now;
+
+        lootPrefabs = new Dictionary<Loot, GameObject>();
+        interactableItemWorldObjectPrefabs = new Dictionary<InteractableItem.Name, GameObject>();
+        weaponScriptableObjectPrefabs = new Dictionary<Weapon.Name, GameObject>();
+        buffScriptableObjectPrefabs = new Dictionary<Buff.Name, GameObject>();
+
+        // Load all items 
+        LoadAllItemPrefabs(ref interactableItemWorldObjectPrefabs, "Prefabs/Items");
+        LoadAllItemPrefabs(ref weaponScriptableObjectPrefabs, "Scripts/Weapons");
+        LoadAllItemPrefabs(ref buffScriptableObjectPrefabs, "Scripts/Buffs");
+
+        DateTime after = DateTime.Now;
+        TimeSpan time = after - before;
+
+        Debug.Log("Loaded items in " + time.Milliseconds + "ms: (" + interactableItemWorldObjectPrefabs.Count + " interactable items), (" + lootPrefabs.Count + " loot), (" + buffScriptableObjectPrefabs.Count + " buffs), (" +
+                weaponScriptableObjectPrefabs.Count + " weapons)");
 
         TerrainManager.OnTerrainChunkGenerated += GenerateItemsForChunk;
         OnPlayerInteractWithItem += InteractWithItem;
@@ -36,38 +52,52 @@ public class ItemManager : MonoBehaviour
     {
         LootTable table = item.GetLootTable();
         int value = random.Next(0, table.GetTotalWeight());
-        Item drop = table.GetLoot(value);
+        Loot drop = table.GetLoot(value);
 
         GameObject g;
-        itemPrefabs.TryGetValue(drop, out g);
+        lootPrefabs.TryGetValue(drop, out g);
 
         if (item.Interact())
         {
             SpawnItem(g, position, drop.ToString());
         }
-
     }
 
 
 
-    private void LoadAllItemPrefabs(ref Dictionary<Item, GameObject> prefabs)
+    /// <summary>
+    /// Load all prefabs from "path" and put them into a Dictionary
+    /// </summary>
+    /// <typeparam name="TEnum"></typeparam>
+    /// <param name="prefabs"></param>
+    /// <param name="path"></param>
+    private void LoadAllItemPrefabs<TEnum>(ref Dictionary<TEnum, GameObject> prefabs, string path) where TEnum : struct
     {
-        // Load all item prefabs from "Assets/Resources/ItemPrefabs"
-        GameObject[] allItemPrefabs = Resources.LoadAll<GameObject>("Prefabs/Items");
+        // Load all objects from path
+        GameObject[] allItemPrefabs = Resources.LoadAll<GameObject>(path);
 
         // Loop through each object
         foreach (GameObject g in allItemPrefabs)
         {
             // Try and get the enum type from the name
-            Item type;
+            TEnum type;
             if (!Enum.TryParse(g.name, out type))
             {
-                Debug.LogError("Could not parse prefab " + g.name + " to Item enum.");
+                Debug.LogError("Could not parse prefab " + g.name + " to enum type.");
                 continue;
             }
 
             // Add it
             prefabs.Add(type, g);
+
+
+            // Check if it is a loot item, and if so add it
+            Loot lootName;
+            if (Enum.TryParse(g.name, out lootName))
+            {
+                lootPrefabs.Add(lootName, g);
+            }
+
         }
     }
 
@@ -80,7 +110,7 @@ public class ItemManager : MonoBehaviour
         foreach (TerrainManager.TerrainChunk.Item item in chunk.items)
         {
             GameObject prefab;
-            if (itemPrefabs.TryGetValue(item.itemType, out prefab))
+            if (interactableItemWorldObjectPrefabs.TryGetValue(item.itemType, out prefab))
             {
                 if (random.Next(0, 1) <= itemChance)
                 {
@@ -100,10 +130,8 @@ public class ItemManager : MonoBehaviour
 
 
 
-    public enum Item
+    public enum Loot
     {
-        Coin,
-        Pot,
-        Chest
+        Coin
     }
 }

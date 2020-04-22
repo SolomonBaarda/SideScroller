@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class InteractableItem : MonoBehaviour
+public abstract class InteractableItem : WorldItem
 {
     [SerializeField]
     protected LootTable lootTable;
@@ -35,5 +35,10 @@ public abstract class InteractableItem : MonoBehaviour
     /// <returns></returns>
     public abstract bool PickUp(PlayerInventory player);
 
-
+    public enum Name
+    {
+        Coin,
+        Pot,
+        Chest
+    }
 }

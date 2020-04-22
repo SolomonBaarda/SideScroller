@@ -428,10 +428,10 @@ public class TerrainManager : MonoBehaviour
 
         public class Item
         {
-            public ItemManager.Item itemType;
+            public InteractableItem.Name itemType;
             public Vector2 centreOfTile;
 
-            public Item(ItemManager.Item itemType, Vector2 centreOfTile)
+            public Item(InteractableItem.Name itemType, Vector2 centreOfTile)
             {
                 this.itemType = itemType;
                 this.centreOfTile = centreOfTile;

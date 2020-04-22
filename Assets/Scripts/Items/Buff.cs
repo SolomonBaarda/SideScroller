@@ -4,9 +4,9 @@ using UnityEngine;
 
 [System.Serializable]
 [CreateAssetMenu]
-public class Buff : ScriptableObject
+public class Buff : Item
 {
-    [SerializeField] private BuffName buffName;
+    [SerializeField] private Name buffName;
 
     // Movement buffs
     [SerializeField] [Range(0, 1)] private float speed_bonus_multiplier;
@@ -24,10 +24,6 @@ public class Buff : ScriptableObject
 
     // Inventory buffs
     [SerializeField] [Range(0, 1)] private int weapon_inventory_size_bonus = 0;
-
-
-    // Sprite to display
-    public Sprite sprite;
 
 
     public void CombineBuffs(Buff b)
@@ -48,7 +44,7 @@ public class Buff : ScriptableObject
 
 
 
-    public enum BuffName
+    public enum Name
     {
         TOTAL_BUFFS_COMBINED,
         SpeedBoost,

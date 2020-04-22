@@ -545,6 +545,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3852e760dca4e784c98bb297fe1bcea5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  worlditemPrefab: {fileID: 4585002219346792956, guid: f99aaf011c8065e47a8f492132a9fb7b,
+    type: 3}
+  interactableitemPrefab: {fileID: 0}
 --- !u!1 &489454952
 GameObject:
   m_ObjectHideFlags: 0
@@ -604,7 +607,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 40
   jump_force: 600
-  MAX_DOUBLE_JUMPS: 1
+  default_double_jumps: 1
+  max_double_jumps: 0
   double_jumps_left: 0
   crouch_speed_reduction: 0.4
   movementSmoothing: 0.02

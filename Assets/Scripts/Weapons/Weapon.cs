@@ -3,9 +3,9 @@
 
 [System.Serializable]
 [CreateAssetMenu]
-public abstract class Weapon : ScriptableObject
+public abstract class Weapon : Item
 {
-    protected WeaponName weaponName;
+    protected Name weaponName;
     protected WeaponType damageType;
     protected float damage;
 
@@ -21,7 +21,7 @@ public abstract class Weapon : ScriptableObject
     }
 
 
-    public enum WeaponName
+    public enum Name
     {
 
     }

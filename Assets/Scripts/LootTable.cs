@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,7 +19,7 @@ public class LootTable : ScriptableObject
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    public ItemManager.Item GetLoot(int value)
+    public ItemManager.Loot GetLoot(int value)
     {
         int total = 0;
         for (int i = 0; i < drops.Length; i++)
@@ -55,7 +56,7 @@ public class LootTable : ScriptableObject
     public class Drop
     {
         [SerializeField]
-        public ItemManager.Item item;
+        public ItemManager.Loot item;
         [SerializeField]
         public int dropChance;
     }
