@@ -8,15 +8,15 @@ public class WorldItem : MonoBehaviour
     public SpriteRenderer spriteRenderer;
     public BoxCollider2D boxCollider;
 
-    public Item contents;
+    public Item item;
 
 
     private void Awake()
     {
         // Set the sprite 
-        if (contents != null)
+        if (item != null)
         {
-            sprite = contents.sprite;
+            sprite = item.sprite;
         }
 
         // Set the layer
