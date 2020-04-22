@@ -29,7 +29,7 @@ public class PlayerInteraction : MonoBehaviour
     }
 
 
-    public void Interact(bool interact)
+    public void Interact(bool interact1, bool interact2)
     {
         List<Collider2D> collisionItems = new List<Collider2D>();
 
@@ -74,13 +74,13 @@ public class PlayerInteraction : MonoBehaviour
                 {
                     if (item.canBePickedUp)
                     {
-                        item.PickUp(GetComponent<Player>());
+                        item.PickUp(GetComponent<PlayerInventory>());
                     }
                 }
             }
 
             // Check if it is a valid time to interact
-            if (interact && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)
+            if (interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)
             {
                 // Get the closest item to the player
                 collisionItems.Sort((x, y) => Vector2.Distance(transform.position, x.transform.position).CompareTo(Vector2.Distance(transform.position, y.transform.position)));

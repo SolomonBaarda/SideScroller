@@ -4,29 +4,29 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public PlayerMovement controller;
+    private PlayerController controller;
 
-    public bool isAlive;
-    public int coinCount;
+    [SerializeField]
+    private bool isAlive;
     public Chunk currentChunk;
 
-    public static string PLAYER = "Player";
+    public static string PLAYER_LAYER = "Player";
 
     private void Awake()
     {
-        controller = GetComponent<PlayerMovement>();
+        // Controller reference
+        controller = GetComponent<PlayerController>();
+        controller.enabled = false;
 
+        // Player variables
         isAlive = false;
-        coinCount = 0;
-
-        GameManager.OnGameStart += SetAlive;
     }
 
 
 
     private void Update()
     {
-        // Get the chunk
+        // Get the chunk the player is in now
         Chunk current = CalculateCurrentChunk();
         if (current != null)
         {
@@ -49,7 +49,7 @@ public class Player : MonoBehaviour
     private Chunk CalculateCurrentChunk()
     {
         // Find the chunk at the centre point
-        Collider2D collision = Physics2D.OverlapPoint(transform.position, LayerMask.GetMask(Chunk.CHUNK));
+        Collider2D collision = Physics2D.OverlapPoint(transform.position, LayerMask.GetMask(Chunk.CHUNK_LAYER));
         if (collision != null)
         {
             return collision.gameObject.GetComponent<Chunk>();
@@ -85,16 +85,11 @@ public class Player : MonoBehaviour
     }
 
 
-    private void SetAlive()
+    public void SetAlive()
     {
         // Set player to be alive and enable controls
         isAlive = true;
         controller.enabled = true;
     }
 
-
-    public void PickedUpCoin()
-    {
-        coinCount++;
-    }
 }

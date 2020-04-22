@@ -72,7 +72,7 @@ public class MovingCamera : MonoBehaviour
     private Chunk CalculateCurrentChunk()
     {
         // Find the chunk at the centre point
-        Collider2D collision = Physics2D.OverlapPoint(transform.position, LayerMask.GetMask(Chunk.CHUNK));
+        Collider2D collision = Physics2D.OverlapPoint(transform.position, LayerMask.GetMask(Chunk.CHUNK_LAYER));
         if (collision != null)
         {
             return collision.gameObject.GetComponent<Chunk>();

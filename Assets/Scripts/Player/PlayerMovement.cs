@@ -8,7 +8,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement Settings")]
     [SerializeField] private float speed = 40f;
     [SerializeField] private float jump_force = 600f;
-    [SerializeField] private int max_double_jumps = 1;
+    [SerializeField] private int default_double_jumps = 1;
+    [SerializeField] private int max_double_jumps = 0;
     [SerializeField] private int double_jumps_left = 0;
     [Range(0, 1)] [SerializeField] private float crouch_speed_reduction = .4f;
 
@@ -55,6 +56,7 @@ public class PlayerMovement : MonoBehaviour
             OnPlayerCrouch = new BoolEvent();
         }
 
+        max_double_jumps = default_double_jumps;
     }
 
     private void OnEnable()
@@ -99,7 +101,7 @@ public class PlayerMovement : MonoBehaviour
         // If crouch has just been let go of
         if (!crouch)
         {
-            if(isCrouching)
+            if (isCrouching)
             {
                 // If the character has a ceiling preventing them from standing up, keep them crouching
                 if (Physics2D.OverlapCircle(headPos.position, collisionCheckRadius, LayerMask.GetMask("Ground")))
@@ -184,11 +186,11 @@ public class PlayerMovement : MonoBehaviour
             // TODO
             isGrounded = false;
             float force = 2 * jump_force;
-            if(facing == Direction.Left)
+            if (facing == Direction.Left)
             {
                 force *= -1;
-            } 
-            else if(facing == Direction.Forward)
+            }
+            else if (facing == Direction.Forward)
             {
                 force = 0;
             }
@@ -235,6 +237,15 @@ public class PlayerMovement : MonoBehaviour
         transform.localScale = theScale;
         */
         // Will use this next time
+    }
+
+
+    public Vector2 PlayerVelocity
+    {
+        get
+        {
+            return rigid.velocity;
+        }
     }
 
 

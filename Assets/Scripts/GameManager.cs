@@ -106,7 +106,7 @@ public class GameManager : MonoBehaviour
     private void StartGame()
     {
         player.SetPosition(terrainManager.GetInitialTileWorldPositionForPlayer());
-        player.controller.enabled = true;
+        player.SetAlive();
 
         movingCamera.direction = MovingCamera.Direction.Following;
 

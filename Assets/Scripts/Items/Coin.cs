@@ -33,11 +33,11 @@ public class Coin : InteractableItem
         return false;
     }
 
-    public override bool PickUp(Player player)
+    public override bool PickUp(PlayerInventory player)
     {
         col.enabled = false;
 
-        player.PickedUpCoin();
+        player.PickUpCoin();
 
         Destroy(gameObject);
 

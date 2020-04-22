@@ -28,7 +28,7 @@ public class Pot : InteractableItem
     }
 
 
-    public override bool PickUp(Player player)
+    public override bool PickUp(PlayerInventory player)
     {
         return false;
     }

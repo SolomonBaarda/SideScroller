@@ -6,7 +6,7 @@ using PathCreation;
 
 public class Chunk : MonoBehaviour
 {
-    public static string CHUNK = "Chunk";
+    public static string CHUNK_LAYER = "Chunk";
 
     [Header("Chunk Information")]
     public Vector2 enteranceWorldSpace;

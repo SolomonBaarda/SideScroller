@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class InteractableItem : MonoBehaviour
 {
     [SerializeField]
-    private LootTable lootTable;
+    protected LootTable lootTable;
 
     public bool isInteractable = false;
     public bool canBePickedUp = false;
@@ -33,7 +33,7 @@ public abstract class InteractableItem : MonoBehaviour
     /// Method to be called when the item is collided with. Return true if an item from the LootTable should be spawned.
     /// </summary>
     /// <returns></returns>
-    public abstract bool PickUp(Player player);
+    public abstract bool PickUp(PlayerInventory player);
 
 
 }

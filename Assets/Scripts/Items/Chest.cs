@@ -46,7 +46,7 @@ public class Chest : InteractableItem
     }
 
 
-    public override bool PickUp(Player player)
+    public override bool PickUp(PlayerInventory player)
     {
         return false;
     }
@@ -65,6 +65,7 @@ public class Chest : InteractableItem
         }
         return false;
     }
+
 
     private void Close()
     {
