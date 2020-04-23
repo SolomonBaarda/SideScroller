@@ -26,9 +26,20 @@ public class InteractionManager : MonoBehaviour
 
             }
             // Check if it is lootable
-            else if (WorldItem.ImplementsInterface<ILootable>(item))
+            if (WorldItem.ImplementsInterface<ILootable>(item))
             {
-                ItemManager.OnGenerateLoot.Invoke(item);
+                ILootable lootable = (ILootable)WorldItem.GetScriptThatImplements<ILootable>(item);
+
+                // Ensure it is not empty
+                if (lootable.IsLootable())
+                {
+                    // Generate loot
+                    ItemManager.OnGenerateLoot.Invoke(item);
+                }
+
+                // Interct with it
+                IInteractable interactable = (IInteractable)WorldItem.GetScriptThatImplements<IInteractable>(item);
+                interactable.Interact();
             }
         }
     }

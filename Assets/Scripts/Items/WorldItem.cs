@@ -6,14 +6,14 @@ public class WorldItem : MonoBehaviour
 {
     [SerializeField]
     public Item item;
+    public Name itemName;
     [Space]
 
-
-    public Sprite sprite;
+    [SerializeField]
+    protected Sprite sprite;
     protected SpriteRenderer spriteRenderer;
+    [Space]
     protected BoxCollider2D boxCollider;
-
-    public Name itemName;
 
     protected void Awake()
     {
@@ -37,7 +37,11 @@ public class WorldItem : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer(ItemManager.ITEM_LAYER);
 
         // Set up the sprite renderer
-        spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
+        }
         spriteRenderer.sprite = sprite;
 
         // Set up the box collider
@@ -52,13 +56,24 @@ public class WorldItem : MonoBehaviour
     }
 
 
-
+    /// <summary>
+    /// Returns true if the attached GameObject has a script that implements the interface T.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="toCheck"></param>
+    /// <returns></returns>
     public static bool ImplementsInterface<T>(GameObject toCheck) where T : class
     {
         return GetScriptThatImplements<T>(toCheck) != null;
     }
 
 
+    /// <summary>
+    /// Returns the script that implements interface T in GameObject. 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="toCheck"></param>
+    /// <returns></returns>
     public static MonoBehaviour GetScriptThatImplements<T>(GameObject toCheck) where T : class
     {
         // Get all monobehaviours 

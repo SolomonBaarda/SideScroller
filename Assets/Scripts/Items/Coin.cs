@@ -22,6 +22,7 @@ public class Coin : WorldItem, ICollidable, ILoot
 
     private IEnumerator InitialDisable()
     {
+        // Disable the being picked up for a little when enabled
         yield return new WaitForSeconds(initialSetup);
         boxCollider.enabled = true;
     }

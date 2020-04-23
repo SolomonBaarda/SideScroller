@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drops:
   - item: 0
-    dropChance: 50
+    dropChance: 1

@@ -76,6 +76,10 @@ public class ItemManager : MonoBehaviour
                     continue;
                 }
 
+                // Loot the item
+                l.Loot();
+
+                // Spawn the drops
                 Vector2 pos = item.transform.position;
                 SpawnItem(g, pos, drop.ToString());
             }
@@ -156,6 +160,7 @@ public class ItemManager : MonoBehaviour
 
     public enum Loot
     {
-        Coin
+        Coin,
+        Pot
     }
 }

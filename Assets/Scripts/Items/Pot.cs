@@ -2,32 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pot : WorldItem, IInteractable, ILootable
+public class Pot : WorldItem, IInteractable, ILootable, ILoot
 {
-    private enum PotState { Whole, Broken };
-    [SerializeField] private PotState state;
-
     [SerializeField]
     private LootTable table;
 
     [SerializeField]
     private int inventory_size = 1;
 
+    private bool hasContents = true;
+
     new private void Awake()
     {
         base.Awake();
-
-        state = PotState.Whole;
 
         SetRendererSortingLayer(ItemManager.RENDERING_LAYER_ITEM_INVENTORY_FRONT);
     }
 
 
-    public void Interact(Player player)
+    public void Interact()
     {
-        state = PotState.Broken;
+        // Break the pot
         Animator a = GetComponent<Animator>();
-        a.SetBool("isBroken", state.Equals(PotState.Broken));
+        a.SetTrigger("Break");
     }
 
 
@@ -40,5 +37,15 @@ public class Pot : WorldItem, IInteractable, ILootable
     public int GetTotalItemsToBeLooted()
     {
         return inventory_size;
+    }
+
+    public bool IsLootable()
+    {
+        return hasContents;
+    }
+
+    public void Loot()
+    {
+        hasContents = false;
     }
 }

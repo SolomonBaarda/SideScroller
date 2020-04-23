@@ -6,5 +6,9 @@ public interface ILootable
 {
     LootTable GetLootTable();
 
-    int GetTotalItemsToBeLooted(); 
+    int GetTotalItemsToBeLooted();
+
+    bool IsLootable();
+
+    void Loot();
 }

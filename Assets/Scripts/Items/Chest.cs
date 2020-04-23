@@ -2,67 +2,38 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chest : MonoBehaviour
+public class Chest : WorldItem, IInteractable, ILootable
 {
     private enum ChestState { Locked, Closed, Open };
-    [SerializeField] private ChestState state;
+    [SerializeField] private ChestState state = ChestState.Closed;
 
     private enum ChestContents { Full, Empty };
-    [SerializeField] private ChestContents contents;
+    [SerializeField] private ChestContents contents = ChestContents.Full;
 
-    private void Awake()
+    [SerializeField]
+    private int inventory_size = 3;
+
+    [SerializeField]
+    private LootTable table;
+
+    private Animator a;
+
+    new private void Awake()
     {
-        state = ChestState.Closed;
-        contents = ChestContents.Full;
+        base.Awake();
 
-    }
-
-    // Update is called once per frame
-    private void Update()
-    {
-        Animator a = GetComponent<Animator>();
-        //a.SetBool("isLocked", state.Equals(ChestState.Locked));
-        a.SetBool("isOpen", state.Equals(ChestState.Open));
-    }
-
-
-    public  bool Interact()
-    {
-        if (state == ChestState.Locked)
-        {
-            Unlock();
-        }
-        else if (state == ChestState.Closed)
-        {
-            return Open();
-        }
-        else if (state == ChestState.Open)
-        {
-            Close();
-        }
-
-        return false;
+        a = GetComponent<Animator>();
     }
 
 
-    public  bool PickUp(PlayerInventory player)
-    {
-        return false;
-    }
 
-
-    private bool Open()
+    private void Open()
     {
         if (state.Equals(ChestState.Closed))
         {
             state = ChestState.Open;
-            if (contents.Equals(ChestContents.Full))
-            {
-                contents = ChestContents.Empty;
-                return true;
-            }
+            a.SetTrigger("Open");
         }
-        return false;
     }
 
 
@@ -70,10 +41,10 @@ public class Chest : MonoBehaviour
     {
         if (state.Equals(ChestState.Open))
         {
+            a.SetTrigger("Close");
             state = ChestState.Closed;
         }
     }
-
 
     private void Unlock()
     {
@@ -83,5 +54,44 @@ public class Chest : MonoBehaviour
         }
     }
 
+    public void Interact()
+    {
+        if (state == ChestState.Locked)
+        {
+            Unlock();
+        }
+        else if (state == ChestState.Closed)
+        {
+            Open();
+        }
+        else if (state == ChestState.Open)
+        {
+            Close();
+        }
+    }
+
+    public LootTable GetLootTable()
+    {
+        return table;
+    }
+
+    public int GetTotalItemsToBeLooted()
+    {
+        return inventory_size;
+    }
+
+
+    public bool IsLootable()
+    {
+        return contents.Equals(ChestContents.Full);
+    }
+
+    public void Loot()
+    {
+        if (contents.Equals(ChestContents.Full))
+        {
+            contents = ChestContents.Empty;
+        }
+    }
 
 }
