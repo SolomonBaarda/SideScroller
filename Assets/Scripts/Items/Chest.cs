@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chest : InteractableItem
+public class Chest : MonoBehaviour
 {
     private enum ChestState { Locked, Closed, Open };
     [SerializeField] private ChestState state;
@@ -15,7 +15,6 @@ public class Chest : InteractableItem
         state = ChestState.Closed;
         contents = ChestContents.Full;
 
-        isInteractable = true;
     }
 
     // Update is called once per frame
@@ -27,7 +26,7 @@ public class Chest : InteractableItem
     }
 
 
-    public override bool Interact()
+    public  bool Interact()
     {
         if (state == ChestState.Locked)
         {
@@ -46,7 +45,7 @@ public class Chest : InteractableItem
     }
 
 
-    public override bool PickUp(PlayerInventory player)
+    public  bool PickUp(PlayerInventory player)
     {
         return false;
     }

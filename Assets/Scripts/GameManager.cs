@@ -29,6 +29,10 @@ public class GameManager : MonoBehaviour
     public GameObject itemManagerObject;
     private ItemManager itemManager;
 
+    [Header("Interaction Manager")]
+    public GameObject interactionManagerObject;
+    private InteractionManager interactionManager;
+
     [Header("Game Settings")]
     public float gameTimeSeconds;
     private bool isGameOver;
@@ -41,6 +45,7 @@ public class GameManager : MonoBehaviour
         terrainManager = terrainManagerObject.GetComponent<TerrainManager>();
         chunkManager = chunkManagerObject.GetComponent<ChunkManager>();
         itemManager = itemManagerObject.GetComponent<ItemManager>();
+        interactionManager = interactionManagerObject.GetComponent<InteractionManager>();
 
         // Add event calls 
         TerrainManager.OnTerrainGenerated += StartGame;

@@ -4,19 +4,33 @@ using UnityEngine;
 
 public class WorldItem : MonoBehaviour
 {
-    public Sprite sprite;
-    public SpriteRenderer spriteRenderer;
-    public BoxCollider2D boxCollider;
-
+    [SerializeField]
     public Item item;
+    [Space]
 
 
-    private void Awake()
+    public Sprite sprite;
+    protected SpriteRenderer spriteRenderer;
+    protected BoxCollider2D boxCollider;
+
+    public Name itemName;
+
+    protected void Awake()
     {
-        // Set the sprite 
+        // See if item needs to be updated
         if (item != null)
         {
-            sprite = item.sprite;
+            // Set the sprite if not already set
+            if (sprite == null)
+            {
+                sprite = item.sprite;
+            }
+
+            // Update the name if not already done
+            if (item.display_name == null)
+            {
+                item.display_name = itemName.ToString();
+            }
         }
 
         // Set the layer
@@ -25,7 +39,6 @@ public class WorldItem : MonoBehaviour
         // Set up the sprite renderer
         spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
         spriteRenderer.sprite = sprite;
-        //spriteRenderer.sortingLayerName = ItemManager.ITEM_LAYER;
 
         // Set up the box collider
         boxCollider = gameObject.AddComponent<BoxCollider2D>();
@@ -33,5 +46,48 @@ public class WorldItem : MonoBehaviour
     }
 
 
+    protected void SetRendererSortingLayer(string layer)
+    {
+        spriteRenderer.sortingLayerID = SortingLayer.NameToID(layer);
+    }
+
+
+
+    public static bool ImplementsInterface<T>(GameObject toCheck) where T : class
+    {
+        return GetScriptThatImplements<T>(toCheck) != null;
+    }
+
+
+    public static MonoBehaviour GetScriptThatImplements<T>(GameObject toCheck) where T : class
+    {
+        // Get all monobehaviours 
+        MonoBehaviour[] all = toCheck.GetComponents<MonoBehaviour>();
+
+        // Loop through each
+        foreach (MonoBehaviour behaviour in all)
+        {
+            // If the monobehaviour implements the interface
+            if (behaviour is T)
+            {
+                // Return it
+                return behaviour;
+            }
+        }
+
+        return null;
+    }
+
+
+
+    /// <summary>
+    /// A list of all possible world items.
+    /// </summary>
+    public enum Name
+    {
+        Coin,
+        Pot,
+        Chest
+    }
 
 }

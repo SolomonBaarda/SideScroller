@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Item : ScriptableObject
 {
     // Sprite to display
@@ -9,6 +10,4 @@ public class Item : ScriptableObject
 
     // Name of the item in inventory
     public string display_name;
-
-    public bool isLoot = false;
 }

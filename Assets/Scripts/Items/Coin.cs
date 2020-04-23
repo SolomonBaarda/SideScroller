@@ -2,19 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Coin : InteractableItem
+public class Coin : WorldItem, ICollidable, ILoot
 {
     [SerializeField]
     private float initialSetup = 0.5f;
-    private Collider2D col;
 
-    private void Awake()
+    new protected void Awake()
     {
-        col = GetComponent<BoxCollider2D>();
+        base.Awake();
+        boxCollider.enabled = false;
 
-        col.enabled = false;
-
-        canBePickedUp = true;
+        SetRendererSortingLayer(ItemManager.RENDERING_LAYER_ITEM_COLLISION);
     }
 
     private void Start()
@@ -25,22 +23,17 @@ public class Coin : InteractableItem
     private IEnumerator InitialDisable()
     {
         yield return new WaitForSeconds(initialSetup);
-        col.enabled = true;
+        boxCollider.enabled = true;
     }
 
-    public override bool Interact()
-    {
-        return false;
-    }
 
-    public override bool PickUp(PlayerInventory player)
+
+    public void Collide(PlayerInventory player)
     {
-        col.enabled = false;
+        boxCollider.enabled = false;
 
         player.PickUpCoin();
 
         Destroy(gameObject);
-
-        return false;
     }
 }

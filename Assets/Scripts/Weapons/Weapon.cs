@@ -2,7 +2,6 @@
 
 
 [System.Serializable]
-[CreateAssetMenu]
 public abstract class Weapon : Item
 {
     protected Name weaponName;

@@ -19,7 +19,7 @@ public class LootTable : ScriptableObject
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    public ItemManager.Loot GetLoot(int value)
+    public WorldItem.Name GetLoot(int value)
     {
         int total = 0;
         for (int i = 0; i < drops.Length; i++)
@@ -32,7 +32,7 @@ public class LootTable : ScriptableObject
             }
         }
 
-        throw new System.Exception("Could not calculate loot drop from table " + this);
+        throw new Exception("Could not calculate loot drop from table " + this);
     }
 
 
@@ -52,11 +52,11 @@ public class LootTable : ScriptableObject
     }
 
 
-    [System.Serializable]
+    [Serializable]
     public class Drop
     {
         [SerializeField]
-        public ItemManager.Loot item;
+        public WorldItem.Name item;
         [SerializeField]
         public int dropChance;
     }

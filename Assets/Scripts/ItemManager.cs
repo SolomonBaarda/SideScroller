@@ -7,12 +7,17 @@ using System;
 public class ItemManager : MonoBehaviour
 {
     public static string ITEM_LAYER = "Item";
-    public static UnityAction<InteractableItem, Vector2> OnPlayerInteractWithItem;
+    public static string RENDERING_LAYER_ITEM_INVENTORY = "Item_Inventory";
+    public static string RENDERING_LAYER_ITEM_INVENTORY_FRONT = "Item_Inventory_Front";
+    public static string RENDERING_LAYER_ITEM_COLLISION = "Item_Collision";
+
+    public static UnityAction<GameObject> OnGenerateLoot;
 
     private System.Random random;
 
-    private Dictionary<Loot, GameObject> lootPrefabs;
-    private Dictionary<InteractableItem.Name, GameObject> interactableItemWorldObjectPrefabs;
+    private Dictionary<WorldItem.Name, GameObject> lootPrefabs;
+
+    private Dictionary<WorldItem.Name, GameObject> worldObjectPrefabs;
     private Dictionary<Weapon.Name, GameObject> weaponScriptableObjectPrefabs;
     private Dictionary<Buff.Name, GameObject> buffScriptableObjectPrefabs;
 
@@ -22,24 +27,26 @@ public class ItemManager : MonoBehaviour
     {
         DateTime before = DateTime.Now;
 
-        lootPrefabs = new Dictionary<Loot, GameObject>();
-        interactableItemWorldObjectPrefabs = new Dictionary<InteractableItem.Name, GameObject>();
+        lootPrefabs = new Dictionary<WorldItem.Name, GameObject>();
+        worldObjectPrefabs = new Dictionary<WorldItem.Name, GameObject>();
         weaponScriptableObjectPrefabs = new Dictionary<Weapon.Name, GameObject>();
         buffScriptableObjectPrefabs = new Dictionary<Buff.Name, GameObject>();
 
         // Load all items 
-        LoadAllItemPrefabs(ref interactableItemWorldObjectPrefabs, "Prefabs/Items");
+
+        LoadAllItemPrefabs(ref worldObjectPrefabs, "Prefabs/Items");
         LoadAllItemPrefabs(ref weaponScriptableObjectPrefabs, "Scripts/Weapons");
         LoadAllItemPrefabs(ref buffScriptableObjectPrefabs, "Scripts/Buffs");
+
 
         DateTime after = DateTime.Now;
         TimeSpan time = after - before;
 
-        Debug.Log("Loaded items in " + time.Milliseconds + "ms: (" + interactableItemWorldObjectPrefabs.Count + " interactable items), (" + lootPrefabs.Count + " loot), (" + buffScriptableObjectPrefabs.Count + " buffs), (" +
+        Debug.Log("Loaded items in " + time.Milliseconds + "ms: (" + worldObjectPrefabs.Count + " interactable items), (" + lootPrefabs.Count + " loot), (" + buffScriptableObjectPrefabs.Count + " buffs), (" +
                 weaponScriptableObjectPrefabs.Count + " weapons)");
 
         TerrainManager.OnTerrainChunkGenerated += GenerateItemsForChunk;
-        OnPlayerInteractWithItem += InteractWithItem;
+        OnGenerateLoot += GenerateLootForItem;
 
         random = new System.Random(0);
     }
@@ -47,20 +54,37 @@ public class ItemManager : MonoBehaviour
 
 
 
-
-    private void InteractWithItem(InteractableItem item, Vector2 position)
+    private void GenerateLootForItem(GameObject item)
     {
-        LootTable table = item.GetLootTable();
-        int value = random.Next(0, table.GetTotalWeight());
-        Loot drop = table.GetLoot(value);
-
-        GameObject g;
-        lootPrefabs.TryGetValue(drop, out g);
-
-        if (item.Interact())
+        // Ensure its lootable
+        if (WorldItem.ImplementsInterface<ILootable>(item))
         {
-            SpawnItem(g, position, drop.ToString());
+            ILootable l = (ILootable)WorldItem.GetScriptThatImplements<ILootable>(item);
+            LootTable table = l.GetLootTable();
+
+            // Generate each item
+            for (int i = 0; i < l.GetTotalItemsToBeLooted(); i++)
+            {
+                // Choose a random piece of loot
+                int value = random.Next(0, table.GetTotalWeight());
+                WorldItem.Name drop = table.GetLoot(value);
+
+                GameObject g;
+                if(!lootPrefabs.TryGetValue(drop, out g))
+                {
+                    Debug.LogError("Failed to get loot " + drop);
+                    continue;
+                }
+
+                Vector2 pos = item.transform.position;
+                SpawnItem(g, pos, drop.ToString());
+            }
+
         }
+
+
+
+
     }
 
 
@@ -90,14 +114,13 @@ public class ItemManager : MonoBehaviour
             // Add it
             prefabs.Add(type, g);
 
-
-            // Check if it is a loot item, and if so add it
-            Loot lootName;
-            if (Enum.TryParse(g.name, out lootName))
+            // GameObject is a loot item
+            if (WorldItem.ImplementsInterface<ILoot>(g))
             {
-                lootPrefabs.Add(lootName, g);
-            }
+                WorldItem loot = (WorldItem)WorldItem.GetScriptThatImplements<ILoot>(g);
 
+                lootPrefabs.Add(loot.itemName, g);
+            }
         }
     }
 
@@ -110,7 +133,7 @@ public class ItemManager : MonoBehaviour
         foreach (TerrainManager.TerrainChunk.Item item in chunk.items)
         {
             GameObject prefab;
-            if (interactableItemWorldObjectPrefabs.TryGetValue(item.itemType, out prefab))
+            if (worldObjectPrefabs.TryGetValue(item.itemType, out prefab))
             {
                 if (random.Next(0, 1) <= itemChance)
                 {
@@ -119,6 +142,7 @@ public class ItemManager : MonoBehaviour
             }
         }
     }
+
 
     private void SpawnItem(GameObject item, Vector2 position, string name)
     {

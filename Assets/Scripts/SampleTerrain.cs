@@ -350,21 +350,21 @@ public class SampleTerrain : MonoBehaviour
             TileBase t = tilemap.GetTile(current);
             if (t != null)
             {
-                InteractableItem.Name itemType = InteractableItem.Name.Coin;
+                WorldItem.Name itemType = WorldItem.Name.Coin;
                 Vector2Int tilePos = new Vector2Int(current.x, current.y) - entryTilePositionLocal;
 
                 // Assign the correct type
                 if(t.Equals(manager.dev_itemCoin))
                 {
-                    itemType = InteractableItem.Name.Coin;
+                    itemType = WorldItem.Name.Coin;
                 }
                 else if (t.Equals(manager.dev_itemPot))
                 {
-                    itemType = InteractableItem.Name.Pot;
+                    itemType = WorldItem.Name.Pot;
                 }
                 else if (t.Equals(manager.dev_itemChest))
                 {
-                    itemType = InteractableItem.Name.Chest;
+                    itemType = WorldItem.Name.Chest;
                 }
                 else
                 {
@@ -408,12 +408,13 @@ public class SampleTerrain : MonoBehaviour
         }
     }
 
+
     public class SampleItem
     {
-        public InteractableItem.Name type;
+        public WorldItem.Name type;
         public Vector2Int tilePos;
 
-        public SampleItem(InteractableItem.Name type, Vector2Int tilePos)
+        public SampleItem(WorldItem.Name type, Vector2Int tilePos)
         {
             this.type = type;
             this.tilePos = tilePos;

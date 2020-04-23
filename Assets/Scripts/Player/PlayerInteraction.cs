@@ -60,53 +60,60 @@ public class PlayerInteraction : MonoBehaviour
         }
 
         // Remove all elements that arent interactable items
-        collisionItems.RemoveAll(c => c.gameObject.GetComponent<InteractableItem>() == null);
+        //collisionItems.RemoveAll(c => c.gameObject.GetComponent<InteractableItem>() == null);
 
         // Only bother if there are items
         if (collisionItems.Count > 0)
         {
-            // Check if any items can be picked up by the player
-            foreach (Collider2D c in collisionItems)
-            {
-                InteractableItem item = c.gameObject.GetComponent<InteractableItem>();
+            // Sort by distance to player
+            collisionItems.Sort((x, y) => Vector2.Distance(transform.position, x.transform.position).CompareTo(Vector2.Distance(transform.position, y.transform.position)));
+            Collider2D[] collisionArray = collisionItems.ToArray();
 
-                if (item != null)
+            // Check if any items can be picked up by the player
+            foreach (Collider2D c in collisionArray)
+            {
+                GameObject g = c.gameObject;
+
+                // If it can be collided with
+                if (WorldItem.ImplementsInterface<ICollidable>(g))
                 {
-                    if (item.canBePickedUp)
-                    {
-                        item.PickUp(GetComponent<PlayerInventory>());
-                    }
+                    ICollidable collidable = (ICollidable)WorldItem.GetScriptThatImplements<ICollidable>(g);
+
+                    // Collide with it
+                    collidable.Collide(GetComponent<PlayerInventory>());
                 }
             }
 
-            // Check if it is a valid time to interact
-            if (interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)
+            foreach (Collider2D c in collisionArray)
             {
-                // Get the closest item to the player
-                collisionItems.Sort((x, y) => Vector2.Distance(transform.position, x.transform.position).CompareTo(Vector2.Distance(transform.position, y.transform.position)));
-
-                Collider2D[] collisionArray = collisionItems.ToArray();
-
-                for (int i = 0; i < collisionArray.Length; i++)
+                // Need to check if not null as collision may have deleted the item by now
+                if (c != null)
                 {
-                    GameObject chosen = collisionArray[i].gameObject;
-                    InteractableItem item = chosen.GetComponent<InteractableItem>();
+                    GameObject g = c.gameObject;
 
-                    if (item != null)
+                    // If it can be collided with
+                    if (WorldItem.ImplementsInterface<IInteractable>(g))
                     {
-                        if (item.Interact())
+                        IInteractable interactable = (IInteractable)WorldItem.GetScriptThatImplements<IInteractable>(g);
+
+                        // Check if it is a valid time to interact
+                        if (interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)
                         {
-                            // Invoke the event
-                            ItemManager.OnPlayerInteractWithItem.Invoke(item, chosen.transform.position);
+                            // Interact with that one item only
+                            InteractionManager.OnPlayerInteractWithItem(g);
                             interact_timeout = 0;
                             break;
                         }
                     }
                 }
+
             }
         }
 
+
     }
 
-
 }
+
+
+
