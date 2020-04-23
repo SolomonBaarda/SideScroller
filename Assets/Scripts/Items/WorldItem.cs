@@ -45,7 +45,12 @@ public class WorldItem : MonoBehaviour
         spriteRenderer.sprite = sprite;
 
         // Set up the box collider
-        boxCollider = gameObject.AddComponent<BoxCollider2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
+        if (boxCollider == null)
+        {
+            boxCollider = gameObject.AddComponent<BoxCollider2D>();
+        }
+
         boxCollider.isTrigger = true;
     }
 

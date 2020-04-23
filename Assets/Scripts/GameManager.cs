@@ -34,7 +34,8 @@ public class GameManager : MonoBehaviour
     private InteractionManager interactionManager;
 
     [Header("Game Settings")]
-    public float gameTimeSeconds;
+    [SerializeField]
+    private float gameTimeSeconds;
     private bool isGameOver;
 
     private void Awake()
@@ -48,8 +49,8 @@ public class GameManager : MonoBehaviour
         interactionManager = interactionManagerObject.GetComponent<InteractionManager>();
 
         // Add event calls 
-        TerrainManager.OnTerrainGenerated += StartGame;
-        //Menu.OnMenuClose += StartGame;
+        //TerrainManager.OnTerrainGenerated += StartGame;
+        Menu.OnMenuClose += StartGame;
 
         isGameOver = true;
     }
