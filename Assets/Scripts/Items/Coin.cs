@@ -10,7 +10,7 @@ public class Coin : WorldItem, ICollidable, ILoot
     new protected void Awake()
     {
         base.Awake();
-        boxCollider.enabled = false;
+        trigger.enabled = false;
 
         SetRendererSortingLayer(ItemManager.RENDERING_LAYER_ITEM_COLLISION);
     }
@@ -24,14 +24,14 @@ public class Coin : WorldItem, ICollidable, ILoot
     {
         // Disable the being picked up for a little when enabled
         yield return new WaitForSeconds(initialSetup);
-        boxCollider.enabled = true;
+        trigger.enabled = true;
     }
 
 
 
     public void Collide(PlayerInventory player)
     {
-        boxCollider.enabled = false;
+        trigger.enabled = false;
 
         player.PickUpCoin();
 

@@ -13,9 +13,36 @@ public class WorldItem : MonoBehaviour
     protected Sprite sprite;
     protected SpriteRenderer spriteRenderer;
     [Space]
-    protected BoxCollider2D boxCollider;
+    protected BoxCollider2D trigger;
 
     protected void Awake()
+    {
+        UpdateItemSprite();
+
+        // Set the layer
+        gameObject.layer = LayerMask.NameToLayer(ItemManager.ITEM_LAYER);
+
+        // Set up the sprite renderer
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
+        }
+        spriteRenderer.sprite = sprite;
+
+        // Set up the box collider
+        trigger = GetComponent<BoxCollider2D>();
+        if (trigger == null)
+        {
+            trigger = gameObject.AddComponent<BoxCollider2D>();
+        }
+
+        trigger.isTrigger = true;
+    }
+
+
+
+    protected void UpdateItemSprite()
     {
         // See if item needs to be updated
         if (item != null)
@@ -32,26 +59,6 @@ public class WorldItem : MonoBehaviour
                 item.display_name = itemName.ToString();
             }
         }
-
-        // Set the layer
-        gameObject.layer = LayerMask.NameToLayer(ItemManager.ITEM_LAYER);
-
-        // Set up the sprite renderer
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer == null)
-        {
-            spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-        }
-        spriteRenderer.sprite = sprite;
-
-        // Set up the box collider
-        boxCollider = GetComponent<BoxCollider2D>();
-        if (boxCollider == null)
-        {
-            boxCollider = gameObject.AddComponent<BoxCollider2D>();
-        }
-
-        boxCollider.isTrigger = true;
     }
 
 
