@@ -683,7 +683,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seed: 
-  useRandomSeed: 0
+  useRandomSeed: 1
   sampleTerrainManagerObject: {fileID: 1609188954}
   groundTile: {fileID: 11400000, guid: 35d18aaf6686fb14db4c9674999a5a90, type: 2}
 --- !u!1 &953929488
@@ -1387,7 +1387,7 @@ CircleCollider2D:
   m_GameObject: {fileID: 692011009574956201}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ec4cb481b7de8cf47adf0aede99232a3, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0

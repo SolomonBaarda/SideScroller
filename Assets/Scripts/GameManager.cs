@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Tilemaps;
 
 public class GameManager : MonoBehaviour
 {
@@ -49,8 +47,8 @@ public class GameManager : MonoBehaviour
         interactionManager = interactionManagerObject.GetComponent<InteractionManager>();
 
         // Add event calls 
-        //TerrainManager.OnTerrainGenerated += StartGame;
-        Menu.OnMenuClose += StartGame;
+        TerrainManager.OnTerrainGenerated += StartGame;
+        //Menu.OnMenuClose += StartGame;
 
         isGameOver = true;
     }

@@ -18,7 +18,7 @@ public class MovingCamera : MonoBehaviour
     private Player player;
 
     private Camera c;
-    public static string cameraLayer = "Camera";
+    public static string LAYER_CAMERA = "Camera";
 
     public float distanceFromOrigin;
 
@@ -93,10 +93,10 @@ public class MovingCamera : MonoBehaviour
     {
         Vector2 bl = c.ViewportToWorldPoint(new Vector3(0, 0, zoom));
         Vector2 tr = c.ViewportToWorldPoint(new Vector3(1, 1, zoom));
-        //Debug.DrawLine(bl, tr);
 
         return GetAllNearbyChunks(bl, tr);
     }
+
 
     public List<Chunk> GetAllNearbyChunks(Vector2 bottomLeft, Vector2 topRight)
     {

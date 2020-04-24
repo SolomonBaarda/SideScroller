@@ -86,9 +86,6 @@ public class ItemManager : MonoBehaviour
 
         }
 
-
-
-
     }
 
 

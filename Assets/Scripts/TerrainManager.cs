@@ -37,6 +37,7 @@ public class TerrainManager : MonoBehaviour
 
     private Vector2Int initialTile;
 
+    [SerializeField]
     private System.Random random;
 
 
@@ -54,7 +55,7 @@ public class TerrainManager : MonoBehaviour
         // Get a random seed
         if (useRandomSeed)
         {
-            // TODO
+            seedHash = Environment.TickCount;
         }
         random = new System.Random(seedHash);
 
