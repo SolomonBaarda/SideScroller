@@ -7,7 +7,9 @@ public class PlayerInteraction : MonoBehaviour
     private float interact_timeout = 0;
     [SerializeField] private float DEFAULT_INTERACT_TIMEOUT_SECONDS = 0.25f;
 
-    List<Collider2D> allColliders;
+    private List<Collider2D> allColliders;
+
+    private PlayerInventory inventory;
 
     private void Awake()
     {
@@ -17,6 +19,8 @@ public class PlayerInteraction : MonoBehaviour
         {
             allColliders.Add(c);
         }
+
+        inventory = GetComponent<PlayerInventory>();
     }
 
     private void Update()
@@ -59,14 +63,11 @@ public class PlayerInteraction : MonoBehaviour
             }
         }
 
-        // Remove all elements that arent interactable items
-        //collisionItems.RemoveAll(c => c.gameObject.GetComponent<InteractableItem>() == null);
-
         // Only bother if there are items
         if (collisionItems.Count > 0)
         {
-            // Sort by distance to player
-            collisionItems.Sort((x, y) => Vector2.Distance(transform.position, x.transform.position).CompareTo(Vector2.Distance(transform.position, y.transform.position)));
+            // Sort by renderer sorting layer, always use item in front first
+            collisionItems.Sort((x, y) => SortingLayer.GetLayerValueFromID(x.gameObject.GetComponent<SpriteRenderer>().sortingLayerID).CompareTo(SortingLayer.GetLayerValueFromID(y.gameObject.GetComponent<SpriteRenderer>().sortingLayerID)));
             Collider2D[] collisionArray = collisionItems.ToArray();
 
             // Check if any items can be picked up by the player
@@ -80,7 +81,7 @@ public class PlayerInteraction : MonoBehaviour
                     ICollidable collidable = (ICollidable)WorldItem.GetScriptThatImplements<ICollidable>(g);
 
                     // Collide with it
-                    collidable.Collide(GetComponent<PlayerInventory>());
+                    collidable.Collide(inventory);
                 }
             }
 
@@ -100,13 +101,12 @@ public class PlayerInteraction : MonoBehaviour
                         if (interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)
                         {
                             // Interact with that one item only
-                            InteractionManager.OnPlayerInteractWithItem(g);
+                            InteractionManager.OnPlayerInteractWithItem(g, inventory);
                             interact_timeout = 0;
                             break;
                         }
                     }
                 }
-
             }
         }
 

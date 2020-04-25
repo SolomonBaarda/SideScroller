@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class InteractionManager : MonoBehaviour
 {
 
-    public static UnityAction<GameObject> OnPlayerInteractWithItem;
+    public static UnityAction<GameObject, PlayerInventory> OnPlayerInteractWithItem;
 
 
     private void Awake()
@@ -15,7 +15,7 @@ public class InteractionManager : MonoBehaviour
     }
 
 
-    private void InteractWithItem(GameObject item)
+    private void InteractWithItem(GameObject item, PlayerInventory inventory)
     {
         // Ensure it is a valid interaction
         if (WorldItem.ImplementsInterface<IInteractable>(item))
@@ -41,7 +41,7 @@ public class InteractionManager : MonoBehaviour
 
             // Interct with it last
             IInteractable interactable = (IInteractable)WorldItem.GetScriptThatImplements<IInteractable>(item);
-            interactable.Interact(GetComponent<PlayerInventory>());
+            interactable.Interact(inventory);
         }
     }
 

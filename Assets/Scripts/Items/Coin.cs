@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Coin : WorldItem, ICollidable, ILoot
+public class Coin : CollectableItem, ILoot
 {
     [SerializeField]
     private float initialSetup = 0.5f;
@@ -15,10 +15,12 @@ public class Coin : WorldItem, ICollidable, ILoot
         SetRendererSortingLayer(ItemManager.RENDERING_LAYER_ITEM_COLLISION);
     }
 
+
     private void Start()
     {
         StartCoroutine(InitialDisable());
     }
+
 
     private IEnumerator InitialDisable()
     {
@@ -28,13 +30,4 @@ public class Coin : WorldItem, ICollidable, ILoot
     }
 
 
-
-    public void Collide(PlayerInventory player)
-    {
-        trigger.enabled = false;
-
-        player.PickUpCoin();
-
-        Destroy(gameObject);
-    }
 }

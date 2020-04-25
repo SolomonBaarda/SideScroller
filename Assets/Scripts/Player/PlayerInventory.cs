@@ -5,36 +5,34 @@ using UnityEngine;
 public class PlayerInventory : MonoBehaviour
 {
     [SerializeField]
-    private int coins_collected = 0;
+    private int total_coins = 0;
 
     [SerializeField]
-    private int inventory_weapon_size = 1;
-    private CollectableItem[] weaponItems;
-    private Weapon[] weapons;
+    private InventoryItem<Weapon> weapon;
 
-    private List<Buff> buffs;
+    [SerializeField]
+    private List<InventoryItem<Buff>> buffs;
+    [SerializeField]
     private Buff currentTotal;
 
     public void Awake()
     {
-        weaponItems = new CollectableItem[inventory_weapon_size];
-        weapons = new Weapon[inventory_weapon_size];
-
-        buffs = new List<Buff>();
+        buffs = new List<InventoryItem<Buff>>();
     }
 
 
 
 
-    public void DropItem(bool drop)
+    public void DropWeapon(bool drop)
     {
         if (drop)
         {
-            if (weapons[0] != null)
+            if (weapon.worldItem != null && weapon.item != null)
             {
-                weapons[0] = null;
-                weaponItems[0].Drop(transform.position, Vector2.zero);
-                weaponItems[0] = null;
+                // Set them to null
+                weapon.item = null;
+                weapon.worldItem.Drop(transform.position, Vector2.zero);
+                weapon.worldItem = null;
             }
         }
     }
@@ -48,14 +46,22 @@ public class PlayerInventory : MonoBehaviour
             CollectableItem c = (CollectableItem)WorldItem.GetScriptThatImplements<CollectableItem>(g);
             ItemBase item = c.item;
 
+            // Coin
+            Coin coin = (Coin)c;
+            if (coin != null)
+            {
+                total_coins++;
+                Destroy(coin.gameObject);
+                return true;
+            }
             // Weapon
             Weapon w = (Weapon)item;
             if (w != null)
             {
-                if (weapons[0] == null)
+                if (weapon.item == null)
                 {
-                    weaponItems[0] = c;
-                    weapons[0] = w;
+                    weapon.worldItem = c;
+                    weapon.item = w;
                     return true;
                 }
             }
@@ -64,8 +70,7 @@ public class PlayerInventory : MonoBehaviour
             Buff b = (Buff)item;
             if (WorldItem.ImplementsInterface<Buff>(g))
             {
-                PickUpBuff(b);
-                return true;
+                return PickUpBuff(c, b);
             }
         }
 
@@ -103,16 +108,16 @@ public class PlayerInventory : MonoBehaviour
 
 
 
-    private bool PickUpBuff(Buff buff)
+    private bool PickUpBuff(CollectableItem worldItem, Buff buff)
     {
-        if (!buffs.Contains(buff))
-        {
-            buffs.Add(buff);
-            UpdateCurrentBuffTotal();
-            return true;
-        }
+        InventoryItem<Buff> b = new InventoryItem<Buff>();
+        b.worldItem = worldItem;
+        b.item = buff;
 
-        return false;
+        buffs.Add(b);
+        UpdateCurrentBuffTotal();
+        return true;
+
     }
 
 
@@ -122,9 +127,9 @@ public class PlayerInventory : MonoBehaviour
         Buff total = ScriptableObject.CreateInstance<Buff>();
 
         // Combine all the values 
-        foreach (Buff b in buffs)
+        foreach (InventoryItem<Buff> b in buffs)
         {
-            total.CombineBuffs(b);
+            total.CombineBuffs(b.item);
         }
 
         // Update the current value
@@ -138,16 +143,14 @@ public class PlayerInventory : MonoBehaviour
     }
 
 
-    public void PickUpCoin()
+
+
+
+    [System.Serializable]
+    public struct InventoryItem<T> where T : class
     {
-        coins_collected++;
+        public CollectableItem worldItem;
+        public T item;
     }
-
-
-
-
-
-
-
 
 }

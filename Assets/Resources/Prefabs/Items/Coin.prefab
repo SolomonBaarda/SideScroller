@@ -48,6 +48,8 @@ MonoBehaviour:
   item: {fileID: 0}
   itemName: 0
   sprite: {fileID: 21300000, guid: 848038db28b4e0d4982d1594c700e696, type: 2}
+  collideToPickUp: 1
+  interactToPickUp: 0
   initialSetup: 0.5
 --- !u!212 &7541231200787745022
 SpriteRenderer:
