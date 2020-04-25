@@ -48,8 +48,9 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         // Interact with items
-        interaction.Interact(isInteract1, isInteract2);
+        interaction.Interact(isInteract1);
 
+        inventory.DropItem(isInteract2);
         Buff currentTotal = inventory.GetCurrentTotal();
 
         // Update the inventory and attack

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CollectableItem : WorldItem, ICollidable, IInteractable
+public class CollectableItem : WorldItem, ICollidable, IInteractable, ICollectable
 {
     [SerializeField]
     private bool collideToPickUp = false, interactToPickUp = false;
@@ -16,36 +16,64 @@ public class CollectableItem : WorldItem, ICollidable, IInteractable
         rigid = GetComponent<Rigidbody2D>();
 
         // Disable the trigger collider by default
-        //trigger.enabled = false;
+        trigger.enabled = false;
     }
 
 
 
-    public void SetCollectableItem(Item item, bool collideToPickUp, bool interactToPickUp)
+    public void SetCollectableItem(ItemBase item, bool collideToPickUp, bool interactToPickUp)
     {
         this.item = item;
         UpdateItemSprite();
 
         this.collideToPickUp = collideToPickUp;
         this.interactToPickUp = interactToPickUp;
+
+        trigger.enabled = true;
     }
 
 
 
-    public void Collide(PlayerInventory player)
+
+    public void Collide(PlayerInventory inventory)
     {
         if (collideToPickUp)
         {
-            Debug.Log("player collided");
+            Collect(inventory);
         }
     }
 
 
-    public void Interact()
+    public void Interact(PlayerInventory inventory)
     {
         if (interactToPickUp)
         {
-            Debug.Log("player interacted");
+            Collect(inventory);
         }
     }
+
+
+
+    public void Collect(PlayerInventory inventory)
+    {
+        // Inventory succesfully picked this up
+        if(inventory.PickUp(gameObject))
+        {
+            enabled = false;
+        }
+    }
+
+
+
+    public void Drop(Vector2 position, Vector2 velocity)
+    {
+        // Set position and velocity to throw the item
+        transform.position = position;
+        rigid.velocity = velocity;
+
+        // Enable it
+        enabled = true;
+    }
+
+
 }

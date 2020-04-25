@@ -29,7 +29,7 @@ public class PlayerInteraction : MonoBehaviour
     }
 
 
-    public void Interact(bool interact1, bool interact2)
+    public void Interact(bool interact1)
     {
         List<Collider2D> collisionItems = new List<Collider2D>();
 

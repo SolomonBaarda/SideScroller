@@ -2,7 +2,7 @@
 
 
 [System.Serializable]
-public abstract class Weapon : Item
+public abstract class Weapon : ItemBase
 {
     protected Name weaponName;
     protected WeaponType damageType;

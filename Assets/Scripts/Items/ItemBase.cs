@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Item : ScriptableObject
+public class ItemBase : ScriptableObject
 {
     // Sprite to display
     public Sprite sprite;

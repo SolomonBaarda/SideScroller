@@ -8,7 +8,8 @@ public class PlayerInventory : MonoBehaviour
     private int coins_collected = 0;
 
     [SerializeField]
-    private int inventory_weapon_size = 3;
+    private int inventory_weapon_size = 1;
+    private CollectableItem[] weaponItems;
     private Weapon[] weapons;
 
     private List<Buff> buffs;
@@ -16,11 +17,60 @@ public class PlayerInventory : MonoBehaviour
 
     public void Awake()
     {
+        weaponItems = new CollectableItem[inventory_weapon_size];
         weapons = new Weapon[inventory_weapon_size];
 
         buffs = new List<Buff>();
     }
 
+
+
+
+    public void DropItem(bool drop)
+    {
+        if (drop)
+        {
+            if (weapons[0] != null)
+            {
+                weapons[0] = null;
+                weaponItems[0].Drop(transform.position, Vector2.zero);
+                weaponItems[0] = null;
+            }
+        }
+    }
+
+
+    public bool PickUp(GameObject g)
+    {
+        // It is collectable
+        if (WorldItem.ImplementsInterface<ICollectable>(g))
+        {
+            CollectableItem c = (CollectableItem)WorldItem.GetScriptThatImplements<CollectableItem>(g);
+            ItemBase item = c.item;
+
+            // Weapon
+            Weapon w = (Weapon)item;
+            if (w != null)
+            {
+                if (weapons[0] == null)
+                {
+                    weaponItems[0] = c;
+                    weapons[0] = w;
+                    return true;
+                }
+            }
+
+            // Buff
+            Buff b = (Buff)item;
+            if (WorldItem.ImplementsInterface<Buff>(g))
+            {
+                PickUpBuff(b);
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 
 
@@ -53,7 +103,7 @@ public class PlayerInventory : MonoBehaviour
 
 
 
-    public bool PickUpBuff(Buff buff)
+    private bool PickUpBuff(Buff buff)
     {
         if (!buffs.Contains(buff))
         {
@@ -92,5 +142,12 @@ public class PlayerInventory : MonoBehaviour
     {
         coins_collected++;
     }
+
+
+
+
+
+
+
 
 }

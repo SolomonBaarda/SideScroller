@@ -54,7 +54,7 @@ public class Chest : WorldItem, IInteractable, ILootable
         }
     }
 
-    public void Interact()
+    public void Interact(PlayerInventory inventory)
     {
         if (state == ChestState.Locked)
         {

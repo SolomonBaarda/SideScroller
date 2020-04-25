@@ -4,7 +4,7 @@ using UnityEngine;
 
 [System.Serializable]
 [CreateAssetMenu]
-public class Buff : Item
+public class Buff : ItemBase
 {
     [SerializeField] private Name buffName;
 

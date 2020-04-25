@@ -20,7 +20,7 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot
     }
 
 
-    public void Interact()
+    public void Interact(PlayerInventory inventory)
     {
         // Break the pot
         Animator a = GetComponent<Animator>();

@@ -36,11 +36,12 @@ public class InteractionManager : MonoBehaviour
                     // Generate loot
                     ItemManager.OnGenerateLoot.Invoke(item);
                 }
-
-                // Interct with it
-                IInteractable interactable = (IInteractable)WorldItem.GetScriptThatImplements<IInteractable>(item);
-                interactable.Interact();
             }
+
+
+            // Interct with it last
+            IInteractable interactable = (IInteractable)WorldItem.GetScriptThatImplements<IInteractable>(item);
+            interactable.Interact(GetComponent<PlayerInventory>());
         }
     }
 

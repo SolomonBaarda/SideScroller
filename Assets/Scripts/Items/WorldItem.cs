@@ -5,7 +5,7 @@ using UnityEngine;
 public class WorldItem : MonoBehaviour
 {
     [SerializeField]
-    public Item item;
+    public ItemBase item;
     public Name itemName;
     [Space]
 

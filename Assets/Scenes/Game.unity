@@ -860,7 +860,7 @@ CircleCollider2D:
   m_GameObject: {fileID: 1068911853}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: ec4cb481b7de8cf47adf0aede99232a3, type: 2}
+  m_Material: {fileID: 6200000, guid: 1a7e6135b23caae4a8d81df2f33ea6d4, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -937,7 +937,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!61 &1199263470
 BoxCollider2D:
