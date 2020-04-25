@@ -14,7 +14,7 @@ public class Menu : MonoBehaviour
     private void Awake()
     {
         // Set the button text
-        SetMenuTextColour(play_button);
+        SetMenuStyleTMPro(ref play_button);
 
         // Add the event calls and functions
         OnButtonClicked += Unload;
@@ -57,7 +57,7 @@ public class Menu : MonoBehaviour
         SceneManager.UnloadSceneAsync(0);
     }
 
-    private void SetMenuTextColour(TMP_Text t)
+    public static void SetMenuStyleTMPro(ref TMP_Text t)
     {
         // Button colours
         Button b = t.GetComponent<Button>();

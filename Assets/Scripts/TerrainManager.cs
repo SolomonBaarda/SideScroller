@@ -263,6 +263,9 @@ public class TerrainManager : MonoBehaviour
 
             // Make the exit
             TerrainChunk.Exit e = new TerrainChunk.Exit(newChunkDirection, exitPositionWorld, newChunkPositionWorld, newChunkID);
+
+
+
             // Get the camera path points
             foreach (Vector2Int point in sampleExit.cameraPathPoints)
             {

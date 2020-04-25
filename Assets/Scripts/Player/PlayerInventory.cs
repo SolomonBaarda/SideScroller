@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerInventory : MonoBehaviour
 {
     [SerializeField]
-    private int total_coins = 0;
+    private SimpleInventoryItem<Coin> coins;
 
     [SerializeField]
     private InventoryItem<Weapon> weapon;
@@ -50,8 +50,12 @@ public class PlayerInventory : MonoBehaviour
             Coin coin = (Coin)c;
             if (coin != null)
             {
-                total_coins++;
+                // Add another coin
+                coins.total++;
+
+                // Destroy it
                 Destroy(coin.gameObject);
+
                 return true;
             }
             // Weapon
@@ -151,6 +155,13 @@ public class PlayerInventory : MonoBehaviour
     {
         public CollectableItem worldItem;
         public T item;
+    }
+
+
+    [System.Serializable]
+    public struct SimpleInventoryItem<T> where T : class
+    {
+        public int total;
     }
 
 }
