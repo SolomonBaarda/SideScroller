@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -51,6 +52,8 @@ public class GameManager : MonoBehaviour
         //Menu.OnMenuClose += StartGame;
 
         isGameOver = true;
+
+        SceneManager.LoadSceneAsync("HUD", LoadSceneMode.Additive);
     }
 
     private void Start()
@@ -91,6 +94,14 @@ public class GameManager : MonoBehaviour
                     break;
             }
         }
+
+        // Update HUD stuff
+        HUD.HUDElements hud = new HUD.HUDElements();
+        hud.coin_count = player.GetCoinCount();
+        hud.game_time = gameTimeSeconds;
+
+        HUD.OnUpdateHUD.Invoke(hud);
+
     }
 
 

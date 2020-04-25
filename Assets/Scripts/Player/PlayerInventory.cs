@@ -83,6 +83,10 @@ public class PlayerInventory : MonoBehaviour
 
 
 
+    public int GetCoinCount()
+    {
+        return coins.total;
+    }
 
 
     public void Attack(float cycleWeapons, bool usePrimary, bool useSecondary, Vector2 playerVelocity)

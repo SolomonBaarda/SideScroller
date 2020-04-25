@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private PlayerController controller;
+    private PlayerInventory inventory;
 
     [SerializeField]
     private bool isAlive;
@@ -17,6 +18,8 @@ public class Player : MonoBehaviour
         // Controller reference
         controller = GetComponent<PlayerController>();
         controller.enabled = false;
+
+        inventory = GetComponent<PlayerInventory>();
 
         // Player variables
         isAlive = false;
@@ -92,4 +95,10 @@ public class Player : MonoBehaviour
         controller.enabled = true;
     }
 
+
+
+    public int GetCoinCount()
+    {
+        return inventory.GetCoinCount();
+    }
 }

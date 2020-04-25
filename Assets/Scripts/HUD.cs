@@ -7,25 +7,27 @@ using UnityEngine.Events;
 
 public class HUD : MonoBehaviour
 {
-    public static UnityEvent<int> OnUpdatePlayerCoinCount;
-
-
+    public static UnityAction<HUDElements> OnUpdateHUD;
 
     public TMP_Text text_coin_count;
+    public TMP_Text text_game_time;
 
 
     private void Awake()
     {
         SetHUDStyleTMPro(ref text_coin_count);
+        SetHUDStyleTMPro(ref text_game_time);
 
-        OnUpdatePlayerCoinCount += UpdateCoinLabel;
+        OnUpdateHUD += UpdateHUD;
     }
 
 
 
-    private void UpdateCoinLabel(int value)
+    private void UpdateHUD(HUDElements elements)
     {
-        text_coin_count.text = value.ToString();
+        text_coin_count.text = elements.coin_count.ToString();
+        // Display time as 1dp only
+        text_game_time.text = elements.game_time.ToString("0.0");
     }
 
 
@@ -50,4 +52,10 @@ public class HUD : MonoBehaviour
         }
     }
 
+
+    public struct HUDElements
+    {
+        public int coin_count;
+        public float game_time;
+    }
 }
