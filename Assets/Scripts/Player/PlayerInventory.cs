@@ -5,8 +5,8 @@ using UnityEngine;
 public class PlayerInventory : MonoBehaviour
 {
     // Inventories for simple items 
-    [SerializeField] private SimpleInventoryItem<Health> health;
-    [SerializeField] private SimpleInventoryItem<Coin> coins;
+    private SimpleInventoryItem<Health> health;
+    private SimpleInventoryItem<Coin> coins;
 
     // Complex items
     [SerializeField] private InventoryItem<Weapon> weapon;

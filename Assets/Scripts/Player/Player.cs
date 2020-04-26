@@ -39,12 +39,6 @@ public class Player : MonoBehaviour
                 currentChunk = current;
             }
         }
-
-
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            SetAlive();
-        }
     }
 
 

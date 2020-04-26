@@ -32,10 +32,18 @@ public class GameManager : MonoBehaviour
     public GameObject interactionManagerObject;
     private InteractionManager interactionManager;
 
+    private HUD hud;
+
     [Header("Game Settings")]
     [SerializeField]
     private float gameTimeSeconds;
     private bool isGameOver;
+
+    private int fps_frame_counter;
+    private float fps_time_counter = 0.0f;
+    private float fps_last_framerate = 0.0f;
+    public float fps_refresh_time = 0.5f;
+
 
     private void Awake()
     {
@@ -53,8 +61,11 @@ public class GameManager : MonoBehaviour
 
         isGameOver = true;
 
+        HUD.OnHUDLoaded += SetUpHUD;
         SceneManager.LoadSceneAsync("HUD", LoadSceneMode.Additive);
+
     }
+
 
     private void Start()
     {
@@ -68,12 +79,26 @@ public class GameManager : MonoBehaviour
     }
 
 
-    private void FixedUpdate()
+    private void Update()
     {
         if (!isGameOver)
         {
             gameTimeSeconds += Time.deltaTime;
         }
+
+        // Update FPS
+        if (fps_time_counter < fps_refresh_time)
+        {
+            fps_time_counter += Time.deltaTime;
+            fps_frame_counter++;
+        }
+        else
+        {
+            fps_last_framerate = fps_frame_counter / fps_time_counter;
+            fps_frame_counter = 0;
+            fps_time_counter = 0;
+        }
+
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -95,10 +120,15 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        if (Input.GetKey(KeyCode.R))
+        {
+            player.SetAlive();
+        }
+
         // Update HUD stuff
         HUD.HUDElements hud = new HUD.HUDElements(player.GetInventory<Coin>().Total, player.GetInventory<Health>().Total,
-            player.GetInventory<Health>().Max, gameTimeSeconds);
-        HUD.OnUpdateHUD.Invoke(hud);
+            player.GetInventory<Health>().Max, gameTimeSeconds, fps_last_framerate);
+        this.hud.UpdateHUD(hud);
     }
 
 
@@ -148,4 +178,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
+
+
+    private void SetUpHUD(HUD hud)
+    {
+        this.hud = hud;
+    }
 }

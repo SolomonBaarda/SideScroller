@@ -4,13 +4,17 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class HUD : MonoBehaviour
 {
-    public static UnityAction<HUDElements> OnUpdateHUD;
+    public static UnityAction<HUD> OnHUDLoaded;
 
     public TMP_Text text_coin_count;
     public TMP_Text text_game_time;
+
+    public bool show_fps = true;
+    public TMP_Text text_fps;
 
 
     private void Awake()
@@ -18,16 +22,34 @@ public class HUD : MonoBehaviour
         SetHUDStyleTMPro(ref text_coin_count);
         SetHUDStyleTMPro(ref text_game_time);
 
-        OnUpdateHUD += UpdateHUD;
+        SetHUDStyleTMPro(ref text_fps);
+
+        SceneManager.sceneLoaded += HUDLoaded;
     }
 
 
+    private void HUDLoaded(Scene s, LoadSceneMode l)
+    {
+        Debug.Log("Scene + " + s + " , loadmode " + l);
+        OnHUDLoaded.Invoke(this);
+    }
 
-    private void UpdateHUD(HUDElements elements)
+
+    public void UpdateHUD(HUDElements elements)
     {
         text_coin_count.text = elements.coin_count.ToString();
         // Display time as 1dp only
         text_game_time.text = elements.game_time.ToString("0.0");
+
+        if (show_fps)
+        {
+            text_fps.enabled = true;
+            text_fps.text = elements.fps.ToString("0.0");
+        }
+        else
+        {
+            text_fps.enabled = false;
+        }
     }
 
 
@@ -59,13 +81,15 @@ public class HUD : MonoBehaviour
         public int player_health;
         public int player_max_health;
         public float game_time;
+        public float fps;
 
-        public HUDElements(int coin_count, int player_health, int max_player_health, float game_time)
+        public HUDElements(int coin_count, int player_health, int player_max_health, float game_time, float fps)
         {
             this.coin_count = coin_count;
             this.player_health = player_health;
-            this.player_max_health = max_player_health;
+            this.player_max_health = player_max_health;
             this.game_time = game_time;
+            this.fps = fps;
         }
     }
 }
