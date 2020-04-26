@@ -4,20 +4,22 @@ using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
 {
-    [SerializeField]
-    private SimpleInventoryItem<Coin> coins;
+    // Inventories for simple items 
+    [SerializeField] private SimpleInventoryItem<Health> health;
+    [SerializeField] private SimpleInventoryItem<Coin> coins;
 
-    [SerializeField]
-    private InventoryItem<Weapon> weapon;
+    // Complex items
+    [SerializeField] private InventoryItem<Weapon> weapon;
 
-    [SerializeField]
-    private List<InventoryItem<Buff>> buffs;
-    [SerializeField]
-    private Buff currentTotal;
+    [SerializeField] private List<InventoryItem<Buff>> buffs;
+    [SerializeField] private Buff currentTotal;
 
     public void Awake()
     {
         buffs = new List<InventoryItem<Buff>>();
+
+        health = new SimpleInventoryItem<Health>(10, 10);
+        coins = new SimpleInventoryItem<Coin>(0, int.MaxValue);
     }
 
 
@@ -27,13 +29,17 @@ public class PlayerInventory : MonoBehaviour
     {
         if (drop)
         {
-            if (weapon.worldItem != null && weapon.item != null)
+            if(weapon != null)
             {
-                // Set them to null
-                weapon.item = null;
-                weapon.worldItem.Drop(transform.position, Vector2.zero);
-                weapon.worldItem = null;
+                if (weapon.worldItem != null && weapon.item != null)
+                {
+                    // Set them to null
+                    weapon.item = null;
+                    weapon.worldItem.Drop(transform.position, Vector2.zero);
+                    weapon.worldItem = null;
+                }
             }
+
         }
     }
 
@@ -83,11 +89,6 @@ public class PlayerInventory : MonoBehaviour
 
 
 
-    public int GetCoinCount()
-    {
-        return coins.total;
-    }
-
 
     public void Attack(float cycleWeapons, bool usePrimary, bool useSecondary, Vector2 playerVelocity)
     {
@@ -118,14 +119,11 @@ public class PlayerInventory : MonoBehaviour
 
     private bool PickUpBuff(CollectableItem worldItem, Buff buff)
     {
-        InventoryItem<Buff> b = new InventoryItem<Buff>();
-        b.worldItem = worldItem;
-        b.item = buff;
+        InventoryItem<Buff> b = new InventoryItem<Buff>(worldItem, buff);
 
         buffs.Add(b);
         UpdateCurrentBuffTotal();
         return true;
-
     }
 
 
@@ -145,27 +143,60 @@ public class PlayerInventory : MonoBehaviour
     }
 
 
-    public Buff GetCurrentTotal()
+
+
+    public Inventory<T> GetInventory<T>() where T : class
     {
-        return currentTotal;
+        if (typeof(T).Equals(typeof(Health)))
+        {
+            return (Inventory<T>)health;
+        }
+        else if (typeof(T).Equals(typeof(Coin)))
+        {
+            return (Inventory<T>)coins;
+        }
+
+        return null;
     }
 
 
 
-
-
     [System.Serializable]
-    public struct InventoryItem<T> where T : class
+    public class InventoryItem<T> where T : class
     {
         public CollectableItem worldItem;
         public T item;
+
+        public InventoryItem(CollectableItem worldItem, T item)
+        {
+            this.worldItem = worldItem;
+            this.item = item;
+        }
     }
 
 
     [System.Serializable]
-    public struct SimpleInventoryItem<T> where T : class
+    public class SimpleInventoryItem<T> : Inventory<T> where T : class
     {
         public int total;
+        public int max;
+        public T item;
+
+        public SimpleInventoryItem(int total, int max)
+        {
+            this.total = total;
+            this.max = max;
+        }
+
+        public int Total => total;
+        public int Max => max;
+    }
+
+
+    public interface Inventory<T> where T : class
+    {
+        int Total { get; }
+        int Max { get; }
     }
 
 }

@@ -56,7 +56,7 @@ public class PlayerController : MonoBehaviour
         interaction.Interact(isInteract1);
 
         inventory.DropWeapon(isInteract2);
-        Buff currentTotal = inventory.GetCurrentTotal();
+        //Buff currentTotal = inventory.GetCurrentTotal();
 
         // Update the inventory and attack
         inventory.Attack(scrollAmount, isFire1, isFire2, movement.PlayerVelocity);

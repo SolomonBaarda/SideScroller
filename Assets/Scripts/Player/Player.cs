@@ -97,8 +97,8 @@ public class Player : MonoBehaviour
 
 
 
-    public int GetCoinCount()
+    public PlayerInventory.Inventory<T> GetInventory<T>() where T : class
     {
-        return inventory.GetCoinCount();
+        return inventory.GetInventory<T>();
     }
 }

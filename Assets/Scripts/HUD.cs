@@ -56,6 +56,16 @@ public class HUD : MonoBehaviour
     public struct HUDElements
     {
         public int coin_count;
+        public int player_health;
+        public int player_max_health;
         public float game_time;
+
+        public HUDElements(int coin_count, int player_health, int max_player_health, float game_time)
+        {
+            this.coin_count = coin_count;
+            this.player_health = player_health;
+            this.player_max_health = max_player_health;
+            this.game_time = game_time;
+        }
     }
 }

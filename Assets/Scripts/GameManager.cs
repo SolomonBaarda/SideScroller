@@ -96,12 +96,9 @@ public class GameManager : MonoBehaviour
         }
 
         // Update HUD stuff
-        HUD.HUDElements hud = new HUD.HUDElements();
-        hud.coin_count = player.GetCoinCount();
-        hud.game_time = gameTimeSeconds;
-
+        HUD.HUDElements hud = new HUD.HUDElements(player.GetInventory<Coin>().Total, player.GetInventory<Health>().Total,
+            player.GetInventory<Health>().Max, gameTimeSeconds);
         HUD.OnUpdateHUD.Invoke(hud);
-
     }
 
 
