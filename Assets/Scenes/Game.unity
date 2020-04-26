@@ -615,12 +615,6 @@ MonoBehaviour:
   facing: 0
   headPos: {fileID: 242332447}
   feetPos: {fileID: 1501458363}
-  OnPlayerland:
-    m_PersistentCalls:
-      m_Calls: []
-  OnPlayerCrouch:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &876974039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1637,5 +1631,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e6e9a7d108920c4fa5c456b012d87d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coins_collected: 0
-  inventory_weapon_size: 3
+  currentTotal: {fileID: 0}

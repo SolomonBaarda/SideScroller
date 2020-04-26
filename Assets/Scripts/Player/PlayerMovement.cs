@@ -16,8 +16,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Controller Settings")]
     [Range(0, .3f)] [SerializeField] private float movementSmoothing = .02f;
     [SerializeField] private bool allowAirControl = true;
-    private const float collisionCheckRadius = .1f;
-    private bool isGrounded;
+    private const float collisionCheckRadius = .2f;
     private Rigidbody2D rigid;
     private Collider2D mainCollider;
     private Collider2D feetCollider;
@@ -28,18 +27,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform headPos;
     [SerializeField] private Transform feetPos;
 
-    [Header("Events")]
-    [Space]
-    public UnityEvent OnPlayerland;
-
-    [System.Serializable]
-    public class BoolEvent : UnityEvent<bool> { }
-
-    public BoolEvent OnPlayerCrouch;
+    private bool isGrounded;
     private bool isCrouching = false;
 
-
-    private enum Direction { Left, Right, Forward };
+    private enum Direction { Left, Right };
 
     private void Awake()
     {
@@ -47,22 +38,13 @@ public class PlayerMovement : MonoBehaviour
         feetCollider = GetComponent<CircleCollider2D>();
         rigid = GetComponent<Rigidbody2D>();
 
-        if (OnPlayerland == null)
-        {
-            OnPlayerland = new UnityEvent();
-        }
-        if (OnPlayerCrouch == null)
-        {
-            OnPlayerCrouch = new BoolEvent();
-        }
-
         max_double_jumps = default_double_jumps;
     }
 
     private void OnEnable()
     {
         // Face forward by default
-        facing = Direction.Forward;
+        facing = Direction.Right;
     }
 
 
@@ -74,6 +56,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // Check if the player is on the ground
         bool wasGrounded = isGrounded;
         isGrounded = false;
 
@@ -85,10 +68,6 @@ public class PlayerMovement : MonoBehaviour
             {
                 isGrounded = true;
                 double_jumps_left = max_double_jumps;
-                if (!wasGrounded)
-                {
-                    OnPlayerland.Invoke();
-                }
             }
         }
     }
@@ -120,7 +99,6 @@ public class PlayerMovement : MonoBehaviour
                 if (!isCrouching)
                 {
                     isCrouching = true;
-                    OnPlayerCrouch.Invoke(true);
                 }
 
                 // Reduce the speed by the crouchSpeed multiplier
@@ -145,7 +123,6 @@ public class PlayerMovement : MonoBehaviour
                 if (isCrouching)
                 {
                     isCrouching = false;
-                    OnPlayerCrouch.Invoke(false);
                 }
             }
 
@@ -173,28 +150,11 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Regular jump
-        if (isGrounded && jump && !crouch)
+        if (isGrounded && jump)
         {
             // Add a vertical force to the player.
             isGrounded = false;
             Jump(jump_force);
-        }
-        // Crouch jump
-        else if (isGrounded && jump && crouch)
-        {
-            // Jump forwards
-            // TODO
-            isGrounded = false;
-            float force = 2 * jump_force;
-            if (facing == Direction.Left)
-            {
-                force *= -1;
-            }
-            else if (facing == Direction.Forward)
-            {
-                force = 0;
-            }
-            ForwardJump(force, jump_force);
         }
         // Double jump
         else if (!isGrounded && jump && double_jumps_left > 0)
@@ -202,6 +162,9 @@ public class PlayerMovement : MonoBehaviour
             double_jumps_left--;
             Jump(jump_force);
         }
+
+
+
     }
 
 
@@ -230,24 +193,18 @@ public class PlayerMovement : MonoBehaviour
 
     private void Flip()
     {
-        // Multiply the player's x local scale by -1.
-        /*
+        // Flip the player
         Vector3 theScale = transform.localScale;
         theScale.x *= -1;
         transform.localScale = theScale;
-        */
-        // Will use this next time
     }
 
 
-    public Vector2 PlayerVelocity
-    {
-        get
-        {
-            return rigid.velocity;
-        }
-    }
+    public Vector2 PlayerVelocity { get { return rigid.velocity; } }
 
+    public bool IsCrouching { get { return isCrouching; } }
+
+    public bool IsOnGround { get { return isGrounded; } }
 
     private void OnDrawGizmosSelected()
     {

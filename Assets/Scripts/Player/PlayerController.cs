@@ -8,6 +8,8 @@ public class PlayerController : MonoBehaviour
     private PlayerInteraction interaction;
     private PlayerInventory inventory;
 
+    private Animator animator;
+
     private float horizontalMovement = 0f;
     private bool isJump = false;
     private bool isCrouch = false;
@@ -26,6 +28,8 @@ public class PlayerController : MonoBehaviour
         movement = GetComponent<PlayerMovement>();
         interaction = GetComponent<PlayerInteraction>();
         inventory = GetComponent<PlayerInventory>();
+
+        animator = GetComponent<Animator>();
     }
 
     private void Update()
@@ -43,6 +47,7 @@ public class PlayerController : MonoBehaviour
         isFire2 = Input.GetButton("Fire2");
         isFire3 = Input.GetButton("Fire3");
 
+        UpdateAnimations();
     }
 
     private void FixedUpdate()
@@ -73,6 +78,15 @@ public class PlayerController : MonoBehaviour
     {
         movement.enabled = false;
         interaction.enabled = false;
+    }
+
+
+    private void UpdateAnimations()
+    {
+        animator.SetFloat("VelocityX", Mathf.Abs(movement.PlayerVelocity.x));
+        animator.SetFloat("VelocityY", movement.PlayerVelocity.y);
+        animator.SetBool("isJumping", !movement.IsOnGround);
+        animator.SetBool("isCrouching", movement.IsCrouching);
     }
 
 }
