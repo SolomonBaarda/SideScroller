@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu]
 public class Buff : ItemBase
 {
-    [SerializeField] private Name buffName;
+    public Name buffName;
 
     // Movement buffs
     [SerializeField] [Range(0, 1)] private float speed_bonus_multiplier;
@@ -48,7 +48,7 @@ public class Buff : ItemBase
     {
         TOTAL_BUFFS_COMBINED,
         SpeedBoost,
-        Jump_Power,
+        JumpPower,
         DoubleJump
     }
 

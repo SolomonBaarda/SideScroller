@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class Pot : WorldItem, IInteractable, ILootable, ILoot
 {
-    [SerializeField]
-    private LootTable table;
+    public LootTable table;
 
     [SerializeField]
     private int inventory_size = 1;

@@ -112,6 +112,7 @@ public class WorldItem : MonoBehaviour
     /// </summary>
     public enum Name
     {
+        WorldItem,
         Coin,
         Pot,
         Chest

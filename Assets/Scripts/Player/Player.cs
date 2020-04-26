@@ -29,16 +29,20 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        // Get the chunk the player is in now
-        Chunk current = CalculateCurrentChunk();
-        if (current != null)
+        if(isAlive)
         {
-            // New chunk
-            if (current != currentChunk)
+            // Get the chunk the player is in now
+            Chunk current = CalculateCurrentChunk();
+            if (current != null)
             {
-                currentChunk = current;
+                // New chunk
+                if (current != currentChunk)
+                {
+                    currentChunk = current;
+                }
             }
         }
+
     }
 
 

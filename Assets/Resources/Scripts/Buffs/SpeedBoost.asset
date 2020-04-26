@@ -10,9 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 70bfeca00c3e88c4e8a41463582d63b4, type: 3}
-  m_Name: Speed
+  m_Name: SpeedBoost
   m_EditorClassIdentifier: 
-  buffName: 0
+  sprite: {fileID: -4841894824035428502, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
+  display_name: 
+  buffName: 1
   speed_bonus_multiplier: 0.33
   jump_power_bonus_multiplier: 0
   double_jump_bonus: 0

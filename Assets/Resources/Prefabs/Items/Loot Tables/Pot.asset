@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Pot
   m_EditorClassIdentifier: 
   drops:
-  - item: 0
+  - item: 1
     dropChance: 1

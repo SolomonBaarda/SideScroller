@@ -6,12 +6,11 @@ using UnityEngine;
 /// <summary>
 /// A class for storing information about the drop chance of specific items, for an item.
 /// </summary>
-[System.Serializable]
+[Serializable]
 [CreateAssetMenu]
 public class LootTable : ScriptableObject
 {
-    [SerializeField]
-    private Drop[] drops;
+    public Drop[] drops;
 
 
     /// <summary>

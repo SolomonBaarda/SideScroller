@@ -30,7 +30,6 @@ public class HUD : MonoBehaviour
 
     private void HUDLoaded(Scene s, LoadSceneMode l)
     {
-        Debug.Log("Scene + " + s + " , loadmode " + l);
         OnHUDLoaded.Invoke(this);
     }
 

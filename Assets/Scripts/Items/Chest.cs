@@ -13,8 +13,7 @@ public class Chest : WorldItem, IInteractable, ILootable
     [SerializeField]
     private int inventory_size = 3;
 
-    [SerializeField]
-    private LootTable table;
+    public LootTable table;
 
     private Animator a;
 

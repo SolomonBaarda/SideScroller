@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Chest
   m_EditorClassIdentifier: 
   drops:
-  - item: 0
-    dropChance: 2
   - item: 1
+    dropChance: 3
+  - item: 2
     dropChance: 1

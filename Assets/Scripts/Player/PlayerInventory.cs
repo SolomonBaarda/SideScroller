@@ -29,7 +29,7 @@ public class PlayerInventory : MonoBehaviour
     {
         if (drop)
         {
-            if(weapon != null)
+            if (weapon != null)
             {
                 if (weapon.worldItem != null && weapon.item != null)
                 {
@@ -53,9 +53,10 @@ public class PlayerInventory : MonoBehaviour
             ItemBase item = c.item;
 
             // Coin
-            Coin coin = (Coin)c;
-            if (coin != null)
+            if (WorldItem.ImplementsInterface<Coin>(g))
             {
+                Coin coin = (Coin)WorldItem.GetScriptThatImplements<Coin>(g);
+
                 // Add another coin
                 coins.total++;
 
@@ -65,9 +66,10 @@ public class PlayerInventory : MonoBehaviour
                 return true;
             }
             // Weapon
-            Weapon w = (Weapon)item;
-            if (w != null)
+            else if (item is Weapon)
             {
+                Weapon w = (Weapon)item;
+
                 if (weapon.item == null)
                 {
                     weapon.worldItem = c;
@@ -75,11 +77,10 @@ public class PlayerInventory : MonoBehaviour
                     return true;
                 }
             }
-
             // Buff
-            Buff b = (Buff)item;
-            if (WorldItem.ImplementsInterface<Buff>(g))
+            else if (item is Buff)
             {
+                Buff b = (Buff)item;
                 return PickUpBuff(c, b);
             }
         }

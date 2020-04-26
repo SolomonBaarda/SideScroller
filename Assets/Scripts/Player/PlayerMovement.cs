@@ -24,11 +24,8 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 velocity = Vector2.zero;
     [SerializeField]
     private Direction facing;
-    [SerializeField] private Transform headPos;
-    [SerializeField] private Transform feetPos;
-
-    private bool isGrounded;
-    private bool isCrouching = false;
+    public Transform headPos;
+    public Transform feetPos;
 
     private enum Direction { Left, Right };
 
@@ -57,8 +54,8 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         // Check if the player is on the ground
-        bool wasGrounded = isGrounded;
-        isGrounded = false;
+        bool wasGrounded = IsOnGround;
+        IsOnGround = false;
 
         // Get all collisions
         Collider2D[] collisions = Physics2D.OverlapCircleAll(feetPos.position, collisionCheckRadius, LayerMask.GetMask("Ground"));
@@ -66,7 +63,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (collisions[i].gameObject != gameObject)
             {
-                isGrounded = true;
+                IsOnGround = true;
                 double_jumps_left = max_double_jumps;
             }
         }
@@ -80,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
         // If crouch has just been let go of
         if (!crouch)
         {
-            if (isCrouching)
+            if (IsCrouching)
             {
                 // If the character has a ceiling preventing them from standing up, keep them crouching
                 if (Physics2D.OverlapCircle(headPos.position, collisionCheckRadius, LayerMask.GetMask("Ground")))
@@ -90,15 +87,15 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        if (isGrounded || allowAirControl)
+        if (IsOnGround || allowAirControl)
         {
             // Crouching
             if (crouch)
             {
                 // Player has just crouched this frame
-                if (!isCrouching)
+                if (!IsCrouching)
                 {
-                    isCrouching = true;
+                    IsCrouching = true;
                 }
 
                 // Reduce the speed by the crouchSpeed multiplier
@@ -120,9 +117,9 @@ public class PlayerMovement : MonoBehaviour
                 }
 
                 // Player has just uncrouched
-                if (isCrouching)
+                if (IsCrouching)
                 {
-                    isCrouching = false;
+                    IsCrouching = false;
                 }
             }
 
@@ -150,14 +147,14 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Regular jump
-        if (isGrounded && jump)
+        if (IsOnGround && jump)
         {
             // Add a vertical force to the player.
-            isGrounded = false;
+            IsOnGround = false;
             Jump(jump_force);
         }
         // Double jump
-        else if (!isGrounded && jump && double_jumps_left > 0)
+        else if (!IsOnGround && jump && double_jumps_left > 0)
         {
             double_jumps_left--;
             Jump(jump_force);
@@ -202,9 +199,8 @@ public class PlayerMovement : MonoBehaviour
 
     public Vector2 PlayerVelocity { get { return rigid.velocity; } }
 
-    public bool IsCrouching { get { return isCrouching; } }
-
-    public bool IsOnGround { get { return isGrounded; } }
+    public bool IsCrouching { get; private set; }
+    public bool IsOnGround { get; private set; }
 
     private void OnDrawGizmosSelected()
     {

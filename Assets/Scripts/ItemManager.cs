@@ -18,10 +18,10 @@ public class ItemManager : MonoBehaviour
     private Dictionary<WorldItem.Name, GameObject> lootPrefabs;
 
     private Dictionary<WorldItem.Name, GameObject> worldObjectPrefabs;
-    private Dictionary<Weapon.Name, GameObject> weaponScriptableObjectPrefabs;
-    private Dictionary<Buff.Name, GameObject> buffScriptableObjectPrefabs;
+    private Dictionary<Weapon.Name, Weapon> weaponScriptableObjectPrefabs;
+    private Dictionary<Buff.Name, Buff> buffScriptableObjectPrefabs;
 
-    public GameObject worlditemPrefab;
+    public GameObject collectableItemPrefab;
 
     private void Awake()
     {
@@ -29,14 +29,14 @@ public class ItemManager : MonoBehaviour
 
         lootPrefabs = new Dictionary<WorldItem.Name, GameObject>();
         worldObjectPrefabs = new Dictionary<WorldItem.Name, GameObject>();
-        weaponScriptableObjectPrefabs = new Dictionary<Weapon.Name, GameObject>();
-        buffScriptableObjectPrefabs = new Dictionary<Buff.Name, GameObject>();
+        weaponScriptableObjectPrefabs = new Dictionary<Weapon.Name, Weapon>();
+        buffScriptableObjectPrefabs = new Dictionary<Buff.Name, Buff>();
 
         // Load all items 
 
         LoadAllItemPrefabs(ref worldObjectPrefabs, "Prefabs/Items");
-        LoadAllItemPrefabs(ref weaponScriptableObjectPrefabs, "Scripts/Weapons");
-        LoadAllItemPrefabs(ref buffScriptableObjectPrefabs, "Scripts/Buffs");
+        LoadAllScriptableItems(ref weaponScriptableObjectPrefabs, "Scripts/Weapons");
+        LoadAllScriptableItems(ref buffScriptableObjectPrefabs, "Scripts/Buffs");
 
 
         DateTime after = DateTime.Now;
@@ -70,7 +70,7 @@ public class ItemManager : MonoBehaviour
                 WorldItem.Name drop = table.GetLoot(value);
 
                 GameObject g;
-                if(!lootPrefabs.TryGetValue(drop, out g))
+                if (!lootPrefabs.TryGetValue(drop, out g))
                 {
                     Debug.LogError("Failed to get loot " + drop);
                     continue;
@@ -82,10 +82,50 @@ public class ItemManager : MonoBehaviour
                 // Spawn the drops
                 Vector2 pos = item.transform.position;
                 SpawnItem(g, pos, drop.ToString());
+
+                /*
+                Buff b;
+                buffScriptableObjectPrefabs.TryGetValue(Buff.Name.SpeedBoost, out b);
+                SpawnCollectableItem(b, pos, b.buffName.ToString(), true, false) ;
+                */
             }
 
         }
 
+    }
+
+
+
+    private void LoadAllScriptableItems<TEnum, TClass>(ref Dictionary<TEnum, TClass> prefabs, string path) where TEnum : struct where TClass : ScriptableObject
+    {
+        // Load all objects from path
+        TClass[] allScripts = Resources.LoadAll<TClass>(path);
+
+        // Loop through each object
+        foreach (TClass t in allScripts)
+        {
+            // Try and get the enum type from the name
+            TEnum type;
+            if (!Enum.TryParse(t.name, out type))
+            {
+                Debug.LogError("Could not parse prefab " + t.name + " to enum type.");
+                continue;
+            }
+
+            // Add it
+            prefabs.Add(type, t);
+
+            // TODO
+            // GameObject is a loot item
+            /*
+            if (WorldItem.ImplementsInterface<ILoot>(t))
+            {
+                WorldItem loot = (WorldItem)WorldItem.GetScriptThatImplements<ILoot>(t);
+
+                lootPrefabs.Add(loot.itemName, t);
+            }
+            */
+        }
     }
 
 
@@ -145,14 +185,26 @@ public class ItemManager : MonoBehaviour
     }
 
 
-    private void SpawnItem(GameObject item, Vector2 position, string name)
+    private GameObject SpawnItem(GameObject item, Vector2 position, string name)
     {
         GameObject g = Instantiate(item, position, Quaternion.identity, transform);
         g.layer = LayerMask.NameToLayer(ITEM_LAYER);
         g.name = name;
+
+        return g;
     }
 
 
+    private void SpawnCollectableItem(ItemBase item, Vector2 position, string name, bool collideToPickUp, bool interactToPickUp)
+    {
+        GameObject g = SpawnItem(collectableItemPrefab, position, name);
+        g.SetActive(false);
+
+        CollectableItem c = g.GetComponent<CollectableItem>();
+        c.SetCollectableItem(item, collideToPickUp, interactToPickUp);
+
+        g.SetActive(true);
+    }
 
 
     public enum Loot
