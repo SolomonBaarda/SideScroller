@@ -17,33 +17,6 @@ public class WorldItem : MonoBehaviour
 
     protected void Awake()
     {
-        UpdateItemSprite();
-
-        // Set the layer
-        gameObject.layer = LayerMask.NameToLayer(ItemManager.ITEM_LAYER);
-
-        // Set up the sprite renderer
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer == null)
-        {
-            spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-        }
-        spriteRenderer.sprite = sprite;
-
-        // Set up the box collider
-        trigger = GetComponent<BoxCollider2D>();
-        if (trigger == null)
-        {
-            trigger = gameObject.AddComponent<BoxCollider2D>();
-        }
-
-        trigger.isTrigger = true;
-    }
-
-
-
-    protected void UpdateItemSprite()
-    {
         // See if item needs to be updated
         if (item != null)
         {
@@ -52,14 +25,38 @@ public class WorldItem : MonoBehaviour
             {
                 sprite = item.sprite;
             }
+        }
 
-            // Update the name if not already done
-            if (item.display_name == null)
+        // Set the layer
+        gameObject.layer = LayerMask.NameToLayer(ItemManager.ITEM_LAYER);
+
+        // Set up the sprite renderer
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            if (spriteRenderer == null)
             {
-                item.display_name = itemName.ToString();
+                spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
             }
         }
+
+        spriteRenderer.sprite = sprite;
+        // Set back most item layer by default
+        SetRendererSortingLayer(ItemManager.RENDERING_LAYER_ITEM_INVENTORY);
+
+        // Set up the box collider
+        if (trigger == null)
+        {
+            trigger = GetComponent<BoxCollider2D>();
+            if (trigger == null)
+            {
+                trigger = gameObject.AddComponent<BoxCollider2D>();
+            }
+        }
+
+        trigger.isTrigger = true;
     }
+
 
 
     protected void SetRendererSortingLayer(string layer)

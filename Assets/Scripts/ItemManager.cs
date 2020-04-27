@@ -33,7 +33,6 @@ public class ItemManager : MonoBehaviour
         buffScriptableObjectPrefabs = new Dictionary<Buff.Name, Buff>();
 
         // Load all items 
-
         LoadAllItemPrefabs(ref worldObjectPrefabs, "Prefabs/Items");
         LoadAllScriptableItems(ref weaponScriptableObjectPrefabs, "Scripts/Weapons");
         LoadAllScriptableItems(ref buffScriptableObjectPrefabs, "Scripts/Buffs");
@@ -198,12 +197,8 @@ public class ItemManager : MonoBehaviour
     private void SpawnCollectableItem(ItemBase item, Vector2 position, string name, bool collideToPickUp, bool interactToPickUp)
     {
         GameObject g = SpawnItem(collectableItemPrefab, position, name);
-        g.SetActive(false);
-
         CollectableItem c = g.GetComponent<CollectableItem>();
         c.SetCollectableItem(item, collideToPickUp, interactToPickUp);
-
-        g.SetActive(true);
     }
 
 

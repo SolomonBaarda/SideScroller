@@ -37,18 +37,18 @@ public class PlayerInteraction : MonoBehaviour
     {
         List<Collider2D> collisionItems = new List<Collider2D>();
 
+        // Filter colliders to be only item layer
+        ContactFilter2D filter = new ContactFilter2D();
+        filter.SetLayerMask(LayerMask.GetMask(ItemManager.ITEM_LAYER));
+        filter.useTriggers = true;
+
         // Loop through each collision with items on each collider
         foreach (Collider2D collider in allColliders)
         {
             // List will be resized if its too small
             Collider2D[] collisions = new Collider2D[1];
 
-            // Filter colliders to be only item layer
-            ContactFilter2D c = new ContactFilter2D();
-            c.SetLayerMask(LayerMask.GetMask(ItemManager.ITEM_LAYER));
-            c.useTriggers = true;
-
-            Physics2D.OverlapCollider(collider, c, collisions);
+            Physics2D.OverlapCollider(collider, filter, collisions);
 
             // Ensure the collider has not already been added
             foreach (Collider2D col in collisions)

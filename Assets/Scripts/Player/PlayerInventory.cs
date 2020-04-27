@@ -81,7 +81,9 @@ public class PlayerInventory : MonoBehaviour
             else if (item is Buff)
             {
                 Buff b = (Buff)item;
-                return PickUpBuff(c, b);
+                CombineBuff(c, b);
+                Destroy(c.gameObject);
+                return true;
             }
         }
 
@@ -118,29 +120,16 @@ public class PlayerInventory : MonoBehaviour
 
 
 
-    private bool PickUpBuff(CollectableItem worldItem, Buff buff)
+    private void CombineBuff(CollectableItem worldItem, Buff buff)
     {
-        InventoryItem<Buff> b = new InventoryItem<Buff>(worldItem, buff);
-
-        buffs.Add(b);
-        UpdateCurrentBuffTotal();
-        return true;
-    }
-
-
-    private void UpdateCurrentBuffTotal()
-    {
-        // Create a new buff instance
-        Buff total = ScriptableObject.CreateInstance<Buff>();
-
-        // Combine all the values 
-        foreach (InventoryItem<Buff> b in buffs)
+        if(currentTotal == null)
         {
-            total.CombineBuffs(b.item);
+            // Create a new buff instance
+            currentTotal = ScriptableObject.CreateInstance<Buff>();
         }
 
-        // Update the current value
-        currentTotal = total;
+        // Combine the buff
+        currentTotal.CombineBuffs(buff);
     }
 
 

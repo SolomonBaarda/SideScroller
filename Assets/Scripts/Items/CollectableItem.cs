@@ -6,6 +6,7 @@ public class CollectableItem : WorldItem, ICollidable, IInteractable, ICollectab
 {
     [SerializeField]
     private bool collideToPickUp = false, interactToPickUp = false;
+    public const float DEFAULT_INITIAL_SETUP_TIME = 0.5f;
 
     private Rigidbody2D rigid;
 
@@ -13,23 +14,27 @@ public class CollectableItem : WorldItem, ICollidable, IInteractable, ICollectab
     {
         base.Awake();
 
-        rigid = GetComponent<Rigidbody2D>();
-
         // Disable the trigger collider by default
         trigger.enabled = false;
+
+        if (rigid == null)
+        {
+            rigid = GetComponent<Rigidbody2D>();
+        }
     }
 
 
-
-    public void SetCollectableItem(ItemBase item, bool collideToPickUp, bool interactToPickUp)
+    public void SetCollectableItem(ItemBase item, bool collideToPickUp, bool interactToPickUp, float initialSetupTime = DEFAULT_INITIAL_SETUP_TIME)
     {
         this.item = item;
-        UpdateItemSprite();
+        base.Awake();
+
+        SetRendererSortingLayer(ItemManager.RENDERING_LAYER_ITEM_COLLISION);
 
         this.collideToPickUp = collideToPickUp;
         this.interactToPickUp = interactToPickUp;
 
-        trigger.enabled = true;
+        DisableFor(initialSetupTime);
     }
 
 
@@ -57,9 +62,9 @@ public class CollectableItem : WorldItem, ICollidable, IInteractable, ICollectab
     public void Collect(PlayerInventory inventory)
     {
         // Inventory succesfully picked this up
-        if(inventory.PickUp(gameObject))
+        if (inventory.PickUp(gameObject))
         {
-            enabled = false;
+            trigger.enabled = false;
         }
     }
 
@@ -73,7 +78,24 @@ public class CollectableItem : WorldItem, ICollidable, IInteractable, ICollectab
 
         // Enable it
         enabled = true;
+        trigger.enabled = true;
     }
 
+
+
+    protected void DisableFor(float seconds)
+    {
+        // Disable trigger 
+        trigger.enabled = false;
+        StartCoroutine(EnableTriggerAfter(seconds));
+    }
+
+
+    private IEnumerator EnableTriggerAfter(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+
+        trigger.enabled = true;
+    }
 
 }
