@@ -10,9 +10,16 @@ public class HUD : MonoBehaviour
 {
     public static UnityAction<HUD> OnHUDLoaded;
 
-    public TMP_Text text_coin_count;
     public TMP_Text text_game_time;
 
+    [Header("Coins")]
+    public TMP_Text text_coin_count;
+
+    [Header("Health")]
+    public Sprite image_health_full;
+    public Sprite image_health_empty;
+
+    [Header("FPS")]
     public bool show_fps = true;
     public TMP_Text text_fps;
 
@@ -34,7 +41,7 @@ public class HUD : MonoBehaviour
     }
 
 
-    public void UpdateHUD(HUDElements elements)
+    public void UpdateHUD(in HUDElements elements)
     {
         text_coin_count.text = elements.coin_count.ToString();
         // Display time as 1dp only
@@ -74,13 +81,13 @@ public class HUD : MonoBehaviour
     }
 
 
-    public struct HUDElements
+    public readonly struct HUDElements
     {
-        public int coin_count;
-        public int player_health;
-        public int player_max_health;
-        public float game_time;
-        public float fps;
+        public readonly int coin_count;
+        public readonly int player_health;
+        public readonly int player_max_health;
+        public readonly float game_time;
+        public readonly float fps;
 
         public HUDElements(int coin_count, int player_health, int player_max_health, float game_time, float fps)
         {

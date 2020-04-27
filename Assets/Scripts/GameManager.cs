@@ -128,7 +128,7 @@ public class GameManager : MonoBehaviour
         // Update HUD stuff
         HUD.HUDElements hud = new HUD.HUDElements(player.GetInventory<Coin>().Total, player.GetInventory<Health>().Total,
             player.GetInventory<Health>().Max, gameTimeSeconds, fps_last_framerate);
-        this.hud.UpdateHUD(hud);
+        this.hud.UpdateHUD(in hud);
     }
 
 
