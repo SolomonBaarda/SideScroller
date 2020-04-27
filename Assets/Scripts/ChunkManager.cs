@@ -6,8 +6,7 @@ using UnityEngine.Events;
 
 public class ChunkManager : MonoBehaviour
 {
-    public static UnityAction<Vector2Int> OnCameraEnterChunk;
-    public static UnityAction<Vector2Int> OnPlayerEnterChunk;
+
 
     public static UnityAction<Vector2Int> OnChunkDestroyed;
 

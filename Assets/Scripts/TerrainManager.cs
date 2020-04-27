@@ -4,7 +4,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.Events;
-
+using System.Configuration;
 
 public class TerrainManager : MonoBehaviour
 {
@@ -20,6 +20,8 @@ public class TerrainManager : MonoBehaviour
     [Header("General Generation Settings")]
     public string seed;
     public bool useRandomSeed;
+
+    public Vector2 CellSize { get { return grid.cellSize; } }
 
     private Grid grid;
     private Tilemap wall;
@@ -357,6 +359,21 @@ public class TerrainManager : MonoBehaviour
         // Set the cell
         tilemap.SetTile(new Vector3Int(tilePosition.x, tilePosition.y, 0), tileType);
     }
+
+
+
+    public Vector2Int GetGroundBoundsTiles()
+    {
+        Vector3Int bounds = ground.cellBounds.size;
+        return new Vector2Int(bounds.x, bounds.y);
+    }
+
+    public Vector2Int GetTilePosition(Vector2 position)
+    {
+        Vector3Int tile = grid.WorldToCell(position);
+        return new Vector2Int(tile.x, tile.y);
+    }
+
 
 
     /// <summary>

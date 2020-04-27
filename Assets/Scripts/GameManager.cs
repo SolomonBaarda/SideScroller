@@ -32,6 +32,10 @@ public class GameManager : MonoBehaviour
     public GameObject interactionManagerObject;
     private InteractionManager interactionManager;
 
+    [Header("Enemy Manager")]
+    public GameObject enemyManagerObject;
+    private EnemyManager enemyManager;
+
     private HUD hud;
 
     [Header("Game Settings")]
@@ -54,6 +58,7 @@ public class GameManager : MonoBehaviour
         chunkManager = chunkManagerObject.GetComponent<ChunkManager>();
         itemManager = itemManagerObject.GetComponent<ItemManager>();
         interactionManager = interactionManagerObject.GetComponent<InteractionManager>();
+        enemyManager = enemyManagerObject.GetComponent<EnemyManager>();
 
         // Add event calls 
         TerrainManager.OnTerrainGenerated += StartGame;
@@ -81,6 +86,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        // Update the game time
         if (!isGameOver)
         {
             gameTimeSeconds += Time.deltaTime;
@@ -99,11 +105,12 @@ public class GameManager : MonoBehaviour
             fps_time_counter = 0;
         }
 
-
+        // Quit the build
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Application.Quit();
         }
+        // Toggle camera mode
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             switch (movingCamera.direction)
@@ -135,18 +142,33 @@ public class GameManager : MonoBehaviour
 
     private void LateUpdate()
     {
-        // Generate any new chunks if necessary
+        // Check each chunk
         List<Chunk> nearbyChunksToCamera = movingCamera.GetAllNearbyChunks();
         foreach (Chunk c in nearbyChunksToCamera)
         {
+            // Generate any new chunks if necessary
             CheckGenerateNewChunks(c);
+
+            // Update the nav meshes
+            UpdateNavMesh(c);
         }
     }
 
 
 
+    private void UpdateNavMesh(Chunk chunk)
+    {
+        Vector2 centre = chunk.transform.position;
+        Vector2Int groundBounds = terrainManager.GetGroundBoundsTiles();
+
+        enemyManager.UpdateNavMesh(new Bounds(centre, chunk.bounds), groundBounds);
+    }
+
+
     private void StartGame()
     {
+        enemyManager.ScanWholeNavMesh();
+
         player.SetPosition(terrainManager.GetInitialTileWorldPositionForPlayer());
         player.SetAlive();
 
