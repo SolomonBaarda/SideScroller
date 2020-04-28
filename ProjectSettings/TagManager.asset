@@ -21,7 +21,7 @@ TagManager:
   - Camera
   - Item
   - OnlyGround
-  - 
+  - Enemy
   - 
   - 
   - 
@@ -64,6 +64,9 @@ TagManager:
     locked: 0
   - name: Ground
     uniqueID: 1186609393
+    locked: 0
+  - name: Enemy
+    uniqueID: 904382589
     locked: 0
   - name: Player
     uniqueID: 813624947

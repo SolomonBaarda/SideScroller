@@ -134,15 +134,13 @@ public class PlayerMovement : MonoBehaviour
             if (move > 0 && !facing.Equals(Direction.Right))
             {
                 // Face right
-                facing = Direction.Right;
-                Flip();
+                Face(Direction.Right);
             }
             // Otherwise if the input is moving the player left and the player is facing right
             else if (move < 0 && !facing.Equals(Direction.Left))
             {
                 // Face left
-                facing = Direction.Left;
-                Flip();
+                Face(Direction.Left);
             }
         }
 
@@ -185,6 +183,28 @@ public class PlayerMovement : MonoBehaviour
 
         // Then jump
         rigid.AddForce(new Vector2(forceX, forceY));
+    }
+
+
+    private void Face(Direction d)
+    {
+        facing = d;
+
+        // Flip the player
+        Vector3 scale = transform.localScale;
+
+        int i = 0;
+        if(d == Direction.Left)
+        {
+            i = -1;
+        }
+        else if(d == Direction.Right)
+        {
+            i = 1;
+        }
+
+        scale.x = i;
+        transform.localScale = scale;
     }
 
 

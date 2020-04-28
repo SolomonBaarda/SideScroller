@@ -173,7 +173,7 @@ public class GameManager : MonoBehaviour
         }
 
         // Check if we need to update the size of the nav mesh
-        enemyManager.CheckUpdateSize(currentMaxTilesFromOrigin, Vector2.zero);
+        enemyManager.CheckUpdateSize(currentMaxTilesFromOrigin);
     }
 
 

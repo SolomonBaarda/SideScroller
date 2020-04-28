@@ -27,7 +27,7 @@ public class EnemyManager : MonoBehaviour
     }
 
 
-    public void CheckUpdateSize(Vector2Int absDistanceFromOrigin, Vector2 centreOfPlayableArea)
+    public void CheckUpdateSize(Vector2Int absDistanceFromOrigin)
     {
         Vector2Int currentGroundExtents = new Vector2Int(graph.width, graph.depth);
         bool needToRecalculate = false;
@@ -46,19 +46,18 @@ public class EnemyManager : MonoBehaviour
             needToRecalculate = true;
         }
 
-        if(needToRecalculate)
+
+        if (needToRecalculate)
         {
-            UpdateNavMeshSize(currentGroundExtents, centreOfPlayableArea);
+            UpdateNavMeshSize(currentGroundExtents);
         }
     }
 
 
-    private void UpdateNavMeshSize(Vector2Int graphSizeTiles, Vector2 centre)
+    private void UpdateNavMeshSize(Vector2Int graphSizeTiles)
     {
         // Update the new graph size
         graph.SetDimensions(graphSizeTiles.x, graphSizeTiles.y, 1.0f);
-
-        graph.center = centre;
 
         ScanWholeNavMesh();
     }
