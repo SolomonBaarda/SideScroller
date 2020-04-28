@@ -6,7 +6,7 @@ using PathCreation;
 
 public class Chunk : MonoBehaviour
 {
-    public static string CHUNK_LAYER = "Chunk";
+    public const string CHUNK_LAYER = "Chunk";
 
     [Header("Chunk Information")]
     public Vector2 enteranceWorldSpace;
@@ -24,8 +24,6 @@ public class Chunk : MonoBehaviour
     public List<CameraPath> cameraPaths;
 
     private Transform cameraPathChild;
-    private Transform itemChild;
-
 
     public void CreateChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldSpace,
         List<TerrainManager.TerrainChunk.Exit> exits, TerrainManager.TerrainDirection direction, float distanceFromOrigin, Vector2Int chunkID)
@@ -115,7 +113,7 @@ public class Chunk : MonoBehaviour
 
 
                 // Set the path and add it
-                path.SetPath(pathPoints);
+                path.SetPath(pathPoints, exit.newChunkID);
                 cameraPaths.Add(path);
             }
             else
@@ -132,6 +130,7 @@ public class Chunk : MonoBehaviour
     {
         ChunkManager.OnChunkDestroyed.Invoke(chunkID);
     }
+
 
     private void OnDrawGizmos()
     {

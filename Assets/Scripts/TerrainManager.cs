@@ -211,11 +211,11 @@ public class TerrainManager : MonoBehaviour
         // Need to add half a cell for odd numbers
         if (b.boundsTile.x % 2 == 1)
         {
-            centre.x += grid.cellSize.x / 2;
+            centre.x += CellSize.x / 2;
         }
         if (b.boundsTile.y % 2 == 1)
         {
-            centre.y += grid.cellSize.y / 2;
+            centre.y += CellSize.y / 2;
         }
 
 
@@ -263,8 +263,10 @@ public class TerrainManager : MonoBehaviour
             // World position of the start of the new chunk
             Vector2 newChunkPositionWorld = grid.CellToWorld(new Vector3Int(newChunkTile.x, newChunkTile.y, 0)) + (grid.cellSize / 2);
 
+            Vector2Int tilesAwayFromOrigin = exitTile - initialTile;
+
             // Make the exit
-            TerrainChunk.Exit e = new TerrainChunk.Exit(newChunkDirection, exitPositionWorld, newChunkPositionWorld, newChunkID);
+            TerrainChunk.Exit e = new TerrainChunk.Exit(newChunkDirection, exitPositionWorld, newChunkPositionWorld, newChunkID, tilesAwayFromOrigin);
 
 
 
@@ -276,8 +278,8 @@ public class TerrainManager : MonoBehaviour
                 Vector2 worldPos = grid.CellToWorld(pointTile);
 
                 // Add a little to centre it
-                worldPos.x += grid.cellSize.x / 2;
-                worldPos.y += grid.cellSize.y / 2;
+                worldPos.x += CellSize.x / 2;
+                worldPos.y += CellSize.y / 2;
 
                 // Add the point 
                 e.cameraPathPoints.Add(worldPos);
@@ -302,7 +304,8 @@ public class TerrainManager : MonoBehaviour
         }
 
         // Return the TerrainChunk object for use in the ChunkManager
-        return new TerrainChunk(b.boundsReal, grid.cellSize, centre, entryPositionWorld, exits, allItemPositions, terrain.itemChance, directionToGenerate, distanceFromOrigin, chunkID);
+        return new TerrainChunk(b.boundsReal, CellSize, centre, entryPositionWorld, exits, directionToGenerate, distanceFromOrigin, chunkID, 
+            allItemPositions, terrain.itemChance);
     }
 
 
@@ -392,7 +395,7 @@ public class TerrainManager : MonoBehaviour
     /// <summary>
     /// Class between Sample Terrain and Chunk.  Used to store values when passed as an event.
     /// </summary>
-    public class TerrainChunk
+    public struct TerrainChunk
     {
         public Vector2 bounds;
         public Vector2 cellSize;
@@ -404,28 +407,25 @@ public class TerrainManager : MonoBehaviour
         public float distanceFromOrigin;
         public Vector2Int chunkID;
 
-        public Vector2 cameraPathStartWorldSpace;
-        public Vector2 cameraPathEndWorldSpace;
-
         public List<Item> items;
         public float itemChance;
 
-        public TerrainChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldPosition,
-                List<Exit> exits, List<Item> items, float itemChance, TerrainDirection direction, float distanceFromOrigin, Vector2Int chunkID)
+        public TerrainChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldPosition, List<Exit> exits, TerrainDirection direction, 
+            float distanceFromOrigin, Vector2Int chunkID, List<Item> items, float itemChance)
         {
             this.bounds = bounds;
             this.cellSize = cellSize;
             this.centre = centre;
             this.enteranceWorldPosition = enteranceWorldPosition;
             this.exits = exits;
-            this.items = items;
-            this.itemChance = itemChance;
             this.direction = direction;
             this.distanceFromOrigin = distanceFromOrigin;
             this.chunkID = chunkID;
+            this.items = items;
+            this.itemChance = itemChance;
         }
 
-        public class Exit
+        public struct Exit
         {
             public TerrainDirection exitDirection;
             public Vector2 exitPositionWorld;
@@ -435,7 +435,9 @@ public class TerrainManager : MonoBehaviour
 
             public List<Vector2> cameraPathPoints;
 
-            public Exit(TerrainDirection exitDirection, Vector2 exitPositionWorld, Vector2 newChunkPositionWorld, Vector2Int newChunkID)
+            public Vector2Int tilesFromOrigin;
+
+            public Exit(TerrainDirection exitDirection, Vector2 exitPositionWorld, Vector2 newChunkPositionWorld, Vector2Int newChunkID, Vector2Int tilesFromOrigin)
             {
                 this.exitDirection = exitDirection;
                 this.exitPositionWorld = exitPositionWorld;
@@ -443,11 +445,13 @@ public class TerrainManager : MonoBehaviour
                 this.newChunkID = newChunkID;
 
                 cameraPathPoints = new List<Vector2>();
+
+                this.tilesFromOrigin = tilesFromOrigin;
             }
         }
 
 
-        public class Item
+        public struct Item
         {
             public WorldItem.Name itemType;
             public Vector2 centreOfTile;

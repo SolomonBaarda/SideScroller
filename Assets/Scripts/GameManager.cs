@@ -68,7 +68,6 @@ public class GameManager : MonoBehaviour
 
         HUD.OnHUDLoaded += SetUpHUD;
         SceneManager.LoadSceneAsync("HUD", LoadSceneMode.Additive);
-
     }
 
 
@@ -159,9 +158,8 @@ public class GameManager : MonoBehaviour
     private void UpdateNavMesh(Chunk chunk)
     {
         Vector2 centre = chunk.transform.position;
-        Vector2Int groundBounds = terrainManager.GetGroundBoundsTiles();
 
-        enemyManager.UpdateNavMesh(new Bounds(centre, chunk.bounds), groundBounds);
+        enemyManager.UpdateNavMesh(new Bounds(centre, chunk.bounds));
     }
 
 
@@ -188,6 +186,32 @@ public class GameManager : MonoBehaviour
             {
                 // Chunk already exists, do nothing
                 Chunk neighbour = chunkManager.GetChunk(exit.newChunkID);
+
+                // Check if the paths need to be updated
+                foreach(CameraPath p in neighbour.cameraPaths)
+                {
+                    if(!p.hasExtraPointStart)
+                    {
+                        Vector2[] currentPathPoints = current.cameraPaths.Find(x => x.nextChunk.Equals(neighbour.chunkID)).points;
+
+                        // Add the second last point from the current path
+                        p.AddExtraPointAtStart(currentPathPoints[currentPathPoints.Length - 2]);
+                    }
+                    if(!p.hasExtraPointEnd)
+                    {
+                        try
+                        {
+                            Chunk next = chunkManager.GetChunk(p.nextChunk);
+                            Vector2[] nextPathPoints = next.cameraPaths.ToArray()[0].points;
+
+                            // Add the second point from the next path
+                            p.AddExtraPointAtEnd(nextPathPoints[1]);
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                }
             }
             catch (Exception)
             {
@@ -197,6 +221,9 @@ public class GameManager : MonoBehaviour
                 // Generate the new chunk
                 terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, distanceFromOrigin, exit.newChunkID);
             }
+
+            // Check if we need to update the size of the nav mesh
+            enemyManager.CheckUpdateSize(new Vector2Int(Mathf.Abs(exit.tilesFromOrigin.x), Mathf.Abs(exit.tilesFromOrigin.y)));
         }
     }
 

@@ -6,17 +6,26 @@ using PathCreation;
 public class CameraPath : MonoBehaviour
 {
     private VertexPath path;
+    private BezierPath b;
     public Vector2[] points;
     public Vector3[] actualPoints;
 
+    public bool hasExtraPointStart;
+    public bool hasExtraPointEnd;
+
+    public Vector2Int nextChunk;
+
     public const float autoControlLength = 0.2f;
 
-    public void SetPath(Vector2[] points)
+    public void SetPath(Vector2[] points, Vector2Int nextChunk)
     {
         this.points = points;
+        this.nextChunk = nextChunk;
+        hasExtraPointStart = false;
+        hasExtraPointEnd = false;
 
         // Create a new path with those points
-        BezierPath b = new BezierPath(points, false, PathSpace.xy);
+        b = new BezierPath(points, false, PathSpace.xy);
 
         // Set the correct modes
         b.ControlPointMode = BezierPath.ControlMode.Automatic;
@@ -28,6 +37,20 @@ public class CameraPath : MonoBehaviour
         actualPoints = path.localPoints;
     }
 
+
+    public void AddExtraPointAtStart(Vector2 point)
+    {
+        hasExtraPointStart = true;
+        b.AddSegmentToStart(point);
+        path = new VertexPath(b, transform.root);
+    }
+
+    public void AddExtraPointAtEnd(Vector2 point)
+    {
+        hasExtraPointEnd = true;
+        b.AddSegmentToEnd(point);
+        path = new VertexPath(b, transform.root);
+    }
 
 
     public float GetPathLength()
