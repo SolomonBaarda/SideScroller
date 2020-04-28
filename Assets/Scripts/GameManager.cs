@@ -186,32 +186,6 @@ public class GameManager : MonoBehaviour
             {
                 // Chunk already exists, do nothing
                 Chunk neighbour = chunkManager.GetChunk(exit.newChunkID);
-
-                // Check if the paths need to be updated
-                foreach(CameraPath p in neighbour.cameraPaths)
-                {
-                    if(!p.hasExtraPointStart)
-                    {
-                        Vector2[] currentPathPoints = current.cameraPaths.Find(x => x.nextChunk.Equals(neighbour.chunkID)).points;
-
-                        // Add the second last point from the current path
-                        p.AddExtraPointAtStart(currentPathPoints[currentPathPoints.Length - 2]);
-                    }
-                    if(!p.hasExtraPointEnd)
-                    {
-                        try
-                        {
-                            Chunk next = chunkManager.GetChunk(p.nextChunk);
-                            Vector2[] nextPathPoints = next.cameraPaths.ToArray()[0].points;
-
-                            // Add the second point from the next path
-                            p.AddExtraPointAtEnd(nextPathPoints[1]);
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    }
-                }
             }
             catch (Exception)
             {

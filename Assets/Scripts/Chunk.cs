@@ -79,16 +79,16 @@ public class Chunk : MonoBehaviour
                 switch (direction)
                 {
                     case TerrainManager.TerrainDirection.Left:
-                        pos.x += cellSize.x / 2;
+                        pos.x += cellSize.x * 1.5f;
                         break;
                     case TerrainManager.TerrainDirection.Right:
-                        pos.x -= cellSize.x / 2;
+                        pos.x -= cellSize.x * 1.5f;
                         break;
                     case TerrainManager.TerrainDirection.Up:
-                        pos.y -= cellSize.y / 2;
+                        pos.y -= cellSize.y * 1.5f;
                         break;
                     case TerrainManager.TerrainDirection.Down:
-                        pos.y += cellSize.y / 2;
+                        pos.y += cellSize.y * 1.5f;
                         break;
                 }
                 pathPoints[0] = pos;
@@ -97,16 +97,16 @@ public class Chunk : MonoBehaviour
                 switch (exit.exitDirection)
                 {
                     case TerrainManager.TerrainDirection.Left:
-                        pos.x -= cellSize.x / 2;
+                        pos.x -= cellSize.x * 1.5f;
                         break;
                     case TerrainManager.TerrainDirection.Right:
-                        pos.x += cellSize.x / 2;
+                        pos.x += cellSize.x * 1.5f;
                         break;
                     case TerrainManager.TerrainDirection.Up:
-                        pos.y += cellSize.y / 2;
+                        pos.y += cellSize.y * 1.5f;
                         break;
                     case TerrainManager.TerrainDirection.Down:
-                        pos.y -= cellSize.y / 2;
+                        pos.y -= cellSize.y * 1.5f;
                         break;
                 }
                 pathPoints[pathPoints.Length - 1] = pos;

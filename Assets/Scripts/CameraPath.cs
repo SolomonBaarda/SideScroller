@@ -10,9 +10,6 @@ public class CameraPath : MonoBehaviour
     public Vector2[] points;
     public Vector3[] actualPoints;
 
-    public bool hasExtraPointStart;
-    public bool hasExtraPointEnd;
-
     public Vector2Int nextChunk;
 
     public const float autoControlLength = 0.2f;
@@ -21,8 +18,6 @@ public class CameraPath : MonoBehaviour
     {
         this.points = points;
         this.nextChunk = nextChunk;
-        hasExtraPointStart = false;
-        hasExtraPointEnd = false;
 
         // Create a new path with those points
         b = new BezierPath(points, false, PathSpace.xy);
@@ -35,21 +30,6 @@ public class CameraPath : MonoBehaviour
         path = new VertexPath(b, transform.root);
 
         actualPoints = path.localPoints;
-    }
-
-
-    public void AddExtraPointAtStart(Vector2 point)
-    {
-        hasExtraPointStart = true;
-        b.AddSegmentToStart(point);
-        path = new VertexPath(b, transform.root);
-    }
-
-    public void AddExtraPointAtEnd(Vector2 point)
-    {
-        hasExtraPointEnd = true;
-        b.AddSegmentToEnd(point);
-        path = new VertexPath(b, transform.root);
     }
 
 
