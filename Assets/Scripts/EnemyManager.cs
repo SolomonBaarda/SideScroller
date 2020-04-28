@@ -3,42 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Pathfinding;
+using UnityEditor.Experimental.GraphView;
 
 public class EnemyManager : MonoBehaviour
 {
     public Transform player;
 
     private GridGraph graph;
-    private Vector2Int currentGroundExtents = Vector2Int.one;
 
-    private bool canUpdateSize = true;
+    private int DEFAULT_GRAPH_INCREMENT = 124;
 
     private void Start()
     {
         graph = AstarPath.active.data.gridGraph;
     }
 
-
-    private void FixedUpdate()
-    {
-        if (graph != null)
-        {
-            if (canUpdateSize)
-            {
-                // The graph size needs to be increased
-                if (currentGroundExtents.x >= graph.width || currentGroundExtents.y >= graph.depth)
-                {
-                    //canUpdateSize = false;
-                    //UpdateNavMeshSize(new Vector2Int(2 * graph.width, 2 * graph.depth));
-                }
-            }
-        }
-    }
-
-    private void ResetSizeUpdater()
-    {
-        canUpdateSize = true;
-    }
 
 
     public void ScanWholeNavMesh()
@@ -48,31 +27,46 @@ public class EnemyManager : MonoBehaviour
     }
 
 
-    public void CheckUpdateSize(Vector2Int absDistanceFromOrigin)
+    public void CheckUpdateSize(Vector2Int absDistanceFromOrigin, Vector2 centreOfPlayableArea)
     {
-        if (absDistanceFromOrigin.x > currentGroundExtents.x)
+        Vector2Int currentGroundExtents = new Vector2Int(graph.width, graph.depth);
+        bool needToRecalculate = false;
+
+        // Change to bounds
+        absDistanceFromOrigin *= 2;
+
+        while (absDistanceFromOrigin.x >= currentGroundExtents.x)
         {
-            currentGroundExtents.x = absDistanceFromOrigin.x;
+            currentGroundExtents.x += DEFAULT_GRAPH_INCREMENT;
+            needToRecalculate = true;
         }
-        if (absDistanceFromOrigin.y > currentGroundExtents.y)
+        while (absDistanceFromOrigin.y >= currentGroundExtents.y)
         {
-            currentGroundExtents.y = absDistanceFromOrigin.y;
+            currentGroundExtents.y += DEFAULT_GRAPH_INCREMENT;
+            needToRecalculate = true;
+        }
+
+        if(needToRecalculate)
+        {
+            UpdateNavMeshSize(currentGroundExtents, centreOfPlayableArea);
         }
     }
 
 
-    private void UpdateNavMeshSize(Vector2Int graphSizeTiles)
-    { 
+    private void UpdateNavMeshSize(Vector2Int graphSizeTiles, Vector2 centre)
+    {
         // Update the new graph size
         graph.SetDimensions(graphSizeTiles.x, graphSizeTiles.y, 1.0f);
 
-        graph.Scan();
+        graph.center = centre;
+
+        ScanWholeNavMesh();
     }
 
 
     public void UpdateNavMesh(Bounds bounds)
     {
         // Update all paths
-        //AstarPath.active.UpdateGraphs(bounds);
+        AstarPath.active.UpdateGraphs(bounds);
     }
 }

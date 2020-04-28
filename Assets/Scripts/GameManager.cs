@@ -151,6 +151,29 @@ public class GameManager : MonoBehaviour
             // Update the nav meshes
             UpdateNavMesh(c);
         }
+
+        // Check if we need to update the nav mesh
+        Vector2Int currentMaxTilesFromOrigin = Vector2Int.zero;
+        foreach (Chunk c in nearbyChunksToCamera)
+        {
+            foreach(TerrainManager.TerrainChunk.Exit e in c.exits)
+            {
+                int x = Mathf.Abs(e.tilesFromOrigin.x);
+                int y = Mathf.Abs(e.tilesFromOrigin.y);
+
+                if (x > currentMaxTilesFromOrigin.x)
+                {
+                    currentMaxTilesFromOrigin.x = x;
+                }
+                if (y > currentMaxTilesFromOrigin.y)
+                {
+                    currentMaxTilesFromOrigin.y = y;
+                }
+            }
+        }
+
+        // Check if we need to update the size of the nav mesh
+        enemyManager.CheckUpdateSize(currentMaxTilesFromOrigin, Vector2.zero);
     }
 
 
@@ -195,9 +218,6 @@ public class GameManager : MonoBehaviour
                 // Generate the new chunk
                 terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, distanceFromOrigin, exit.newChunkID);
             }
-
-            // Check if we need to update the size of the nav mesh
-            enemyManager.CheckUpdateSize(new Vector2Int(Mathf.Abs(exit.tilesFromOrigin.x), Mathf.Abs(exit.tilesFromOrigin.y)));
         }
     }
 
