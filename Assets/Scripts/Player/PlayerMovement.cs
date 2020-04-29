@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
+using UnityEditor.Build;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -22,6 +23,10 @@ public class PlayerMovement : MonoBehaviour
     public readonly Vector2 TERMINAL_VELOCITY = new Vector2(16, 124);
     private Vector2 previousVelocity = Vector2.zero;
     private bool previouslyGrounded = false;
+    private bool previouslySliding = false;
+    private float minimum_slide_time = 0.5f;
+    private float slideTime = 0;
+    private bool previouslyCrouchWalking = false;
 
     [SerializeField] private Direction facing;
 
@@ -127,42 +132,89 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
 
+
+
             // Movement stuff
 
-            // Desired velocity
-            Vector2 targetVelocity = new Vector2(move * 10, rigid.velocity.y);
-
             bool isSliding = false;
+            bool isCrouchWalking = false;
 
             // Player is crouching, overwrite target vel
             if (IsCrouching && IsOnGround)
             {
                 // Player has just landed from falling
-                if(!previouslyGrounded)
+                if (!previouslyGrounded)
                 {
                     // Do a big slide in the direction the player is facing
 
-                    Vector2 newVelocity = rigid.velocity;
-
+                    // Get the direction
                     int dir = 0;
-                    if (facing.Equals(Direction.Right))
-                    {
-                        dir = 1;
-                    }
-                    else if (facing.Equals(Direction.Left))
-                    {
-                        dir = -1;
-                    }
+                    if (facing.Equals(Direction.Right)) { dir = 1; }
+                    else if (facing.Equals(Direction.Left)) { dir = -1; }
 
+                    // Transfer the y velocity into x
+                    Vector2 newVelocity = rigid.velocity;
                     newVelocity.x = dir * Mathf.Abs(previousVelocity.y);
                     rigid.velocity = newVelocity;
+
+                    // Update timer and conditions
+                    isSliding = true;
+                    slideTime = 0;
+                }
+                // Player was already on the ground
+                else
+                {
+                    // Player wants to start crouch walking
+                    bool slidingJustEnded = previouslySliding && slideTime >= minimum_slide_time && move != 0;
+
+                    // Player is crouch waling 
+                    if (slidingJustEnded || previouslyCrouchWalking)
+                    {
+                        isCrouchWalking = true;
+                        isSliding = false;
+                    }
+
+                    // If not crouch walking, must be sliding
+                    if (!isCrouchWalking)
+                    {
+                        isSliding = true;
+                    }
                 }
 
-                // Reduce the speed by the crouch speed reduction
-                targetVelocity.x = Mathf.MoveTowards(rigid.velocity.x, 0, crouch_speed_reduction);
-                isSliding = true;
+                // Record the values for use next frame
+                previouslyCrouchWalking = isCrouchWalking;
+                previouslySliding = isSliding;
             }
 
+            if(!IsOnGround)
+            {
+                isCrouchWalking = false;
+                isSliding = false;
+            }
+
+            // Set velocity
+
+            // Set crouch walk speed
+            if (isCrouchWalking)
+            {
+                move *= (1 - crouch_speed_reduction);
+            }
+
+            // Desired velocity
+            Vector2 targetVelocity = new Vector2(move * 10, rigid.velocity.y);
+
+            // Slow down when sliding
+            if (isSliding)
+            {
+                // Reduce the speed by the crouch speed reduction
+                targetVelocity.x = Mathf.MoveTowards(rigid.velocity.x, 0, crouch_speed_reduction);
+                slideTime += Time.deltaTime;
+            }
+            // Reset timer if not sliding
+            else
+            {
+                slideTime = minimum_slide_time;
+            }
 
             // Get the new velocity and ensure it doesn't exceed terminal velocity
             Vector3 newVel = Vector2.SmoothDamp(rigid.velocity, targetVelocity, ref previousVelocity, movementSmoothing);
@@ -267,6 +319,7 @@ public class PlayerMovement : MonoBehaviour
 
     public bool IsCrouching { get; private set; }
     public bool IsOnGround { get; private set; }
+
 
     private void OnDrawGizmosSelected()
     {
