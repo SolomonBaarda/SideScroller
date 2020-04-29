@@ -14,6 +14,12 @@ public class CameraPath : MonoBehaviour
 
     public const float autoControlLength = 0.2f;
 
+
+    /// <summary>
+    /// Bug with Path, if path is straight, must remove all other points between.
+    /// </summary>
+    /// <param name="points"></param>
+    /// <param name="nextChunk"></param>
     public void SetPath(Vector2[] points, Vector2Int nextChunk)
     {
         this.points = points;

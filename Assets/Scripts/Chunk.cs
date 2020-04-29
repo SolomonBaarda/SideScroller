@@ -100,10 +100,7 @@ public class Chunk : MonoBehaviour
                         extra.y = pos.y - cellSize.y;
                         break;
                 }
-                if(!isFlat)
-                {
-                    l.AddFirst(pos);
-                }
+                l.AddFirst(pos);
                 l.AddFirst(extra);
 
                 // Get the last point
@@ -129,15 +126,12 @@ public class Chunk : MonoBehaviour
                         extra.y = pos.y - cellSize.y;
                         break;
                 }
-                if(!isFlat)
-                {
-                    l.AddLast(pos);
-                }
+                l.AddLast(pos);
                 l.AddLast(extra);
 
 
                 // Set the path and add it
-                path.SetPath(l.ToArray(), exit.newChunkID);
+                path.SetPath(RemoveMiddlePointsIfStraightPath(l.ToArray(), direction, exit.exitDirection), exit.newChunkID);
                 cameraPaths.Add(path);
             }
             else
@@ -148,6 +142,35 @@ public class Chunk : MonoBehaviour
         }
     }
 
+
+
+    private Vector2[] RemoveMiddlePointsIfStraightPath(Vector2[] points, TerrainManager.TerrainDirection direction, TerrainManager.TerrainDirection exitDirection)
+    {
+        Vector2 first = points[0], last = points[points.Length - 2];
+
+        // Horizontal case
+        if((direction == TerrainManager.TerrainDirection.Both ||
+            direction == TerrainManager.TerrainDirection.Left || direction == TerrainManager.TerrainDirection.Right) &&
+            (exitDirection == TerrainManager.TerrainDirection.Left || exitDirection == TerrainManager.TerrainDirection.Right))
+        {
+            if(first.y == last.y)
+            {
+                return new []{ first, last };
+            }
+        }
+
+        // Vertical case
+        if ((direction == TerrainManager.TerrainDirection.Up || direction == TerrainManager.TerrainDirection.Down) &&
+            (exitDirection == TerrainManager.TerrainDirection.Up || exitDirection == TerrainManager.TerrainDirection.Down))
+        {
+            if (first.x == last.x)
+            {
+                return new[] { first, last };
+            }
+        }
+
+        return points;
+    }
 
 
     private void OnDestroy()
