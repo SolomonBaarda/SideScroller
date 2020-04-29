@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using PathCreation;
+using System.Linq;
 
 public class Chunk : MonoBehaviour
 {
@@ -71,49 +72,72 @@ public class Chunk : MonoBehaviour
                 pathObject.name = "Path " + (pathObject.transform.GetSiblingIndex() + 1) + "/" + exits.Count;
                 CameraPath path = pathObject.GetComponent<CameraPath>();
 
+                
+                LinkedList<Vector2> l = new LinkedList<Vector2>(exit.cameraPathPoints);
+                bool isFlat = l.Count <= 2;
 
                 // Move the first and last point to exactly the edge of the chunk
-                Vector2[] pathPoints = exit.cameraPathPoints.ToArray();
                 // Get the first point
-                Vector2 pos = pathPoints[0];
+                Vector2 pos = l.First.Value;
+                l.RemoveFirst();
+                Vector2 extra = new Vector2(pos.x, pos.y);
                 switch (direction)
                 {
                     case TerrainManager.TerrainDirection.Left:
-                        pos.x += cellSize.x * 1.5f;
+                        pos.x += cellSize.x / 2;
+                        extra.x = pos.x + cellSize.x;
                         break;
                     case TerrainManager.TerrainDirection.Right:
-                        pos.x -= cellSize.x * 1.5f;
+                        pos.x -= cellSize.x / 2;
+                        extra.x = pos.x - cellSize.x;
                         break;
                     case TerrainManager.TerrainDirection.Up:
-                        pos.y -= cellSize.y * 1.5f;
+                        pos.y += cellSize.y / 2;
+                        extra.y = pos.y + cellSize.y;
                         break;
                     case TerrainManager.TerrainDirection.Down:
-                        pos.y += cellSize.y * 1.5f;
+                        pos.y -= cellSize.y / 2;
+                        extra.y = pos.y - cellSize.y;
                         break;
                 }
-                pathPoints[0] = pos;
+                if(!isFlat)
+                {
+                    l.AddFirst(pos);
+                }
+                l.AddFirst(extra);
+
                 // Get the last point
-                pos = pathPoints[pathPoints.Length - 1];
+                pos = l.Last.Value;
+                l.RemoveLast();
+                extra = new Vector2(pos.x, pos.y);
                 switch (exit.exitDirection)
                 {
                     case TerrainManager.TerrainDirection.Left:
-                        pos.x -= cellSize.x * 1.5f;
+                        pos.x -= cellSize.x / 2;
+                        extra.x = pos.x - cellSize.x;
                         break;
                     case TerrainManager.TerrainDirection.Right:
-                        pos.x += cellSize.x * 1.5f;
+                        pos.x += cellSize.x / 2;
+                        extra.x = pos.x + cellSize.x;
                         break;
                     case TerrainManager.TerrainDirection.Up:
-                        pos.y += cellSize.y * 1.5f;
+                        pos.y += cellSize.y / 2;
+                        extra.y = pos.y + cellSize.y;
                         break;
                     case TerrainManager.TerrainDirection.Down:
-                        pos.y -= cellSize.y * 1.5f;
+                        pos.y -= cellSize.y / 2;
+                        extra.y = pos.y - cellSize.y;
                         break;
                 }
-                pathPoints[pathPoints.Length - 1] = pos;
+                if(!isFlat)
+                {
+                    l.AddLast(pos);
+                }
+                l.AddLast(extra);
 
 
                 // Set the path and add it
-                path.SetPath(pathPoints, exit.newChunkID);
+                path.SetPath(l.ToArray(), exit.newChunkID);
                 cameraPaths.Add(path);
             }
             else
