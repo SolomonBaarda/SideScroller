@@ -74,7 +74,7 @@ public class PlayerMovement : MonoBehaviour
     {
         move *= speed;
 
-        // If crouch has just been let go of
+        // If crouch has been let go of
         if (!crouch)
         {
             if (IsCrouching)
@@ -87,6 +87,8 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+
+        // Allow user direction movement input 
         if (IsOnGround || allowAirControl)
         {
             // Crouching
@@ -97,9 +99,6 @@ public class PlayerMovement : MonoBehaviour
                 {
                     IsCrouching = true;
                 }
-
-                // Reduce the speed by the crouchSpeed multiplier
-                move *= (1 - crouch_speed_reduction);
 
                 // Disable the top collider when crouching
                 if (mainCollider != null)
@@ -123,12 +122,21 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
 
+            // Desired velocity
+            Vector2 targetVelocity = new Vector2(move * 10, rigid.velocity.y);
 
-            // Move the character by finding the target velocity
-            Vector2 targetVelocity = new Vector2(move * 10f, rigid.velocity.y);
+            // Player is crouching, overwrite target vel
+            if (IsCrouching && IsOnGround)
+            {
+                // Reduce the speed by the crouch speed reduction
+                targetVelocity.x = Mathf.MoveTowards(rigid.velocity.x, 0, crouch_speed_reduction);
+            }
 
+            //velocity = rigid.velocity;
             // And then smoothing it out and applying it to the character
             rigid.velocity = Vector2.SmoothDamp(rigid.velocity, targetVelocity, ref velocity, movementSmoothing);
+            //rigid.velocity = Vector2.MoveTowards(rigid.velocity, targetVelocity, Mathf.Abs(move));
+                
 
             // If the input is moving the player right and the player is facing left
             if (move > 0 && !facing.Equals(Direction.Right))
@@ -157,8 +165,6 @@ public class PlayerMovement : MonoBehaviour
             double_jumps_left--;
             Jump(jump_force);
         }
-
-
 
     }
 
@@ -194,11 +200,11 @@ public class PlayerMovement : MonoBehaviour
         Vector3 scale = transform.localScale;
 
         int i = 0;
-        if(d == Direction.Left)
+        if (d == Direction.Left)
         {
             i = -1;
         }
-        else if(d == Direction.Right)
+        else if (d == Direction.Right)
         {
             i = 1;
         }

@@ -149,7 +149,7 @@ public class GameManager : MonoBehaviour
             CheckGenerateNewChunks(c);
 
             // Update the nav meshes
-            UpdateNavMesh(c);
+            //UpdateNavMesh(c);
         }
 
         // Check if we need to update the nav mesh
@@ -173,7 +173,7 @@ public class GameManager : MonoBehaviour
         }
 
         // Check if we need to update the size of the nav mesh
-        enemyManager.CheckUpdateSize(currentMaxTilesFromOrigin);
+        //enemyManager.CheckUpdateSize(currentMaxTilesFromOrigin);
     }
 
 
