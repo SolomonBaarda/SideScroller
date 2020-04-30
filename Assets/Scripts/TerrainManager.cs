@@ -37,18 +37,18 @@ public class TerrainManager : MonoBehaviour
     [Header("Initial Tile Type")]
     public Tile groundTile;
 
-    private Vector2Int initialTile;
+    public static readonly Vector2Int initialTilePos = Vector2Int.zero;
 
     [SerializeField]
     private System.Random random;
 
 
-    public static string LAYER_NAME_WALL = "Wall";
-    public static string LAYER_NAME_WALL_DETAIL = "Wall Detail";
-    public static string LAYER_NAME_BACKGROUND = "Background";
-    public static string LAYER_NAME_HAZARD = "Hazard";
-    public static string LAYER_NAME_GROUND = "Ground";
-    public static string LAYER_NAME_DEV = "Dev";
+    public const string LAYER_NAME_WALL = "Wall";
+    public const string LAYER_NAME_WALL_DETAIL = "Wall Detail";
+    public const string LAYER_NAME_BACKGROUND = "Background";
+    public const string LAYER_NAME_HAZARD = "Hazard";
+    public const string LAYER_NAME_GROUND = "Ground";
+    public const string LAYER_NAME_DEV = "Dev";
 
     private void Awake()
     {
@@ -118,10 +118,10 @@ public class TerrainManager : MonoBehaviour
 
         this.rule = rule;
         ClearAllTiles();
-        initialTile = GenerateInitialTile(Vector2Int.zero);
+        GenerateInitialTile(initialTilePos);
 
         // Generate the spawn room
-        GenerateFromSampleTerrain(initialTile, false, Direction.Both, sampleTerrainManager.startingArea, Vector2Int.zero);
+        GenerateFromSampleTerrain(initialTilePos, false, Direction.Both, sampleTerrainManager.startingArea, ChunkManager.initialChunkID);
 
         after = DateTime.Now;
         time = after - before;
@@ -146,7 +146,8 @@ public class TerrainManager : MonoBehaviour
     }
 
 
-    public void Generate(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID)
+
+    public void Generate(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID, int sampleIndex = -1)
     {
         // Get a list of only the valid sample terrain
         List<SampleTerrain> allValidSamples = new List<SampleTerrain>();
@@ -158,9 +159,6 @@ public class TerrainManager : MonoBehaviour
             }
         }
 
-        //Debug.Log("all samples " + sampleTerrainManager.allSamples.Length);
-        //Debug.Log("valid samples " + allValidSamples.Count);
-
         if (allValidSamples.Count.Equals(0))
         {
             throw new Exception("No valid Sample Terrain for generation direction " + directionToGenerate);
@@ -170,6 +168,13 @@ public class TerrainManager : MonoBehaviour
         SampleTerrain[] validSamples = allValidSamples.ToArray();
         int index = random.Next(0, validSamples.Length);
         SampleTerrain chosen = validSamples[index];
+
+        // Overwrite it if we need to
+        if ((rule.Equals(Generation.Symmetrical_Endless) || rule.Equals(Generation.Symmetrical_Limit)) && sampleIndex != -1)
+        {
+            chosen = validSamples[sampleIndex];
+        }
+
         bool flipAxisX = false;
         if ((directionToGenerate.Equals(Direction.Left) && chosen.direction.Equals(Direction.Right))
             || (directionToGenerate.Equals(Direction.Right) && chosen.direction.Equals(Direction.Left)))
@@ -270,7 +275,7 @@ public class TerrainManager : MonoBehaviour
             // World position of the start of the new chunk
             Vector2 newChunkPositionWorld = grid.CellToWorld(new Vector3Int(newChunkTile.x, newChunkTile.y, 0)) + (grid.cellSize / 2);
 
-            Vector2Int tilesAwayFromOrigin = exitTile - initialTile;
+            Vector2Int tilesAwayFromOrigin = exitTile - initialTilePos;
 
             // Make the exit
             TerrainChunk.Exit e = new TerrainChunk.Exit(newChunkDirection, exitPositionWorld, newChunkPositionWorld, newChunkID, tilesAwayFromOrigin);
@@ -350,7 +355,7 @@ public class TerrainManager : MonoBehaviour
     public Vector2 GetInitialTileWorldPositionForPlayer()
     {
         // Get the initial position + (half a cell, 1 cell, 0) to point to the top, middle of the cell
-        return ground.CellToWorld(new Vector3Int(initialTile.x, initialTile.y, ground.cellBounds.z)) + new Vector3(ground.cellSize.x / 2, ground.cellSize.y, 0);
+        return ground.CellToWorld(new Vector3Int(initialTilePos.x, initialTilePos.y, ground.cellBounds.z)) + new Vector3(ground.cellSize.x / 2, ground.cellSize.y, 0);
     }
 
 

@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         // Generate terrain when the game loads
-        terrainManager.Initialise(TerrainManager.Generation.Multidirectional_Endless, printDebug);
+        terrainManager.Initialise(TerrainManager.Generation.Symmetrical_Endless, printDebug);
     }
 
     private void OnDestroy()
@@ -220,8 +220,23 @@ public class GameManager : MonoBehaviour
             }
             catch (Exception)
             {
+                // Get the SampleTerrain for the chunk in a symmetrical position
+                int symmetricChunkIndex = -1;
+                try
+                {
+                    Chunk symmetric = chunkManager.GetChunk(ChunkManager.initialChunkID - exit.newChunkID);
+                    if(symmetric.chunkID != ChunkManager.initialChunkID)
+                    {
+                        symmetricChunkIndex = symmetric.sampleTerrainIndex;
+                    }                    
+                }
+                catch (Exception)
+                {
+                }
+
+                Debug.Log("using symmetric chunk " + symmetricChunkIndex + " for chunk " + exit.newChunkID);
                 // Generate the new chunk
-                terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID);
+                terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID, symmetricChunkIndex);
             }
         }
     }

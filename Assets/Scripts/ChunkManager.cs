@@ -6,14 +6,13 @@ using UnityEngine.Events;
 
 public class ChunkManager : MonoBehaviour
 {
-
-
     public static UnityAction<Vector2Int> OnChunkDestroyed;
 
     [Header("Chunk Prefab Reference")]
     public GameObject chunkPrefab;
 
     private Dictionary<Vector2Int, Chunk> chunks;
+    public static readonly Vector2Int initialChunkID = Vector2Int.zero;
 
     private void Awake()
     {
