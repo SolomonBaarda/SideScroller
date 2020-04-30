@@ -38,16 +38,24 @@ public class GameManager : MonoBehaviour
 
     private HUD hud;
 
-    [Header("Game Settings")]
-    [SerializeField]
-    private float gameTimeSeconds;
+    public float GameTimeSeconds { get; private set; }
     private bool isGameOver;
 
+    // Game rules
+    [Header("Game Rules")]
+    [SerializeField] public bool DoSinglePlayer = true;
+    [SerializeField] public bool DoEnemySpawning = false;
+    [SerializeField] public bool DoItemDrops = true;
+
+    // FPS variables
+    [Header("FPS Settings")]
     private int fps_frame_counter;
     private float fps_time_counter = 0.0f;
     private float fps_last_framerate = 0.0f;
     public float fps_refresh_time = 0.5f;
 
+    [Header("Debug")]
+    public bool printDebug = true;
 
     private void Awake()
     {
@@ -61,7 +69,7 @@ public class GameManager : MonoBehaviour
         enemyManager = enemyManagerObject.GetComponent<EnemyManager>();
 
         // Add event calls 
-        TerrainManager.OnTerrainGenerated += StartGame;
+        TerrainManager.OnInitialTerrainGenerated += StartGame;
         //Menu.OnMenuClose += StartGame;
 
         isGameOver = true;
@@ -74,7 +82,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         // Generate terrain when the game loads
-        terrainManager.Initialise();
+        terrainManager.Initialise(TerrainManager.Generation.Multidirectional_Endless, printDebug);
     }
 
     private void OnDestroy()
@@ -88,7 +96,7 @@ public class GameManager : MonoBehaviour
         // Update the game time
         if (!isGameOver)
         {
-            gameTimeSeconds += Time.deltaTime;
+            GameTimeSeconds += Time.deltaTime;
         }
 
         // Update FPS
@@ -133,7 +141,7 @@ public class GameManager : MonoBehaviour
 
         // Update HUD stuff
         HUD.HUDElements hud = new HUD.HUDElements(player.GetInventory<Coin>().Total, player.GetInventory<Health>().Total,
-            player.GetInventory<Health>().Max, gameTimeSeconds, fps_last_framerate);
+            player.GetInventory<Health>().Max, GameTimeSeconds, fps_last_framerate);
         this.hud.UpdateHUD(in hud);
     }
 
@@ -212,11 +220,8 @@ public class GameManager : MonoBehaviour
             }
             catch (Exception)
             {
-                // Does not exist, so generate it
-                // Calculate how far along the camera path the new chunk is
-                float distanceFromOrigin = current.CalculateNewChunkDistanceFromOrigin(MovingCamera.GetClosestCameraPath(exit.exitPositionWorld, current));
                 // Generate the new chunk
-                terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, distanceFromOrigin, exit.newChunkID);
+                terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID);
             }
         }
     }

@@ -11,6 +11,7 @@ public class CameraPath : MonoBehaviour
     public Vector3[] actualPoints;
 
     public Vector2Int nextChunk;
+    public TerrainManager.Direction pathDirection;
 
     public const float autoControlLength = 0.2f;
 
@@ -20,17 +21,19 @@ public class CameraPath : MonoBehaviour
     /// </summary>
     /// <param name="points"></param>
     /// <param name="nextChunk"></param>
-    public void SetPath(Vector2[] points, Vector2Int nextChunk)
+    public void SetPath(Vector2[] points, Vector2Int nextChunk, TerrainManager.Direction pathDirection)
     {
         this.points = points;
         this.nextChunk = nextChunk;
+        this.pathDirection = pathDirection;
 
         // Create a new path with those points
-        b = new BezierPath(points, false, PathSpace.xy);
-
-        // Set the correct modes
-        b.ControlPointMode = BezierPath.ControlMode.Automatic;
-        b.AutoControlLength = autoControlLength;
+        b = new BezierPath(points, false, PathSpace.xy)
+        {
+            // Set the correct modes
+            ControlPointMode = BezierPath.ControlMode.Automatic,
+            AutoControlLength = autoControlLength
+        };
 
         // Reference to the path
         path = new VertexPath(b, transform.root);

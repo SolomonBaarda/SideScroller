@@ -36,15 +36,15 @@ public class SampleTerrainManager : MonoBehaviour
         // Load terrain
         Transform terrain = transform.Find("Terrain");
         allSamples = terrain.GetComponentsInChildren<SampleTerrain>();
-        foreach (SampleTerrain t in allSamples)
+        for (int i = 0; i < allSamples.Length; i++)
         {
-            t.LoadSample();
+            allSamples[i].LoadSample(i);
         }
 
 
         // Load spawn
         Transform spawn = transform.Find("Spawn");
         startingArea = spawn.GetComponentInChildren<SampleTerrain>();
-        startingArea.LoadSample();
+        startingArea.LoadSample(0);
     }
 }

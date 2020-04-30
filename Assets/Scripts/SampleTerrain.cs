@@ -31,15 +31,19 @@ public class SampleTerrain : MonoBehaviour
     public List<Exit> exitTilePositions;
 
     // Terrain direction and type
-    public TerrainManager.TerrainDirection direction;
+    public TerrainManager.Direction direction;
     public SampleTerrainType terrainType;
 
+    // Item stuff
     public List<SampleItem> items;
-
     [Range(0, 1)] public float itemChance = 1;
 
-    public void LoadSample()
+    public int index;
+
+    public void LoadSample(int index)
     {
+        this.index = index;
+
         // References 
         manager = transform.root.GetComponent<SampleTerrainManager>();
         grid = GetComponent<Grid>();
@@ -190,19 +194,19 @@ public class SampleTerrain : MonoBehaviour
                 // Check if the tile matches the entry tile type
                 if (tilemap_dev.GetTile(current).Equals(manager.dev_entryLeft))
                 {
-                    direction = TerrainManager.TerrainDirection.Left;
+                    direction = TerrainManager.Direction.Left;
                 }
                 else if (tilemap_dev.GetTile(current).Equals(manager.dev_entryRight))
                 {
-                    direction = TerrainManager.TerrainDirection.Right;
+                    direction = TerrainManager.Direction.Right;
                 }
                 else if (tilemap_dev.GetTile(current).Equals(manager.dev_entryUp))
                 {
-                    direction = TerrainManager.TerrainDirection.Up;
+                    direction = TerrainManager.Direction.Up;
                 }
                 else if (tilemap_dev.GetTile(current).Equals(manager.dev_entryDown))
                 {
-                    direction = TerrainManager.TerrainDirection.Down;
+                    direction = TerrainManager.Direction.Down;
                 }
                 else
                 {

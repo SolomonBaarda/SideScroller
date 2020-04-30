@@ -1,17 +1,15 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 using UnityEngine.Events;
-using System.Configuration;
+using UnityEngine.Tilemaps;
 
 public class TerrainManager : MonoBehaviour
 {
     /// <summary>
     /// Called when the initial terrain has been generated at the start of the game.
     /// </summary>
-    public static UnityAction OnTerrainGenerated;
+    public static UnityAction OnInitialTerrainGenerated;
     /// <summary>
     /// Called when a terrain chunk has been generated.  
     /// </summary>
@@ -20,6 +18,8 @@ public class TerrainManager : MonoBehaviour
     [Header("General Generation Settings")]
     public string seed;
     public bool useRandomSeed;
+
+    private Generation rule;
 
     public Vector2 CellSize { get { return grid.cellSize; } }
 
@@ -98,7 +98,7 @@ public class TerrainManager : MonoBehaviour
 
 
 
-    public void Initialise()
+    public void Initialise(Generation rule, bool printDebug)
     {
         // Load the sample terrain
         DateTime before = DateTime.Now;
@@ -107,39 +107,46 @@ public class TerrainManager : MonoBehaviour
 
         DateTime after = DateTime.Now;
         TimeSpan time = after - before;
-        Debug.Log("It took " + time.Milliseconds + " ms to load the sample terrain.");
+        if(printDebug)
+        {
+            Debug.Log("It took " + time.Milliseconds + " ms to load the sample terrain.");
+        }
 
 
         // Generate the terrain
         before = DateTime.Now;
 
+        this.rule = rule;
         ClearAllTiles();
-        initialTile = GenerateInitialTile();
+        initialTile = GenerateInitialTile(Vector2Int.zero);
 
         // Generate the spawn room
-        GenerateFromSampleTerrain(initialTile, false, TerrainDirection.Both, sampleTerrainManager.startingArea, 0, Vector2Int.zero);
+        GenerateFromSampleTerrain(initialTile, false, Direction.Both, sampleTerrainManager.startingArea, Vector2Int.zero);
 
         after = DateTime.Now;
         time = after - before;
-        Debug.Log("It took " + time.Milliseconds + " ms to generate the starting area.");
+        if(printDebug)
+        {
+            Debug.Log("It took " + time.Milliseconds + " ms to generate the starting area.");
+        }
 
-        OnTerrainGenerated.Invoke();
+        OnInitialTerrainGenerated.Invoke();
     }
 
 
-    private bool IsValidDirection(TerrainDirection directionToGenerate, TerrainDirection sampleTerrainDirection)
+    private bool IsValidDirection(Direction directionToGenerate, Direction sampleTerrainDirection)
     {
         // Terrain is already the correct direction
         return directionToGenerate.Equals(sampleTerrainDirection)
             // Terrain can go both ways
-            || (directionToGenerate.Equals(TerrainDirection.Both) && (sampleTerrainDirection.Equals(TerrainDirection.Left) || (sampleTerrainDirection.Equals(TerrainDirection.Right))))
+            || (directionToGenerate.Equals(Direction.Both) && (sampleTerrainDirection.Equals(Direction.Left) || (sampleTerrainDirection.Equals(Direction.Right))))
             // Terrain will need to be flipped
-            || (directionToGenerate.Equals(TerrainDirection.Left) && sampleTerrainDirection.Equals(TerrainDirection.Right))
-            || (directionToGenerate.Equals(TerrainDirection.Right) && sampleTerrainDirection.Equals(TerrainDirection.Left));
+            || (directionToGenerate.Equals(Direction.Left) && sampleTerrainDirection.Equals(Direction.Right))
+            || (directionToGenerate.Equals(Direction.Right) && sampleTerrainDirection.Equals(Direction.Left));
     }
 
 
-    public void Generate(Vector2 startTileWorldSpace, TerrainDirection directionToGenerate, float distanceFromOrigin, Vector2Int chunkID)
+    public void Generate(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID)
     {
         // Get a list of only the valid sample terrain
         List<SampleTerrain> allValidSamples = new List<SampleTerrain>();
@@ -164,8 +171,8 @@ public class TerrainManager : MonoBehaviour
         int index = random.Next(0, validSamples.Length);
         SampleTerrain chosen = validSamples[index];
         bool flipAxisX = false;
-        if ((directionToGenerate.Equals(TerrainDirection.Left) && chosen.direction.Equals(TerrainDirection.Right))
-            || (directionToGenerate.Equals(TerrainDirection.Right) && chosen.direction.Equals(TerrainDirection.Left)))
+        if ((directionToGenerate.Equals(Direction.Left) && chosen.direction.Equals(Direction.Right))
+            || (directionToGenerate.Equals(Direction.Right) && chosen.direction.Equals(Direction.Left)))
         {
             flipAxisX = true;
         }
@@ -173,13 +180,13 @@ public class TerrainManager : MonoBehaviour
         Vector3Int entryPos = grid.WorldToCell(startTileWorldSpace);
 
         // Generate the new chunk and update the tile reference
-        GenerateFromSampleTerrain(new Vector2Int(entryPos.x, entryPos.y), flipAxisX, directionToGenerate, chosen, distanceFromOrigin, chunkID);
+        GenerateFromSampleTerrain(new Vector2Int(entryPos.x, entryPos.y), flipAxisX, directionToGenerate, chosen, chunkID);
     }
 
 
 
 
-    private void GenerateFromSampleTerrain(Vector2Int entryTile, bool flipAxisX, TerrainDirection directionToGenerate, SampleTerrain terrain, float distanceFromOrigin, Vector2Int chunkID)
+    private void GenerateFromSampleTerrain(Vector2Int entryTile, bool flipAxisX, Direction directionToGenerate, SampleTerrain terrain, Vector2Int chunkID)
     {
         // Copy the terrain, each layer at a time
         CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wall, ref wall);
@@ -189,10 +196,10 @@ public class TerrainManager : MonoBehaviour
         CopySampleTerrainLayer(entryTile, flipAxisX, terrain.ground, ref ground);
 
         // Tell the ChunkManager that the terrain has been generated
-        OnTerrainChunkGenerated.Invoke(GenerateTerrainChunk(entryTile, flipAxisX, directionToGenerate, terrain, distanceFromOrigin, chunkID));
+        OnTerrainChunkGenerated.Invoke(GenerateTerrainChunk(entryTile, flipAxisX, directionToGenerate, terrain, chunkID));
     }
 
-    private TerrainChunk GenerateTerrainChunk(Vector2Int entryTile, bool flipAxisX, TerrainDirection directionToGenerate, SampleTerrain terrain, float distanceFromOrigin, Vector2Int chunkID)
+    private TerrainChunk GenerateTerrainChunk(Vector2Int entryTile, bool flipAxisX, Direction directionToGenerate, SampleTerrain terrain, Vector2Int chunkID)
     {
         // Get the inverse multiplier
         int invert = 1;
@@ -229,7 +236,7 @@ public class TerrainManager : MonoBehaviour
 
             Vector2Int newChunkTile = exitTile;
             Vector2Int newChunkID = chunkID;
-            TerrainDirection newChunkDirection = directionToGenerate;
+            Direction newChunkDirection = directionToGenerate;
 
             // Move by 1 tile in correct direction
             switch (sampleExit.exitDirection)
@@ -238,25 +245,25 @@ public class TerrainManager : MonoBehaviour
                 case SampleTerrain.ExitDirection.Left:
                     newChunkTile.x += flipAxisX ? 1 : -1;
                     newChunkID.x += flipAxisX ? 1 : -1;
-                    newChunkDirection = flipAxisX ? TerrainDirection.Right : TerrainDirection.Left;
+                    newChunkDirection = flipAxisX ? Direction.Right : Direction.Left;
                     break;
                 // Exit is right
                 case SampleTerrain.ExitDirection.Right:
                     newChunkTile.x += !flipAxisX ? 1 : -1;
                     newChunkID.x += !flipAxisX ? 1 : -1;
-                    newChunkDirection = !flipAxisX ? TerrainDirection.Right : TerrainDirection.Left;
+                    newChunkDirection = !flipAxisX ? Direction.Right : Direction.Left;
                     break;
                 // Exit is up
                 case SampleTerrain.ExitDirection.Up:
                     newChunkTile.y++;
                     newChunkID.y++;
-                    newChunkDirection = TerrainDirection.Up;
+                    newChunkDirection = Direction.Up;
                     break;
                 // Exit is down
                 case SampleTerrain.ExitDirection.Down:
                     newChunkTile.y--;
                     newChunkID.y--;
-                    newChunkDirection = TerrainDirection.Down;
+                    newChunkDirection = Direction.Down;
                     break;
             }
 
@@ -304,8 +311,8 @@ public class TerrainManager : MonoBehaviour
         }
 
         // Return the TerrainChunk object for use in the ChunkManager
-        return new TerrainChunk(b.boundsReal, CellSize, centre, entryPositionWorld, exits, directionToGenerate, distanceFromOrigin, chunkID, 
-            allItemPositions, terrain.itemChance);
+        return new TerrainChunk(b.boundsReal, CellSize, centre, entryPositionWorld, exits, directionToGenerate, chunkID, 
+            allItemPositions, terrain.itemChance, terrain.index);
     }
 
 
@@ -347,13 +354,12 @@ public class TerrainManager : MonoBehaviour
     }
 
 
-    private Vector2Int GenerateInitialTile()
+    private Vector2Int GenerateInitialTile(Vector2Int tilePos)
     {
         // Calculate the initial position
-        Vector2Int initialPosition = Vector2Int.zero;
-        SetTile(ground, groundTile, initialPosition);
+        SetTile(ground, groundTile, tilePos);
 
-        return initialPosition;
+        return tilePos;
     }
 
 
@@ -378,10 +384,18 @@ public class TerrainManager : MonoBehaviour
 
 
 
+    public enum Generation
+    {
+        Multidirectional_Endless,
+        Symmetrical_Endless,
+        Symmetrical_Limit,
+    }
+
+
     /// <summary>
     /// The direction that the terrain is facing. Camera should move in that direction.
     /// </summary>
-    public enum TerrainDirection
+    public enum Direction
     {
         Left,
         Right,
@@ -402,15 +416,16 @@ public class TerrainManager : MonoBehaviour
 
         public Vector2 enteranceWorldPosition;
         public List<Exit> exits;
-        public TerrainDirection direction;
-        public float distanceFromOrigin;
+        public Direction direction;
         public Vector2Int chunkID;
 
         public List<Item> items;
         public float itemChance;
 
-        public TerrainChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldPosition, List<Exit> exits, TerrainDirection direction, 
-            float distanceFromOrigin, Vector2Int chunkID, List<Item> items, float itemChance)
+        public int sampleIndex;
+
+        public TerrainChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldPosition, List<Exit> exits, 
+            Direction direction, Vector2Int chunkID, List<Item> items, float itemChance, int sampleIndex)
         {
             this.bounds = bounds;
             this.cellSize = cellSize;
@@ -418,15 +433,15 @@ public class TerrainManager : MonoBehaviour
             this.enteranceWorldPosition = enteranceWorldPosition;
             this.exits = exits;
             this.direction = direction;
-            this.distanceFromOrigin = distanceFromOrigin;
             this.chunkID = chunkID;
             this.items = items;
             this.itemChance = itemChance;
+            this.sampleIndex = sampleIndex;
         }
 
         public struct Exit
         {
-            public TerrainDirection exitDirection;
+            public Direction exitDirection;
             public Vector2 exitPositionWorld;
 
             public Vector2 newChunkPositionWorld;
@@ -436,7 +451,7 @@ public class TerrainManager : MonoBehaviour
 
             public Vector2Int tilesFromOrigin;
 
-            public Exit(TerrainDirection exitDirection, Vector2 exitPositionWorld, Vector2 newChunkPositionWorld, Vector2Int newChunkID, Vector2Int tilesFromOrigin)
+            public Exit(Direction exitDirection, Vector2 exitPositionWorld, Vector2 newChunkPositionWorld, Vector2Int newChunkID, Vector2Int tilesFromOrigin)
             {
                 this.exitDirection = exitDirection;
                 this.exitPositionWorld = exitPositionWorld;

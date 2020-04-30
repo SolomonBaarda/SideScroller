@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using PathCreation;
-
+using Pathfinding;
+using UnityEditorInternal;
 
 public class MovingCamera : MonoBehaviour
 {
@@ -20,7 +21,6 @@ public class MovingCamera : MonoBehaviour
     private Camera c;
     public static string LAYER_CAMERA = "Camera";
 
-    public float distanceFromOrigin;
 
     private void Awake()
     {
@@ -40,12 +40,10 @@ public class MovingCamera : MonoBehaviour
         catch (System.Exception)
         {
         }
-
-        distanceFromOrigin = 0;
     }
 
 
-    private void FixedUpdate()
+    private void Update()
     {
         // Get the chunk
         Chunk current = CalculateCurrentChunk();
@@ -115,11 +113,6 @@ public class MovingCamera : MonoBehaviour
     }
 
 
-    private float GetDistanceFromOrigin(Vector3 point, Chunk chunk)
-    {
-        return chunk.distanceFromOrigin + GetClosestCameraPath(point, chunk).GetLengthAtPoint(point);
-    }
-
 
     private void Move()
     {
@@ -142,26 +135,35 @@ public class MovingCamera : MonoBehaviour
                 }
                 // Update the position and update the distance along the path
                 position = GetClosestPoint(following.transform.position, c);
-                distanceFromOrigin = GetDistanceFromOrigin(transform.position, currentChunk);
 
             }
             // Move along terrain camera path
             else if (direction.Equals(Direction.Terrain))
             {
-                // Update distance
-                distanceFromOrigin += speed * Time.deltaTime;
+                Vector2 newPos = transform.position;
+                // The path that the player is following
+                CameraPath p = GetClosestCameraPath(following.transform.position, currentChunk);
+                float distance = speed * Time.deltaTime;
 
-                // Get the local distance
-                float distanceInChunk = distanceFromOrigin - currentChunk.distanceFromOrigin;
+                // Move in the correct direction
+                switch (p.pathDirection)
+                {
+                    case TerrainManager.Direction.Left:
+                        newPos.x -= distance;
+                        break;
+                    case TerrainManager.Direction.Right:
+                        newPos.x += distance;
+                        break;
+                    case TerrainManager.Direction.Up:
+                        newPos.y += distance;
+                        break;
+                    case TerrainManager.Direction.Down:
+                        newPos.y -= distance;
+                        break;
+                }
 
-                // Get the position in the chunk
-                CameraPath path = GetClosestCameraPath(following.transform.position, currentChunk);
-
-                // Clamp the value
-                distanceInChunk = Mathf.Clamp(distanceInChunk, 0, path.GetPathLength());
-
-                // Get the position in the chunk
-                position = path.GetPositionAtDistance(distanceInChunk);
+                // Get the closest position
+                position = p.GetClosestPosition(newPos);
             }
 
             // Force zoom out

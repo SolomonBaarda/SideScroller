@@ -13,21 +13,20 @@ public class Chunk : MonoBehaviour
     public Vector2 enteranceWorldSpace;
     public List<TerrainManager.TerrainChunk.Exit> exits;
 
-    public TerrainManager.TerrainDirection direction;
+    public TerrainManager.Direction direction;
     public Vector2 bounds;
     private Vector2 cellSize;
     public Vector2Int chunkID;
-    public float distanceFromOrigin;
+    public int sampleTerrainIndex;
 
     [Header("Camera Path Prefab Reference")]
     public GameObject cameraPathPrefab;
 
     public List<CameraPath> cameraPaths;
-
     private Transform cameraPathChild;
 
     public void CreateChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldSpace,
-        List<TerrainManager.TerrainChunk.Exit> exits, TerrainManager.TerrainDirection direction, float distanceFromOrigin, Vector2Int chunkID)
+        List<TerrainManager.TerrainChunk.Exit> exits, TerrainManager.Direction direction, int sampleTerrainIndex, Vector2Int chunkID)
     {
         // Assign variables 
         this.bounds = bounds;
@@ -35,7 +34,7 @@ public class Chunk : MonoBehaviour
         this.enteranceWorldSpace = enteranceWorldSpace;
         this.exits = exits;
         this.direction = direction;
-        this.distanceFromOrigin = distanceFromOrigin;
+        this.sampleTerrainIndex = sampleTerrainIndex;
         this.chunkID = chunkID;
 
         // Set the name 
@@ -53,11 +52,6 @@ public class Chunk : MonoBehaviour
     }
 
 
-
-    public float CalculateNewChunkDistanceFromOrigin(CameraPath chosen)
-    {
-        return distanceFromOrigin + chosen.GetPathLength();
-    }
 
 
     private void InitialiseCameraPaths(List<TerrainManager.TerrainChunk.Exit> exits)
@@ -83,19 +77,19 @@ public class Chunk : MonoBehaviour
                 Vector2 extra = new Vector2(pos.x, pos.y);
                 switch (direction)
                 {
-                    case TerrainManager.TerrainDirection.Left:
+                    case TerrainManager.Direction.Left:
                         pos.x += cellSize.x / 2;
                         extra.x = pos.x + cellSize.x;
                         break;
-                    case TerrainManager.TerrainDirection.Right:
+                    case TerrainManager.Direction.Right:
                         pos.x -= cellSize.x / 2;
                         extra.x = pos.x - cellSize.x;
                         break;
-                    case TerrainManager.TerrainDirection.Up:
+                    case TerrainManager.Direction.Up:
                         pos.y += cellSize.y / 2;
                         extra.y = pos.y + cellSize.y;
                         break;
-                    case TerrainManager.TerrainDirection.Down:
+                    case TerrainManager.Direction.Down:
                         pos.y -= cellSize.y / 2;
                         extra.y = pos.y - cellSize.y;
                         break;
@@ -109,19 +103,19 @@ public class Chunk : MonoBehaviour
                 extra = new Vector2(pos.x, pos.y);
                 switch (exit.exitDirection)
                 {
-                    case TerrainManager.TerrainDirection.Left:
+                    case TerrainManager.Direction.Left:
                         pos.x -= cellSize.x / 2;
                         extra.x = pos.x - cellSize.x;
                         break;
-                    case TerrainManager.TerrainDirection.Right:
+                    case TerrainManager.Direction.Right:
                         pos.x += cellSize.x / 2;
                         extra.x = pos.x + cellSize.x;
                         break;
-                    case TerrainManager.TerrainDirection.Up:
+                    case TerrainManager.Direction.Up:
                         pos.y += cellSize.y / 2;
                         extra.y = pos.y + cellSize.y;
                         break;
-                    case TerrainManager.TerrainDirection.Down:
+                    case TerrainManager.Direction.Down:
                         pos.y -= cellSize.y / 2;
                         extra.y = pos.y - cellSize.y;
                         break;
@@ -131,7 +125,7 @@ public class Chunk : MonoBehaviour
 
 
                 // Set the path and add it
-                path.SetPath(RemoveMiddlePointsIfStraightPath(l.ToArray(), direction, exit.exitDirection), exit.newChunkID);
+                path.SetPath(RemoveMiddlePointsIfStraightPath(l.ToArray(), direction, exit.exitDirection), exit.newChunkID, exit.exitDirection);
                 cameraPaths.Add(path);
             }
             else
@@ -144,14 +138,14 @@ public class Chunk : MonoBehaviour
 
 
 
-    private Vector2[] RemoveMiddlePointsIfStraightPath(Vector2[] points, TerrainManager.TerrainDirection direction, TerrainManager.TerrainDirection exitDirection)
+    private Vector2[] RemoveMiddlePointsIfStraightPath(Vector2[] points, TerrainManager.Direction direction, TerrainManager.Direction exitDirection)
     {
         Vector2 first = points[0], last = points[points.Length - 2];
 
         // Horizontal case
-        if((direction == TerrainManager.TerrainDirection.Both ||
-            direction == TerrainManager.TerrainDirection.Left || direction == TerrainManager.TerrainDirection.Right) &&
-            (exitDirection == TerrainManager.TerrainDirection.Left || exitDirection == TerrainManager.TerrainDirection.Right))
+        if((direction == TerrainManager.Direction.Both ||
+            direction == TerrainManager.Direction.Left || direction == TerrainManager.Direction.Right) &&
+            (exitDirection == TerrainManager.Direction.Left || exitDirection == TerrainManager.Direction.Right))
         {
             if(first.y == last.y)
             {
@@ -160,8 +154,8 @@ public class Chunk : MonoBehaviour
         }
 
         // Vertical case
-        if ((direction == TerrainManager.TerrainDirection.Up || direction == TerrainManager.TerrainDirection.Down) &&
-            (exitDirection == TerrainManager.TerrainDirection.Up || exitDirection == TerrainManager.TerrainDirection.Down))
+        if ((direction == TerrainManager.Direction.Up || direction == TerrainManager.Direction.Down) &&
+            (exitDirection == TerrainManager.Direction.Up || exitDirection == TerrainManager.Direction.Down))
         {
             if (first.x == last.x)
             {

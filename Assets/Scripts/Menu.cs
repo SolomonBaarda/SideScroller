@@ -24,7 +24,7 @@ public class Menu : MonoBehaviour
         play_button.enabled = false;
 
         // Enable the button when the game is ready
-        TerrainManager.OnTerrainGenerated += Ready;
+        TerrainManager.OnInitialTerrainGenerated += Ready;
     }
 
 
@@ -39,7 +39,7 @@ public class Menu : MonoBehaviour
     {
         // Remove listeners
         OnButtonClicked -= Unload;
-        TerrainManager.OnTerrainGenerated -= Ready;
+        TerrainManager.OnInitialTerrainGenerated -= Ready;
 
         play_button.GetComponent<Button>().onClick.RemoveAllListeners();
     }
