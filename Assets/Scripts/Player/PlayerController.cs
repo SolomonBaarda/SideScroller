@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
 
     private float horizontalMovement = 0f;
+    private float verticalMovement = 0f;
     private bool isJump = false;
     private bool isCrouch = false;
 
@@ -35,17 +36,18 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         // Update the control values
-        horizontalMovement = Input.GetAxisRaw("Horizontal");
-        isJump = Input.GetButtonDown("Jump");
-        isCrouch = Input.GetButton("Crouch");
+        horizontalMovement = Input.GetAxisRaw("P1_Horizontal");
+        verticalMovement = Input.GetAxisRaw("P1_Vertical");
+        isJump = Input.GetButtonDown("P1_Jump");
+        isCrouch = Input.GetButton("P1_Crouch");
 
-        isInteract1 = Input.GetButton("Interact");
-        isInteract2 = Input.GetButton("Interact");
+        isInteract1 = Input.GetButton("P1_Interact");
+        isInteract2 = Input.GetButton("P1_Interact2");
 
-        scrollAmount = Input.GetAxisRaw("Mouse ScrollWheel");
-        isFire1 = Input.GetButton("Fire1");
-        isFire2 = Input.GetButton("Fire2");
-        isFire3 = Input.GetButton("Fire3");
+        //scrollAmount = Input.GetAxisRaw("Mouse ScrollWheel");
+        //isFire1 = Input.GetButton("Fire1");
+        //isFire2 = Input.GetButton("Fire2");
+        //isFire3 = Input.GetButton("Fire3");
 
         UpdateAnimations();
     }
