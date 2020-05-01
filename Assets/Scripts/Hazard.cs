@@ -6,13 +6,17 @@ public class Hazard : MonoBehaviour
 {
     public void OnTriggerEnter2D(Collider2D collision)
     {
-        // Player is colliding with this object 
-        if (collision.gameObject.layer.Equals(LayerMask.NameToLayer(Player.PLAYER_LAYER)))
+        // A player is colliding with this
+        if (LayerMask.LayerToName(collision.gameObject.layer).Contains(Player.DEFAULT_PLAYER_LAYER))
         {
             // Reference to player and controller script
             Player p = collision.GetComponentInParent<Player>();
 
-            p.SetDead();
+            if (p.IsAlive)
+            {
+                p.SetDead();
+                Debug.Log(p.PLAYER_LAYER + " has died.");
+            }
         }
     }
 }

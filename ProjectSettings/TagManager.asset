@@ -15,14 +15,14 @@ TagManager:
   - 
   - Background
   - Ground
-  - Player
+  - Player_P1
   - Hazard
   - Chunk
   - Camera
   - Item
   - OnlyGround
   - Enemy
-  - 
+  - Player_P2
   - 
   - 
   - 

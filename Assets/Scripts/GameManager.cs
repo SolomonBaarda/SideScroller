@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
@@ -9,8 +10,8 @@ public class GameManager : MonoBehaviour
     public static UnityAction OnGameStart;
 
     [Header("Player")]
-    public GameObject playerGameObject;
-    private Player player;
+    public GameObject playerManagerObject;
+    private PlayerManager playerManager;
 
     [Header("Camera")]
     public GameObject cameraGameObject;
@@ -60,7 +61,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         // References to scripts
-        player = playerGameObject.GetComponent<Player>();
+        playerManager = playerManagerObject.GetComponent<PlayerManager>();
         movingCamera = cameraGameObject.GetComponent<MovingCamera>();
         terrainManager = terrainManagerObject.GetComponent<TerrainManager>();
         chunkManager = chunkManagerObject.GetComponent<ChunkManager>();
@@ -113,7 +114,7 @@ public class GameManager : MonoBehaviour
         }
 
         // Quit the build
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetButton("Cancel"))
         {
             Application.Quit();
         }
@@ -136,8 +137,14 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKey(KeyCode.R))
         {
-            player.SetAlive();
+            foreach(Player p in playerManager.AllPlayers)
+            {
+                p.SetAlive();
+            }
+            
         }
+
+        Player player = playerManager.GetPlayer("P1");
 
         // Update HUD stuff
         HUD.HUDElements hud = new HUD.HUDElements(player.GetInventory<Coin>().Total, player.GetInventory<Health>().Total,
@@ -198,8 +205,11 @@ public class GameManager : MonoBehaviour
     {
         enemyManager.ScanWholeNavMesh();
 
-        player.SetPosition(terrainManager.GetInitialTileWorldPositionForPlayer());
-        player.SetAlive();
+        foreach(Player p in playerManager.AllPlayers)
+        {
+            p.SetPosition(terrainManager.GetInitialTileWorldPositionForPlayer());
+            p.SetAlive();
+        }
 
         movingCamera.direction = MovingCamera.Direction.Following;
 
@@ -233,8 +243,6 @@ public class GameManager : MonoBehaviour
                 catch (Exception)
                 {
                 }
-
-                Debug.Log("using symmetric chunk " + symmetricChunkIndex + " for chunk " + exit.newChunkID);
                 // Generate the new chunk
                 terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID, symmetricChunkIndex);
             }

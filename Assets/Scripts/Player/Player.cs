@@ -8,28 +8,46 @@ public class Player : MonoBehaviour
     private PlayerInventory inventory;
 
     [SerializeField]
-    private bool isAlive;
+    public bool IsAlive { get; private set; }
     public Chunk currentChunk;
 
-    public static string PLAYER_LAYER = "Player";
+    public string PLAYER_ID { get; private set; }
+    public string PLAYER_LAYER { get; private set; }
+    public const string DEFAULT_PLAYER_LAYER = "Player";
+
+
+    [SerializeField]
+    private ID id;
+
+    private enum ID
+    {
+        P1,
+        P2,
+    }
 
     private void Awake()
     {
+        // Set the player
+        PLAYER_ID = id.ToString();
+        PLAYER_LAYER = DEFAULT_PLAYER_LAYER + "_" + PLAYER_ID;
+        gameObject.layer = LayerMask.NameToLayer(PLAYER_LAYER);
+
         // Controller reference
         controller = GetComponent<PlayerController>();
         controller.enabled = false;
+        controller.SetPlayer(PLAYER_ID);
 
         inventory = GetComponent<PlayerInventory>();
 
         // Player variables
-        isAlive = false;
+        IsAlive = false;
     }
 
 
 
     private void Update()
     {
-        if(isAlive)
+        if(IsAlive)
         {
             // Get the chunk the player is in now
             Chunk current = CalculateCurrentChunk();
@@ -81,7 +99,7 @@ public class Player : MonoBehaviour
 
     public void SetDead()
     {
-        isAlive = false;
+        IsAlive = false;
         controller.enabled = false;
     }
 
@@ -89,7 +107,7 @@ public class Player : MonoBehaviour
     public void SetAlive()
     {
         // Set player to be alive and enable controls
-        isAlive = true;
+        IsAlive = true;
         controller.enabled = true;
     }
 

@@ -23,6 +23,8 @@ public class PlayerController : MonoBehaviour
     private bool isFire2 = false;
     private bool isFire3 = false;
 
+    private string prefix = "";
+
     private void Awake()
     {
         // Get reference to the controller script
@@ -33,16 +35,22 @@ public class PlayerController : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
+
+    public void SetPlayer(string ID)
+    {
+        prefix = ID + "_";
+    }
+
     private void Update()
     {
         // Update the control values
-        horizontalMovement = Input.GetAxisRaw("P1_Horizontal");
-        verticalMovement = Input.GetAxisRaw("P1_Vertical");
-        isJump = Input.GetButtonDown("P1_Jump");
-        isCrouch = Input.GetButton("P1_Crouch");
+        horizontalMovement = Input.GetAxisRaw(prefix + "Horizontal");
+        verticalMovement = Input.GetAxisRaw(prefix + "Vertical");
+        isJump = Input.GetButtonDown(prefix + "Jump");
+        isCrouch = Input.GetButton(prefix + "Crouch");
 
-        isInteract1 = Input.GetButton("P1_Interact");
-        isInteract2 = Input.GetButton("P1_Interact2");
+        isInteract1 = Input.GetButton(prefix + "Interact");
+        isInteract2 = Input.GetButton(prefix + "Interact2");
 
         //scrollAmount = Input.GetAxisRaw("Mouse ScrollWheel");
         //isFire1 = Input.GetButton("Fire1");
