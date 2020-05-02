@@ -49,6 +49,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] public bool DoEnemySpawning = false;
     [SerializeField] public bool DoItemDrops = true;
 
+    [SerializeField] public int MaxChunksToGenerateIfNotEndless = 8;
+
     // FPS variables
     [Header("FPS Settings")]
     private int fps_frame_counter;
@@ -87,7 +89,7 @@ public class GameManager : MonoBehaviour
         TerrainManager.Generation generationType = TerrainManager.Generation.Multidirectional_Endless;
         if(!DoSinglePlayer)
         {
-            generationType = TerrainManager.Generation.Symmetrical_Endless;
+            generationType = TerrainManager.Generation.Symmetrical_Limit;
         }
         
         // Generate terrain when the game loads
@@ -251,6 +253,16 @@ public class GameManager : MonoBehaviour
             }
             catch (Exception)
             {
+                // Don't generate the chunk if there is a limit
+                if(terrainManager.GenerationRule.ToString().Contains("Limit"))
+                {
+                    if(Mathf.Abs(exit.newChunkID.x) >= MaxChunksToGenerateIfNotEndless ||
+                        Mathf.Abs(exit.newChunkID.y) >= MaxChunksToGenerateIfNotEndless)
+                    {
+                        continue;
+                    }
+                }
+
                 // Get the SampleTerrain for the chunk in a symmetrical position
                 int symmetricChunkIndex = -1;
                 try
