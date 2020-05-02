@@ -5,18 +5,16 @@ using PathCreation;
 using Pathfinding;
 using UnityEditorInternal;
 
-public class MovingCamera : MonoBehaviour
+public class MovingCamera : Locatable
 {
-    public Chunk currentChunk;
-
     [Header("Movement Settings")]
     public float zoom = 8;
     public float speed = 4;
     public Direction direction = Direction.Stationary;
 
     [Header("GameObject to Follow")]
-    public GameObject following;
-    private Player player;
+    private GameObject objectFollowing;
+    private Locatable following;
 
     private Camera c;
     public static string LAYER_CAMERA = "Camera";
@@ -32,31 +30,14 @@ public class MovingCamera : MonoBehaviour
         c = GetComponent<Camera>();
         c.orthographic = true;
         c.orthographicSize = zoom;
-
-        try
-        {
-            player = following.GetComponent<Player>();
-        }
-        catch (System.Exception)
-        {
-        }
     }
 
 
     private void Update()
     {
-        // Get the chunk
-        Chunk current = CalculateCurrentChunk();
-        if (current != null)
-        {
-            // New chunk
-            if (current != currentChunk)
-            {
-                currentChunk = current;
-            }
-        }
+        UpdateCurrentChunk();
 
-        if (currentChunk != null)
+        if (CurrentChunk != null)
         {
             Move();
         }
@@ -65,26 +46,17 @@ public class MovingCamera : MonoBehaviour
     }
 
 
-
-
-    private Chunk CalculateCurrentChunk()
+    public bool SetFollowingTarget(GameObject toFollow)
     {
-        // Find the chunk at the centre point
-        Collider2D collision = Physics2D.OverlapPoint(transform.position, LayerMask.GetMask(Chunk.CHUNK_LAYER));
-        if (collision != null)
+        // Set the target
+        if (WorldItem.ExtendsClass<Locatable>(toFollow))
         {
-            return collision.gameObject.GetComponent<Chunk>();
+            objectFollowing = toFollow;
+            following = (Locatable)WorldItem.GetClass<Locatable>(toFollow);
+            return true;
         }
-
-        return null;
+        return false;
     }
-
-
-    public Chunk GetCurrentChunk()
-    {
-        return currentChunk;
-    }
-
 
 
     public List<Chunk> GetAllNearbyChunks()
@@ -124,17 +96,21 @@ public class MovingCamera : MonoBehaviour
             // Set position if following 
             if (direction.Equals(Direction.Following))
             {
-                // Get the chunk closest to the player if we can
-                Chunk c = currentChunk;
-                if (player != null)
+                Chunk c = CurrentChunk;
+                Vector2 closest = transform.position;
+                if (following != null)
                 {
-                    if (player.currentChunk != null)
+                    // Get the chunk closest to the player if we can
+                    if (following.CurrentChunk != null)
                     {
-                        c = player.currentChunk;
+                        c = following.CurrentChunk;
                     }
+                    // Get the closest position if we can 
+                    closest = following.transform.position;
                 }
+
                 // Update the position and update the distance along the path
-                position = GetClosestPoint(following.transform.position, c);
+                position = GetClosestPoint(closest, c);
 
             }
             // Move along terrain camera path
@@ -142,7 +118,7 @@ public class MovingCamera : MonoBehaviour
             {
                 Vector2 newPos = transform.position;
                 // The path that the player is following
-                CameraPath p = GetClosestCameraPath(following.transform.position, currentChunk);
+                CameraPath p = GetClosestCameraPath(following.transform.position, CurrentChunk);
                 float distance = speed * Time.deltaTime;
 
                 // Move in the correct direction

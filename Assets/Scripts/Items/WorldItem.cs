@@ -71,9 +71,9 @@ public class WorldItem : MonoBehaviour
     /// <typeparam name="T"></typeparam>
     /// <param name="toCheck"></param>
     /// <returns></returns>
-    public static bool ImplementsInterface<T>(GameObject toCheck) where T : class
+    public static bool ExtendsClass<T>(GameObject toCheck) where T : class
     {
-        return GetScriptThatImplements<T>(toCheck) != null;
+        return GetClass<T>(toCheck) != null;
     }
 
 
@@ -83,7 +83,7 @@ public class WorldItem : MonoBehaviour
     /// <typeparam name="T"></typeparam>
     /// <param name="toCheck"></param>
     /// <returns></returns>
-    public static MonoBehaviour GetScriptThatImplements<T>(GameObject toCheck) where T : class
+    public static MonoBehaviour GetClass<T>(GameObject toCheck) where T : class
     {
         // Get all monobehaviours 
         MonoBehaviour[] all = toCheck.GetComponents<MonoBehaviour>();

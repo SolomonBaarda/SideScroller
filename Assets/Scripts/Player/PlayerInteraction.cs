@@ -76,9 +76,9 @@ public class PlayerInteraction : MonoBehaviour
                 GameObject g = c.gameObject;
 
                 // If it can be collided with
-                if (WorldItem.ImplementsInterface<ICollidable>(g))
+                if (WorldItem.ExtendsClass<ICollidable>(g))
                 {
-                    ICollidable collidable = (ICollidable)WorldItem.GetScriptThatImplements<ICollidable>(g);
+                    ICollidable collidable = (ICollidable)WorldItem.GetClass<ICollidable>(g);
 
                     // Collide with it
                     collidable.Collide(inventory);
@@ -93,9 +93,9 @@ public class PlayerInteraction : MonoBehaviour
                     GameObject g = c.gameObject;
 
                     // If it can be collided with
-                    if (WorldItem.ImplementsInterface<IInteractable>(g))
+                    if (WorldItem.ExtendsClass<IInteractable>(g))
                     {
-                        IInteractable interactable = (IInteractable)WorldItem.GetScriptThatImplements<IInteractable>(g);
+                        IInteractable interactable = (IInteractable)WorldItem.GetClass<IInteractable>(g);
 
                         // Check if it is a valid time to interact
                         if (interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)

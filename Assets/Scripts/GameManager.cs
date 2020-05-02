@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pathfinding;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations;
@@ -82,8 +83,15 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        // Apply game rules
+        TerrainManager.Generation generationType = TerrainManager.Generation.Multidirectional_Endless;
+        if(!DoSinglePlayer)
+        {
+            generationType = TerrainManager.Generation.Symmetrical_Endless;
+        }
+        
         // Generate terrain when the game loads
-        terrainManager.Initialise(TerrainManager.Generation.Symmetrical_Endless, printDebug);
+        terrainManager.Initialise(generationType, printDebug);
     }
 
     private void OnDestroy()
@@ -144,7 +152,7 @@ public class GameManager : MonoBehaviour
             
         }
 
-        Player player = playerManager.GetPlayer("P1");
+        Player player = playerManager.GetPlayer(Player.ID.P1);
 
         // Update HUD stuff
         HUD.HUDElements hud = new HUD.HUDElements(player.GetInventory<Coin>().Total, player.GetInventory<Health>().Total,
@@ -164,7 +172,10 @@ public class GameManager : MonoBehaviour
             CheckGenerateNewChunks(c);
 
             // Update the nav meshes
-            //UpdateNavMesh(c);
+            if(DoEnemySpawning)
+            {
+                UpdateNavMesh(c);
+            }
         }
 
         // Check if we need to update the nav mesh
@@ -188,7 +199,10 @@ public class GameManager : MonoBehaviour
         }
 
         // Check if we need to update the size of the nav mesh
-        //enemyManager.CheckUpdateSize(currentMaxTilesFromOrigin);
+        if(DoEnemySpawning)
+        {
+            enemyManager.CheckUpdateSize(currentMaxTilesFromOrigin);
+        }
     }
 
 
@@ -205,12 +219,19 @@ public class GameManager : MonoBehaviour
     {
         enemyManager.ScanWholeNavMesh();
 
+        // Spawn players
+        playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P1);
+        if (!DoSinglePlayer)
+        {
+            playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P2);
+        }
+
         foreach(Player p in playerManager.AllPlayers)
         {
-            p.SetPosition(terrainManager.GetInitialTileWorldPositionForPlayer());
             p.SetAlive();
         }
 
+        movingCamera.SetFollowingTarget(playerManager.GetPlayer(Player.ID.P1).gameObject);
         movingCamera.direction = MovingCamera.Direction.Following;
 
         isGameOver = false;

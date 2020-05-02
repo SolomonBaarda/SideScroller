@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Locatable
 {
     private PlayerController controller;
     private PlayerInventory inventory;
 
     [SerializeField]
     public bool IsAlive { get; private set; }
-    public Chunk currentChunk;
 
     public string PLAYER_ID { get; private set; }
     public string PLAYER_LAYER { get; private set; }
@@ -17,18 +16,21 @@ public class Player : MonoBehaviour
 
 
     [SerializeField]
-    private ID id;
+    public ID PlayerID { get; private set; }
 
-    private enum ID
+    public enum ID
     {
         P1,
         P2,
     }
 
-    private void Awake()
+
+    public void SetPlayer(ID PlayerID)
     {
+        this.PlayerID = PlayerID;
+
         // Set the player
-        PLAYER_ID = id.ToString();
+        PLAYER_ID = PlayerID.ToString();
         PLAYER_LAYER = DEFAULT_PLAYER_LAYER + "_" + PLAYER_ID;
         gameObject.layer = LayerMask.NameToLayer(PLAYER_LAYER);
 
@@ -49,39 +51,11 @@ public class Player : MonoBehaviour
     {
         if(IsAlive)
         {
-            // Get the chunk the player is in now
-            Chunk current = CalculateCurrentChunk();
-            if (current != null)
-            {
-                // New chunk
-                if (current != currentChunk)
-                {
-                    currentChunk = current;
-                }
-            }
+            UpdateCurrentChunk();
         }
 
     }
 
-
-
-    private Chunk CalculateCurrentChunk()
-    {
-        // Find the chunk at the centre point
-        Collider2D collision = Physics2D.OverlapPoint(transform.position, LayerMask.GetMask(Chunk.CHUNK_LAYER));
-        if (collision != null)
-        {
-            return collision.gameObject.GetComponent<Chunk>();
-        }
-
-        return null;
-    }
-
-
-    public Chunk GetCurrentChunk()
-    {
-        return currentChunk;
-    }
 
 
     public void SetPosition(Vector2 position)
@@ -93,7 +67,7 @@ public class Player : MonoBehaviour
         r.velocity = vel;
 
         // Add a little to centre the player
-        transform.position = new Vector3(position.x, position.y + b.bounds.extents.y, 0);
+        transform.position = new Vector2(position.x, position.y + b.bounds.extents.y);
     }
 
 

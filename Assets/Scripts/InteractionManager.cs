@@ -18,17 +18,17 @@ public class InteractionManager : MonoBehaviour
     private void InteractWithItem(GameObject item, PlayerInventory inventory)
     {
         // Ensure it is a valid interaction
-        if (WorldItem.ImplementsInterface<IInteractable>(item))
+        if (WorldItem.ExtendsClass<IInteractable>(item))
         {
             // It is loot that needs to be picked up
-            if (WorldItem.ImplementsInterface<ILoot>(item))
+            if (WorldItem.ExtendsClass<ILoot>(item))
             {
 
             }
             // Check if it is lootable
-            if (WorldItem.ImplementsInterface<ILootable>(item))
+            if (WorldItem.ExtendsClass<ILootable>(item))
             {
-                ILootable lootable = (ILootable)WorldItem.GetScriptThatImplements<ILootable>(item);
+                ILootable lootable = (ILootable)WorldItem.GetClass<ILootable>(item);
 
                 // Ensure it is not empty
                 if (lootable.IsLootable())
@@ -40,7 +40,7 @@ public class InteractionManager : MonoBehaviour
 
 
             // Interct with it last
-            IInteractable interactable = (IInteractable)WorldItem.GetScriptThatImplements<IInteractable>(item);
+            IInteractable interactable = (IInteractable)WorldItem.GetClass<IInteractable>(item);
             interactable.Interact(inventory);
         }
     }

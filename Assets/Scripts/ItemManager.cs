@@ -56,9 +56,9 @@ public class ItemManager : MonoBehaviour
     private void GenerateLootForItem(GameObject item)
     {
         // Ensure its lootable
-        if (WorldItem.ImplementsInterface<ILootable>(item))
+        if (WorldItem.ExtendsClass<ILootable>(item))
         {
-            ILootable l = (ILootable)WorldItem.GetScriptThatImplements<ILootable>(item);
+            ILootable l = (ILootable)WorldItem.GetClass<ILootable>(item);
             LootTable table = l.GetLootTable();
 
             // Generate each item
@@ -155,9 +155,9 @@ public class ItemManager : MonoBehaviour
             prefabs.Add(type, g);
 
             // GameObject is a loot item
-            if (WorldItem.ImplementsInterface<ILoot>(g))
+            if (WorldItem.ExtendsClass<ILoot>(g))
             {
-                WorldItem loot = (WorldItem)WorldItem.GetScriptThatImplements<ILoot>(g);
+                WorldItem loot = (WorldItem)WorldItem.GetClass<ILoot>(g);
 
                 lootPrefabs.Add(loot.itemName, g);
             }

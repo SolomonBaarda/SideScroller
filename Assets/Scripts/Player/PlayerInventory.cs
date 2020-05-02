@@ -47,15 +47,15 @@ public class PlayerInventory : MonoBehaviour
     public bool PickUp(GameObject g)
     {
         // It is collectable
-        if (WorldItem.ImplementsInterface<ICollectable>(g))
+        if (WorldItem.ExtendsClass<ICollectable>(g))
         {
-            CollectableItem c = (CollectableItem)WorldItem.GetScriptThatImplements<CollectableItem>(g);
+            CollectableItem c = (CollectableItem)WorldItem.GetClass<CollectableItem>(g);
             ItemBase item = c.item;
 
             // Coin
-            if (WorldItem.ImplementsInterface<Coin>(g))
+            if (WorldItem.ExtendsClass<Coin>(g))
             {
-                Coin coin = (Coin)WorldItem.GetScriptThatImplements<Coin>(g);
+                Coin coin = (Coin)WorldItem.GetClass<Coin>(g);
 
                 // Add another coin
                 coins.total++;
