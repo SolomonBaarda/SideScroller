@@ -10,7 +10,7 @@ public class CollectableItem : WorldItem, ICollidable, IInteractable, ICollectab
 
     private Rigidbody2D rigid;
 
-    new private void Awake()
+    public override void Awake()
     {
         base.Awake();
 

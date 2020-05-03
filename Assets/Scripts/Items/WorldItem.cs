@@ -15,7 +15,7 @@ public class WorldItem : MonoBehaviour
     [Space]
     protected BoxCollider2D trigger;
 
-    protected void Awake()
+    public virtual void Awake()
     {
         // See if item needs to be updated
         if (item != null)

@@ -66,7 +66,7 @@ public class Chunk : MonoBehaviour
                 pathObject.name = "Path " + (pathObject.transform.GetSiblingIndex() + 1) + "/" + exits.Count;
                 CameraPath path = pathObject.GetComponent<CameraPath>();
 
-                
+
                 LinkedList<Vector2> l = new LinkedList<Vector2>(exit.cameraPathPoints);
                 bool isFlat = l.Count <= 2;
 
@@ -143,13 +143,13 @@ public class Chunk : MonoBehaviour
         Vector2 first = points[0], last = points[points.Length - 2];
 
         // Horizontal case
-        if((direction == TerrainManager.Direction.Both ||
+        if ((direction == TerrainManager.Direction.Both ||
             direction == TerrainManager.Direction.Left || direction == TerrainManager.Direction.Right) &&
             (exitDirection == TerrainManager.Direction.Left || exitDirection == TerrainManager.Direction.Right))
         {
-            if(first.y == last.y)
+            if (first.y == last.y)
             {
-                return new []{ first, last };
+                return new[] { first, last };
             }
         }
 
@@ -214,6 +214,47 @@ public class Chunk : MonoBehaviour
     {
         return "(" + chunkID.x + "," + chunkID.y + ")";
     }
+
+
+
+
+
+
+
+
+
+    // Chunk location mathods
+    public static Chunk CalculateCurrentChunk(Vector2 position)
+    {
+        // Find the chunk at the centre point
+        Collider2D collision = Physics2D.OverlapPoint(position, LayerMask.GetMask(CHUNK_LAYER));
+        if (collision != null)
+        {
+            return collision.gameObject.GetComponent<Chunk>();
+        }
+
+        return null;
+    }
+
+
+    public static Chunk UpdateCurrentChunk(Chunk current, Vector2 position)
+    {
+        // Get the chunk the player is in now
+        Chunk currentNew = CalculateCurrentChunk(position);
+        if (currentNew != null)
+        {
+            // New chunk
+            if (currentNew != current)
+            {
+                return currentNew;
+            }
+        }
+        // Old chunk
+        return current;
+    }
+
+
+
 
 
 

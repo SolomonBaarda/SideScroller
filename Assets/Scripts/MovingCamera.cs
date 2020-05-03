@@ -5,7 +5,7 @@ using PathCreation;
 using Pathfinding;
 using UnityEditorInternal;
 
-public class MovingCamera : Locatable
+public class MovingCamera : MonoBehaviour, ILocatable
 {
     [Header("Movement Settings")]
     public float zoom = 8;
@@ -14,11 +14,13 @@ public class MovingCamera : Locatable
 
     [Header("GameObject to Follow")]
     private GameObject objectFollowing;
-    private Locatable following;
+    private ILocatable following;
 
     private Camera c;
     public static string LAYER_CAMERA = "Camera";
 
+    public Chunk CurrentChunk { get; private set; }
+    public Vector2 Position { get { return transform.position; } }
 
     private void Awake()
     {
@@ -49,10 +51,10 @@ public class MovingCamera : Locatable
     public bool SetFollowingTarget(GameObject toFollow)
     {
         // Set the target
-        if (WorldItem.ExtendsClass<Locatable>(toFollow))
+        if (WorldItem.ExtendsClass<ILocatable>(toFollow))
         {
             objectFollowing = toFollow;
-            following = (Locatable)WorldItem.GetClass<Locatable>(toFollow);
+            following = (ILocatable)WorldItem.GetClass<ILocatable>(toFollow);
             return true;
         }
         return false;
@@ -106,7 +108,7 @@ public class MovingCamera : Locatable
                         c = following.CurrentChunk;
                     }
                     // Get the closest position if we can 
-                    closest = following.transform.position;
+                    closest = following.Position;
                 }
 
                 // Update the position and update the distance along the path
@@ -118,7 +120,7 @@ public class MovingCamera : Locatable
             {
                 Vector2 newPos = transform.position;
                 // The path that the player is following
-                CameraPath p = GetClosestCameraPath(following.transform.position, CurrentChunk);
+                CameraPath p = GetClosestCameraPath(following.Position, CurrentChunk);
                 float distance = speed * Time.deltaTime;
 
                 // Move in the correct direction
@@ -214,6 +216,11 @@ public class MovingCamera : Locatable
         }
     }
 
+
+    public void UpdateCurrentChunk()
+    {
+        CurrentChunk = Chunk.UpdateCurrentChunk(CurrentChunk, Position);
+    }
 
 
     public enum Direction

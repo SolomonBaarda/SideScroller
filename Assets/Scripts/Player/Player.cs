@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : Locatable
+public class Player : MonoBehaviour, ILocatable
 {
     private PlayerController controller;
     private PlayerInventory inventory;
@@ -17,6 +17,9 @@ public class Player : Locatable
 
     [SerializeField]
     public ID PlayerID { get; private set; }
+
+    public Chunk CurrentChunk { get; private set; }
+    public Vector2 Position { get { return transform.position; } }
 
     public enum ID
     {
@@ -49,7 +52,7 @@ public class Player : Locatable
 
     private void Update()
     {
-        if(IsAlive)
+        if (IsAlive)
         {
             UpdateCurrentChunk();
         }
@@ -90,5 +93,11 @@ public class Player : Locatable
     public PlayerInventory.Inventory<T> GetInventory<T>() where T : class
     {
         return inventory.GetInventory<T>();
+    }
+
+
+    public void UpdateCurrentChunk()
+    {
+        CurrentChunk = Chunk.UpdateCurrentChunk(CurrentChunk, Position);
     }
 }
