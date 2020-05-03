@@ -5,10 +5,10 @@ using UnityEngine;
 public class CollectableItem : WorldItem, ICollidable, IInteractable, ICollectable
 {
     [SerializeField]
-    private bool collideToPickUp = false, interactToPickUp = false;
+    protected bool collideToPickUp = false, interactToPickUp = false;
     public const float DEFAULT_INITIAL_SETUP_TIME = 0.5f;
 
-    private Rigidbody2D rigid;
+    protected Rigidbody2D rigid;
 
     public override void Awake()
     {
@@ -73,7 +73,9 @@ public class CollectableItem : WorldItem, ICollidable, IInteractable, ICollectab
     public void Drop(Vector2 position, Vector2 velocity)
     {
         // Set position and velocity to throw the item
+        transform.parent = null;
         transform.position = position;
+
         rigid.velocity = velocity;
 
         // Enable it

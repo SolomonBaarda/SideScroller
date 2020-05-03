@@ -233,7 +233,9 @@ public class GameManager : MonoBehaviour
             p.SetAlive();
         }
 
-        movingCamera.SetFollowingTarget(playerManager.GetPlayer(Player.ID.P1).gameObject);
+        GameObject payload = itemManager.SpawnPayload(new Vector2(0, 12));
+
+        movingCamera.SetFollowingTarget(payload);
         movingCamera.direction = MovingCamera.Direction.Following;
 
         isGameOver = false;

@@ -10,6 +10,7 @@ public class Coin : CollectableItem, ILoot
     {
         base.Awake();
         SetRendererSortingLayer(ItemManager.RENDERING_LAYER_ITEM_COLLISION);
+        collideToPickUp = true;
     }
 
 

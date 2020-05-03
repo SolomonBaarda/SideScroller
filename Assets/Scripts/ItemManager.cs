@@ -23,6 +23,9 @@ public class ItemManager : MonoBehaviour
 
     public GameObject collectableItemPrefab;
 
+    public GameObject payloadPrefab;
+    private GameObject payload;
+
     private void Awake()
     {
         DateTime before = DateTime.Now;
@@ -50,6 +53,13 @@ public class ItemManager : MonoBehaviour
         random = new System.Random(0);
     }
 
+
+
+    public GameObject SpawnPayload(Vector2 position)
+    {
+        payload =  SpawnItem(payloadPrefab, position, "Payload");
+        return payload;
+    }
 
 
 

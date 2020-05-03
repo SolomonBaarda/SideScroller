@@ -78,6 +78,8 @@ public class Player : MonoBehaviour, ILocatable
     {
         IsAlive = false;
         controller.enabled = false;
+
+        inventory.DropItem(true);
     }
 
 

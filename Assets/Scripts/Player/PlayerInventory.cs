@@ -14,6 +14,8 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField] private List<InventoryItem<Buff>> buffs;
     [SerializeField] private Buff currentTotal;
 
+    private GameObject payload;
+
     public void Awake()
     {
         buffs = new List<InventoryItem<Buff>>();
@@ -25,19 +27,17 @@ public class PlayerInventory : MonoBehaviour
 
 
 
-    public void DropWeapon(bool drop)
+    public void DropItem(bool drop)
     {
         if (drop)
         {
-            if (weapon != null)
+            if (payload != null)
             {
-                if (weapon.worldItem != null && weapon.item != null)
-                {
-                    // Set them to null
-                    weapon.item = null;
-                    weapon.worldItem.Drop(transform.position, Vector2.zero);
-                    weapon.worldItem = null;
-                }
+                Payload p = payload.GetComponent<Payload>();
+                p.Drop();
+                p.Drop(transform.position, GetComponent<Rigidbody2D>().velocity);
+
+                payload = null;
             }
 
         }
@@ -65,6 +65,18 @@ public class PlayerInventory : MonoBehaviour
 
                 return true;
             }
+            // Payload
+            else if (WorldItem.ExtendsClass<Payload>(g))
+            {
+                Payload p = (Payload)WorldItem.GetClass<Payload>(g);
+                p.PickUp();
+
+                payload = g;
+
+                payload.transform.parent = transform;
+                payload.transform.position = new Vector2(transform.position.x, transform.position.y + 1);
+                
+            }
             // Weapon
             else if (item is Weapon)
             {
@@ -89,7 +101,6 @@ public class PlayerInventory : MonoBehaviour
 
         return false;
     }
-
 
 
 

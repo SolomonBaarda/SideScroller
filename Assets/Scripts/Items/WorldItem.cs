@@ -21,7 +21,7 @@ public class WorldItem : MonoBehaviour
         if (item != null)
         {
             // Set the sprite if not already set
-            if (sprite == null)
+            if (item.sprite != null)
             {
                 sprite = item.sprite;
             }
@@ -37,6 +37,14 @@ public class WorldItem : MonoBehaviour
             if (spriteRenderer == null)
             {
                 spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
+            }
+            else
+            {
+                // Check if it has a sprite
+                if(spriteRenderer.sprite != null)
+                {
+                    sprite = spriteRenderer.sprite;
+                }
             }
         }
 
