@@ -19,6 +19,9 @@ public class TerrainManager : MonoBehaviour
     public string seed;
     public bool useRandomSeed;
 
+
+    public const int DEFAULT_MAX_CHUNKS_NOT_ENDLESS = 8;
+
     public Generation GenerationRule { get; private set; }
 
     public Vector2 CellSize { get { return grid.cellSize; } }
@@ -116,7 +119,7 @@ public class TerrainManager : MonoBehaviour
         // Generate the terrain
         before = DateTime.Now;
 
-        this.GenerationRule = rule;
+        GenerationRule = rule;
         ClearAllTiles();
         GenerateInitialTile(initialTilePos);
 

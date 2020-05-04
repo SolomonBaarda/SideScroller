@@ -44,12 +44,7 @@ public class GameManager : MonoBehaviour
     private bool isGameOver;
 
     // Game rules
-    [Header("Game Rules")]
-    [SerializeField] public bool DoSinglePlayer = true;
-    [SerializeField] public bool DoEnemySpawning = false;
-    [SerializeField] public bool DoItemDrops = true;
-
-    [SerializeField] public int MaxChunksToGenerateIfNotEndless = 8;
+    public Presets presets = new Presets();
 
     // FPS variables
     [Header("FPS Settings")]
@@ -86,14 +81,13 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         // Apply game rules
-        TerrainManager.Generation generationType = TerrainManager.Generation.Multidirectional_Endless;
-        if(!DoSinglePlayer)
+        if (presets.DoSinglePlayer)
         {
-            generationType = TerrainManager.Generation.Symmetrical_Limit;
+            presets.terrain_generation = TerrainManager.Generation.Multidirectional_Endless;
         }
-        
+
         // Generate terrain when the game loads
-        terrainManager.Initialise(generationType, printDebug);
+        terrainManager.Initialise(presets.terrain_generation, printDebug);
     }
 
     private void OnDestroy()
@@ -128,31 +122,18 @@ public class GameManager : MonoBehaviour
         {
             Application.Quit();
         }
-        // Toggle camera mode
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            switch (movingCamera.direction)
-            {
-                case MovingCamera.Direction.Terrain:
-                    movingCamera.direction = MovingCamera.Direction.Following;
-                    break;
-                case MovingCamera.Direction.Stationary:
-                    movingCamera.direction = MovingCamera.Direction.Terrain;
-                    break;
-                case MovingCamera.Direction.Following:
-                    movingCamera.direction = MovingCamera.Direction.Stationary;
-                    break;
-            }
-        }
+
+
 
         if (Input.GetKey(KeyCode.R))
         {
-            foreach(Player p in playerManager.AllPlayers)
+            foreach (Player p in playerManager.AllPlayers)
             {
                 p.SetAlive();
             }
-            
+
         }
+
 
         Player player = playerManager.GetPlayer(Player.ID.P1);
 
@@ -174,35 +155,35 @@ public class GameManager : MonoBehaviour
             CheckGenerateNewChunks(c);
 
             // Update the nav meshes
-            if(DoEnemySpawning)
+            if (presets.DoEnemySpawning)
             {
                 UpdateNavMesh(c);
             }
         }
 
-        // Check if we need to update the nav mesh
-        Vector2Int currentMaxTilesFromOrigin = Vector2Int.zero;
-        foreach (Chunk c in nearbyChunksToCamera)
+        // Check if we need to update the size of the nav mesh
+        if (presets.DoEnemySpawning)
         {
-            foreach(TerrainManager.TerrainChunk.Exit e in c.exits)
+            // Check if we need to update the nav mesh
+            Vector2Int currentMaxTilesFromOrigin = Vector2Int.zero;
+            foreach (Chunk c in nearbyChunksToCamera)
             {
-                int x = Mathf.Abs(e.tilesFromOrigin.x);
-                int y = Mathf.Abs(e.tilesFromOrigin.y);
+                foreach (TerrainManager.TerrainChunk.Exit e in c.exits)
+                {
+                    int x = Mathf.Abs(e.tilesFromOrigin.x);
+                    int y = Mathf.Abs(e.tilesFromOrigin.y);
 
-                if (x > currentMaxTilesFromOrigin.x)
-                {
-                    currentMaxTilesFromOrigin.x = x;
-                }
-                if (y > currentMaxTilesFromOrigin.y)
-                {
-                    currentMaxTilesFromOrigin.y = y;
+                    if (x > currentMaxTilesFromOrigin.x)
+                    {
+                        currentMaxTilesFromOrigin.x = x;
+                    }
+                    if (y > currentMaxTilesFromOrigin.y)
+                    {
+                        currentMaxTilesFromOrigin.y = y;
+                    }
                 }
             }
-        }
 
-        // Check if we need to update the size of the nav mesh
-        if(DoEnemySpawning)
-        {
             enemyManager.CheckUpdateSize(currentMaxTilesFromOrigin);
         }
     }
@@ -219,16 +200,19 @@ public class GameManager : MonoBehaviour
 
     private void StartGame()
     {
-        enemyManager.ScanWholeNavMesh();
+        if (presets.DoEnemySpawning)
+        {
+            enemyManager.ScanWholeNavMesh();
+        }
 
         // Spawn players
         playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P1);
-        if (!DoSinglePlayer)
+        if (!presets.DoSinglePlayer)
         {
             playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P2);
         }
 
-        foreach(Player p in playerManager.AllPlayers)
+        foreach (Player p in playerManager.AllPlayers)
         {
             p.SetAlive();
         }
@@ -256,10 +240,12 @@ public class GameManager : MonoBehaviour
             catch (Exception)
             {
                 // Don't generate the chunk if there is a limit
-                if(terrainManager.GenerationRule.ToString().Contains("Limit"))
+                if (presets.terrain_generation.ToString().Contains("Limit"))
                 {
-                    if(Mathf.Abs(exit.newChunkID.x) >= MaxChunksToGenerateIfNotEndless ||
-                        Mathf.Abs(exit.newChunkID.y) >= MaxChunksToGenerateIfNotEndless)
+                    Vector2Int chunk = exit.newChunkID - ChunkManager.initialChunkID;
+
+                    if (Mathf.Abs(chunk.x) >= presets.terrain_limit_not_endless ||
+                        Mathf.Abs(chunk.y) >= presets.terrain_limit_not_endless)
                     {
                         continue;
                     }
@@ -267,17 +253,31 @@ public class GameManager : MonoBehaviour
 
                 // Get the SampleTerrain for the chunk in a symmetrical position
                 int symmetricChunkIndex = -1;
-                try
+                if (presets.terrain_generation.ToString().Contains("Symmetrical"))
                 {
-                    Chunk symmetric = chunkManager.GetChunk(ChunkManager.initialChunkID - exit.newChunkID);
-                    if(symmetric.chunkID != ChunkManager.initialChunkID)
+                    try
                     {
-                        symmetricChunkIndex = symmetric.sampleTerrainIndex;
-                    }                    
+                        Vector2Int symmetricChunkID = exit.newChunkID;
+                        if(exit.newChunkID.x < ChunkManager.initialChunkID.x)
+                        {
+                            symmetricChunkID.x = ChunkManager.initialChunkID.x + Mathf.Abs(exit.newChunkID.x);
+                        }
+                        else if(exit.newChunkID.x > ChunkManager.initialChunkID.x)
+                        {
+                            symmetricChunkID.x = ChunkManager.initialChunkID.x - Mathf.Abs(exit.newChunkID.x);
+                        }
+
+                        Chunk symmetric = chunkManager.GetChunk(symmetricChunkID);
+                        if (symmetric.chunkID != ChunkManager.initialChunkID)
+                        {
+                            symmetricChunkIndex = symmetric.sampleTerrainIndex;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
                 }
-                catch (Exception)
-                {
-                }
+
                 // Generate the new chunk
                 terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID, symmetricChunkIndex);
             }
@@ -286,6 +286,54 @@ public class GameManager : MonoBehaviour
 
 
 
+    public class Presets
+    {
+        // Game rules
+        public bool DoSinglePlayer;
+        public bool DoEnemySpawning;
+        public bool DoItemDrops;
+
+        // Map generation stuff
+        public TerrainManager.Generation terrain_generation;
+        public int terrain_limit_not_endless;
+
+        // Objective stuff
+
+        // Player controller stuff
+        public Preset player_gravity;
+        public Preset player_speed;
+
+        public Presets() : this(false, false, true, TerrainManager.Generation.Symmetrical_Limit, TerrainManager.DEFAULT_MAX_CHUNKS_NOT_ENDLESS, 
+            Preset.Default, Preset.Default)
+        {
+        }
+
+        public Presets(bool DoSinglePlayer, bool DoEnemySpawning, bool DoItemDrops,
+            TerrainManager.Generation terrain_generation, int terrain_limit_not_endless,
+            Preset player_gravity, Preset player_speed)
+        {
+            this.DoSinglePlayer = DoSinglePlayer;
+            this.DoEnemySpawning = DoEnemySpawning;
+            this.DoItemDrops = DoItemDrops;
+
+            this.terrain_generation = terrain_generation;
+            this.terrain_limit_not_endless = terrain_limit_not_endless;
+
+
+
+            this.player_gravity = player_gravity;
+            this.player_speed = player_speed;
+        }
+    }
+
+
+    public enum Preset
+    {
+        Default,
+        Less,
+        More,
+        Random,
+    }
 
     private void SetUpHUD(HUD hud)
     {

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class Player : MonoBehaviour, ILocatable
@@ -15,8 +16,7 @@ public class Player : MonoBehaviour, ILocatable
     public const string DEFAULT_PLAYER_LAYER = "Player";
 
 
-    [SerializeField]
-    public ID PlayerID { get; private set; }
+    [SerializeField] public ID PlayerID { get; private set; }
 
     public Chunk CurrentChunk { get; private set; }
     public Vector2 Position { get { return transform.position; } }
@@ -101,5 +101,15 @@ public class Player : MonoBehaviour, ILocatable
     public void UpdateCurrentChunk()
     {
         CurrentChunk = Chunk.UpdateCurrentChunk(CurrentChunk, Position);
+    }
+
+
+
+    public static class Default
+    {
+        public const float SPEED = 40;
+        public const float SPEED_MINIMUM = 20;
+
+
     }
 }
