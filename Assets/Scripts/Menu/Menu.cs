@@ -1,15 +1,16 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
 
-
 public class Menu : MonoBehaviour
 {
-    public TMP_Text play_button;
-    private static UnityAction OnButtonClicked;
     public static UnityAction OnMenuClose;
+
+    public TMP_Text play_button;
+    public Transform presetMenuParent;
 
     private GameManager.Presets preset;
 
@@ -22,16 +23,64 @@ public class Menu : MonoBehaviour
         play_button.enabled = false;
 
         // Add the event calls and functions
-        //play_button.GetComponent<Button>().onClick.AddListener(OnButtonClicked);
-        //OnButtonClicked += ApplyGamePresets;
-
         TerrainManager.OnInitialTerrainGenerated += Unload;
 
         preset = new GameManager.Presets();
 
-        Ready();
+        LoadPresetMenu();
+
         LoadGame();
     }
+
+
+
+
+    private void LoadPresetMenu()
+    {
+        List<GameManager.PresetValues> allPresetValues = new List<GameManager.PresetValues>();
+        allPresetValues.Add(GameManager.PresetValues.Default);
+        allPresetValues.Add(GameManager.PresetValues.Less);
+        allPresetValues.Add(GameManager.PresetValues.More);
+        allPresetValues.Add(GameManager.PresetValues.Random);
+
+        //AddDropdown(presetMenuParent, "Player speed", allPresetValues);
+
+        Ready();
+    }
+
+
+
+    private void AddDropdown(Transform parent, string item_text, List<GameManager.PresetValues> presetOptions)
+    {
+        GameObject newDropdown = new GameObject(item_text);
+        newDropdown.transform.parent = parent;
+        TMP_Dropdown d = newDropdown.AddComponent<TMP_Dropdown>();
+
+        GameObject text = new GameObject("text");
+        text.transform.parent = newDropdown.transform;
+        TMP_Text t = text.AddComponent<TextMeshProUGUI>();
+        SetMenuStyleTMPro(ref t);
+        t.text = item_text;
+
+        d.itemText = t;
+
+        List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
+        foreach (GameManager.PresetValues p in presetOptions)
+        {
+            options.Add(new TMP_Dropdown.OptionData
+            {
+                text = p.ToString()
+            });
+        }
+
+        d.options = options;
+
+        d.template = parent.GetComponent<RectTransform>();
+
+    }
+
+
+
 
 
     private void LoadGame()
@@ -44,7 +93,6 @@ public class Menu : MonoBehaviour
     private void OnDestroy()
     {
         // Remove listeners
-        OnButtonClicked -= ApplyGamePresets;
         TerrainManager.OnInitialTerrainGenerated -= Ready;
 
         play_button.GetComponent<Button>().onClick.RemoveAllListeners();

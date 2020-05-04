@@ -10,6 +10,8 @@ public class HUD : MonoBehaviour
 {
     public static UnityAction<HUD> OnHUDLoaded;
 
+    private Canvas canvas;
+
     public TMP_Text text_game_time;
 
     [Header("Coins")]
@@ -26,6 +28,8 @@ public class HUD : MonoBehaviour
 
     private void Awake()
     {
+        canvas = GetComponent<Canvas>();
+
         SetHUDStyleTMPro(ref text_coin_count);
         SetHUDStyleTMPro(ref text_game_time);
 
@@ -78,6 +82,18 @@ public class HUD : MonoBehaviour
         {
             t.color = Color.white;
         }
+    }
+
+
+    private void OnEnable()
+    {
+        canvas.enabled = true;
+    }
+
+
+    private void OnDisable()
+    {
+        canvas.enabled = false;
     }
 
 

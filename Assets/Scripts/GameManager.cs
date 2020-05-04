@@ -241,6 +241,8 @@ public class GameManager : MonoBehaviour
         movingCamera.SetFollowingTarget(payload);
         movingCamera.direction = MovingCamera.Direction.Following;
 
+        hud.enabled = true;
+
         isGameOver = false;
     }
 
@@ -319,17 +321,17 @@ public class GameManager : MonoBehaviour
         // Objective stuff
 
         // Player controller stuff
-        public Preset player_gravity;
-        public Preset player_speed;
+        public PresetValues player_gravity;
+        public PresetValues player_speed;
 
         public Presets() : this(false, false, true, TerrainManager.Generation.Symmetrical_Limit, TerrainManager.DEFAULT_MAX_CHUNKS_NOT_ENDLESS,
-            Preset.Default, Preset.Default)
+            PresetValues.Default, PresetValues.Default)
         {
         }
 
         public Presets(bool DoSinglePlayer, bool DoEnemySpawning, bool DoItemDrops,
             TerrainManager.Generation terrain_generation, int terrain_limit_not_endless,
-            Preset player_gravity, Preset player_speed)
+            PresetValues player_gravity, PresetValues player_speed)
         {
             this.DoSinglePlayer = DoSinglePlayer;
             this.DoEnemySpawning = DoEnemySpawning;
@@ -346,7 +348,7 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public enum Preset
+    public enum PresetValues
     {
         Default,
         Less,
@@ -357,5 +359,7 @@ public class GameManager : MonoBehaviour
     private void SetUpHUD(HUD hud)
     {
         this.hud = hud;
+
+        this.hud.enabled = false;
     }
 }
