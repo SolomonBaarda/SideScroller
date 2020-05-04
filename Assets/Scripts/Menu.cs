@@ -11,24 +11,30 @@ public class Menu : MonoBehaviour
     private static UnityAction OnButtonClicked;
     public static UnityAction OnMenuClose;
 
+    private GameManager.Presets preset;
+
     private void Awake()
     {
         // Set the button text
         SetMenuStyleTMPro(ref play_button);
 
-        // Add the event calls and functions
-        OnButtonClicked += Unload;
-        play_button.GetComponent<Button>().onClick.AddListener(OnButtonClicked);
-
         // Disable the button by default
         play_button.enabled = false;
 
-        // Enable the button when the game is ready
-        TerrainManager.OnInitialTerrainGenerated += Ready;
+        // Add the event calls and functions
+        //play_button.GetComponent<Button>().onClick.AddListener(OnButtonClicked);
+        //OnButtonClicked += ApplyGamePresets;
+
+        TerrainManager.OnInitialTerrainGenerated += Unload;
+
+        preset = new GameManager.Presets();
+
+        Ready();
+        LoadGame();
     }
 
 
-    private void Start()
+    private void LoadGame()
     {
         // Load the main game
         SceneManager.LoadSceneAsync("Game", LoadSceneMode.Additive);
@@ -38,16 +44,26 @@ public class Menu : MonoBehaviour
     private void OnDestroy()
     {
         // Remove listeners
-        OnButtonClicked -= Unload;
+        OnButtonClicked -= ApplyGamePresets;
         TerrainManager.OnInitialTerrainGenerated -= Ready;
 
         play_button.GetComponent<Button>().onClick.RemoveAllListeners();
     }
 
+
     private void Ready()
     {
-        Debug.Log("terrain ready!");
         play_button.enabled = true;
+    }
+
+
+    public void ApplyGamePresets()
+    {
+        // Apply the preset
+        GameManager.OnSetPresets.Invoke(preset);
+
+        // Disable the play button
+        play_button.enabled = false;
     }
 
 

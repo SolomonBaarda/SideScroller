@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public static UnityAction<Presets> OnSetPresets;
     public static UnityAction OnGameStart;
 
     [Header("Player")]
@@ -44,7 +45,7 @@ public class GameManager : MonoBehaviour
     private bool isGameOver;
 
     // Game rules
-    public Presets presets = new Presets();
+    public Presets presets;
 
     // FPS variables
     [Header("FPS Settings")]
@@ -58,6 +59,8 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        isGameOver = true;
+
         // References to scripts
         playerManager = playerManagerObject.GetComponent<PlayerManager>();
         movingCamera = cameraGameObject.GetComponent<MovingCamera>();
@@ -67,19 +70,31 @@ public class GameManager : MonoBehaviour
         interactionManager = interactionManagerObject.GetComponent<InteractionManager>();
         enemyManager = enemyManagerObject.GetComponent<EnemyManager>();
 
-        // Add event calls 
-        TerrainManager.OnInitialTerrainGenerated += StartGame;
-        //Menu.OnMenuClose += StartGame;
-
-        isGameOver = true;
-
+        // Load HUD
         HUD.OnHUDLoaded += SetUpHUD;
         SceneManager.LoadSceneAsync("HUD", LoadSceneMode.Additive);
+        OnSetPresets += SetPresets;
+
+        
+
+        // If the Menu is loaded, wait for presets 
+        if (SceneManager.GetSceneByName("Main Menu").isLoaded)
+        {
+            Menu.OnMenuClose += StartGame;
+        }
+        else
+        {
+            TerrainManager.OnInitialTerrainGenerated += StartGame;
+            OnSetPresets.Invoke(new Presets());
+        }
     }
 
 
-    private void Start()
+
+    private void SetPresets(Presets presets)
     {
+        this.presets = presets;
+
         // Apply game rules
         if (presets.DoSinglePlayer)
         {
@@ -90,6 +105,8 @@ public class GameManager : MonoBehaviour
         terrainManager.Initialise(presets.terrain_generation, printDebug);
     }
 
+
+
     private void OnDestroy()
     {
         Menu.OnMenuClose -= StartGame;
@@ -98,10 +115,27 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        // Update the game time
         if (!isGameOver)
         {
+            // Update the game time
             GameTimeSeconds += Time.deltaTime;
+
+
+            if (Input.GetKey(KeyCode.R))
+            {
+                foreach (Player p in playerManager.AllPlayers)
+                {
+                    p.SetAlive();
+                }
+            }
+
+
+            Player player = playerManager.GetPlayer(Player.ID.P1);
+
+            // Update HUD stuff
+            HUD.HUDElements hud = new HUD.HUDElements(player.GetInventory<Coin>().Total, player.GetInventory<Health>().Total,
+                player.GetInventory<Health>().Max, GameTimeSeconds, fps_last_framerate);
+            this.hud.UpdateHUD(in hud);
         }
 
         // Update FPS
@@ -122,70 +156,55 @@ public class GameManager : MonoBehaviour
         {
             Application.Quit();
         }
-
-
-
-        if (Input.GetKey(KeyCode.R))
-        {
-            foreach (Player p in playerManager.AllPlayers)
-            {
-                p.SetAlive();
-            }
-
-        }
-
-
-        Player player = playerManager.GetPlayer(Player.ID.P1);
-
-        // Update HUD stuff
-        HUD.HUDElements hud = new HUD.HUDElements(player.GetInventory<Coin>().Total, player.GetInventory<Health>().Total,
-            player.GetInventory<Health>().Max, GameTimeSeconds, fps_last_framerate);
-        this.hud.UpdateHUD(in hud);
     }
 
 
 
     private void LateUpdate()
     {
-        // Check each chunk
-        List<Chunk> nearbyChunksToCamera = movingCamera.GetAllNearbyChunks();
-        foreach (Chunk c in nearbyChunksToCamera)
+        if (!isGameOver)
         {
-            // Generate any new chunks if necessary
-            CheckGenerateNewChunks(c);
-
-            // Update the nav meshes
-            if (presets.DoEnemySpawning)
-            {
-                UpdateNavMesh(c);
-            }
-        }
-
-        // Check if we need to update the size of the nav mesh
-        if (presets.DoEnemySpawning)
-        {
-            // Check if we need to update the nav mesh
-            Vector2Int currentMaxTilesFromOrigin = Vector2Int.zero;
+            // Check each chunk
+            List<Chunk> nearbyChunksToCamera = movingCamera.GetAllNearbyChunks();
             foreach (Chunk c in nearbyChunksToCamera)
             {
-                foreach (TerrainManager.TerrainChunk.Exit e in c.exits)
-                {
-                    int x = Mathf.Abs(e.tilesFromOrigin.x);
-                    int y = Mathf.Abs(e.tilesFromOrigin.y);
+                // Generate any new chunks if necessary
+                CheckGenerateNewChunks(c);
 
-                    if (x > currentMaxTilesFromOrigin.x)
-                    {
-                        currentMaxTilesFromOrigin.x = x;
-                    }
-                    if (y > currentMaxTilesFromOrigin.y)
-                    {
-                        currentMaxTilesFromOrigin.y = y;
-                    }
+                // Update the nav meshes
+                if (presets.DoEnemySpawning)
+                {
+                    UpdateNavMesh(c);
                 }
             }
 
-            enemyManager.CheckUpdateSize(currentMaxTilesFromOrigin);
+            // Check if we need to update the size of the nav mesh
+            if (presets.DoEnemySpawning)
+            {
+                // Check if we need to update the nav mesh
+                Vector2Int currentMaxTilesFromOrigin = Vector2Int.zero;
+                foreach (Chunk c in nearbyChunksToCamera)
+                {
+                    foreach (TerrainManager.TerrainChunk.Exit e in c.exits)
+                    {
+                        int x = Mathf.Abs(e.tilesFromOrigin.x);
+                        int y = Mathf.Abs(e.tilesFromOrigin.y);
+
+                        if (x > currentMaxTilesFromOrigin.x)
+                        {
+                            currentMaxTilesFromOrigin.x = x;
+                        }
+                        if (y > currentMaxTilesFromOrigin.y)
+                        {
+                            currentMaxTilesFromOrigin.y = y;
+                        }
+                    }
+                }
+
+                enemyManager.CheckUpdateSize(currentMaxTilesFromOrigin);
+            }
         }
+
     }
 
 
@@ -258,11 +277,11 @@ public class GameManager : MonoBehaviour
                     try
                     {
                         Vector2Int symmetricChunkID = exit.newChunkID;
-                        if(exit.newChunkID.x < ChunkManager.initialChunkID.x)
+                        if (exit.newChunkID.x < ChunkManager.initialChunkID.x)
                         {
                             symmetricChunkID.x = ChunkManager.initialChunkID.x + Mathf.Abs(exit.newChunkID.x);
                         }
-                        else if(exit.newChunkID.x > ChunkManager.initialChunkID.x)
+                        else if (exit.newChunkID.x > ChunkManager.initialChunkID.x)
                         {
                             symmetricChunkID.x = ChunkManager.initialChunkID.x - Mathf.Abs(exit.newChunkID.x);
                         }
@@ -303,7 +322,7 @@ public class GameManager : MonoBehaviour
         public Preset player_gravity;
         public Preset player_speed;
 
-        public Presets() : this(false, false, true, TerrainManager.Generation.Symmetrical_Limit, TerrainManager.DEFAULT_MAX_CHUNKS_NOT_ENDLESS, 
+        public Presets() : this(false, false, true, TerrainManager.Generation.Symmetrical_Limit, TerrainManager.DEFAULT_MAX_CHUNKS_NOT_ENDLESS,
             Preset.Default, Preset.Default)
         {
         }

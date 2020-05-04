@@ -7,9 +7,9 @@ public class Player : MonoBehaviour, ILocatable
 {
     private PlayerController controller;
     private PlayerInventory inventory;
+    private PlayerInteraction interaction;
 
-    [SerializeField]
-    public bool IsAlive { get; private set; }
+    [SerializeField] public bool IsAlive { get; private set; }
 
     public string PLAYER_ID { get; private set; }
     public string PLAYER_LAYER { get; private set; }
@@ -70,7 +70,7 @@ public class Player : MonoBehaviour, ILocatable
         r.velocity = vel;
 
         // Add a little to centre the player
-        transform.position = new Vector2(position.x, position.y + b.bounds.extents.y);
+        transform.position = new Vector2(position.x, position.y + b.bounds.max.y);
     }
 
 
