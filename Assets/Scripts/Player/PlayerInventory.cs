@@ -31,15 +31,18 @@ public class PlayerInventory : MonoBehaviour
     {
         if (drop)
         {
+            // Drop the payload
             if (payload != null)
             {
                 Payload p = payload.GetComponent<Payload>();
-                p.Drop();
-                p.Drop(transform.position, GetComponent<Rigidbody2D>().velocity);
-
-                payload = null;
+                p.Drop(p.Position, GetComponent<Rigidbody2D>().velocity);
             }
+        }
 
+        // Check if player has payload in inventory
+        if(GetComponentInChildren<Payload>() == null)
+        {
+            payload = null;
         }
     }
 
@@ -69,13 +72,9 @@ public class PlayerInventory : MonoBehaviour
             else if (WorldItem.ExtendsClass<Payload>(g))
             {
                 Payload p = (Payload)WorldItem.GetClass<Payload>(g);
-                p.PickUp();
-
                 payload = g;
 
-                payload.transform.parent = transform;
-                payload.transform.position = new Vector2(transform.position.x, transform.position.y + 1);
-                
+                p.PickUp(gameObject, new Vector2(transform.position.x, transform.position.y + 1));
             }
             // Weapon
             else if (item is Weapon)

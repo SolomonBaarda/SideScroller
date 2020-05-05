@@ -85,15 +85,9 @@ public class HUD : MonoBehaviour
     }
 
 
-    private void OnEnable()
+    public void SetVisible(bool enabled)
     {
-        canvas.enabled = true;
-    }
-
-
-    private void OnDisable()
-    {
-        canvas.enabled = false;
+        canvas.enabled = enabled ? true : false;
     }
 
 

@@ -18,7 +18,6 @@ public class PlayerMovement : MonoBehaviour
     [Header("Controller Settings")]
     [Range(0, .5f)] [SerializeField] private float movementSmoothing = .02f;
     [SerializeField] private bool allowAirControl = true;
-    private const float collisionCheckRadius = .2f;
 
     public readonly Vector2 TERMINAL_VELOCITY = new Vector2(16, 124);
     private Vector2 previousVelocity = Vector2.zero;
@@ -67,15 +66,11 @@ public class PlayerMovement : MonoBehaviour
         previouslyGrounded = IsOnGround;
         IsOnGround = false;
 
-        // Get all collisions
-        Collider2D[] collisions = Physics2D.OverlapCircleAll(feetPos.position, collisionCheckRadius, LayerMask.GetMask("Ground"));
-        for (int i = 0; i < collisions.Length; i++)
+        // Check ground collisions
+        if (GroundCheck.IsOnGround(feetPos.position))
         {
-            if (collisions[i].gameObject != gameObject)
-            {
-                IsOnGround = true;
-                double_jumps_left = max_double_jumps;
-            }
+            IsOnGround = true;
+            double_jumps_left = max_double_jumps;
         }
     }
 
@@ -90,7 +85,7 @@ public class PlayerMovement : MonoBehaviour
             if (IsCrouching)
             {
                 // If the character has a ceiling preventing them from standing up, keep them crouching
-                if (Physics2D.OverlapCircle(headPos.position, collisionCheckRadius, LayerMask.GetMask("Ground")))
+                if(GroundCheck.IsOnGround(headPos.position))
                 {
                     crouch = true;
                 }
@@ -186,7 +181,7 @@ public class PlayerMovement : MonoBehaviour
                 previouslySliding = isSliding;
             }
 
-            if(!IsOnGround)
+            if (!IsOnGround)
             {
                 isCrouchWalking = false;
                 isSliding = false;
@@ -324,8 +319,8 @@ public class PlayerMovement : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawSphere(headPos.position, collisionCheckRadius);
-        Gizmos.DrawSphere(feetPos.position, collisionCheckRadius);
+        Gizmos.DrawSphere(headPos.position, GroundCheck.DEFAULT_RADIUS);
+        Gizmos.DrawSphere(feetPos.position, GroundCheck.DEFAULT_RADIUS);
     }
 
 

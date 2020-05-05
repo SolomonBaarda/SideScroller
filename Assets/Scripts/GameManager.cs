@@ -75,8 +75,6 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadSceneAsync("HUD", LoadSceneMode.Additive);
         OnSetPresets += SetPresets;
 
-        
-
         // If the Menu is loaded, wait for presets 
         if (SceneManager.GetSceneByName("Main Menu").isLoaded)
         {
@@ -120,7 +118,6 @@ public class GameManager : MonoBehaviour
             // Update the game time
             GameTimeSeconds += Time.deltaTime;
 
-
             if (Input.GetKey(KeyCode.R))
             {
                 foreach (Player p in playerManager.AllPlayers)
@@ -132,6 +129,7 @@ public class GameManager : MonoBehaviour
 
             Player player = playerManager.GetPlayer(Player.ID.P1);
 
+            this.hud.SetVisible(true);
             // Update HUD stuff
             HUD.HUDElements hud = new HUD.HUDElements(player.GetInventory<Coin>().Total, player.GetInventory<Health>().Total,
                 player.GetInventory<Health>().Max, GameTimeSeconds, fps_last_framerate);
@@ -240,8 +238,6 @@ public class GameManager : MonoBehaviour
 
         movingCamera.SetFollowingTarget(payload);
         movingCamera.direction = MovingCamera.Direction.Following;
-
-        hud.enabled = true;
 
         isGameOver = false;
     }
@@ -360,6 +356,9 @@ public class GameManager : MonoBehaviour
     {
         this.hud = hud;
 
-        this.hud.enabled = false;
+        if(isGameOver)
+        {
+            this.hud.SetVisible(false);
+        }
     }
 }

@@ -237,6 +237,12 @@ public class Chunk : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Returns the most recent non-null Chunk.
+    /// </summary>
+    /// <param name="current"></param>
+    /// <param name="position"></param>
+    /// <returns></returns>
     public static Chunk UpdateCurrentChunk(Chunk current, Vector2 position)
     {
         // Get the chunk the player is in now
