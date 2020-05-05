@@ -20,19 +20,21 @@ public class Menu : MonoBehaviour
         SetMenuStyleTMPro(ref play_button);
 
         // Disable the button by default
-        play_button.enabled = false;
-
-        // Add the event calls and functions
-        TerrainManager.OnInitialTerrainGenerated += Unload;
+        //play_button.enabled = false;
 
         preset = new GameManager.Presets();
 
         LoadPresetMenu();
-
-        LoadGame();
     }
 
 
+
+    public void OnPlayPressed()
+    {
+        play_button.enabled = false;
+
+        SceneLoader.Instance.LoadGame();
+    }
 
 
     private void LoadPresetMenu()
@@ -44,8 +46,6 @@ public class Menu : MonoBehaviour
         allPresetValues.Add(GameManager.PresetValues.Random);
 
         //AddDropdown(presetMenuParent, "Player speed", allPresetValues);
-
-        Ready();
     }
 
 
@@ -83,28 +83,6 @@ public class Menu : MonoBehaviour
 
 
 
-    private void LoadGame()
-    {
-        // Load the main game
-        SceneManager.LoadSceneAsync("Game", LoadSceneMode.Additive);
-    }
-
-
-    private void OnDestroy()
-    {
-        // Remove listeners
-        TerrainManager.OnInitialTerrainGenerated -= Ready;
-
-        play_button.GetComponent<Button>().onClick.RemoveAllListeners();
-    }
-
-
-    private void Ready()
-    {
-        play_button.enabled = true;
-    }
-
-
     public void ApplyGamePresets()
     {
         // Apply the preset
@@ -115,11 +93,6 @@ public class Menu : MonoBehaviour
     }
 
 
-    private void Unload()
-    {
-        OnMenuClose.Invoke();
-        SceneManager.UnloadSceneAsync(0);
-    }
 
     public static void SetMenuStyleTMPro(ref TMP_Text t)
     {

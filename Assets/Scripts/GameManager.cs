@@ -72,8 +72,9 @@ public class GameManager : MonoBehaviour
 
         // Load HUD
         HUD.OnHUDLoaded += SetUpHUD;
-        SceneManager.LoadSceneAsync("HUD", LoadSceneMode.Additive);
+        SceneManager.LoadSceneAsync(SceneLoader.HUD_SCENE, LoadSceneMode.Additive);
         OnSetPresets += SetPresets;
+
 
         // If the Menu is loaded, wait for presets 
         if (SceneManager.GetSceneByName("Main Menu").isLoaded)
