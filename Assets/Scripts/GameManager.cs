@@ -223,10 +223,10 @@ public class GameManager : MonoBehaviour
         }
 
         // Spawn players
-        playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P1);
+        playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P1, presets.DoSinglePlayer);
         if (!presets.DoSinglePlayer)
         {
-            playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P2);
+            playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P2, !presets.DoSinglePlayer);
         }
 
         foreach (Player p in playerManager.AllPlayers)

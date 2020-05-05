@@ -32,8 +32,8 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rigid;
     private Collider2D mainCollider;
     private Collider2D feetCollider;
-    public Transform headPos;
-    public Transform feetPos;
+    private Transform headPos;
+    private Transform feetPos;
 
     private enum Direction { Left, Right };
 
@@ -45,6 +45,12 @@ public class PlayerMovement : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
 
         max_double_jumps = default_double_jumps;
+    }
+
+    public void SetDefaults(Transform headPosition, Transform feetPosition)
+    {
+        headPos = headPosition;
+        feetPos = feetPosition;
     }
 
     private void OnEnable()
@@ -138,6 +144,7 @@ public class PlayerMovement : MonoBehaviour
             if (IsCrouching && IsOnGround)
             {
                 // Player has just landed from falling
+                /*
                 if (!previouslyGrounded)
                 {
                     // Do a big slide in the direction the player is facing
@@ -156,8 +163,11 @@ public class PlayerMovement : MonoBehaviour
                     isSliding = true;
                     slideTime = 0;
                 }
+                */
+
+                
                 // Player was already on the ground
-                else
+                if(previouslyGrounded)
                 {
                     // Player wants to start crouch walking
                     bool slidingJustEnded = previouslySliding && slideTime >= minimum_slide_time && move != 0;

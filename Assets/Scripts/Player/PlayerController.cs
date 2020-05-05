@@ -18,12 +18,9 @@ public class PlayerController : MonoBehaviour
     private bool isInteract1 = false;
     private bool isInteract2 = false;
 
-    private float scrollAmount = 0f;
-    private bool isFire1 = false;
-    private bool isFire2 = false;
-    private bool isFire3 = false;
-
-    private string prefix = "";
+    bool canUseController;
+    private string player_axis_prefix = "";
+    private const string controller_axis_prefix = "C";
 
     private void Awake()
     {
@@ -36,26 +33,78 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    public void SetPlayer(string ID)
+    public void SetControls(string ID, bool canUseController)
     {
-        prefix = ID + "_";
+        player_axis_prefix = ID;
+        this.canUseController = canUseController;
     }
+
+
+    public void SetDefaults(Transform headPosition, Transform feetPosition)
+    {
+        movement.SetDefaults(headPosition, feetPosition);
+    }
+
+
+    private bool GetButton(string prefix, string button)
+    {
+        return Input.GetButton(prefix + "_" + button);
+    }
+
+    private bool GetButtonDown(string prefix, string button)
+    {
+        return Input.GetButtonDown(prefix + "_" + button);
+    }
+
+    private float GetAxisRaw(string prefix, string axis)
+    {
+        return Input.GetAxisRaw(prefix + "_" + axis);
+    }
+
+
+    private float GetMax(float a, float b)
+    {
+        if(Mathf.Abs(a) > Mathf.Abs(b))
+        {
+            return a;
+        }
+        else
+        {
+            return b;
+        }
+    }
+
+    private bool GetMax(bool a, bool b)
+    {
+        return a || b;
+    }
+
 
     private void Update()
     {
         // Update the control values
-        horizontalMovement = Input.GetAxisRaw(prefix + "Horizontal");
-        verticalMovement = Input.GetAxisRaw(prefix + "Vertical");
-        isJump = Input.GetButtonDown(prefix + "Jump");
-        isCrouch = Input.GetButton(prefix + "Crouch");
+        horizontalMovement = GetAxisRaw(player_axis_prefix, "Horizontal");
+        verticalMovement = GetAxisRaw(player_axis_prefix, "Vertical");
 
-        isInteract1 = Input.GetButton(prefix + "Interact");
-        isInteract2 = Input.GetButton(prefix + "Interact2");
+        isJump = GetButtonDown(player_axis_prefix, "Jump");
+        isCrouch = GetButton(player_axis_prefix, "Crouch");
 
-        //scrollAmount = Input.GetAxisRaw("Mouse ScrollWheel");
-        //isFire1 = Input.GetButton("Fire1");
-        //isFire2 = Input.GetButton("Fire2");
-        //isFire3 = Input.GetButton("Fire3");
+        isInteract1 = GetButton(player_axis_prefix, "Interact");
+        isInteract2 = GetButton(player_axis_prefix, "Interact2");
+
+        // Check controller values as well and update them if we need to 
+        if(canUseController)
+        {
+            // Choose the maximum of both inputs
+            horizontalMovement = GetMax(GetAxisRaw(controller_axis_prefix, "Horizontal"), horizontalMovement);
+            verticalMovement = GetMax(GetAxisRaw(controller_axis_prefix, "Vertical"), verticalMovement);
+
+            isJump = GetMax(GetButtonDown(controller_axis_prefix, "Jump"), isJump);
+            isCrouch = GetMax(GetButton(controller_axis_prefix, "Crouch"), isCrouch);
+
+            isInteract1 = GetMax(GetButton(controller_axis_prefix, "Interact"), isInteract1);
+            isInteract2 = GetMax(GetButton(controller_axis_prefix, "Interact2"), isInteract2);
+        }
 
         UpdateAnimations();
     }
@@ -66,10 +115,6 @@ public class PlayerController : MonoBehaviour
         interaction.Interact(isInteract1);
 
         inventory.DropItem(isInteract2);
-        //Buff currentTotal = inventory.GetCurrentTotal();
-
-        // Update the inventory and attack
-        inventory.Attack(scrollAmount, isFire1, isFire2, movement.PlayerVelocity);
 
         // Move last
         movement.Move(horizontalMovement * Time.fixedDeltaTime, isCrouch, isJump);

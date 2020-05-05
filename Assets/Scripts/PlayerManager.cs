@@ -16,13 +16,13 @@ public class PlayerManager : MonoBehaviour
     }
 
 
-    public void SpawnPlayer(Vector2 position, Player.ID playerID)
+    public void SpawnPlayer(Vector2 position, Player.ID playerID, bool canUseController)
     {
         GameObject g = Instantiate(playerPrefab, transform);
         g.name = playerID.ToString();
 
         Player p = g.GetComponent<Player>();
-        p.SetPlayer(playerID);
+        p.SetPlayer(playerID, canUseController);
         AllPlayers.Add(p);
 
         p.SetPosition(position);

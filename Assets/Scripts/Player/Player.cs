@@ -7,14 +7,13 @@ public class Player : MonoBehaviour, ILocatable
 {
     private PlayerController controller;
     private PlayerInventory inventory;
-    private PlayerInteraction interaction;
 
-    [SerializeField] public bool IsAlive { get; private set; }
+    public Transform headPosition, feetPosition;
 
+    public bool IsAlive { get; private set; }
     public string PLAYER_ID { get; private set; }
     public string PLAYER_LAYER { get; private set; }
     public const string DEFAULT_PLAYER_LAYER = "Player";
-
 
     [SerializeField] public ID PlayerID { get; private set; }
 
@@ -28,7 +27,7 @@ public class Player : MonoBehaviour, ILocatable
     }
 
 
-    public void SetPlayer(ID PlayerID)
+    public void SetPlayer(ID PlayerID, bool canUseController)
     {
         this.PlayerID = PlayerID;
 
@@ -40,7 +39,9 @@ public class Player : MonoBehaviour, ILocatable
         // Controller reference
         controller = GetComponent<PlayerController>();
         controller.enabled = false;
-        controller.SetPlayer(PLAYER_ID);
+        controller.SetDefaults(headPosition, feetPosition);
+
+        controller.SetControls(PLAYER_ID, canUseController);
 
         inventory = GetComponent<PlayerInventory>();
 
@@ -50,13 +51,12 @@ public class Player : MonoBehaviour, ILocatable
 
 
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (IsAlive)
         {
             UpdateCurrentChunk();
         }
-
     }
 
 
@@ -69,8 +69,10 @@ public class Player : MonoBehaviour, ILocatable
         vel.y = 0;
         r.velocity = vel;
 
+        float height = headPosition.position.y - feetPosition.position.y;
+
         // Add a little to centre the player
-        transform.position = new Vector2(position.x, position.y + b.bounds.max.y);
+        transform.position = new Vector2(position.x, position.y + (height/2));
     }
 
 
@@ -92,6 +94,8 @@ public class Player : MonoBehaviour, ILocatable
 
 
 
+
+
     public PlayerInventory.Inventory<T> GetInventory<T>() where T : class
     {
         return inventory.GetInventory<T>();
@@ -109,7 +113,5 @@ public class Player : MonoBehaviour, ILocatable
     {
         public const float SPEED = 40;
         public const float SPEED_MINIMUM = 20;
-
-
     }
 }

@@ -23,11 +23,6 @@ public class Payload : CollectableItem, ILocatable
     private void FixedUpdate()
     {
         UpdateCurrentChunk();
-
-        if(GroundCheck.IsOnGround(groundPosition.position))
-        {
-            lastGroundPosition = transform.position;
-        }
     }
 
     public void UpdateCurrentChunk()
@@ -39,6 +34,11 @@ public class Payload : CollectableItem, ILocatable
         if (currentNew != null)
         {
             CurrentChunk = currentNew;
+
+            if (GroundCheck.IsOnGround(groundPosition.position))
+            {
+                lastGroundPosition = transform.position;
+            }
         }
         // Is null, don't update current chunk
         else
