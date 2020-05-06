@@ -7,20 +7,15 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
     private float interact_timeout = 0;
     [SerializeField] private float DEFAULT_INTERACT_TIMEOUT_SECONDS = 0.25f;
 
-    public float area_of_attack = 1;
-
-    private List<Collider2D> allColliders;
+    private List<Collider2D> areaOfInteraction;
+    public Collider2D AreaOfAttack { get; private set; }
 
     private PlayerInventory inventory;
 
-    private void Awake()
+    public void SetColliders(List<Collider2D> areaOfInteraction, Collider2D areaOfAttack)
     {
-        // Add all attached colliders to the list
-        allColliders = new List<Collider2D>();
-        foreach (Collider2D c in GetComponents<Collider2D>())
-        {
-            allColliders.Add(c);
-        }
+        this.areaOfInteraction = areaOfInteraction;
+        AreaOfAttack = areaOfAttack;
 
         inventory = GetComponent<PlayerInventory>();
     }
@@ -45,7 +40,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         filter.useTriggers = true;
 
         // Loop through each collision with items on each collider
-        foreach (Collider2D collider in allColliders)
+        foreach (Collider2D collider in areaOfInteraction)
         {
             // List will be resized if its too small
             Collider2D[] collisions = new Collider2D[1];
@@ -136,19 +131,29 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
             (1 << LayerMask.NameToLayer(TerrainManager.LAYER_NAME_HAZARD)) 
         );
 
-        // Get all possible collisions
-        List<Collider2D> allColliders = new List<Collider2D>(Physics2D.OverlapCircleAll(transform.position, area_of_attack, layerMask));
-
-        // Remove all that can't be attacked 
-        List<GameObject> validTargets = new List<GameObject>();
-        foreach(Collider2D c in allColliders)
+        // Set the contact filter
+        ContactFilter2D contactFilter = new ContactFilter2D
         {
-            GameObject g = c.gameObject;
+            useLayerMask = true,
+            layerMask = layerMask,
+            useTriggers = true
+        };
 
-            // Ensure valid target and not already in the list
-            if(WorldItem.ExtendsClass<ICanBeAttacked>(g) && !validTargets.Contains(g))
+        List<GameObject> validTargets = new List<GameObject>();
+
+        // Get all possible collisions
+        Collider2D[] allCollisions = new Collider2D[1]; 
+        if(Physics2D.OverlapCollider(AreaOfAttack, contactFilter, allCollisions) > 0)
+        {
+            foreach (Collider2D c in allCollisions)
             {
-                validTargets.Add(g);
+                GameObject g = c.gameObject;
+
+                // Remove all that can't be attacked and ensure there are no duplicates
+                if (WorldItem.ExtendsClass<ICanBeAttacked>(g) && !validTargets.Contains(g))
+                {
+                    validTargets.Add(g);
+                }
             }
         }
 
@@ -161,12 +166,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
     }
 
 
-    private void OnDrawGizmosSelected()
-    {
-        // Draw area of attack
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, area_of_attack);
-    }
+
 }
 
 

@@ -30,21 +30,24 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Direction facing;
 
     private Rigidbody2D rigid;
-    private Collider2D mainCollider;
+    private Collider2D torsoCollider;
     private Collider2D feetCollider;
     private Transform headPos;
     private Transform feetPos;
 
     private enum Direction { Left, Right };
 
-
     private void Awake()
     {
-        mainCollider = GetComponent<BoxCollider2D>();
-        feetCollider = GetComponent<CircleCollider2D>();
         rigid = GetComponent<Rigidbody2D>();
 
         max_double_jumps = default_double_jumps;
+    }
+
+    public void SetColliders(Collider2D torsoCollider, Collider2D feetCollider)
+    {
+        this.torsoCollider = torsoCollider;
+        this.feetCollider = feetCollider;
     }
 
     public void SetDefaults(Transform headPosition, Transform feetPosition)
@@ -112,18 +115,18 @@ public class PlayerMovement : MonoBehaviour
                 }
 
                 // Disable the top collider when crouching
-                if (mainCollider != null)
+                if (torsoCollider != null)
                 {
-                    mainCollider.enabled = false;
+                    torsoCollider.enabled = false;
                 }
             }
             // Set not crouching
             else
             {
                 // Enable the collider when not crouching
-                if (mainCollider != null)
+                if (torsoCollider != null)
                 {
-                    mainCollider.enabled = true;
+                    torsoCollider.enabled = true;
                 }
 
                 // Player has just uncrouched

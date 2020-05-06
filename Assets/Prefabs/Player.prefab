@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2638045218602126187}
   - component: {fileID: 2638045218602126186}
   - component: {fileID: 2638045218602126185}
+  - component: {fileID: 1454900814556581906}
   - component: {fileID: 2638045218602126184}
   - component: {fileID: 2638045218602126197}
   - component: {fileID: 3244487834473068629}
@@ -174,6 +175,22 @@ CircleCollider2D:
   m_Offset: {x: 0, y: -0.5}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!58 &1454900814556581906
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2638045218602126188}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.5, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.75
 --- !u!114 &2638045218602126184
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,8 +203,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3d3767b0d2b5754cb6cab5be04cbfdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  feetPosition: {fileID: 3244487833654855806}
   headPosition: {fileID: 3244487835014452442}
+  feetPosition: {fileID: 3244487833654855806}
+  torsoCollider: {fileID: 2638045218602126186}
+  feetCollider: {fileID: 2638045218602126185}
+  areaOfAttackCollider: {fileID: 1454900814556581906}
 --- !u!114 &2638045218602126197
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -221,8 +241,6 @@ MonoBehaviour:
   movementSmoothing: 0.02
   allowAirControl: 1
   facing: 0
-  headPos: {fileID: 3244487835014452442}
-  feetPos: {fileID: 3244487833654855806}
 --- !u!114 &2638045218602126196
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -236,6 +254,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DEFAULT_INTERACT_TIMEOUT_SECONDS: 0.25
+  area_of_attack: 1
 --- !u!114 &2638045218602126199
 MonoBehaviour:
   m_ObjectHideFlags: 0

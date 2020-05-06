@@ -5,8 +5,12 @@ public class Player : MonoBehaviour, ILocatable
 {
     private PlayerController controller;
     private PlayerInventory inventory;
+    private PlayerInteraction interaction;
+    private PlayerMovement movement;
 
     public Transform headPosition, feetPosition;
+
+    public Collider2D torsoCollider, feetCollider, areaOfAttackCollider;
 
     public bool IsAlive { get; private set; }
     public string PLAYER_ID { get; private set; }
@@ -43,7 +47,13 @@ public class Player : MonoBehaviour, ILocatable
 
         controller.SetControls(PLAYER_ID, canUseController);
 
+        interaction = GetComponent<PlayerInteraction>();
+        interaction.SetColliders(new List<Collider2D>(new Collider2D[] { torsoCollider, feetCollider}), areaOfAttackCollider);
+
         inventory = GetComponent<PlayerInventory>();
+
+        movement = GetComponent<PlayerMovement>();
+        movement.SetColliders(torsoCollider, feetCollider);
 
         // Player variables
         IsAlive = false;

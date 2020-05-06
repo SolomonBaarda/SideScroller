@@ -45,7 +45,6 @@ public class PlayerController : MonoBehaviour
         movement.SetDefaults(headPosition, feetPosition);
     }
 
-
     private bool GetButton(string prefix, string button)
     {
         return Input.GetButton(prefix + "_" + button);
