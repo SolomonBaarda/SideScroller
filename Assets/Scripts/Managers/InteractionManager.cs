@@ -5,9 +5,7 @@ using UnityEngine.Events;
 
 public class InteractionManager : MonoBehaviour
 {
-
     public static UnityAction<GameObject, PlayerInventory> OnPlayerInteractWithItem;
-
 
     private void Awake()
     {

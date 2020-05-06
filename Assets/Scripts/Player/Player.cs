@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour, ILocatable
@@ -14,6 +12,8 @@ public class Player : MonoBehaviour, ILocatable
     public string PLAYER_ID { get; private set; }
     public string PLAYER_LAYER { get; private set; }
     public const string DEFAULT_PLAYER_LAYER = "Player";
+
+    public const string LAYER_ONLY_GROUND = "OnlyGround";
 
     [SerializeField] public ID PlayerID { get; private set; }
 
@@ -114,4 +114,5 @@ public class Player : MonoBehaviour, ILocatable
         public const float SPEED = 40;
         public const float SPEED_MINIMUM = 20;
     }
+
 }

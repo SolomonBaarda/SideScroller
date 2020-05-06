@@ -74,7 +74,7 @@ public class WorldItem : MonoBehaviour
 
 
     /// <summary>
-    /// Returns true if the attached GameObject has a script that implements the interface T.
+    /// Returns true if the attached GameObject has a script that implements the class T.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="toCheck"></param>
@@ -86,7 +86,7 @@ public class WorldItem : MonoBehaviour
 
 
     /// <summary>
-    /// Returns the script that implements interface T in GameObject. 
+    /// Returns the monobehaviour that implements class T in GameObject. 
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="toCheck"></param>

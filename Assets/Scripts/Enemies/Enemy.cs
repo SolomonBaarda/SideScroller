@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface Enemy 
+public abstract class Enemy 
 {
+    public const string LAYER = "Enemy";
 
+    public abstract void Attack();
 
-    void Attack();
-
-    void Move(Transform destination);
+    public abstract void Move(Transform destination);
 
 
 

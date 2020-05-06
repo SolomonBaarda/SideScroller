@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerInteraction : MonoBehaviour
+public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
 {
     private float interact_timeout = 0;
     [SerializeField] private float DEFAULT_INTERACT_TIMEOUT_SECONDS = 0.25f;
+
+    public float area_of_attack = 1;
 
     private List<Collider2D> allColliders;
 
@@ -109,10 +111,62 @@ public class PlayerInteraction : MonoBehaviour
                 }
             }
         }
-
-
     }
 
+
+
+    public void Attack(bool isAttacking)
+    {
+        List<GameObject> targets = InAreaOfAttack();
+
+        foreach(GameObject g in targets)
+        {
+            
+        }
+    }
+
+
+    public List<GameObject> InAreaOfAttack()
+    {
+        // Set the layermask
+        // Don't allow player to attack themselves and remove some common layers for performance reasons
+        LayerMask layerMask = ~( 
+            (1 << gameObject.layer) | (1 << LayerMask.NameToLayer(Player.LAYER_ONLY_GROUND)) |
+            (1 << LayerMask.NameToLayer(Chunk.CHUNK_LAYER)) | (1 << LayerMask.NameToLayer(TerrainManager.LAYER_NAME_GROUND)) | 
+            (1 << LayerMask.NameToLayer(TerrainManager.LAYER_NAME_HAZARD)) 
+        );
+
+        // Get all possible collisions
+        List<Collider2D> allColliders = new List<Collider2D>(Physics2D.OverlapCircleAll(transform.position, area_of_attack, layerMask));
+
+        // Remove all that can't be attacked 
+        List<GameObject> validTargets = new List<GameObject>();
+        foreach(Collider2D c in allColliders)
+        {
+            GameObject g = c.gameObject;
+
+            // Ensure valid target and not already in the list
+            if(WorldItem.ExtendsClass<ICanBeAttacked>(g) && !validTargets.Contains(g))
+            {
+                validTargets.Add(g);
+            }
+        }
+
+        return validTargets;
+    }
+
+    public void WasAttacked()
+    {
+        throw new System.NotImplementedException();
+    }
+
+
+    private void OnDrawGizmosSelected()
+    {
+        // Draw area of attack
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, area_of_attack);
+    }
 }
 
 

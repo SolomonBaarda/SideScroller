@@ -113,6 +113,7 @@ public class PlayerController : MonoBehaviour
     {
         // Interact with items
         interaction.Interact(isInteract1);
+        interaction.Attack(true);
 
         inventory.DropItem(isInteract2);
 
