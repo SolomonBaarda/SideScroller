@@ -19,9 +19,6 @@ public class Menu : MonoBehaviour
         // Set the button text
         SetMenuStyleTMPro(ref play_button);
 
-        // Disable the button by default
-        //play_button.enabled = false;
-
         preset = new GameManager.Presets();
 
         LoadPresetMenu();

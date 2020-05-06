@@ -22,25 +22,40 @@ public class SceneLoader : MonoBehaviour
         // Load the main menu
         loadingScreen.SetActive(true);
         scenesLoading.Add(SceneManager.LoadSceneAsync(MENU_SCENE, LoadSceneMode.Additive));
-        StartCoroutine(GetSceneLoadProgress());
+        StartCoroutine(WaitForUnloadScenes());
     }
 
 
 
     public void LoadGame()
     {
+        // Load the game and HUD
         loadingScreen.SetActive(true);
         scenesLoading.Add(SceneManager.LoadSceneAsync(GAME_SCENE, LoadSceneMode.Additive));
         scenesLoading.Add(SceneManager.LoadSceneAsync(HUD_SCENE, LoadSceneMode.Additive));
 
+        // Unload the menu
         scenesLoading.Add(SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(MENU_SCENE)));
         
-        StartCoroutine(GetSceneLoadProgress());
+        StartCoroutine(WaitForUnloadScenes());
     }
 
 
+    public void UnloadGameToMenu()
+    {
+        // Load the menu
+        loadingScreen.SetActive(true);
+        scenesLoading.Add(SceneManager.LoadSceneAsync(MENU_SCENE, LoadSceneMode.Additive));
 
-    private IEnumerator GetSceneLoadProgress()
+        // Unload the game
+        scenesLoading.Add(SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(GAME_SCENE)));
+        scenesLoading.Add(SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(HUD_SCENE)));
+
+        StartCoroutine(WaitForUnloadScenes());
+    }
+
+
+    private IEnumerator WaitForUnloadScenes()
     {
         for (int i = 0; i < scenesLoading.Count; i++)
         {

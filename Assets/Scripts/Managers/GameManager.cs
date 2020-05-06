@@ -72,7 +72,6 @@ public class GameManager : MonoBehaviour
 
         // Load HUD
         HUD.OnHUDLoaded += SetUpHUD;
-        SceneManager.LoadSceneAsync(SceneLoader.HUD_SCENE, LoadSceneMode.Additive);
         OnSetPresets += SetPresets;
 
 
@@ -130,11 +129,14 @@ public class GameManager : MonoBehaviour
 
             Player player = playerManager.GetPlayer(Player.ID.P1);
 
-            this.hud.SetVisible(true);
-            // Update HUD stuff
-            HUD.HUDElements hud = new HUD.HUDElements(player.GetInventory<Coin>().Total, player.GetInventory<Health>().Total,
-                player.GetInventory<Health>().Max, GameTimeSeconds, fps_last_framerate);
-            this.hud.UpdateHUD(in hud);
+            if(hud != null)
+            {
+                this.hud.SetVisible(true);
+                // Update HUD stuff
+                HUD.HUDElements hud = new HUD.HUDElements(player.GetInventory<Coin>().Total, player.GetInventory<Health>().Total,
+                    player.GetInventory<Health>().Max, GameTimeSeconds, fps_last_framerate);
+                this.hud.UpdateHUD(in hud);
+            }
         }
 
         // Update FPS

@@ -25,15 +25,22 @@ public class HUD : MonoBehaviour
     public bool show_fps = true;
     public TMP_Text text_fps;
 
+    [Header("Quit")]
+    public TMP_Text button_quit;
+
+    public SceneLoader sceneLoader;
 
     private void Awake()
     {
         canvas = GetComponent<Canvas>();
+        sceneLoader = SceneLoader.Instance;
 
         SetHUDStyleTMPro(ref text_coin_count);
         SetHUDStyleTMPro(ref text_game_time);
 
         SetHUDStyleTMPro(ref text_fps);
+
+        SetHUDStyleTMPro(ref button_quit);
 
         SceneManager.sceneLoaded += HUDLoaded;
     }
@@ -42,6 +49,13 @@ public class HUD : MonoBehaviour
     private void HUDLoaded(Scene s, LoadSceneMode l)
     {
         OnHUDLoaded.Invoke(this);
+    }
+
+
+
+    public void QuitToMenu()
+    {
+        sceneLoader.UnloadGameToMenu();
     }
 
 
