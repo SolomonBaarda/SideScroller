@@ -110,11 +110,10 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // Attack first
+        interaction.Attack(isInteract2);
         // Interact with items
         interaction.Interact(isInteract1);
-        interaction.Attack(true);
-
-        inventory.DropItem(isInteract2);
 
         // Move last
         movement.Move(horizontalMovement * Time.fixedDeltaTime, isCrouch, isJump);

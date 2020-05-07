@@ -27,23 +27,27 @@ public class PlayerInventory : MonoBehaviour
 
 
 
-    public void DropItem(bool drop)
+    public bool DropItem(bool drop)
     {
-        if (drop)
-        {
-            // Drop the payload
-            if (payload != null)
-            {
-                Payload p = payload.GetComponent<Payload>();
-                p.Drop(p.Position, GetComponent<Rigidbody2D>().velocity);
-            }
-        }
-
         // Check if player has payload in inventory
-        if(GetComponentInChildren<Payload>() == null)
+        Payload p = GetComponentInChildren<Payload>();
+        if (p != null)
+        {
+            payload = p.gameObject;
+        }
+        else
         {
             payload = null;
         }
+
+        // Drop the payload
+        if (drop && p != null)
+        {
+            p.Drop(p.Position, GetComponent<Rigidbody2D>().velocity);
+            return true;
+        }
+
+        return false;
     }
 
 
@@ -132,7 +136,7 @@ public class PlayerInventory : MonoBehaviour
 
     private void CombineBuff(CollectableItem worldItem, Buff buff)
     {
-        if(currentTotal == null)
+        if (currentTotal == null)
         {
             // Create a new buff instance
             currentTotal = ScriptableObject.CreateInstance<Buff>();

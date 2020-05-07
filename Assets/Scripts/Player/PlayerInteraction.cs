@@ -1,16 +1,18 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
 {
-    private float interact_timeout = 0;
-    [SerializeField] private float DEFAULT_INTERACT_TIMEOUT_SECONDS = 0.25f;
+    private const float DEFAULT_INTERACT_TIMEOUT_SECONDS = 0.25f;
+    [SerializeField]
+    private float interact_timeout = DEFAULT_INTERACT_TIMEOUT_SECONDS;
 
     private List<Collider2D> areaOfInteraction;
     public Collider2D AreaOfAttack { get; private set; }
 
     private PlayerInventory inventory;
+    private Rigidbody2D rigid;
 
     public void SetColliders(List<Collider2D> areaOfInteraction, Collider2D areaOfAttack)
     {
@@ -18,6 +20,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         AreaOfAttack = areaOfAttack;
 
         inventory = GetComponent<PlayerInventory>();
+        rigid = GetComponent<Rigidbody2D>();
     }
 
     private void Update()
@@ -106,17 +109,39 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
                 }
             }
         }
+
+        // Drop the item
+        if (inventory.DropItem(interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS))
+        {
+            interact_timeout = 0;
+        }
     }
 
 
 
     public void Attack(bool isAttacking)
     {
-        List<GameObject> targets = InAreaOfAttack();
-
-        foreach(GameObject g in targets)
+        // Vaid time to attack
+        if(interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS && isAttacking)
         {
-            
+            // Get all the targets
+            List<GameObject> targets = InAreaOfAttack();
+
+            if(targets.Count > 0)
+            {
+                // Reset the timer
+                interact_timeout = 0;
+
+                // Loop through each target and hit them
+                foreach (GameObject g in targets)
+                {
+                    if (WorldItem.ExtendsClass<ICanBeAttacked>(g))
+                    {
+                        ICanBeAttacked a = (ICanBeAttacked)WorldItem.GetClass<ICanBeAttacked>(g);
+                        a.WasAttacked(transform.position);
+                    }
+                }
+            }
         }
     }
 
@@ -125,10 +150,10 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
     {
         // Set the layermask
         // Don't allow player to attack themselves and remove some common layers for performance reasons
-        LayerMask layerMask = ~( 
+        LayerMask layerMask = ~(
             (1 << gameObject.layer) | (1 << LayerMask.NameToLayer(Player.LAYER_ONLY_GROUND)) |
-            (1 << LayerMask.NameToLayer(Chunk.CHUNK_LAYER)) | (1 << LayerMask.NameToLayer(TerrainManager.LAYER_NAME_GROUND)) | 
-            (1 << LayerMask.NameToLayer(TerrainManager.LAYER_NAME_HAZARD)) 
+            (1 << LayerMask.NameToLayer(Chunk.CHUNK_LAYER)) | (1 << LayerMask.NameToLayer(TerrainManager.LAYER_NAME_GROUND)) |
+            (1 << LayerMask.NameToLayer(TerrainManager.LAYER_NAME_HAZARD))
         );
 
         // Set the contact filter
@@ -142,8 +167,8 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         List<GameObject> validTargets = new List<GameObject>();
 
         // Get all possible collisions
-        Collider2D[] allCollisions = new Collider2D[1]; 
-        if(Physics2D.OverlapCollider(AreaOfAttack, contactFilter, allCollisions) > 0)
+        Collider2D[] allCollisions = new Collider2D[1];
+        if (Physics2D.OverlapCollider(AreaOfAttack, contactFilter, allCollisions) > 0)
         {
             foreach (Collider2D c in allCollisions)
             {
@@ -160,9 +185,18 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         return validTargets;
     }
 
-    public void WasAttacked()
+    public void WasAttacked(Vector2 attackerPosition)
     {
-        throw new System.NotImplementedException();
+        int direction = 1;
+        if(attackerPosition.x > transform.position.x)
+        {
+            direction = -1;
+        }
+
+        
+        Vector2 force = new Vector2(direction * 8, 12);
+
+        rigid.AddForce(force, ForceMode2D.Impulse);
     }
 
 
