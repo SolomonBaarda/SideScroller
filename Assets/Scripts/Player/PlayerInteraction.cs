@@ -35,6 +35,17 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
 
     public void Interact(bool interact1)
     {
+        // First check if the item needs to be dropped
+        if (inventory.CanDropItem())
+        {
+            // Drop the item
+            if (interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)
+            {
+                interact_timeout = 0;
+                inventory.DropItem();
+            }
+        }
+
         List<Collider2D> collisionItems = new List<Collider2D>();
 
         // Filter colliders to be only item layer
@@ -103,17 +114,11 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
                             // Interact with that one item only
                             InteractionManager.OnPlayerInteractWithItem(g, inventory);
                             interact_timeout = 0;
-                            break;
+                            return;
                         }
                     }
                 }
             }
-        }
-
-        // Drop the item
-        if (inventory.DropItem(interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS))
-        {
-            interact_timeout = 0;
         }
     }
 

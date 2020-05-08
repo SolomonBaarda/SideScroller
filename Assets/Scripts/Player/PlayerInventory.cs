@@ -14,7 +14,7 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField] private List<InventoryItem<Buff>> buffs;
     [SerializeField] private Buff currentTotal;
 
-    private GameObject payload;
+    public GameObject payload;
 
     public void Awake()
     {
@@ -25,9 +25,7 @@ public class PlayerInventory : MonoBehaviour
     }
 
 
-
-
-    public bool DropItem(bool drop)
+    public bool CanDropItem()
     {
         // Check if player has payload in inventory
         Payload p = GetComponentInChildren<Payload>();
@@ -40,14 +38,18 @@ public class PlayerInventory : MonoBehaviour
             payload = null;
         }
 
-        // Drop the payload
-        if (drop && p != null)
-        {
-            p.Drop(p.Position, GetComponent<Rigidbody2D>().velocity);
-            return true;
-        }
+        return p != null;
+    }
 
-        return false;
+    public void DropItem()
+    {
+        if (CanDropItem())
+        {
+            Payload p = payload.GetComponent<Payload>();
+
+            // Drop the payload
+            p.Drop(p.Position, GetComponent<Rigidbody2D>().velocity);
+        }
     }
 
 

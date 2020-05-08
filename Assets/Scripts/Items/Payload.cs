@@ -53,6 +53,7 @@ public class Payload : CollectableItem, ILocatable
     public void PickUp(GameObject player, Vector2 newPosition)
     {
         rigid.isKinematic = true;
+        trigger.enabled = false;
 
         transform.parent = player.transform;
         transform.position = newPosition;
@@ -61,6 +62,7 @@ public class Payload : CollectableItem, ILocatable
     public new void Drop(Vector2 position, Vector2 velocity)
     {
         rigid.isKinematic = false;
+        trigger.enabled = true;
         transform.parent = null;
 
         base.Drop(position, velocity);
