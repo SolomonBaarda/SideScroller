@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
@@ -10,7 +9,6 @@ public class Menu : MonoBehaviour
     public static UnityAction OnMenuClose;
 
     public TMP_Text play_button;
-    public Transform presetMenuParent;
 
     private GameManager.Presets preset;
 
@@ -30,7 +28,13 @@ public class Menu : MonoBehaviour
     {
         play_button.enabled = false;
 
-        SceneLoader.Instance.LoadGame();
+        SceneLoader.Instance.LoadGame(preset);
+    }
+
+
+    public void OnMultiplayerCheckboxChanged(bool value)
+    {
+        preset.DoSinglePlayer = !value;
     }
 
 

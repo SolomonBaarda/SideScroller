@@ -64,6 +64,8 @@ public class TerrainManager : MonoBehaviour
         }
         random = new System.Random(seedHash);
 
+        OnInitialTerrainGenerated += EMPTY_METHOD;
+
         // Get the references
         grid = GetComponent<Grid>();
         sampleTerrainManager = sampleTerrainManagerObject.GetComponent<SampleTerrainManager>();
@@ -390,7 +392,13 @@ public class TerrainManager : MonoBehaviour
         return new Vector2Int(tile.x, tile.y);
     }
 
-
+    /// <summary>
+    /// Empty method. Used to ensure event calls are never null.
+    /// </summary>
+    private void EMPTY_METHOD()
+    {
+        
+    }
 
     public enum Generation
     {

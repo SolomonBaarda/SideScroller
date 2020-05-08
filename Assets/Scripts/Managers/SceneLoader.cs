@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -14,21 +15,30 @@ public class SceneLoader : MonoBehaviour
     public GameObject loadingScreen;
 
     List<AsyncOperation> scenesLoading = new List<AsyncOperation>();
+    public UnityEvent OnScenesLoaded;
+
+    private GameManager.Presets lastPreset;
+
+    public bool IsLoadingScenes { get { return scenesLoading.Count > 0; } }
 
     private void Awake()
     {
         Instance = this;
 
+        OnScenesLoaded = new UnityEvent();
+
         // Load the main menu
         loadingScreen.SetActive(true);
         scenesLoading.Add(SceneManager.LoadSceneAsync(MENU_SCENE, LoadSceneMode.Additive));
-        StartCoroutine(WaitForUnloadScenes());
+        StartCoroutine(WaitForLoadScenes());
     }
 
 
 
-    public void LoadGame()
+    public void LoadGame(GameManager.Presets presets)
     {
+        lastPreset = presets;
+
         // Load the game and HUD
         loadingScreen.SetActive(true);
         scenesLoading.Add(SceneManager.LoadSceneAsync(GAME_SCENE, LoadSceneMode.Additive));
@@ -36,8 +46,10 @@ public class SceneLoader : MonoBehaviour
 
         // Unload the menu
         scenesLoading.Add(SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(MENU_SCENE)));
-        
-        StartCoroutine(WaitForUnloadScenes());
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
+        StartCoroutine(WaitForLoadScenes());
     }
 
 
@@ -45,17 +57,26 @@ public class SceneLoader : MonoBehaviour
     {
         // Load the menu
         loadingScreen.SetActive(true);
-        scenesLoading.Add(SceneManager.LoadSceneAsync(MENU_SCENE, LoadSceneMode.Additive));
+        if(SceneIsLoaded(MENU_SCENE))
+        {
+            scenesLoading.Add(SceneManager.LoadSceneAsync(MENU_SCENE, LoadSceneMode.Additive));
+        }
 
         // Unload the game
-        scenesLoading.Add(SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(GAME_SCENE)));
-        scenesLoading.Add(SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(HUD_SCENE)));
+        if(SceneIsLoaded(GAME_SCENE))
+        {
+            scenesLoading.Add(SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(GAME_SCENE)));
+        }
+        if(SceneIsLoaded(HUD_SCENE))
+        {
+            scenesLoading.Add(SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(HUD_SCENE)));
+        }
 
-        StartCoroutine(WaitForUnloadScenes());
+        StartCoroutine(WaitForLoadScenes());
     }
 
 
-    private IEnumerator WaitForUnloadScenes()
+    private IEnumerator WaitForLoadScenes()
     {
         for (int i = 0; i < scenesLoading.Count; i++)
         {
@@ -67,9 +88,24 @@ public class SceneLoader : MonoBehaviour
 
         // Hide the loading screen
         loadingScreen.SetActive(false);
+
+        OnScenesLoaded.Invoke();
     }
 
 
+    private void OnSceneLoaded(Scene s, LoadSceneMode l)
+    {
+        if(s.name.Equals(GAME_SCENE))
+        {
+            GameManager.OnSetPresets.Invoke(lastPreset);
+        }
+    }
+    
+
+    public bool SceneIsLoaded(string name)
+    {
+        return SceneManager.GetSceneByName(name) != null;
+    }
 
 
 }

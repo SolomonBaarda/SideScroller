@@ -72,13 +72,13 @@ public class GameManager : MonoBehaviour
 
         // Load HUD
         HUD.OnHUDLoaded += SetUpHUD;
+        // Load presets
         OnSetPresets += SetPresets;
 
-
         // If the Menu is loaded, wait for presets 
-        if (SceneManager.GetSceneByName("Main Menu").isLoaded)
+        if (SceneLoader.Instance.SceneIsLoaded(SceneLoader.MENU_SCENE))
         {
-            Menu.OnMenuClose += StartGame;
+            SceneLoader.Instance.OnScenesLoaded.AddListener(StartGame);
         }
         else
         {
