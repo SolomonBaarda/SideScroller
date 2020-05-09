@@ -1234,6 +1234,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seed: 
   useRandomSeed: 0
+  rule: {fileID: 0}
   sampleTerrainManagerObject: {fileID: 1609188954}
   groundTile: {fileID: 11400000, guid: 35d18aaf6686fb14db4c9674999a5a90, type: 2}
 --- !u!1 &953929488
@@ -1646,6 +1647,120 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_Tiles.Array.data[2].second.m_TileSpriteIndex
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_Tiles.Array.data[4].second.m_TileSpriteIndex
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_Tiles.Array.data[6].second.m_TileSpriteIndex
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_Tiles.Array.data[6].second.m_AllTileFlags
+      value: 2147483650
+      objectReference: {fileID: 0}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[12].m_RefCount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[13].m_Data
+      value: 
+      objectReference: {fileID: -392480253200770856, guid: 92bb2c4709b330b4bb3828f69703d7ed,
+        type: 3}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[15].m_Data
+      value: 
+      objectReference: {fileID: -6547043493076464110, guid: 92bb2c4709b330b4bb3828f69703d7ed,
+        type: 3}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[16].m_RefCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[16].m_Data
+      value: 
+      objectReference: {fileID: 2187011968806798870, guid: 92bb2c4709b330b4bb3828f69703d7ed,
+        type: 3}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[13].m_RefCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_Tiles.Array.data[0].second.m_TileSpriteIndex
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[14].m_RefCount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_Tiles.Array.data[0].second.m_AllTileFlags
+      value: 1073741826
+      objectReference: {fileID: 0}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_Tiles.Array.data[1].second.m_TileSpriteIndex
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_Tiles.Array.data[3].second.m_TileSpriteIndex
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[11].m_RefCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[11].m_Data
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_Tiles.Array.data[5].second.m_TileSpriteIndex
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_Tiles.Array.data[7].second.m_TileSpriteIndex
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[17].m_RefCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[17].m_Data
+      value: 
+      objectReference: {fileID: 182855423865772039, guid: 92bb2c4709b330b4bb3828f69703d7ed,
+        type: 3}
+    - target: {fileID: 5350793357945653181, guid: 51fdc561ba13a6c41a9753945affdbba,
+        type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[15].m_RefCount
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5350793358878637442, guid: 51fdc561ba13a6c41a9753945affdbba,
         type: 3}
       propertyPath: m_Name
@@ -2073,9 +2188,5 @@ MonoBehaviour:
   itemManagerObject: {fileID: 292633088}
   interactionManagerObject: {fileID: 1539556900}
   enemyManagerObject: {fileID: 128989138}
-  DoSinglePlayer: 0
-  DoEnemySpawning: 0
-  DoItemDrops: 1
-  MaxChunksToGenerateIfNotEndless: 8
   fps_refresh_time: 0.5
   printDebug: 1
