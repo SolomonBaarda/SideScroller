@@ -20,6 +20,9 @@ public class TerrainManager : MonoBehaviour
     public bool useRandomSeed;
 
 
+    public RuleTile rule;
+
+
     public const int DEFAULT_MAX_CHUNKS_NOT_ENDLESS = 8;
 
     public Generation GenerationRule { get; private set; }
@@ -99,6 +102,7 @@ public class TerrainManager : MonoBehaviour
             }
         }
 
+        
     }
 
 
@@ -345,6 +349,24 @@ public class TerrainManager : MonoBehaviour
 
             tilemap.SetTile(newTilePos, tile.tileType);
         }
+
+        // Loop through each tile
+        /*
+        BoundsInt.PositionEnumerator p = tilemap.cellBounds.allPositionsWithin;
+        while (p.MoveNext())
+        {
+            Vector3Int current = p.Current;
+            // Get the tile
+            TileBase t = tilemap.GetTile(current);
+            if (t != null)
+            {
+                if (t is RuleTile r)
+                {
+                    //r.UpdateNeighborPositions();
+                }
+            }
+        }
+        */
     }
 
 

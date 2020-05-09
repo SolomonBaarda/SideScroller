@@ -10,14 +10,12 @@ public class Menu : MonoBehaviour
 
     public TMP_Text play_button;
 
-    private GameManager.Presets preset;
+    private GameManager.Presets preset = new GameManager.Presets();
 
     private void Awake()
     {
         // Set the button text
         SetMenuStyleTMPro(ref play_button);
-
-        preset = new GameManager.Presets();
 
         LoadPresetMenu();
     }
@@ -35,6 +33,11 @@ public class Menu : MonoBehaviour
     public void OnMultiplayerCheckboxChanged(bool value)
     {
         preset.DoSinglePlayer = !value;
+    }
+
+    public void OnTerrainLengthSliderChanged(int value)
+    {
+        preset.terrain_limit_not_endless = value;
     }
 
 

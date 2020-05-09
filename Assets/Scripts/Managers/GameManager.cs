@@ -76,10 +76,11 @@ public class GameManager : MonoBehaviour
         OnSetPresets += SetPresets;
 
         // If the Menu is loaded, wait for presets 
-        if (SceneLoader.Instance.SceneIsLoaded(SceneLoader.MENU_SCENE))
+        if (SceneLoader.Instance != null && SceneLoader.Instance.SceneIsLoaded(SceneLoader.MENU_SCENE))
         {
             SceneLoader.Instance.OnScenesLoaded.AddListener(StartGame);
         }
+        // Just start the game and do defaut presets, must be running in the editor
         else
         {
             TerrainManager.OnInitialTerrainGenerated += StartGame;
@@ -97,6 +98,10 @@ public class GameManager : MonoBehaviour
         if (presets.DoSinglePlayer)
         {
             presets.terrain_generation = TerrainManager.Generation.Multidirectional_Endless;
+        }
+        else
+        {
+            presets.terrain_generation = TerrainManager.Generation.Symmetrical_Limit;
         }
 
         // Generate terrain when the game loads
