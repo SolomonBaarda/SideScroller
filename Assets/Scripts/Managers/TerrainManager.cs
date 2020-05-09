@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Tilemaps;
@@ -18,10 +20,6 @@ public class TerrainManager : MonoBehaviour
     [Header("General Generation Settings")]
     public string seed;
     public bool useRandomSeed;
-
-
-    public RuleTile rule;
-
 
     public const int DEFAULT_MAX_CHUNKS_NOT_ENDLESS = 8;
 
@@ -42,6 +40,7 @@ public class TerrainManager : MonoBehaviour
 
     [Header("Initial Tile Type")]
     public Tile groundTile;
+    public RandomTile backgroundWallTile;
 
     public static readonly Vector2Int initialTilePos = Vector2Int.zero;
 
@@ -209,8 +208,30 @@ public class TerrainManager : MonoBehaviour
         CopySampleTerrainLayer(entryTile, flipAxisX, terrain.hazard, ref hazard);
         CopySampleTerrainLayer(entryTile, flipAxisX, terrain.ground, ref ground);
 
+        // Generate the chunk
+        TerrainChunk c = GenerateTerrainChunk(entryTile, flipAxisX, directionToGenerate, terrain, chunkID);
+
+        Vector3Int centre = grid.WorldToCell(c.centre);
+        Vector2Int extents = new Vector2Int((int)(c.bounds / c.cellSize / 2).x, (int)(c.bounds / c.cellSize / 2).y);
+        Vector3Int offset = new Vector3Int();
+
+
+        int offsetDistance = 4;
+
+        if(directionToGenerate == Direction.Left || directionToGenerate == Direction.Right || directionToGenerate == Direction.Both)
+        {
+            offset.y = (int)(c.bounds.y / 2) + offsetDistance;
+        }
+
+        //wall.BoxFill(centre, backgroundWallTile, centre.x -extents.x, centre.y + offset.y, centre.x + extents.x, centre.y + offset.y);
+        //wall.BoxFill(centre, backgroundWallTile, centre.x - extents.x, centre.y - offset.y, centre.x + extents.x, centre.y - offset.y);
+
+        // Do a flood fill of wall tiles
+        wall.FloodFill(centre + offset, backgroundWallTile);
+        wall.FloodFill(centre - offset, backgroundWallTile);
+
         // Tell the ChunkManager that the terrain has been generated
-        OnTerrainChunkGenerated.Invoke(GenerateTerrainChunk(entryTile, flipAxisX, directionToGenerate, terrain, chunkID));
+        OnTerrainChunkGenerated.Invoke(c);
     }
 
     private TerrainChunk GenerateTerrainChunk(Vector2Int entryTile, bool flipAxisX, Direction directionToGenerate, SampleTerrain terrain, Vector2Int chunkID)
@@ -349,24 +370,6 @@ public class TerrainManager : MonoBehaviour
 
             tilemap.SetTile(newTilePos, tile.tileType);
         }
-
-        // Loop through each tile
-        /*
-        BoundsInt.PositionEnumerator p = tilemap.cellBounds.allPositionsWithin;
-        while (p.MoveNext())
-        {
-            Vector3Int current = p.Current;
-            // Get the tile
-            TileBase t = tilemap.GetTile(current);
-            if (t != null)
-            {
-                if (t is RuleTile r)
-                {
-                    //r.UpdateNeighborPositions();
-                }
-            }
-        }
-        */
     }
 
 
