@@ -24,6 +24,10 @@ public class Player : MonoBehaviour, ILocatable
     public Chunk CurrentChunk { get; private set; }
     public Vector2 Position { get { return transform.position; } }
 
+
+    public Payload.Direction IdealDirection { get; private set; }
+
+
     public enum ID
     {
         P1,
@@ -31,9 +35,10 @@ public class Player : MonoBehaviour, ILocatable
     }
 
 
-    public void SetPlayer(ID PlayerID, bool canUseController)
+    public void SetPlayer(ID PlayerID, Payload.Direction directionToMove, bool canUseController)
     {
         this.PlayerID = PlayerID;
+        IdealDirection = directionToMove;
 
         // Set the player
         PLAYER_ID = PlayerID.ToString();

@@ -345,8 +345,16 @@ public class TerrainManager : MonoBehaviour
             allItemPositions.Add(new TerrainChunk.Item(item.type, pos));
         }
 
+        List<TerrainChunk.Respawn> respawnPoints = new List<TerrainChunk.Respawn>();
+        respawnPoints.Add(new TerrainChunk.Respawn(Payload.Direction.None, entryPositionWorld));
+
+        foreach(TerrainChunk.Exit e in exits)
+        {
+            respawnPoints.Add(new TerrainChunk.Respawn(Payload.Direction.None, e.exitPositionWorld));
+        }
+
         // Return the TerrainChunk object for use in the ChunkManager
-        return new TerrainChunk(b.boundsReal, CellSize, centre, entryPositionWorld, exits, directionToGenerate, chunkID, 
+        return new TerrainChunk(b.boundsReal, CellSize, centre, entryPositionWorld, exits, respawnPoints, directionToGenerate, chunkID, 
             allItemPositions, terrain.itemChance, terrain.index);
     }
 
@@ -457,6 +465,8 @@ public class TerrainManager : MonoBehaviour
 
         public Vector2 enteranceWorldPosition;
         public List<Exit> exits;
+        public List<Respawn> respawnPoints;
+
         public Direction direction;
         public Vector2Int chunkID;
 
@@ -465,7 +475,7 @@ public class TerrainManager : MonoBehaviour
 
         public int sampleIndex;
 
-        public TerrainChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldPosition, List<Exit> exits, 
+        public TerrainChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldPosition, List<Exit> exits, List<Respawn> respawnPoints, 
             Direction direction, Vector2Int chunkID, List<Item> items, float itemChance, int sampleIndex)
         {
             this.bounds = bounds;
@@ -473,6 +483,7 @@ public class TerrainManager : MonoBehaviour
             this.centre = centre;
             this.enteranceWorldPosition = enteranceWorldPosition;
             this.exits = exits;
+            this.respawnPoints = respawnPoints;
             this.direction = direction;
             this.chunkID = chunkID;
             this.items = items;
@@ -502,6 +513,18 @@ public class TerrainManager : MonoBehaviour
                 cameraPathPoints = new List<Vector2>();
 
                 this.tilesFromOrigin = tilesFromOrigin;
+            }
+        }
+
+        public struct Respawn
+        {
+            public Payload.Direction direction;
+            public Vector2 position;
+
+            public Respawn(Payload.Direction direction, Vector2 position)
+            {
+                this.direction = direction;
+                this.position = position;
             }
         }
 

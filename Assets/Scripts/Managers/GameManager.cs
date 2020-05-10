@@ -195,7 +195,8 @@ public class GameManager : MonoBehaviour
             }
 
             // Check if a player needs to be respawned
-            playerManager.CheckRespawns(nearbyChunksToCamera);
+            Payload p = itemManager.Payload.GetComponent<Payload>();
+            playerManager.CheckRespawns(nearbyChunksToCamera, p);
 
             // Check if we need to update the size of the nav mesh
             if (presets.DoEnemySpawning)
@@ -244,11 +245,13 @@ public class GameManager : MonoBehaviour
         }
 
         // Spawn players
-        playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P1, presets.DoSinglePlayer);
+        Payload.Direction p1_dir = Payload.Direction.None;
         if (!presets.DoSinglePlayer)
         {
-            playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P2, !presets.DoSinglePlayer);
+            playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P2, Payload.Direction.Left, true);
+            p1_dir = Payload.Direction.Right;
         }
+        playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P1, p1_dir, presets.DoSinglePlayer);
 
         foreach (Player p in playerManager.AllPlayers)
         {

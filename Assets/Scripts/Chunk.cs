@@ -12,6 +12,7 @@ public class Chunk : MonoBehaviour
     [Header("Chunk Information")]
     public Vector2 enteranceWorldSpace;
     public List<TerrainManager.TerrainChunk.Exit> exits;
+    public List<TerrainManager.TerrainChunk.Respawn> respawnPoints;
 
     public TerrainManager.Direction direction;
     public Vector2 bounds;
@@ -25,14 +26,16 @@ public class Chunk : MonoBehaviour
     public List<CameraPath> cameraPaths;
     private Transform cameraPathChild;
 
-    public void CreateChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldSpace,
-        List<TerrainManager.TerrainChunk.Exit> exits, TerrainManager.Direction direction, int sampleTerrainIndex, Vector2Int chunkID)
+    public void CreateChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldSpace, 
+        List<TerrainManager.TerrainChunk.Exit> exits, List<TerrainManager.TerrainChunk.Respawn> respawnPoints, 
+        TerrainManager.Direction direction, int sampleTerrainIndex, Vector2Int chunkID)
     {
         // Assign variables 
         this.bounds = bounds;
         this.cellSize = cellSize;
         this.enteranceWorldSpace = enteranceWorldSpace;
         this.exits = exits;
+        this.respawnPoints = respawnPoints;
         this.direction = direction;
         this.sampleTerrainIndex = sampleTerrainIndex;
         this.chunkID = chunkID;
@@ -214,9 +217,6 @@ public class Chunk : MonoBehaviour
     {
         return "(" + chunkID.x + "," + chunkID.y + ")";
     }
-
-
-
 
 
 

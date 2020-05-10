@@ -48,7 +48,7 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public void CheckRespawns(List<Chunk> chunksNearCamera)
+    public void CheckRespawns(List<Chunk> chunksNearCamera, Payload payload)
     {
         DateTime now = DateTime.Now;
 
@@ -71,32 +71,73 @@ public class PlayerManager : MonoBehaviour
                 // Player needs to be respawned
                 if (respawn[p] <= 0)
                 {
-                    // Remove from the respawn list
-                    respawn.Remove(p);
-
-                    // Respawn the player
-                    CheckRespawn(p, chunksNearCamera);
+                    // Try to respawn the player
+                    if (WasRespawned(p, chunksNearCamera, payload))
+                    {
+                        // Remove from the respawn list
+                        respawn.Remove(p);
+                    }
+                    else
+                    {
+                        // Do nothing, will try to respawn again next time it is called
+                    }
                 }
             }
         }
     }
 
 
-    private void CheckRespawn(Player p, List<Chunk> nearbyChunks)
+    private bool WasRespawned(Player player, List<Chunk> nearbyChunks, Payload payload)
     {
-        Vector2 position = p.gameObject.transform.position;
+        bool canRespawn = false;
+        Vector2 position = payload.gameObject.transform.position;
 
-        if(isSinglePlayer)
+        if (isSinglePlayer)
         {
-
+            // Do nothing for now, maybe just exit the game
         }
         else
         {
-            
+            // Loop through each chunk
+            foreach(Chunk c in nearbyChunks)
+            {
+                // Each exit point 
+                foreach (TerrainManager.TerrainChunk.Respawn point in c.respawnPoints)
+                {
+                    // Exit point is the correct direction
+                    if(point.direction == player.IdealDirection || point.direction == Payload.Direction.None)
+                    {
+                        canRespawn = true;
+
+                        // Put the player on their side of the screen
+                        // Choose the furthest away point from the payload
+                        if (player.IdealDirection == Payload.Direction.Left)
+                        {
+                            if(point.position.x > position.x)
+                            {
+                                position = point.position;
+                            }
+                        }
+                        else if (player.IdealDirection == Payload.Direction.Right)
+                        {
+                            if (point.position.x < position.x)
+                            {
+                                position = point.position;
+                            }
+                        }
+                    }
+                }
+            }
+
         }
 
-        // Respawn the player
-        RespawnPlayer(p, position);
+        // Respawn the player if there's a valid place
+        if (canRespawn)
+        {
+            RespawnPlayer(player, position);
+        }
+
+        return canRespawn;
     }
 
 
@@ -109,13 +150,13 @@ public class PlayerManager : MonoBehaviour
     }
 
 
-    public void SpawnPlayer(Vector2 position, Player.ID playerID, bool canUseController)
+    public void SpawnPlayer(Vector2 position, Player.ID playerID, Payload.Direction directionToMove, bool canUseController)
     {
         GameObject g = Instantiate(playerPrefab, transform);
         g.name = playerID.ToString();
 
         Player p = g.GetComponent<Player>();
-        p.SetPlayer(playerID, canUseController);
+        p.SetPlayer(playerID, directionToMove, canUseController);
         AllPlayers.Add(p);
 
         p.SetPosition(position);

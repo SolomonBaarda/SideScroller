@@ -24,7 +24,7 @@ public class ItemManager : MonoBehaviour
     public GameObject collectableItemPrefab;
 
     public GameObject payloadPrefab;
-    private GameObject payload;
+    public GameObject Payload { get; private set; }
 
     private void Awake()
     {
@@ -57,8 +57,8 @@ public class ItemManager : MonoBehaviour
 
     public GameObject SpawnPayload(Vector2 position)
     {
-        payload =  SpawnItem(payloadPrefab, position, "Payload");
-        return payload;
+        Payload = SpawnItem(payloadPrefab, position, "Payload");
+        return Payload;
     }
 
 

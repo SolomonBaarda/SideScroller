@@ -25,7 +25,7 @@ public class ChunkManager : MonoBehaviour
     }
 
 
-    private void GenerateNewChunk(TerrainManager.TerrainChunk terrainChunk)
+    private void GenerateNewChunk(TerrainManager.TerrainChunk t)
     {
         // Create a new chunk game object 
         // This is used for the player, camera path etc
@@ -33,9 +33,8 @@ public class ChunkManager : MonoBehaviour
         Chunk c = g.GetComponent<Chunk>();
 
         // Create the chunk
-        c.CreateChunk(terrainChunk.bounds, terrainChunk.cellSize, terrainChunk.centre, terrainChunk.enteranceWorldPosition,
-                terrainChunk.exits, terrainChunk.direction, terrainChunk.sampleIndex, terrainChunk.chunkID);
-        chunks.Add(terrainChunk.chunkID, c);
+        c.CreateChunk(t.bounds, t.cellSize, t.centre, t.enteranceWorldPosition, t.exits, t.respawnPoints, t.direction, t.sampleIndex, t.chunkID);
+        chunks.Add(t.chunkID, c);
     }
 
 

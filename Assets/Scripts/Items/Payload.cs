@@ -10,6 +10,7 @@ public class Payload : CollectableItem, ILocatable
     public Transform groundPosition;
     private Vector2 lastGroundPosition;
 
+    public Direction IdealDirection { get; private set; } = Direction.None;
 
     public override void Awake()
     {
@@ -52,21 +53,41 @@ public class Payload : CollectableItem, ILocatable
 
     public void PickUp(GameObject player, Vector2 newPosition)
     {
+        // Disable physics while picked up
         rigid.isKinematic = true;
         trigger.enabled = false;
 
+        // Update the direction this payload wants to travel in
+        Player p = player.GetComponent<Player>();
+        IdealDirection = p.IdealDirection;
+
+        // Pick up
         transform.parent = player.transform;
         transform.position = newPosition;
     }
 
     public new void Drop(Vector2 position, Vector2 velocity)
     {
+        // Enable physics again
         rigid.isKinematic = false;
         trigger.enabled = true;
         transform.parent = null;
 
+        // Set the direction
+        IdealDirection = Direction.None;
+
+        // Drop
         base.Drop(position, velocity);
     }
 
+
+
+
+    public enum Direction
+    {
+        None,
+        Left,
+        Right,
+    }
 
 }
