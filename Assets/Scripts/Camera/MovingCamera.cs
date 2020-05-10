@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using PathCreation;
-using Pathfinding;
-using UnityEditorInternal;
+using UnityEngine.Video;
 
 public class MovingCamera : MonoBehaviour, ILocatable
 {
@@ -21,6 +18,11 @@ public class MovingCamera : MonoBehaviour, ILocatable
 
     public Chunk CurrentChunk { get; private set; }
     public Vector2 Position { get { return transform.position; } }
+
+    public Bounds ViewBounds { get {
+            Vector2 bl = c.ViewportToWorldPoint(new Vector3(0, 0, zoom));
+            Vector2 tr = c.ViewportToWorldPoint(new Vector3(1, 1, zoom)); 
+            return new Bounds((Vector2)transform.position, tr - bl); } }
 
     private void Awake()
     {
@@ -63,10 +65,7 @@ public class MovingCamera : MonoBehaviour, ILocatable
 
     public List<Chunk> GetAllNearbyChunks()
     {
-        Vector2 bl = c.ViewportToWorldPoint(new Vector3(0, 0, zoom));
-        Vector2 tr = c.ViewportToWorldPoint(new Vector3(1, 1, zoom));
-
-        return GetAllNearbyChunks(bl, tr);
+        return GetAllNearbyChunks(ViewBounds.min, ViewBounds.max);
     }
 
 

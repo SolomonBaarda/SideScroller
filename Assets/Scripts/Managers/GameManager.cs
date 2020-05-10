@@ -196,7 +196,7 @@ public class GameManager : MonoBehaviour
 
             // Check if a player needs to be respawned
             Payload p = itemManager.Payload.GetComponent<Payload>();
-            playerManager.CheckRespawns(nearbyChunksToCamera, p);
+            playerManager.CheckRespawns(nearbyChunksToCamera, p, movingCamera.ViewBounds);
 
             // Check if we need to update the size of the nav mesh
             if (presets.DoEnemySpawning)

@@ -48,7 +48,7 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public void CheckRespawns(List<Chunk> chunksNearCamera, Payload payload)
+    public void CheckRespawns(List<Chunk> chunksNearCamera, Payload payload, Bounds cameraViewBounds)
     {
         DateTime now = DateTime.Now;
 
@@ -72,7 +72,7 @@ public class PlayerManager : MonoBehaviour
                 if (respawn[p] <= 0)
                 {
                     // Try to respawn the player
-                    if (WasRespawned(p, chunksNearCamera, payload))
+                    if (WasRespawned(p, chunksNearCamera, payload, cameraViewBounds))
                     {
                         // Remove from the respawn list
                         respawn.Remove(p);
@@ -87,7 +87,7 @@ public class PlayerManager : MonoBehaviour
     }
 
 
-    private bool WasRespawned(Player player, List<Chunk> nearbyChunks, Payload payload)
+    private bool WasRespawned(Player player, List<Chunk> nearbyChunks, Payload payload, Bounds view)
     {
         bool canRespawn = false;
         Vector2 position = payload.gameObject.transform.position;
@@ -109,22 +109,28 @@ public class PlayerManager : MonoBehaviour
                     {
                         canRespawn = true;
 
-                        // Put the player on their side of the screen
-                        // Choose the furthest away point from the payload
-                        if (player.IdealDirection == Payload.Direction.Left)
+                        // Ensure the point is actually visible on the screen
+                        if(point.position.x >= view.min.x && point.position.x <= view.max.x &&
+                            point.position.y >= view.min.y && point.position.y <= view.max.y)
                         {
-                            if(point.position.x > position.x)
+                            // Put the player on their side of the screen
+                            // Choose the furthest away point from the payload
+                            if (player.IdealDirection == Payload.Direction.Left)
                             {
-                                position = point.position;
+                                if (point.position.x > position.x)
+                                {
+                                    position = point.position;
+                                }
+                            }
+                            else if (player.IdealDirection == Payload.Direction.Right)
+                            {
+                                if (point.position.x < position.x)
+                                {
+                                    position = point.position;
+                                }
                             }
                         }
-                        else if (player.IdealDirection == Payload.Direction.Right)
-                        {
-                            if (point.position.x < position.x)
-                            {
-                                position = point.position;
-                            }
-                        }
+
                     }
                 }
             }
