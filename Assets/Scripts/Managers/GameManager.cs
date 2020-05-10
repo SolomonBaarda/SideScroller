@@ -1,8 +1,6 @@
-﻿using Pathfinding;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Animations;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
@@ -78,7 +76,7 @@ public class GameManager : MonoBehaviour
         // If the Menu is loaded, wait for presets 
         if (SceneLoader.Instance != null && SceneLoader.Instance.SceneIsLoaded(SceneLoader.MENU_SCENE))
         {
-            SceneLoader.Instance.OnScenesLoaded.AddListener(StartGame);
+            SceneLoader.Instance.OnScenesLoaded += StartGame;
         }
         // Just start the game and do defaut presets, must be running in the editor
         else
@@ -106,12 +104,26 @@ public class GameManager : MonoBehaviour
 
         // Generate terrain when the game loads
         terrainManager.Initialise(presets.terrain_generation, printDebug);
+
+        playerManager.SetGameMode(presets.DoSinglePlayer);
     }
 
 
 
     private void OnDestroy()
     {
+        HUD.OnHUDLoaded -= SetUpHUD;
+        OnSetPresets -= SetPresets;
+
+        if(SceneLoader.Instance != null)
+        {
+            SceneLoader.Instance.OnScenesLoaded -= StartGame;
+        }
+        else
+        {
+            TerrainManager.OnInitialTerrainGenerated -= StartGame;
+        }
+
         Menu.OnMenuClose -= StartGame;
     }
 
@@ -131,13 +143,11 @@ public class GameManager : MonoBehaviour
                 }
             }
 
-
             Player player = playerManager.GetPlayer(Player.ID.P1);
-
-            if(hud != null)
+            // Update HUD stuff
+            if (hud != null)
             {
                 this.hud.SetVisible(true);
-                // Update HUD stuff
                 HUD.HUDElements hud = new HUD.HUDElements(player.GetInventory<Coin>().Total, player.GetInventory<Health>().Total,
                     player.GetInventory<Health>().Max, GameTimeSeconds, fps_last_framerate);
                 this.hud.UpdateHUD(in hud);
@@ -183,6 +193,9 @@ public class GameManager : MonoBehaviour
                     UpdateNavMesh(c);
                 }
             }
+
+            // Check if a player needs to be respawned
+            playerManager.CheckRespawns(nearbyChunksToCamera);
 
             // Check if we need to update the size of the nav mesh
             if (presets.DoEnemySpawning)

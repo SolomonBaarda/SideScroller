@@ -15,7 +15,7 @@ public class SceneLoader : MonoBehaviour
     public GameObject loadingScreen;
 
     List<AsyncOperation> scenesLoading = new List<AsyncOperation>();
-    public UnityEvent OnScenesLoaded;
+    public UnityAction OnScenesLoaded;
 
     private GameManager.Presets lastPreset;
 
@@ -24,8 +24,6 @@ public class SceneLoader : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-
-        OnScenesLoaded = new UnityEvent();
 
         // Load the main menu
         loadingScreen.SetActive(true);

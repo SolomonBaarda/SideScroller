@@ -12,10 +12,10 @@ public class Hazard : MonoBehaviour
             // Reference to player and controller script
             Player p = collision.GetComponentInParent<Player>();
 
-            if (p.IsAlive)
+            if(p != null)
             {
-                p.SetDead();
-                Debug.Log(p.PLAYER_LAYER + " has died.");
+                // Let the manager know that the player should be killed
+                PlayerManager.OnPlayerDie.Invoke(p);
             }
         }
     }
