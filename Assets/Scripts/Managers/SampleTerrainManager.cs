@@ -9,6 +9,8 @@ public class SampleTerrainManager : MonoBehaviour
     public SampleTerrain[] allSamples;
     [HideInInspector]
     public SampleTerrain startingArea;
+    [HideInInspector]
+    public SampleTerrain finishArea;
 
     // Dev tile types used 
     [Header("Dev Tile references")]
@@ -41,10 +43,14 @@ public class SampleTerrainManager : MonoBehaviour
             allSamples[i].LoadSample(i);
         }
 
-
         // Load spawn
         Transform spawn = transform.Find("Spawn");
         startingArea = spawn.GetComponentInChildren<SampleTerrain>();
         startingArea.LoadSample(0);
+
+        // Load spawn
+        Transform finish = transform.Find("Finish");
+        finishArea = finish.GetComponentInChildren<SampleTerrain>();
+        finishArea.LoadSample(0);
     }
 }

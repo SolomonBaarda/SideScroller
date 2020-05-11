@@ -32,7 +32,7 @@ public class SampleTerrain : MonoBehaviour
 
     // Terrain direction and type
     public TerrainManager.Direction direction;
-    public SampleTerrainType terrainType;
+    public TerrainType terrainType;
 
     // Item stuff
     public List<SampleItem> items;
@@ -469,10 +469,11 @@ public class SampleTerrain : MonoBehaviour
     }
 
 
-    public enum SampleTerrainType
+    public enum TerrainType
     {
         Terrain,
-        Spawn
+        Spawn,
+        Finish,
     }
 
     public enum ExitDirection

@@ -155,16 +155,31 @@ public class TerrainManager : MonoBehaviour
 
 
 
-    public void Generate(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID, int sampleIndex = -1)
+
+
+    public void Generate(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID, int sampleIndex = -1, SampleTerrain.TerrainType type = SampleTerrain.TerrainType.Terrain)
     {
         // Get a list of only the valid sample terrain
         List<SampleTerrain> allValidSamples = new List<SampleTerrain>();
-        foreach (SampleTerrain t in sampleTerrainManager.allSamples)
+
+        // Load the correct terrain for this type
+        switch (type)
         {
-            if (IsValidDirection(directionToGenerate, t.direction))
-            {
-                allValidSamples.Add(t);
-            }
+            case SampleTerrain.TerrainType.Terrain:
+                foreach (SampleTerrain t in sampleTerrainManager.allSamples)
+                {
+                    if (IsValidDirection(directionToGenerate, t.direction))
+                    {
+                        allValidSamples.Add(t);
+                    }
+                }
+                break;
+            case SampleTerrain.TerrainType.Spawn:
+                allValidSamples.Add(sampleTerrainManager.startingArea);
+                break;
+            case SampleTerrain.TerrainType.Finish:
+                allValidSamples.Add(sampleTerrainManager.finishArea);
+                break;
         }
 
         if (allValidSamples.Count.Equals(0))

@@ -712,7 +712,7 @@ Transform:
   m_GameObject: {fileID: 175497837}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 0}
   m_Children:
   - {fileID: 1615530053}
   - {fileID: 112815032}
@@ -1055,7 +1055,7 @@ Transform:
   m_GameObject: {fileID: 398164110}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 0}
   m_Children:
   - {fileID: 1774196826}
   - {fileID: 1379464322}
@@ -1481,7 +1481,7 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
-  m_AllowMSAA: 1
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
@@ -1514,7 +1514,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3e3da71290725f4d83da28e8bdb4d6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoom: 8
+  zoom: 16
   speed: 4
   direction: 2
 --- !u!1 &1379464321

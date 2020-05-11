@@ -288,7 +288,6 @@ public class GameManager : MonoBehaviour
                     if (Mathf.Abs(chunk.x) >= presets.terrain_limit_not_endless ||
                         Mathf.Abs(chunk.y) >= presets.terrain_limit_not_endless)
                     {
-                        // Need to generate the final chunk
                         continue;
                     }
                 }
