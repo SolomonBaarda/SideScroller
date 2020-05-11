@@ -25,12 +25,24 @@ public class SceneLoader : MonoBehaviour
     {
         Instance = this;
 
+        // Add an empty method to the event call to ensure never null
+        OnScenesLoaded += EMPTY;
+
         // Load the main menu
         loadingScreen.SetActive(true);
         scenesLoading.Add(SceneManager.LoadSceneAsync(MENU_SCENE, LoadSceneMode.Additive));
         StartCoroutine(WaitForLoadScenes());
     }
 
+
+    private void Update()
+    {
+        // Quit the build
+        if (Input.GetButton("Cancel"))
+        {
+            Application.Quit();
+        }
+    }
 
 
     public void LoadGame(GameManager.Presets presets)
@@ -55,17 +67,17 @@ public class SceneLoader : MonoBehaviour
     {
         // Load the menu
         loadingScreen.SetActive(true);
-        if(SceneIsLoaded(MENU_SCENE))
+        if (SceneIsLoaded(MENU_SCENE))
         {
             scenesLoading.Add(SceneManager.LoadSceneAsync(MENU_SCENE, LoadSceneMode.Additive));
         }
 
         // Unload the game
-        if(SceneIsLoaded(GAME_SCENE))
+        if (SceneIsLoaded(GAME_SCENE))
         {
             scenesLoading.Add(SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(GAME_SCENE)));
         }
-        if(SceneIsLoaded(HUD_SCENE))
+        if (SceneIsLoaded(HUD_SCENE))
         {
             scenesLoading.Add(SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(HUD_SCENE)));
         }
@@ -93,12 +105,12 @@ public class SceneLoader : MonoBehaviour
 
     private void OnSceneLoaded(Scene s, LoadSceneMode l)
     {
-        if(s.name.Equals(GAME_SCENE))
+        if (s.name.Equals(GAME_SCENE))
         {
             GameManager.OnSetPresets.Invoke(lastPreset);
         }
     }
-    
+
 
     public bool SceneIsLoaded(string name)
     {
@@ -106,4 +118,5 @@ public class SceneLoader : MonoBehaviour
     }
 
 
+    public static void EMPTY() { }
 }

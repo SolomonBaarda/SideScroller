@@ -867,6 +867,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text_game_time: {fileID: 2026689013}
+  coin_display_parent: {fileID: 2008493374}
   text_coin_count: {fileID: 270869426}
   image_health_full: {fileID: 0}
   image_health_empty: {fileID: 0}

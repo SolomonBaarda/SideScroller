@@ -689,6 +689,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   play_button: {fileID: 2043199018}
+  multiplayer_toggle: {fileID: 1195927309}
+  map_length_slider_parent: {fileID: 419262426}
+  map_length_slider: {fileID: 2038809301}
 --- !u!1 &1028220838
 GameObject:
   m_ObjectHideFlags: 0
@@ -866,18 +869,7 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 721405953}
-        m_MethodName: OnMultiplayerCheckboxChanged
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_IsOn: 1
 --- !u!1 &1242273051
 GameObject:
@@ -1527,18 +1519,7 @@ MonoBehaviour:
   m_Value: 8
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 721405953}
-        m_MethodName: OnTerrainLengthSliderChanged
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &2038809302
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -48,7 +48,7 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public void CheckRespawns(List<Chunk> chunksNearCamera, Payload payload, Bounds cameraViewBounds)
+    public void CheckRespawns(List<Chunk> chunksNearCamera, Bounds cameraViewBounds)
     {
         DateTime now = DateTime.Now;
 
@@ -72,7 +72,7 @@ public class PlayerManager : MonoBehaviour
                 if (respawn[p] <= 0)
                 {
                     // Try to respawn the player
-                    if (WasRespawned(p, chunksNearCamera, payload, cameraViewBounds))
+                    if (WasRespawned(p, chunksNearCamera, cameraViewBounds))
                     {
                         // Remove from the respawn list
                         respawn.Remove(p);
@@ -87,10 +87,10 @@ public class PlayerManager : MonoBehaviour
     }
 
 
-    private bool WasRespawned(Player player, List<Chunk> nearbyChunks, Payload payload, Bounds view)
+    private bool WasRespawned(Player player, List<Chunk> nearbyChunks, Bounds view)
     {
         bool canRespawn = false;
-        Vector2 position = payload.gameObject.transform.position;
+        Vector2 position = player.gameObject.transform.position;
 
         if (isSinglePlayer)
         {

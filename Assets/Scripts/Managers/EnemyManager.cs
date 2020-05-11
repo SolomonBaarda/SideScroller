@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using Pathfinding;
-using UnityEditor.Experimental.GraphView;
 
 public class EnemyManager : MonoBehaviour
 {
@@ -11,7 +8,7 @@ public class EnemyManager : MonoBehaviour
 
     private GridGraph graph;
 
-    private int DEFAULT_GRAPH_INCREMENT = 124;
+    private const int DEFAULT_GRAPH_INCREMENT = 124;
 
     private void Start()
     {

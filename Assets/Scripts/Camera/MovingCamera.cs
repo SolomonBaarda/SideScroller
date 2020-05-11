@@ -106,29 +106,27 @@ public class MovingCamera : MonoBehaviour, ILocatable
 
             // Set position if following 
             if (direction.Equals(Direction.Following))
-            {
-                Chunk c = CurrentChunk;
-                Vector2 closest = transform.position;
+            {                
                 if (following != null)
                 {
+                    Chunk c = CurrentChunk;
+
                     // Get the chunk closest to the player if we can
                     if (following.CurrentChunk != null)
                     {
                         c = following.CurrentChunk;
                     }
-                    // Get the closest position if we can 
-                    closest = following.Position;
-                }
 
-                // Update the position and update the distance along the path
-                Vector3 possiblePosition = GetClosestPoint(closest, c);
+                    // Update the position and update the distance along the path
+                    Vector3 possiblePosition = GetClosestPoint(following.Position, c);
 
-                // Ensure the new position is in the correct direction for the object following
-                if ((following.IdealDirection == Payload.Direction.Left && position.x < following.Position.x) ||
-                    (following.IdealDirection == Payload.Direction.Right && position.x > following.Position.x) ||
-                    following.IdealDirection == Payload.Direction.None)
-                {
-                    position = possiblePosition;
+                    // Ensure the new position is in the correct direction for the object following
+                    if (following.IdealDirection == Payload.Direction.None ||
+                        (following.IdealDirection == Payload.Direction.Left && position.x < following.Position.x) ||
+                        (following.IdealDirection == Payload.Direction.Right && position.x > following.Position.x))
+                    {
+                        position = possiblePosition;
+                    }
                 }
             }
             // Move along terrain camera path

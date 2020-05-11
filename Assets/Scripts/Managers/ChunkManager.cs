@@ -24,6 +24,12 @@ public class ChunkManager : MonoBehaviour
         OnChunkDestroyed += RemoveChunk;
     }
 
+    private void OnDestroy()
+    {
+        TerrainManager.OnTerrainChunkGenerated -= GenerateNewChunk;
+
+        OnChunkDestroyed -= RemoveChunk;
+    }
 
     private void GenerateNewChunk(TerrainManager.TerrainChunk t)
     {
@@ -34,6 +40,11 @@ public class ChunkManager : MonoBehaviour
 
         // Create the chunk
         c.CreateChunk(t.bounds, t.cellSize, t.centre, t.enteranceWorldPosition, t.exits, t.respawnPoints, t.direction, t.sampleIndex, t.chunkID);
+        if(chunks.ContainsKey(t.chunkID))
+        {
+            chunks.Remove(t.chunkID);
+        }
+        // Add the new chunk
         chunks.Add(t.chunkID, c);
     }
 

@@ -8,9 +8,15 @@ public class Menu : MonoBehaviour
 {
     public static UnityAction OnMenuClose;
 
+    [Header("Play Button")]
     public TMP_Text play_button;
 
-    private GameManager.Presets preset = new GameManager.Presets();
+    [Header("Multiplayer Toggle")]
+    public Toggle multiplayer_toggle;
+
+    [Header("Slider")]
+    public GameObject map_length_slider_parent;
+    public Slider map_length_slider;
 
     private void Awake()
     {
@@ -21,23 +27,27 @@ public class Menu : MonoBehaviour
     }
 
 
+    private void Update()
+    {
+        // Only enable the slider if it is multiplayer mode
+        map_length_slider_parent.SetActive(multiplayer_toggle.isOn);
+    }
+
 
     public void OnPlayPressed()
     {
+        // Disable the button
         play_button.enabled = false;
 
+        // Apply the presets
+        GameManager.Presets preset = new GameManager.Presets
+        {
+            DoSinglePlayer = !multiplayer_toggle.isOn,
+            terrain_limit_not_endless = (int)map_length_slider.value,
+        };
+
+        // Load the game
         SceneLoader.Instance.LoadGame(preset);
-    }
-
-
-    public void OnMultiplayerCheckboxChanged(bool value)
-    {
-        preset.DoSinglePlayer = !value;
-    }
-
-    public void OnTerrainLengthSliderChanged(int value)
-    {
-        preset.terrain_limit_not_endless = value;
     }
 
 
@@ -80,23 +90,7 @@ public class Menu : MonoBehaviour
         d.options = options;
 
         d.template = parent.GetComponent<RectTransform>();
-
     }
-
-
-
-
-
-    public void ApplyGamePresets()
-    {
-        // Apply the preset
-        GameManager.OnSetPresets.Invoke(preset);
-
-        // Disable the play button
-        play_button.enabled = false;
-    }
-
-
 
     public static void SetMenuStyleTMPro(ref TMP_Text t)
     {

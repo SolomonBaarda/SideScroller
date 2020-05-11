@@ -172,7 +172,11 @@ public class Chunk : MonoBehaviour
 
     private void OnDestroy()
     {
-        ChunkManager.OnChunkDestroyed.Invoke(chunkID);
+        // Ensure the ChunkManager still exists before invoking
+        if(ChunkManager.OnChunkDestroyed != null)
+        {
+            ChunkManager.OnChunkDestroyed.Invoke(chunkID);
+        }
     }
 
 

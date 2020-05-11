@@ -54,6 +54,12 @@ public class ItemManager : MonoBehaviour
     }
 
 
+    private void OnDestroy()
+    {
+        TerrainManager.OnTerrainChunkGenerated -= GenerateItemsForChunk;
+        OnGenerateLoot -= GenerateLootForItem;
+    }
+
 
     public GameObject SpawnPayload(Vector2 position)
     {

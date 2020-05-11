@@ -86,6 +86,65 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        HUD.OnHUDLoaded -= SetUpHUD;
+        OnSetPresets -= SetPresets;
+
+        if (SceneLoader.Instance != null)
+        {
+            SceneLoader.Instance.OnScenesLoaded -= StartGame;
+        }
+        else
+        {
+            TerrainManager.OnInitialTerrainGenerated -= StartGame;
+        }
+
+        Menu.OnMenuClose -= StartGame;
+    }
+
+
+    private void StartGame()
+    {
+        if (presets.DoEnemySpawning)
+        {
+            enemyManager.ScanWholeNavMesh();
+        }
+
+        // Single player game
+        if (presets.DoSinglePlayer)
+        {
+            // Spawn player 1 
+            playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P1, Payload.Direction.None, true);
+
+            // Set up camera
+            movingCamera.SetFollowingTarget(playerManager.GetPlayer(Player.ID.P1).gameObject);
+            movingCamera.direction = MovingCamera.Direction.Following;
+        }
+        // Multiplayer game
+        else
+        {
+            // Spawn players 
+            playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P1, Payload.Direction.Right, false);
+            playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P2, Payload.Direction.Left, true);
+
+            // Spawn payload
+            GameObject payload = itemManager.SpawnPayload(new Vector2(0, 12));
+
+            // Set up camera
+            movingCamera.SetFollowingTarget(payload);
+            movingCamera.direction = MovingCamera.Direction.Following;
+
+            hud.SetMultiplayer();
+        }
+
+        foreach (Player p in playerManager.AllPlayers)
+        {
+            p.SetAlive();
+        }
+
+        isGameOver = false;
+    }
 
 
     private void SetPresets(Presets presets)
@@ -107,26 +166,6 @@ public class GameManager : MonoBehaviour
 
         playerManager.SetGameMode(presets.DoSinglePlayer);
     }
-
-
-
-    private void OnDestroy()
-    {
-        HUD.OnHUDLoaded -= SetUpHUD;
-        OnSetPresets -= SetPresets;
-
-        if(SceneLoader.Instance != null)
-        {
-            SceneLoader.Instance.OnScenesLoaded -= StartGame;
-        }
-        else
-        {
-            TerrainManager.OnInitialTerrainGenerated -= StartGame;
-        }
-
-        Menu.OnMenuClose -= StartGame;
-    }
-
 
     private void Update()
     {
@@ -166,12 +205,6 @@ public class GameManager : MonoBehaviour
             fps_frame_counter = 0;
             fps_time_counter = 0;
         }
-
-        // Quit the build
-        if (Input.GetButton("Cancel"))
-        {
-            Application.Quit();
-        }
     }
 
 
@@ -195,8 +228,7 @@ public class GameManager : MonoBehaviour
             }
 
             // Check if a player needs to be respawned
-            Payload p = itemManager.Payload.GetComponent<Payload>();
-            playerManager.CheckRespawns(nearbyChunksToCamera, p, movingCamera.ViewBounds);
+            playerManager.CheckRespawns(nearbyChunksToCamera, movingCamera.ViewBounds);
 
             // Check if we need to update the size of the nav mesh
             if (presets.DoEnemySpawning)
@@ -235,38 +267,6 @@ public class GameManager : MonoBehaviour
 
         enemyManager.UpdateNavMesh(new Bounds(centre, chunk.bounds));
     }
-
-
-    private void StartGame()
-    {
-        if (presets.DoEnemySpawning)
-        {
-            enemyManager.ScanWholeNavMesh();
-        }
-
-        // Spawn players
-        Payload.Direction p1_dir = Payload.Direction.None;
-        if (!presets.DoSinglePlayer)
-        {
-            playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P2, Payload.Direction.Left, true);
-            p1_dir = Payload.Direction.Right;
-        }
-        playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P1, p1_dir, presets.DoSinglePlayer);
-
-        foreach (Player p in playerManager.AllPlayers)
-        {
-            p.SetAlive();
-        }
-
-        GameObject payload = itemManager.SpawnPayload(new Vector2(0, 12));
-
-        movingCamera.SetFollowingTarget(payload);
-        movingCamera.direction = MovingCamera.Direction.Following;
-
-        isGameOver = false;
-    }
-
-
 
     private void CheckGenerateNewChunks(Chunk current)
     {
@@ -380,7 +380,7 @@ public class GameManager : MonoBehaviour
     {
         this.hud = hud;
 
-        if(isGameOver)
+        if (isGameOver)
         {
             this.hud.SetVisible(false);
         }

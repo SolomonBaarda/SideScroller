@@ -15,6 +15,7 @@ public class HUD : MonoBehaviour
     public TMP_Text text_game_time;
 
     [Header("Coins")]
+    public GameObject coin_display_parent;
     public TMP_Text text_coin_count;
 
     [Header("Health")]
@@ -46,9 +47,20 @@ public class HUD : MonoBehaviour
     }
 
 
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= HUDLoaded;
+    }
+
     private void HUDLoaded(Scene s, LoadSceneMode l)
     {
         OnHUDLoaded.Invoke(this);
+    }
+
+
+    public void SetMultiplayer()
+    {
+        coin_display_parent.SetActive(false);
     }
 
 
