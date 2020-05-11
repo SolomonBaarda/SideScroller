@@ -135,7 +135,10 @@ public class GameManager : MonoBehaviour
             movingCamera.SetFollowingTarget(payload);
             movingCamera.direction = MovingCamera.Direction.Following;
 
-            hud.SetMultiplayer();
+            if(hud != null)
+            {
+                hud.SetMultiplayer();
+            }
         }
 
         foreach (Player p in playerManager.AllPlayers)
@@ -174,18 +177,17 @@ public class GameManager : MonoBehaviour
             // Update the game time
             GameTimeSeconds += Time.deltaTime;
 
-            if (Input.GetKey(KeyCode.R))
-            {
-                foreach (Player p in playerManager.AllPlayers)
-                {
-                    p.SetAlive();
-                }
-            }
+            // Check if a player is outside the bounds
+            playerManager.CheckPlayersOutsideBounds(movingCamera.ViewBounds);
+            // Check if a player needs to be respawned
+            playerManager.CheckRespawns(movingCamera.GetAllNearbyChunks(), movingCamera.transform.position, movingCamera.ViewBounds);
 
-            Player player = playerManager.GetPlayer(Player.ID.P1);
+
             // Update HUD stuff
             if (hud != null)
             {
+                Player player = playerManager.GetPlayer(Player.ID.P1);
+
                 this.hud.SetVisible(true);
                 HUD.HUDElements hud = new HUD.HUDElements(player.GetInventory<Coin>().Total, player.GetInventory<Health>().Total,
                     player.GetInventory<Health>().Max, GameTimeSeconds, fps_last_framerate);
@@ -226,9 +228,6 @@ public class GameManager : MonoBehaviour
                     UpdateNavMesh(c);
                 }
             }
-
-            // Check if a player needs to be respawned
-            playerManager.CheckRespawns(nearbyChunksToCamera, movingCamera.ViewBounds);
 
             // Check if we need to update the size of the nav mesh
             if (presets.DoEnemySpawning)
@@ -285,9 +284,11 @@ public class GameManager : MonoBehaviour
                 {
                     Vector2Int chunk = exit.newChunkID - ChunkManager.initialChunkID;
 
+                    // We have generated enough normal chunks
                     if (Mathf.Abs(chunk.x) >= presets.terrain_limit_not_endless ||
                         Mathf.Abs(chunk.y) >= presets.terrain_limit_not_endless)
                     {
+                        // Need to generate the final chunk
                         continue;
                     }
                 }

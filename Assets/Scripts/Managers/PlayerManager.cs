@@ -9,6 +9,7 @@ public class PlayerManager : MonoBehaviour
 
     public const float DEFAULT_RESPAWN_WAIT_TIME_SECONDS = 1f;
     private DateTime lastRespawnCheck;
+    public const float RESPAWN_AREA_PERCENTAGE_OF_CAMERA_BOUNDS = 0.75f;
 
     public GameObject playerPrefab;
 
@@ -48,7 +49,24 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public void CheckRespawns(List<Chunk> chunksNearCamera, Bounds cameraViewBounds)
+
+    public void CheckPlayersOutsideBounds(Bounds screenBounds)
+    {
+        foreach (Player p in AllPlayers)
+        {
+            // Check if the player is within the screen bounds
+            if (!PointIsWithinBounds(p.transform.position, screenBounds))
+            {
+                if (p.IsAlive)
+                {
+                    OnPlayerDie.Invoke(p);
+                }
+            }
+        }
+    }
+
+
+    public void CheckRespawns(List<Chunk> chunksNearCamera, Vector2 cameraCentre, Bounds cameraViewBounds)
     {
         DateTime now = DateTime.Now;
 
@@ -66,13 +84,15 @@ public class PlayerManager : MonoBehaviour
             if (PlayerIsRespawning(p))
             {
                 // Update the timer
-                respawn[p] = respawn[p] - (float)time.TotalSeconds;
+                respawn[p] -= (float)(time.TotalMilliseconds / 1000);
 
                 // Player needs to be respawned
                 if (respawn[p] <= 0)
                 {
+                    Bounds respawnBounds = new Bounds(cameraViewBounds.center, cameraViewBounds.size * RESPAWN_AREA_PERCENTAGE_OF_CAMERA_BOUNDS);
+
                     // Try to respawn the player
-                    if (WasRespawned(p, chunksNearCamera, cameraViewBounds))
+                    if (WasRespawned(p, chunksNearCamera, cameraCentre, respawnBounds))
                     {
                         // Remove from the respawn list
                         respawn.Remove(p);
@@ -87,10 +107,11 @@ public class PlayerManager : MonoBehaviour
     }
 
 
-    private bool WasRespawned(Player player, List<Chunk> nearbyChunks, Bounds view)
+    private bool WasRespawned(Player player, List<Chunk> nearbyChunks, Vector2 cameraCentre, Bounds respawnBounds)
     {
         bool canRespawn = false;
-        Vector2 position = player.gameObject.transform.position;
+        // Initialise to be the first respawn point
+        Vector2 bestRespawnPosition = cameraCentre;
 
         if (isSinglePlayer)
         {
@@ -99,53 +120,82 @@ public class PlayerManager : MonoBehaviour
         else
         {
             // Loop through each chunk
-            foreach(Chunk c in nearbyChunks)
+            foreach (Chunk c in nearbyChunks)
             {
                 // Each exit point 
                 foreach (TerrainManager.TerrainChunk.Respawn point in c.respawnPoints)
                 {
                     // Exit point is the correct direction
-                    if(point.direction == player.IdealDirection || point.direction == Payload.Direction.None)
+                    if (point.direction == Payload.Direction.None || player.IdealDirection == point.direction)
                     {
-                        canRespawn = true;
-
                         // Ensure the point is actually visible on the screen
-                        if(point.position.x >= view.min.x && point.position.x <= view.max.x &&
-                            point.position.y >= view.min.y && point.position.y <= view.max.y)
+                        if (PointIsWithinBounds(point.position, respawnBounds))
                         {
-                            // Put the player on their side of the screen
-                            // Choose the furthest away point from the payload
-                            if (player.IdealDirection == Payload.Direction.Left)
+                            bool isNotClosestToAnotherPlayer = true;
+
+                            // Disable for now
+                            /*
+                            foreach (Player p in AllPlayers)
                             {
-                                if (point.position.x > position.x)
+                                if (p != player)
                                 {
-                                    position = point.position;
+                                    // This point is the closest spawn to another player
+                                    if (point.position.x == p.NearestSpawnPoint.x && point.position.y == p.NearestSpawnPoint.y)
+                                    {
+                                        isNotClosestToAnotherPlayer = false;
+                                        Debug.Log("Found point that is closest to another");
+                                        break;
+                                    }
                                 }
                             }
-                            else if (player.IdealDirection == Payload.Direction.Right)
+                            */
+
+                            // Ensure that the point is not on top of another player
+                            if (isNotClosestToAnotherPlayer)
                             {
-                                if (point.position.x < position.x)
+                                // Put the player on their side of the screen
+                                // Choose the furthest away point from the payload
+                                switch (player.IdealDirection)
                                 {
-                                    position = point.position;
+                                    case Payload.Direction.Left:
+                                        if (point.position.x > bestRespawnPosition.x)
+                                        {
+                                            bestRespawnPosition = point.position;
+                                        }
+                                        break;
+                                    case Payload.Direction.Right:
+                                        if (point.position.x < bestRespawnPosition.x)
+                                        {
+                                            bestRespawnPosition = point.position;
+                                        }
+                                        break;
+                                    default:
+                                        continue;
                                 }
+
+                                canRespawn = true;
                             }
                         }
-
                     }
                 }
             }
-
         }
 
         // Respawn the player if there's a valid place
         if (canRespawn)
         {
-            RespawnPlayer(player, position);
+            RespawnPlayer(player, bestRespawnPosition);
         }
 
         return canRespawn;
     }
 
+
+
+    public static bool PointIsWithinBounds(Vector2 point, Bounds b)
+    {
+        return point.x >= b.min.x && point.x <= b.max.x && point.y >= b.min.y && point.y <= b.max.y;
+    }
 
     private void RespawnPlayer(Player p, Vector2 position)
     {
@@ -183,7 +233,5 @@ public class PlayerManager : MonoBehaviour
 
         return null;
     }
-
-
 
 }

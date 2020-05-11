@@ -26,6 +26,8 @@ public class Player : MonoBehaviour, ILocatable
 
     public Payload.Direction IdealDirection { get; private set; }
 
+    public Vector2 NearestSpawnPoint { get; private set; }
+
 
     public enum ID
     {
@@ -77,7 +79,6 @@ public class Player : MonoBehaviour, ILocatable
 
     public void SetPosition(Vector2 position)
     {
-        BoxCollider2D b = GetComponentInChildren<BoxCollider2D>();
         Rigidbody2D r = GetComponent<Rigidbody2D>();
         Vector2 vel = r.velocity;
         vel.y = 0;
@@ -119,6 +120,16 @@ public class Player : MonoBehaviour, ILocatable
     public void UpdateCurrentChunk()
     {
         CurrentChunk = Chunk.UpdateCurrentChunk(CurrentChunk, Position);
+
+        Vector2 closest = CurrentChunk.respawnPoints[0].position;
+        foreach (TerrainManager.TerrainChunk.Respawn r in CurrentChunk.respawnPoints)
+        {
+            if (Vector2.Distance(transform.position, r.position) < Vector2.Distance(transform.position, closest))
+            {
+                closest = r.position;
+            }
+        }
+        NearestSpawnPoint = closest;
     }
 
 
