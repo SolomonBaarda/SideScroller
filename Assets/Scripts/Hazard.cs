@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Hazard : MonoBehaviour
@@ -9,13 +8,17 @@ public class Hazard : MonoBehaviour
         // A player is colliding with this
         if (LayerMask.LayerToName(collision.gameObject.layer).Contains(Player.DEFAULT_PLAYER_LAYER))
         {
-            // Reference to player and controller script
-            Player p = collision.GetComponentInParent<Player>();
-
-            if(p != null)
+            // Ensure it is a valid collision
+            if (!collision.isTrigger)
             {
-                // Let the manager know that the player should be killed
-                PlayerManager.OnPlayerDie.Invoke(p);
+                // Reference to player and controller script
+                Player p = collision.GetComponentInParent<Player>();
+
+                if (p != null)
+                {
+                    // Let the manager know that the player should be killed
+                    PlayerManager.OnPlayerDie.Invoke(p);
+                }
             }
         }
     }

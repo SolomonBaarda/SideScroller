@@ -24,7 +24,6 @@ public class Player : MonoBehaviour, ILocatable
     public Chunk CurrentChunk { get; private set; }
     public Vector2 Position { get { return transform.position; } }
 
-
     public Payload.Direction IdealDirection { get; private set; }
 
 

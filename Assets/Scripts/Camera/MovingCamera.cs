@@ -9,8 +9,6 @@ public class MovingCamera : MonoBehaviour, ILocatable
     public float speed = 4;
     public Direction direction = Direction.Stationary;
 
-    [Header("GameObject to Follow")]
-    private GameObject objectFollowing;
     private ILocatable following;
 
     private Camera c;
@@ -18,11 +16,20 @@ public class MovingCamera : MonoBehaviour, ILocatable
 
     public Chunk CurrentChunk { get; private set; }
     public Vector2 Position { get { return transform.position; } }
+    public Payload.Direction IdealDirection
+    {
+        get { return Payload.Direction.None; }
+    }
 
-    public Bounds ViewBounds { get {
+    public Bounds ViewBounds
+    {
+        get
+        {
             Vector2 bl = c.ViewportToWorldPoint(new Vector3(0, 0, zoom));
-            Vector2 tr = c.ViewportToWorldPoint(new Vector3(1, 1, zoom)); 
-            return new Bounds((Vector2)transform.position, tr - bl); } }
+            Vector2 tr = c.ViewportToWorldPoint(new Vector3(1, 1, zoom));
+            return new Bounds((Vector2)transform.position, tr - bl);
+        }
+    }
 
     private void Awake()
     {
@@ -55,7 +62,6 @@ public class MovingCamera : MonoBehaviour, ILocatable
         // Set the target
         if (WorldItem.ExtendsClass<ILocatable>(toFollow))
         {
-            objectFollowing = toFollow;
             following = (ILocatable)WorldItem.GetClass<ILocatable>(toFollow);
             return true;
         }
@@ -69,17 +75,21 @@ public class MovingCamera : MonoBehaviour, ILocatable
     }
 
 
-    public List<Chunk> GetAllNearbyChunks(Vector2 bottomLeft, Vector2 topRight)
+    public static List<Chunk> GetAllNearbyChunks(Vector2 bottomLeft, Vector2 topRight)
     {
         Vector2 size = topRight - bottomLeft;
         // Get a list of colliders
-        Collider2D[] collisions = Physics2D.OverlapBoxAll(bottomLeft + (size / 2), size, 0, LayerMask.GetMask("Chunk"));
+        Collider2D[] collisions = Physics2D.OverlapBoxAll(bottomLeft + (size / 2), size, 0, LayerMask.GetMask(Chunk.CHUNK_LAYER));
         List<Chunk> chunks = new List<Chunk>();
 
         // Get each chunk from them
         foreach (Collider2D c in collisions)
         {
-            chunks.Add(c.gameObject.GetComponent<Chunk>());
+            Chunk chunk = c.gameObject.GetComponent<Chunk>();
+            if (!chunks.Contains(chunk))
+            {
+                chunks.Add(chunk);
+            }
         }
 
         return chunks;
@@ -111,8 +121,15 @@ public class MovingCamera : MonoBehaviour, ILocatable
                 }
 
                 // Update the position and update the distance along the path
-                position = GetClosestPoint(closest, c);
+                Vector3 possiblePosition = GetClosestPoint(closest, c);
 
+                // Ensure the new position is in the correct direction for the object following
+                if ((following.IdealDirection == Payload.Direction.Left && position.x < following.Position.x) ||
+                    (following.IdealDirection == Payload.Direction.Right && position.x > following.Position.x) ||
+                    following.IdealDirection == Payload.Direction.None)
+                {
+                    position = possiblePosition;
+                }
             }
             // Move along terrain camera path
             else if (direction.Equals(Direction.Terrain))
@@ -142,6 +159,7 @@ public class MovingCamera : MonoBehaviour, ILocatable
                 // Get the closest position
                 position = p.GetClosestPosition(newPos);
             }
+
 
             // Force zoom out
             position.z = -zoom;
@@ -185,7 +203,6 @@ public class MovingCamera : MonoBehaviour, ILocatable
 
                 return paths[index];
             }
-
         }
 
         throw new System.Exception("Cannot calculate camera path for null chunk or null path");

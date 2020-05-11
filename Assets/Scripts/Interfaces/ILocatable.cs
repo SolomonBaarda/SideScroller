@@ -10,6 +10,11 @@ public interface ILocatable
     Chunk CurrentChunk { get; }
 
     /// <summary>
+    /// The ideal direction this object wants to travel in.
+    /// </summary>
+    Payload.Direction IdealDirection { get; }
+
+    /// <summary>
     /// The current world position of the object.
     /// </summary>
     Vector2 Position { get; }
