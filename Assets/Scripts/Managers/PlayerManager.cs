@@ -133,23 +133,6 @@ public class PlayerManager : MonoBehaviour
                         {
                             bool isNotClosestToAnotherPlayer = true;
 
-                            // Disable for now
-                            /*
-                            foreach (Player p in AllPlayers)
-                            {
-                                if (p != player)
-                                {
-                                    // This point is the closest spawn to another player
-                                    if (point.position.x == p.NearestSpawnPoint.x && point.position.y == p.NearestSpawnPoint.y)
-                                    {
-                                        isNotClosestToAnotherPlayer = false;
-                                        Debug.Log("Found point that is closest to another");
-                                        break;
-                                    }
-                                }
-                            }
-                            */
-
                             // Ensure that the point is not on top of another player
                             if (isNotClosestToAnotherPlayer)
                             {

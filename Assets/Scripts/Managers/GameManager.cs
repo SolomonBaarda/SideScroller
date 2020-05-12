@@ -159,7 +159,7 @@ public class GameManager : MonoBehaviour
             movingCamera.SetFollowingTarget(payload);
             movingCamera.direction = MovingCamera.Direction.Following;
 
-            if(hud != null)
+            if (hud != null)
             {
                 hud.SetMultiplayer();
             }
@@ -296,6 +296,7 @@ public class GameManager : MonoBehaviour
                 int symmetricChunkIndex = -1;
                 if (presets.terrain_generation.ToString().Contains("Symmetrical"))
                 {
+                    // Try to get the symmetrical chunk. If it fails, just generate a random one
                     try
                     {
                         Vector2Int symmetricChunkID = exit.newChunkID;
@@ -313,14 +314,18 @@ public class GameManager : MonoBehaviour
                         {
                             symmetricChunkIndex = symmetric.sampleTerrainIndex;
                         }
+
+                        // Generate the symmetrical chunk
+                        terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID, terrainManager.GetSampleTerrain(symmetricChunkIndex));
+                        continue;
                     }
                     catch (Exception)
                     {
                     }
                 }
 
-                // Generate the new chunk
-                terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID, SampleTerrain.TerrainType.Terrain, symmetricChunkIndex);
+                // Generate a new random chunk
+                terrainManager.GenerateRandom(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID);
             }
         }
     }
