@@ -30,6 +30,8 @@ public class SampleTerrain : MonoBehaviour
     private Vector2Int entryTilePositionLocal;
     public List<Exit> exitTilePositions;
 
+    public List<SampleSpawn> extraRespawnPoints;
+
     // Terrain direction and type
     public TerrainManager.Direction direction;
     public TerrainType terrainType;
@@ -50,6 +52,7 @@ public class SampleTerrain : MonoBehaviour
 
         exitTilePositions = new List<Exit>();
         items = new List<SampleItem>();
+        extraRespawnPoints = new List<SampleSpawn>();
 
         tilemap_devCameraPath = new List<Tilemap>();
 
@@ -95,7 +98,7 @@ public class SampleTerrain : MonoBehaviour
             }
 
             // Disable the rendering of all samples
-            r.enabled = false;
+            r.enabled = true;
         }
 
         // Create new objects to store the tile data
@@ -113,6 +116,8 @@ public class SampleTerrain : MonoBehaviour
         FindExitTilePositions(ref exitTilePositions);
         // And their extra camera paths 
         FindCameraPathPositions(ref exitTilePositions, tilemap_devCameraPath);
+        // Load any extra respawn points
+        FindRespawnPoints(ref extraRespawnPoints);
 
         // Load the item types and positions
         LoadItems(ref items, tilemap_dev);
@@ -342,6 +347,47 @@ public class SampleTerrain : MonoBehaviour
 
 
 
+    private void FindRespawnPoints(ref List<SampleSpawn> respawns)
+    {
+        respawns.Clear();
+
+        // Get an iterator for the bounds of the tilemap 
+        BoundsInt.PositionEnumerator p = tilemap_dev.cellBounds.allPositionsWithin.GetEnumerator();
+        while (p.MoveNext())
+        {
+            Vector3Int current = p.Current;
+            if (tilemap_dev.GetTile(current) != null)
+            {
+                Payload.Direction direction;
+
+                // Check if it is an exit tile type
+                if (tilemap_dev.GetTile(current).Equals(manager.dev_spawnBoth))
+                {
+                    direction = Payload.Direction.None;
+                }
+                else if (tilemap_dev.GetTile(current).Equals(manager.dev_spawnRight))
+                {
+                    direction = Payload.Direction.Right;
+                }
+                else if (tilemap_dev.GetTile(current).Equals(manager.dev_spawnLeft))
+                {
+                    direction = Payload.Direction.Left;
+                }
+                // Do nothing if not (for now)
+                else
+                {
+                    continue;
+                }
+
+                // Add the new exit
+                Vector2Int tile = new Vector2Int(current.x, current.y) - entryTilePositionLocal;
+                respawns.Add(new SampleSpawn(direction, tile));
+            }
+        }
+    }
+
+
+
     private void LoadItems(ref List<SampleItem> items, Tilemap tilemap)
     {
         items.Clear();
@@ -425,6 +471,18 @@ public class SampleTerrain : MonoBehaviour
         }
     }
 
+
+    public class SampleSpawn
+    {
+        public Payload.Direction direction;
+        public Vector2Int tilePos;
+
+        public SampleSpawn(Payload.Direction direction, Vector2Int tilePos)
+        {
+            this.direction = direction;
+            this.tilePos = tilePos;
+        }
+    }
 
     public class Exit
     {

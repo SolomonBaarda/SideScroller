@@ -24,6 +24,12 @@ public class SampleTerrainManager : MonoBehaviour
     public Tile dev_exitUp;
     public Tile dev_exitDown;
     [Space(8)]
+    public Tile dev_spawnRight;
+    public Tile dev_spawnLeft;
+    public Tile dev_spawnBoth;
+    [Space(8)]
+    public Tile dev_finish;
+    [Space(8)]
     public Tile dev_cameraPathRight;
     public Tile dev_cameraPathLeft;
     public Tile dev_cameraPathUp;

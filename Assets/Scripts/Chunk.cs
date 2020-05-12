@@ -216,6 +216,13 @@ public class Chunk : MonoBehaviour
             Gizmos.color = Color.cyan;
             Gizmos.DrawCube(exit.newChunkPositionWorld, 0.5f * Vector2.one);
         }
+
+        // Draw all respawn points
+        foreach(TerrainManager.TerrainChunk.Respawn r in respawnPoints)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(r.position, 0.5f);
+        }
     }
 
 

@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Profiling;
 using UnityEngine.Tilemaps;
 
 public class TerrainManager : MonoBehaviour
@@ -266,21 +267,40 @@ public class TerrainManager : MonoBehaviour
 
         // Calculate some important values
         SampleTerrain.GroundBounds b = terrain.GetGroundBounds();
-        Vector2 entryPositionWorld = grid.CellToWorld(new Vector3Int(entryTile.x, entryTile.y, 0)) + (grid.cellSize / 2);
+        Vector2 entryPositionWorld = (Vector2)grid.CellToWorld(new Vector3Int(entryTile.x, entryTile.y, 0)) + (CellSize / 2);
 
         // Centre position
         Vector2Int centreTile = entryTile + new Vector2Int(b.minTile.x * invert, b.minTile.y) + new Vector2Int(b.boundsTile.x * invert / 2, b.boundsTile.y / 2);
         Vector2 centre = grid.CellToWorld(new Vector3Int(centreTile.x, centreTile.y, 0));
+        
         // Need to add half a cell for odd numbers
-        if (b.boundsTile.x % 2 == 1)
-        {
-            centre.x += CellSize.x / 2;
-        }
-        if (b.boundsTile.y % 2 == 1)
-        {
-            centre.y += CellSize.y / 2;
-        }
+        if (b.boundsTile.x % 2 == 1) { centre.x += CellSize.x / 2; }
+        if (b.boundsTile.y % 2 == 1) { centre.y += CellSize.y / 2; }
 
+        // Add extra respawn points 
+        List<TerrainChunk.Respawn> respawnPoints = new List<TerrainChunk.Respawn>();
+        respawnPoints.Add(new TerrainChunk.Respawn(Payload.Direction.None, entryPositionWorld));
+
+        // Add all the extra respawn points
+        foreach(SampleTerrain.SampleSpawn s in terrain.extraRespawnPoints)
+        {
+            Payload.Direction dir = s.direction;
+
+            if(invert == -1)
+            {
+                if(dir == Payload.Direction.Left)
+                {
+                    dir = Payload.Direction.Right;
+                }
+                else if (dir == Payload.Direction.Right)
+                {
+                    dir = Payload.Direction.Left;
+                }
+            }
+
+            Vector2 spawnPosWorld = entryPositionWorld + (Vector2) grid.CellToWorld(new Vector3Int(invert * s.tilePos.x, s.tilePos.y, 0)) + (CellSize / 2);
+            respawnPoints.Add(new TerrainChunk.Respawn(dir, entryPositionWorld));
+        }
 
         // Loop through each sample terrain exit
         List<TerrainChunk.Exit> exits = new List<TerrainChunk.Exit>();
@@ -324,14 +344,12 @@ public class TerrainManager : MonoBehaviour
             }
 
             // World position of the start of the new chunk
-            Vector2 newChunkPositionWorld = grid.CellToWorld(new Vector3Int(newChunkTile.x, newChunkTile.y, 0)) + (grid.cellSize / 2);
+            Vector2 newChunkPositionWorld = (Vector2)grid.CellToWorld(new Vector3Int(newChunkTile.x, newChunkTile.y, 0)) + (CellSize / 2);
 
             Vector2Int tilesAwayFromOrigin = exitTile - initialTilePos;
 
             // Make the exit
             TerrainChunk.Exit e = new TerrainChunk.Exit(newChunkDirection, exitPositionWorld, newChunkPositionWorld, newChunkID, tilesAwayFromOrigin);
-
-
 
             // Get the camera path points
             foreach (Vector2Int point in sampleExit.cameraPathPoints)
@@ -360,16 +378,6 @@ public class TerrainManager : MonoBehaviour
             Vector2 pos = (Vector2)grid.CellToWorld(new Vector3Int(entryTile.x + invert * item.tilePos.x, entryTile.y + item.tilePos.y, 0)) + CellSize / 2;
             // And add it
             allItemPositions.Add(new TerrainChunk.Item(item.type, pos));
-        }
-
-        List<TerrainChunk.Respawn> respawnPoints = new List<TerrainChunk.Respawn>
-        {
-            new TerrainChunk.Respawn(Payload.Direction.None, entryPositionWorld)
-        };
-
-        foreach (TerrainChunk.Exit e in exits)
-        {
-            respawnPoints.Add(new TerrainChunk.Respawn(Payload.Direction.None, e.exitPositionWorld));
         }
 
         // Return the TerrainChunk object for use in the ChunkManager
