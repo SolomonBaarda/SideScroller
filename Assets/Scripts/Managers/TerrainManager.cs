@@ -254,6 +254,7 @@ public class TerrainManager : MonoBehaviour
         OnTerrainChunkGenerated.Invoke(c);
     }
 
+
     private TerrainChunk GenerateTerrainChunk(Vector2Int entryTile, bool flipAxisX, Direction directionToGenerate, SampleTerrain terrain, Vector2Int chunkID)
     {
         // Get the inverse multiplier
@@ -337,11 +338,7 @@ public class TerrainManager : MonoBehaviour
             {
                 // Get the world pos
                 Vector3Int pointTile = new Vector3Int(entryTile.x + invert * point.x, entryTile.y + point.y, 0);
-                Vector2 worldPos = grid.CellToWorld(pointTile);
-
-                // Add a little to centre it
-                worldPos.x += CellSize.x / 2;
-                worldPos.y += CellSize.y / 2;
+                Vector2 worldPos = (Vector2)grid.CellToWorld(pointTile) + CellSize/2;
 
                 // Add the point 
                 e.cameraPathPoints.Add(worldPos);
@@ -360,13 +357,15 @@ public class TerrainManager : MonoBehaviour
         foreach (SampleTerrain.SampleItem item in terrain.items)
         {
             // Get position of the centre of the tile
-            Vector2 pos = grid.CellToWorld(new Vector3Int(entryTile.x + invert * item.tilePos.x, entryTile.y + item.tilePos.y, 0)) + grid.cellSize / 2;
+            Vector2 pos = (Vector2)grid.CellToWorld(new Vector3Int(entryTile.x + invert * item.tilePos.x, entryTile.y + item.tilePos.y, 0)) + CellSize / 2;
             // And add it
             allItemPositions.Add(new TerrainChunk.Item(item.type, pos));
         }
 
-        List<TerrainChunk.Respawn> respawnPoints = new List<TerrainChunk.Respawn>();
-        respawnPoints.Add(new TerrainChunk.Respawn(Payload.Direction.None, entryPositionWorld));
+        List<TerrainChunk.Respawn> respawnPoints = new List<TerrainChunk.Respawn>
+        {
+            new TerrainChunk.Respawn(Payload.Direction.None, entryPositionWorld)
+        };
 
         foreach (TerrainChunk.Exit e in exits)
         {

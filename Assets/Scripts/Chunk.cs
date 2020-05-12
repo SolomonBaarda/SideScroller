@@ -69,9 +69,7 @@ public class Chunk : MonoBehaviour
                 pathObject.name = "Path " + (pathObject.transform.GetSiblingIndex() + 1) + "/" + exits.Count;
                 CameraPath path = pathObject.GetComponent<CameraPath>();
 
-
                 LinkedList<Vector2> l = new LinkedList<Vector2>(exit.cameraPathPoints);
-                bool isFlat = l.Count <= 2;
 
                 // Move the first and last point to exactly the edge of the chunk
                 // Get the first point
@@ -128,7 +126,7 @@ public class Chunk : MonoBehaviour
 
 
                 // Set the path and add it
-                path.SetPath(RemoveMiddlePointsIfStraightPath(l.ToArray(), direction, exit.exitDirection), exit.newChunkID, exit.exitDirection);
+                path.SetPath(RemoveMiddlePointsIfStraightPath(l.ToArray(), exit.exitDirection), exit.newChunkID, exit.exitDirection);
                 cameraPaths.Add(path);
             }
             else
@@ -141,32 +139,37 @@ public class Chunk : MonoBehaviour
 
 
 
-    private Vector2[] RemoveMiddlePointsIfStraightPath(Vector2[] points, TerrainManager.Direction direction, TerrainManager.Direction exitDirection)
+    private Vector2[] RemoveMiddlePointsIfStraightPath(Vector2[] points, TerrainManager.Direction exitDirection)
     {
-        Vector2 first = points[0], last = points[points.Length - 2];
+        Vector2 first = points[0], last = points[points.Length - 1];
 
         // Horizontal case
-        if ((direction == TerrainManager.Direction.Both ||
-            direction == TerrainManager.Direction.Left || direction == TerrainManager.Direction.Right) &&
-            (exitDirection == TerrainManager.Direction.Left || exitDirection == TerrainManager.Direction.Right))
+        if (exitDirection == TerrainManager.Direction.Left || exitDirection == TerrainManager.Direction.Right)
         {
-            if (first.y == last.y)
+            for(int i = 1; i < points.Length; i++)
             {
-                return new[] { first, last };
+                if(points[i-1].y != points[i].y)
+                {
+                    // Point isn't the same height
+                    return points;
+                }
             }
         }
-
         // Vertical case
-        if ((direction == TerrainManager.Direction.Up || direction == TerrainManager.Direction.Down) &&
-            (exitDirection == TerrainManager.Direction.Up || exitDirection == TerrainManager.Direction.Down))
+        else if (exitDirection == TerrainManager.Direction.Up || exitDirection == TerrainManager.Direction.Down)
         {
-            if (first.x == last.x)
+            for (int i = 1; i < points.Length; i++)
             {
-                return new[] { first, last };
+                if (points[i - 1].x != points[i].x)
+                {
+                    // Point isn't the same height
+                    return points;
+                }
             }
         }
 
-        return points;
+        // If we get down here, every point was the same x or y
+        return new[] { first, last };
     }
 
 

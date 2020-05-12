@@ -65,20 +65,24 @@ public class CameraPath : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        // Draw the paths
+        for (int w = 1; w < path.localPoints.Length; w++)
+        {
+            Gizmos.color = Color.white;
+            Gizmos.DrawLine(path.localPoints[w - 1], path.localPoints[w]);
+        }
+    }
+
+
+    private void OnDrawGizmosSelected()
+    {
+        // Draw all the points
         foreach (Vector2 point in points)
         {
-            // Draw the paths
-            for (int w = 1; w < path.localPoints.Length; w++)
-            {
-                Gizmos.color = Color.white;
-                Gizmos.DrawLine(path.localPoints[w - 1], path.localPoints[w]);
-            }
-
-            // Draw all the points
             Gizmos.color = Color.green;
             Gizmos.DrawCube(point, 0.5f * Vector2.one);
         }
-
     }
+
 
 }

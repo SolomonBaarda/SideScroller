@@ -224,8 +224,6 @@ public class GameManager : MonoBehaviour
 
         if (!isGameOver)
         {
-
-
             // Update the nav meshes
             if (presets.DoEnemySpawning)
             {
