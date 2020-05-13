@@ -37,7 +37,6 @@ public class SampleTerrain : MonoBehaviour
 
     // Terrain direction and type
     public TerrainManager.Direction direction;
-    public TerrainType terrainType;
 
     public int index;
 
@@ -397,7 +396,6 @@ public class SampleTerrain : MonoBehaviour
     }
 
 
-
     private void LoadItems(ref List<Item> items, Tilemap tilemap)
     {
         items.Clear();
@@ -538,12 +536,6 @@ public class SampleTerrain : MonoBehaviour
     }
 
 
-    public enum TerrainType
-    {
-        Terrain,
-        Spawn,
-        Finish,
-    }
 
     public enum ExitDirection
     {

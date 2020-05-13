@@ -9,7 +9,7 @@ public class PlayerManager : MonoBehaviour
 
     public const float DEFAULT_RESPAWN_WAIT_TIME_SECONDS = 1f;
     private DateTime lastRespawnCheck;
-    public const float RESPAWN_AREA_PERCENTAGE_OF_CAMERA_BOUNDS = 0.75f;
+    public const float RESPAWN_AREA_PERCENTAGE_OF_CAMERA_BOUNDS = 0.85f;
 
     public GameObject playerPrefab;
 
@@ -195,6 +195,15 @@ public class PlayerManager : MonoBehaviour
 
     public static bool PointIsWithinBounds(Vector2 point, Bounds b)
     {
+        /*
+        Debug.DrawLine(b.min, new Vector2(b.min.x, b.max.y), Color.black, 4);
+        Debug.DrawLine(b.min, new Vector2(b.max.x, b.min.y), Color.black, 4);
+        Debug.DrawLine(b.max, new Vector2(b.min.x, b.max.y), Color.black, 4);
+        Debug.DrawLine(b.max, new Vector2(b.max.x, b.min.y), Color.black, 4);
+
+        Debug.DrawRay(point, Vector3.forward, Color.red, 4);
+        */
+
         return point.x >= b.min.x && point.x <= b.max.x && point.y >= b.min.y && point.y <= b.max.y;
     }
 
