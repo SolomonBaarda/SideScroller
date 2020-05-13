@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Build.Content;
 using UnityEngine;
@@ -43,6 +44,8 @@ public class GameManager : MonoBehaviour
     public float GameTimeSeconds { get; private set; }
     private bool isGameOver;
 
+    public const float GAME_START_WAIT_SECONDS = 1f;
+
     // Game rules
     public Presets presets;
 
@@ -77,12 +80,12 @@ public class GameManager : MonoBehaviour
         // If the Menu is loaded, wait for presets 
         if (SceneLoader.Instance != null && SceneLoader.Instance.SceneIsLoaded(SceneLoader.MENU_SCENE))
         {
-            SceneLoader.Instance.OnScenesLoaded += StartGame;
+            SceneLoader.Instance.OnScenesLoaded += CountDownGameStart;
         }
         // Just start the game and do defaut presets, must be running in the editor
         else
         {
-            TerrainManager.OnSpawnGenerated += StartGame;
+            TerrainManager.OnSpawnGenerated += CountDownGameStart;
             OnSetPresets.Invoke(new Presets());
         }
     }
@@ -94,14 +97,14 @@ public class GameManager : MonoBehaviour
 
         if (SceneLoader.Instance != null)
         {
-            SceneLoader.Instance.OnScenesLoaded -= StartGame;
+            SceneLoader.Instance.OnScenesLoaded -= CountDownGameStart;
         }
         else
         {
-            TerrainManager.OnSpawnGenerated -= StartGame;
+            TerrainManager.OnSpawnGenerated -= CountDownGameStart;
         }
 
-        Menu.OnMenuClose -= StartGame;
+        Menu.OnMenuClose -= CountDownGameStart;
     }
 
 
@@ -123,6 +126,20 @@ public class GameManager : MonoBehaviour
 
         // Generate spawn chunk
         terrainManager.GenerateSpawn(presets.terrain_generation, presets.terrain_limit_not_endless);
+    }
+
+
+    private void CountDownGameStart()
+    {
+        StartCoroutine(WaitForGameStart());
+    }
+
+
+    private IEnumerator WaitForGameStart()
+    {
+        yield return new WaitForSeconds(GAME_START_WAIT_SECONDS);
+
+        StartGame();
     }
 
 
