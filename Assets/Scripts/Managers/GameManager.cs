@@ -150,13 +150,17 @@ public class GameManager : MonoBehaviour
             enemyManager.ScanWholeNavMesh();
         }
 
-        List<Chunk> nearbyChunks = movingCamera.GetAllNearbyChunks();
+        // Add only the spawn for initial start
+        List<Chunk> onlySpawnChunk = new List<Chunk>
+        {
+            chunkManager.GetChunk(ChunkManager.initialChunkID)
+        };
 
         // Single player game
         if (presets.DoSinglePlayer)
         {
             // Spawn player 1 
-            playerManager.SpawnPlayer(Player.ID.P1, Payload.Direction.None, true, nearbyChunks, movingCamera.ViewBounds);
+            playerManager.SpawnPlayer(Player.ID.P1, Payload.Direction.None, true, onlySpawnChunk, movingCamera.ViewBounds);
 
             // Set up camera
             movingCamera.SetFollowingTarget(playerManager.GetPlayer(Player.ID.P1).gameObject);
@@ -166,11 +170,12 @@ public class GameManager : MonoBehaviour
         else
         {
             // Spawn players 
-            playerManager.SpawnPlayer(Player.ID.P1, Payload.Direction.Right, false, nearbyChunks, movingCamera.ViewBounds);
-            playerManager.SpawnPlayer(Player.ID.P2, Payload.Direction.Left, true, nearbyChunks, movingCamera.ViewBounds);
+            playerManager.SpawnPlayer(Player.ID.P1, Payload.Direction.Right, false, onlySpawnChunk, movingCamera.ViewBounds);
+            playerManager.SpawnPlayer(Player.ID.P2, Payload.Direction.Left, true, onlySpawnChunk, movingCamera.ViewBounds);
 
             // Spawn payload
-            GameObject payload = itemManager.SpawnPayload(new Vector2(0, 12));
+            Vector2 payloadSpawn = playerManager.GetBestRespawnPoint(Payload.Direction.None, onlySpawnChunk, movingCamera.ViewBounds);
+            GameObject payload = itemManager.SpawnPayload(new Vector2(payloadSpawn.x, payloadSpawn.y + (terrainManager.CellSize.y)));
 
             // Set up camera
             movingCamera.SetFollowingTarget(payload);

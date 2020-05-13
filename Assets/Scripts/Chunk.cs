@@ -202,26 +202,26 @@ public class Chunk : MonoBehaviour
     {
         // Centre
         Gizmos.color = Color.white;
-        Gizmos.DrawCube(transform.position, 0.5f * Vector2.one);
+        Gizmos.DrawCube(transform.position, 0.25f * Vector2.one);
 
         // Enterance marker
         Gizmos.color = Color.yellow;
-        Gizmos.DrawCube(enteranceWorldSpace, 0.5f * Vector2.one);
+        Gizmos.DrawCube(enteranceWorldSpace, 0.25f * Vector2.one);
 
         // Exit markers
         foreach (TerrainManager.TerrainChunk.Exit exit in exits)
         {
             Gizmos.color = Color.blue;
-            Gizmos.DrawCube(exit.exitPositionWorld, 0.5f * Vector2.one);
+            Gizmos.DrawCube(exit.exitPositionWorld, 0.25f * Vector2.one);
             Gizmos.color = Color.cyan;
-            Gizmos.DrawCube(exit.newChunkPositionWorld, 0.5f * Vector2.one);
+            Gizmos.DrawCube(exit.newChunkPositionWorld, 0.25f * Vector2.one);
         }
 
         // Draw all respawn points
         foreach(TerrainManager.TerrainChunk.Respawn r in respawnPoints)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawSphere(r.position, 0.5f);
+            Gizmos.DrawSphere(r.position, 0.25f);
         }
     }
 

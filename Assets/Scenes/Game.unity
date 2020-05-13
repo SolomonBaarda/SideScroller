@@ -1234,7 +1234,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seed: 
   useRandomSeed: 0
-  sampleTerrainManagerObject: {fileID: 5350793358878637442, guid: 51fdc561ba13a6c41a9753945affdbba,
+  sampleTerrainManagerObjectPrefab: {fileID: 5350793358878637442, guid: 51fdc561ba13a6c41a9753945affdbba,
     type: 3}
   groundTile: {fileID: 11400000, guid: 35d18aaf6686fb14db4c9674999a5a90, type: 2}
   backgroundWallTile: {fileID: 11400000, guid: 46c763b12d566dc4d9bde3bb83c4849e, type: 2}

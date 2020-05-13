@@ -41,7 +41,7 @@ public class TerrainManager : MonoBehaviour
     private Tilemap ground;
 
     [Header("Sample Terrain Manager Reference")]
-    public GameObject sampleTerrainManagerObject;
+    public GameObject sampleTerrainManagerObjectPrefab;
     private SampleTerrainManager sampleTerrainManager;
 
     [Header("Initial Tile Type")]
@@ -72,7 +72,9 @@ public class TerrainManager : MonoBehaviour
 
         // Get the references
         grid = GetComponent<Grid>();
-        sampleTerrainManager = sampleTerrainManagerObject.GetComponent<SampleTerrainManager>();
+
+        GameObject sampleGameObject = Instantiate(sampleTerrainManagerObjectPrefab);
+        sampleTerrainManager = sampleGameObject.GetComponent<SampleTerrainManager>();
 
         // Assign the tilemaps
         for (int i = 0; i < grid.transform.childCount; i++)
@@ -298,8 +300,9 @@ public class TerrainManager : MonoBehaviour
                 }
             }
 
-            Vector2 spawnPosWorld = entryPositionWorld + (Vector2)grid.CellToWorld(new Vector3Int(invert * s.tilePos.x, s.tilePos.y, 0)) + (CellSize / 2);
-            respawnPoints.Add(new TerrainChunk.Respawn(dir, entryPositionWorld));
+            Vector2Int respawnTile = entryTile + new Vector2Int(invert * s.tilePos.x, s.tilePos.y);
+            Vector2 spawnPos = (Vector2)grid.CellToWorld(new Vector3Int(respawnTile.x, respawnTile.y, 0)) + CellSize / 2;
+            respawnPoints.Add(new TerrainChunk.Respawn(dir, spawnPos));
         }
 
         // Loop through each sample terrain exit

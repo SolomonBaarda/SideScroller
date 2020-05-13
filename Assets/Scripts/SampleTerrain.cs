@@ -41,6 +41,21 @@ public class SampleTerrain : MonoBehaviour
 
     public int index;
 
+
+    private void Awake()
+    {
+        // Disable stuff so we can't interact with the samples
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            GameObject g = transform.GetChild(i).gameObject;
+            TilemapRenderer r = g.GetComponent<TilemapRenderer>();
+            if(r != null)
+            {
+                r.enabled = false;
+            }
+        }
+    }
+
     public void LoadSample(int index)
     {
         this.index = index;
@@ -94,9 +109,6 @@ public class SampleTerrain : MonoBehaviour
                     tilemap_dev = t;
                 }
             }
-
-            // Disable the rendering of all samples
-            r.enabled = true;
         }
 
         // Create new objects to store the tile data

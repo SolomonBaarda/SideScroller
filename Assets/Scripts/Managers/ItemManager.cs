@@ -64,6 +64,7 @@ public class ItemManager : MonoBehaviour
     public GameObject SpawnPayload(Vector2 position)
     {
         Payload = SpawnItem(payloadPrefab, position, "Payload");
+        Payload.GetComponent<Payload>().SetPosition(position);
         return Payload;
     }
 

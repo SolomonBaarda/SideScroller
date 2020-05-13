@@ -119,13 +119,17 @@ public class PlayerManager : MonoBehaviour
 
 
 
-    private Vector2 GetBestRespawnPoint(Payload.Direction objectIdealDirection, List<Chunk> nearbyChunks, Bounds cameraViewBounds)
+    public Vector2 GetBestRespawnPoint(Payload.Direction objectIdealDirection, List<Chunk> nearbyChunks, Bounds cameraViewBounds)
     {
         bool canRespawn = false;
         // Create new bounds, smaller then the camera screen used for respawns
         Bounds respawnBounds = new Bounds(cameraViewBounds.center, cameraViewBounds.size * RESPAWN_AREA_PERCENTAGE_OF_CAMERA_BOUNDS);
         // Initialise to be the first respawn point
         Vector2 bestRespawnPosition = respawnBounds.center;
+        if (objectIdealDirection == Payload.Direction.None)
+        {
+            bestRespawnPosition = nearbyChunks[0].respawnPoints[0].position;
+        }
 
         // Loop through each chunk
         foreach (Chunk c in nearbyChunks)

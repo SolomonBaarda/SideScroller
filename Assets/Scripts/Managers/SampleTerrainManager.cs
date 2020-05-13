@@ -39,6 +39,7 @@ public class SampleTerrainManager : MonoBehaviour
     public Tile dev_itemPot;
     public Tile dev_itemChest;
 
+
     public void LoadAllSampleTerrain()
     {
         // Load terrain

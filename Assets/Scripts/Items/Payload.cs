@@ -80,7 +80,18 @@ public class Payload : CollectableItem, ILocatable
         base.Drop(position, velocity);
     }
 
+    public void SetPosition(Vector2 position)
+    {
+        Rigidbody2D r = GetComponent<Rigidbody2D>();
+        Vector2 vel = r.velocity;
+        vel.y = 0;
+        r.velocity = vel;
 
+        float height = trigger.bounds.max.y;
+
+        // Add a little to centre the player
+        transform.position = new Vector2(position.x, position.y + (height / 2));
+    }
 
 
     public enum Direction
