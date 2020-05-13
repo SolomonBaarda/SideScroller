@@ -123,8 +123,6 @@ public class GameManager : MonoBehaviour
 
         // Generate spawn chunk
         terrainManager.GenerateSpawn(presets.terrain_generation, presets.terrain_limit_not_endless);
-
-        playerManager.SetGameMode(presets.DoSinglePlayer);
     }
 
 
@@ -135,11 +133,13 @@ public class GameManager : MonoBehaviour
             enemyManager.ScanWholeNavMesh();
         }
 
+        List<Chunk> nearbyChunks = movingCamera.GetAllNearbyChunks();
+
         // Single player game
         if (presets.DoSinglePlayer)
         {
             // Spawn player 1 
-            playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P1, Payload.Direction.None, true);
+            playerManager.SpawnPlayer(Player.ID.P1, Payload.Direction.None, true, nearbyChunks, movingCamera.ViewBounds);
 
             // Set up camera
             movingCamera.SetFollowingTarget(playerManager.GetPlayer(Player.ID.P1).gameObject);
@@ -149,8 +149,8 @@ public class GameManager : MonoBehaviour
         else
         {
             // Spawn players 
-            playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P1, Payload.Direction.Right, false);
-            playerManager.SpawnPlayer(terrainManager.GetInitialTileWorldPositionForPlayer(), Player.ID.P2, Payload.Direction.Left, true);
+            playerManager.SpawnPlayer(Player.ID.P1, Payload.Direction.Right, false, nearbyChunks, movingCamera.ViewBounds);
+            playerManager.SpawnPlayer(Player.ID.P2, Payload.Direction.Left, true, nearbyChunks, movingCamera.ViewBounds);
 
             // Spawn payload
             GameObject payload = itemManager.SpawnPayload(new Vector2(0, 12));
@@ -184,7 +184,7 @@ public class GameManager : MonoBehaviour
             // Check if a player is outside the bounds
             playerManager.CheckPlayersOutsideBounds(movingCamera.ViewBounds);
             // Check if a player needs to be respawned
-            playerManager.CheckRespawns(movingCamera.GetAllNearbyChunks(), movingCamera.transform.position, movingCamera.ViewBounds);
+            playerManager.CheckAllRespawns(movingCamera.GetAllNearbyChunks(), movingCamera.ViewBounds);
 
 
             // Update HUD stuff

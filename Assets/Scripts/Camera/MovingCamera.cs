@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Video;
 
 public class MovingCamera : MonoBehaviour, ILocatable
 {
@@ -117,13 +116,13 @@ public class MovingCamera : MonoBehaviour, ILocatable
                         c = following.CurrentChunk;
                     }
 
-                    // Update the position and update the distance along the path
+                    // Get the closest point in the chunk to the target
                     Vector3 possiblePosition = GetClosestPoint(following.Position, c);
 
                     // Ensure the new position is in the correct direction for the object following
                     if (following.IdealDirection == Payload.Direction.None ||
-                        (following.IdealDirection == Payload.Direction.Left && position.x < following.Position.x) ||
-                        (following.IdealDirection == Payload.Direction.Right && position.x > following.Position.x))
+                        (following.IdealDirection == Payload.Direction.Left && possiblePosition.x < transform.position.x) ||
+                        (following.IdealDirection == Payload.Direction.Right && possiblePosition.x > transform.position.x))
                     {
                         position = possiblePosition;
                     }
