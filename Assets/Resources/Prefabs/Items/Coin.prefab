@@ -50,7 +50,7 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: 848038db28b4e0d4982d1594c700e696, type: 2}
   collideToPickUp: 1
   interactToPickUp: 0
-  initialSetup: 0.5
+  initialSetupTime: 0.5
 --- !u!212 &7541231200787745022
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -69,7 +69,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

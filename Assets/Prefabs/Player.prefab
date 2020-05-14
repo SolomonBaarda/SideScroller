@@ -61,7 +61,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -253,8 +253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d8947cf5bb2fc64488ca5a9da3708a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DEFAULT_INTERACT_TIMEOUT_SECONDS: 0.25
-  area_of_attack: 1
+  interact_timeout: 0.25
 --- !u!114 &2638045218602126199
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,6 +267,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentTotal: {fileID: 0}
+  payload: {fileID: 0}
 --- !u!1 &3244487833654855807
 GameObject:
   m_ObjectHideFlags: 0
