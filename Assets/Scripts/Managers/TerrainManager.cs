@@ -379,7 +379,7 @@ public class TerrainManager : MonoBehaviour
         foreach (SampleTerrain.Item item in terrain.items)
         {
             // Get position of the centre of the tile
-            Vector2 pos = (Vector2)grid.CellToWorld(new Vector3Int(entryTile.x + invert * item.tilePos.x, entryTile.y + item.tilePos.y, 0)) + CellSize / 2;
+            Vector2 pos = (Vector2)grid.CellToWorld(new Vector3Int(entryTile.x + invert * item.tilePos.x, entryTile.y + item.tilePos.y, 0)) + (CellSize / 2);
             // And add it
             allItemPositions.Add(new TerrainChunk.Item(item.type, pos));
         }
@@ -388,7 +388,7 @@ public class TerrainManager : MonoBehaviour
         List<(GameObject, Vector2)> extraWorldObjects = new List<(GameObject, Vector2)>();
         for(int i = 0; i < terrain.otherObjects.Count; i++)
         {
-            Vector2 position = entryPositionWorld + new Vector2(invert * terrain.otherObjects[i].Item2.x, terrain.otherObjects[i].Item2.y) - (CellSize / 2);
+            Vector2 position = entryPositionWorld + new Vector2(invert * terrain.otherObjects[i].Item2.x, terrain.otherObjects[i].Item2.y);
             Quaternion rotation;
             extraWorldObjects.Add((terrain.otherObjects[i].Item1, position));
         }
