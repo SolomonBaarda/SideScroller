@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pathfinding.Ionic.Zip;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Threading;
@@ -383,9 +384,18 @@ public class TerrainManager : MonoBehaviour
             allItemPositions.Add(new TerrainChunk.Item(item.type, pos));
         }
 
+        // Get all extra world objects
+        List<(GameObject, Vector2)> extraWorldObjects = new List<(GameObject, Vector2)>();
+        for(int i = 0; i < terrain.otherObjects.Count; i++)
+        {
+            Vector2 position = entryPositionWorld + new Vector2(invert * terrain.otherObjects[i].Item2.x, terrain.otherObjects[i].Item2.y) - (CellSize / 2);
+            Quaternion rotation;
+            extraWorldObjects.Add((terrain.otherObjects[i].Item1, position));
+        }
+
         // Return the TerrainChunk object for use in the ChunkManager
         return new TerrainChunk(b.boundsReal, CellSize, centre, entryPositionWorld, exits, respawnPoints, directionToGenerate, chunkID,
-            allItemPositions, terrain.itemChance, terrain.index);
+            allItemPositions, terrain.itemChance, extraWorldObjects, terrain.index);
     }
 
 
@@ -513,10 +523,12 @@ public class TerrainManager : MonoBehaviour
         public List<Item> items;
         public float itemChance;
 
+        public List<(GameObject, Vector2)> extraWorldObjects;
+
         public int sampleIndex;
 
         public TerrainChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldPosition, List<Exit> exits, List<Respawn> respawnPoints,
-            Direction direction, Vector2Int chunkID, List<Item> items, float itemChance, int sampleIndex)
+            Direction direction, Vector2Int chunkID, List<Item> items, float itemChance, List<(GameObject, Vector2)> extraWorldObjects, int sampleIndex)
         {
             this.bounds = bounds;
             this.cellSize = cellSize;
@@ -528,6 +540,7 @@ public class TerrainManager : MonoBehaviour
             this.chunkID = chunkID;
             this.items = items;
             this.itemChance = itemChance;
+            this.extraWorldObjects = extraWorldObjects;
             this.sampleIndex = sampleIndex;
         }
 

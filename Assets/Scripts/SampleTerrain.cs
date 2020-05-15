@@ -5,6 +5,9 @@ using UnityEngine.Tilemaps;
 
 public class SampleTerrain : MonoBehaviour 
 {
+    // Reference to manager
+    private SampleTerrainManager manager;
+
     // Tilemaps 
     private Grid grid;
     private Tilemap tilemap_wall;
@@ -15,8 +18,8 @@ public class SampleTerrain : MonoBehaviour
     private Tilemap tilemap_dev;
     private List<Tilemap> tilemap_dev_AllCameraPaths;
 
-    // Reference to manager
-    private SampleTerrainManager manager;
+    private GameObject extraObjectsParent;
+    public List<(GameObject, Vector2)> otherObjects;
 
     // Objects for storing the tiles
     public Layer wall;
@@ -43,14 +46,33 @@ public class SampleTerrain : MonoBehaviour
 
     private void Awake()
     {
-        // Disable stuff so we can't interact with the samples
-        for (int i = 0; i < transform.childCount; i++)
+        // References 
+        manager = transform.root.GetComponent<SampleTerrainManager>();
+
+        grid = GetComponentInChildren<Grid>();
+
+        // Disable renderers for all tilemaps
+        for (int i = 0; i < grid.transform.childCount; i++)
         {
-            GameObject g = transform.GetChild(i).gameObject;
+            GameObject g = grid.transform.GetChild(i).gameObject;
             TilemapRenderer r = g.GetComponent<TilemapRenderer>();
-            if(r != null)
+            if (r != null)
             {
                 r.enabled = false;
+            }
+        }
+
+
+        extraObjectsParent = transform.Find("Extras").gameObject;
+
+        // Disable all extras for now
+        for(int i = 0; i < extraObjectsParent.transform.childCount; i++)
+        {
+            GameObject g = extraObjectsParent.transform.GetChild(i).gameObject;
+
+            if(g != null)
+            {
+                g.SetActive(false);
             }
         }
     }
@@ -58,10 +80,6 @@ public class SampleTerrain : MonoBehaviour
     public void LoadSample(int index)
     {
         this.index = index;
-
-        // References 
-        manager = transform.root.GetComponent<SampleTerrainManager>();
-        grid = GetComponent<Grid>();
 
         exitTilePositions = new List<Exit>();
         items = new List<Item>();
@@ -137,6 +155,20 @@ public class SampleTerrain : MonoBehaviour
         LoadTiles(tilemap_background, ref background);
         LoadTiles(tilemap_hazard, ref hazard);
         LoadTiles(tilemap_ground, ref ground);
+
+        // Load all other objects - Lights etc.
+        otherObjects = new List<(GameObject, Vector2)>();
+        for (int i = 0; i < extraObjectsParent.transform.childCount; i++)
+        {
+            GameObject g = extraObjectsParent.transform.GetChild(i).gameObject;
+
+            if (g != null)
+            {
+                // Add the object and its relative position to the entry tile
+                Vector2 objectPosition = g.transform.position - grid.CellToWorld(new Vector3Int(entryTilePositionLocal.x, entryTilePositionLocal.y, 0));
+                otherObjects.Add((g, objectPosition));
+            }
+        }
     }
 
 

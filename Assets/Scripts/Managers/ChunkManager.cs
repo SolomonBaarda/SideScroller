@@ -35,11 +35,19 @@ public class ChunkManager : MonoBehaviour
     {
         // Create a new chunk game object 
         // This is used for the player, camera path etc
-        GameObject g = Instantiate(chunkPrefab, transform);
-        Chunk c = g.GetComponent<Chunk>();
+        GameObject chunkObject = Instantiate(chunkPrefab, transform);
+        Chunk c = chunkObject.GetComponent<Chunk>();
 
         // Create the chunk
         c.CreateChunk(t.bounds, t.cellSize, t.centre, t.enteranceWorldPosition, t.exits, t.respawnPoints, t.direction, t.sampleIndex, t.chunkID);
+
+        // Instantiate all extra objects
+        for(int i = 0; i < t.extraWorldObjects.Count; i++)
+        {
+            GameObject g = Instantiate(t.extraWorldObjects[i].Item1, t.extraWorldObjects[i].Item2, t.extraWorldObjects[i].Item1.transform.rotation, chunkObject.transform);
+            g.SetActive(true);
+        }
+
         if(chunks.ContainsKey(t.chunkID))
         {
             chunks.Remove(t.chunkID);
