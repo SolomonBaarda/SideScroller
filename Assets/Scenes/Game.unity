@@ -1253,7 +1253,7 @@ GameObject:
   m_Component:
   - component: {fileID: 643041394}
   - component: {fileID: 643041395}
-  m_Layer: 18
+  m_Layer: 0
   m_Name: Global Post Processing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
