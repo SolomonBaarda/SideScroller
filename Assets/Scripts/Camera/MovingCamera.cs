@@ -4,7 +4,7 @@ using UnityEngine;
 public class MovingCamera : MonoBehaviour, ILocatable
 {
     [Header("Movement Settings")]
-    public float zoom = 8;
+    public float zoom = 16;
     public float speed = 4;
     public Direction direction = Direction.Stationary;
 
