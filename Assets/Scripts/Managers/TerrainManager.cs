@@ -270,7 +270,8 @@ public class TerrainManager : MonoBehaviour
 
         // Calculate some important values
         SampleTerrain.GroundBounds b = terrain.GetGroundBounds();
-        Vector2 entryPositionWorld = (Vector2)grid.CellToWorld(new Vector3Int(entryTile.x, entryTile.y, 0)) + (CellSize / 2);
+        Vector2 entryPositionWorldCorner = grid.CellToWorld(new Vector3Int(entryTile.x, entryTile.y, 0));
+        Vector2 entryPositionWorld = entryPositionWorldCorner + (CellSize / 2);
 
         // Centre position
         Vector2Int centreTile = entryTile + new Vector2Int(b.minTile.x * invert, b.minTile.y) + new Vector2Int(b.boundsTile.x * invert / 2, b.boundsTile.y / 2);
@@ -385,12 +386,22 @@ public class TerrainManager : MonoBehaviour
         }
 
         // Get all extra world objects
-        List<(GameObject, Vector2)> extraWorldObjects = new List<(GameObject, Vector2)>();
-        for(int i = 0; i < terrain.otherObjects.Count; i++)
+        List<(GameObject, Vector2, Vector3)> extraWorldObjects = new List<(GameObject, Vector2, Vector3)>();
+        for(int i = 0; i < terrain.extraGameObjects.Count; i++)
         {
-            Vector2 position = entryPositionWorld + new Vector2(invert * terrain.otherObjects[i].Item2.x, terrain.otherObjects[i].Item2.y);
-            Quaternion rotation;
-            extraWorldObjects.Add((terrain.otherObjects[i].Item1, position));
+            // Calculate the new position and rotation
+            Vector2 position = entryPositionWorldCorner + (new Vector2(invert * terrain.extraGameObjects[i].Item2.x, terrain.extraGameObjects[i].Item2.y) * CellSize);
+            Vector3 localScale = terrain.extraGameObjects[i].Item1.transform.localScale;
+
+            // The object needs to be flipped
+            if (invert < 0)
+            {
+                position.x += CellSize.x;
+
+                localScale.x *= -1;
+            }
+            
+            extraWorldObjects.Add((terrain.extraGameObjects[i].Item1, position, localScale));
         }
 
         // Return the TerrainChunk object for use in the ChunkManager
@@ -523,12 +534,12 @@ public class TerrainManager : MonoBehaviour
         public List<Item> items;
         public float itemChance;
 
-        public List<(GameObject, Vector2)> extraWorldObjects;
+        public List<(GameObject, Vector2, Vector3)> extraWorldObjects;
 
         public int sampleIndex;
 
         public TerrainChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldPosition, List<Exit> exits, List<Respawn> respawnPoints,
-            Direction direction, Vector2Int chunkID, List<Item> items, float itemChance, List<(GameObject, Vector2)> extraWorldObjects, int sampleIndex)
+            Direction direction, Vector2Int chunkID, List<Item> items, float itemChance, List<(GameObject, Vector2, Vector3)> extraWorldObjects, int sampleIndex)
         {
             this.bounds = bounds;
             this.cellSize = cellSize;

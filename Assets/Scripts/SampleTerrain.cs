@@ -19,7 +19,10 @@ public class SampleTerrain : MonoBehaviour
     private List<Tilemap> tilemap_dev_AllCameraPaths;
 
     private GameObject extraObjectsParent;
-    public List<(GameObject, Vector2)> otherObjects;
+    /// <summary>
+    /// List of extra GameObjects and their positions in tiles, relative to the entry tile.
+    /// </summary>
+    public List<(GameObject, Vector2)> extraGameObjects;
 
     // Objects for storing the tiles
     public Layer wall;
@@ -157,7 +160,7 @@ public class SampleTerrain : MonoBehaviour
         LoadTiles(tilemap_ground, ref ground);
 
         // Load all other objects - Lights etc.
-        otherObjects = new List<(GameObject, Vector2)>();
+        extraGameObjects = new List<(GameObject, Vector2)>();
         for (int i = 0; i < extraObjectsParent.transform.childCount; i++)
         {
             GameObject g = extraObjectsParent.transform.GetChild(i).gameObject;
@@ -166,7 +169,7 @@ public class SampleTerrain : MonoBehaviour
             {
                 // Add the object and its relative position to the entry tile
                 Vector2 objectPosition = g.transform.position - grid.CellToWorld(new Vector3Int(entryTilePositionLocal.x, entryTilePositionLocal.y, 0));
-                otherObjects.Add((g, objectPosition));
+                extraGameObjects.Add((g, objectPosition/grid.cellSize));
             }
         }
     }

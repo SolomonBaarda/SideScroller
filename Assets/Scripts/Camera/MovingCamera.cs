@@ -218,10 +218,10 @@ public class MovingCamera : MonoBehaviour, ILocatable
         if (c != null)
         {
             // Draw the camera view 
-            Vector3 bl = c.ViewportToWorldPoint(new Vector3(0, 0, zoom));
-            Vector3 br = c.ViewportToWorldPoint(new Vector3(1, 0, zoom));
-            Vector3 tl = c.ViewportToWorldPoint(new Vector3(0, 1, zoom));
-            Vector3 tr = c.ViewportToWorldPoint(new Vector3(1, 1, zoom));
+            Vector2 bl = ViewBounds.min;
+            Vector2 br = new Vector2(ViewBounds.max.x, ViewBounds.min.y);
+            Vector2 tl = new Vector2(ViewBounds.min.x, ViewBounds.max.y);
+            Vector2 tr = ViewBounds.max;
             Gizmos.DrawLine(bl, br);
             Gizmos.DrawLine(bl, tl);
             Gizmos.DrawLine(tr, br);

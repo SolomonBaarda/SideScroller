@@ -45,6 +45,7 @@ public class ChunkManager : MonoBehaviour
         for(int i = 0; i < t.extraWorldObjects.Count; i++)
         {
             GameObject g = Instantiate(t.extraWorldObjects[i].Item1, t.extraWorldObjects[i].Item2, t.extraWorldObjects[i].Item1.transform.rotation, chunkObject.transform);
+            g.transform.localScale = t.extraWorldObjects[i].Item3;
             g.SetActive(true);
         }
 
