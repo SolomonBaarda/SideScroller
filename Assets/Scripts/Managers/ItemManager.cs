@@ -12,6 +12,7 @@ public class ItemManager : MonoBehaviour
     public static string RENDERING_LAYER_ITEM_COLLISION = "Item_Collision";
 
     public static UnityAction<GameObject> OnGenerateLoot;
+    public static UnityAction<GameObject> OnItemOutOfBounds;
 
     private System.Random random;
 

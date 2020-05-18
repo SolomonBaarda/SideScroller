@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Payload : CollectableItem, ILocatable
 {
+    public const string LAYER = "Payload";
+
     public Chunk CurrentChunk { get; private set; }
     public Vector2 Position { get { return transform.position; } }
 

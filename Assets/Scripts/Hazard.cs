@@ -21,5 +21,11 @@ public class Hazard : MonoBehaviour
                 }
             }
         }
+        // Payload
+        else if(LayerMask.LayerToName(collision.gameObject.layer).Contains(Payload.LAYER))
+        {
+            Debug.Log("Collided with p");
+            ItemManager.OnItemOutOfBounds.Invoke(collision.gameObject);
+        }
     }
 }

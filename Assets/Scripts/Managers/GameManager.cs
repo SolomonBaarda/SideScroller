@@ -75,6 +75,8 @@ public class GameManager : MonoBehaviour
         // Load presets
         OnSetPresets += Initialise;
 
+        ItemManager.OnItemOutOfBounds += ItemOutOfBounds;
+
         // If the Menu is loaded, wait for presets 
         if (SceneLoader.Instance != null && SceneLoader.Instance.SceneIsLoaded(SceneLoader.MENU_SCENE))
         {
@@ -347,6 +349,19 @@ public class GameManager : MonoBehaviour
                 // Generate a new random chunk
                 terrainManager.GenerateRandom(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID);
             }
+        }
+    }
+
+
+    private void ItemOutOfBounds(GameObject item)
+    {
+        if(WorldItem.ExtendsClass<Payload>(item))
+        {
+            Payload p = (Payload)WorldItem.GetClass<Payload>(item);
+
+            // Get the best position on the screen
+            Vector2 respawn = playerManager.GetBestRespawnPoint(p.IdealDirection, movingCamera.GetAllNearbyChunks(), movingCamera.ViewBounds);
+            p.SetPosition(respawn);
         }
     }
 
