@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.Events;
@@ -413,7 +414,7 @@ public class TerrainManager : MonoBehaviour
 
     private void CopySampleTerrainLayer(Vector2Int entryPosition, bool flipAxisX, SampleTerrain.Layer layer, ref Tilemap tilemap)
     {
-        Vector3Int entry = new Vector3Int(entryPosition.x, entryPosition.y, 0);
+        Vector2Int entry = new Vector2Int(entryPosition.x, entryPosition.y);
 
         int invert = 1;
         if (flipAxisX)
@@ -425,9 +426,28 @@ public class TerrainManager : MonoBehaviour
         foreach (SampleTerrain.Layer.Tile tile in layer.tilesInThisLayer)
         {
             // Position of the new tile
-            Vector3Int newTilePos = entry + new Vector3Int(invert * tile.position.x, tile.position.y, 0);
+            Vector2Int newTilePos = entry + new Vector2Int(invert * tile.position.x, tile.position.y);
 
-            tilemap.SetTile(newTilePos, tile.tileType);
+            TileBase newTileType = tile.tileType;
+
+            // Check if we need to flip the tile type
+            if(invert < 0)
+            {
+                if(tile.tileType is RuleTile)
+                {
+                    // Swap the direction
+                    if(tile.tileType.Equals(sampleTerrainManager.rampLeft))
+                    {
+                        newTileType = sampleTerrainManager.rampRight;
+                    }
+                    else if (tile.tileType.Equals(sampleTerrainManager.rampRight))
+                    {
+                        newTileType = sampleTerrainManager.rampLeft;
+                    }
+                }
+            }
+
+            SetTile(tilemap, newTileType, newTilePos);
         }
     }
 
@@ -468,7 +488,7 @@ public class TerrainManager : MonoBehaviour
     }
 
 
-    private void SetTile(Tilemap tilemap, Tile tileType, Vector2Int tilePosition)
+    private void SetTile(Tilemap tilemap, TileBase tileType, Vector2Int tilePosition)
     {
         // Set the cell
         tilemap.SetTile(new Vector3Int(tilePosition.x, tilePosition.y, 0), tileType);

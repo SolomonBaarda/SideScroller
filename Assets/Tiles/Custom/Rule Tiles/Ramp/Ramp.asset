@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3e146197892d3945897caed70a2ce18, type: 3}
+  m_Name: Ramp
+  m_EditorClassIdentifier: 
+  m_DefaultSprite: {fileID: -5570809178039183426, guid: a6342b9af9618a142be4174aacde4284,
+    type: 3}
+  m_DefaultGameObject: {fileID: 0}
+  m_DefaultColliderType: 1
+  m_TilingRules: []
+  left: {fileID: 11400000, guid: 38364aaf1c7132b4bb6d8a4825559502, type: 2}
+  right: {fileID: 11400000, guid: 737361bdce21ad84881962ad07e85ba8, type: 2}

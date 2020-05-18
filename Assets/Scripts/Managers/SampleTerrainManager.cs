@@ -40,6 +40,11 @@ public class SampleTerrainManager : MonoBehaviour
     public Tile dev_itemChest;
 
 
+    [Header("Custom Rule Tiles")]
+    public RuleTile rampLeft;
+    public RuleTile rampRight;
+
+
     public void LoadAllSampleTerrain()
     {
         // Load terrain
