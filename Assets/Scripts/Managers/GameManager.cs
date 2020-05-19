@@ -360,7 +360,7 @@ public class GameManager : MonoBehaviour
             Payload p = (Payload)WorldItem.GetClass<Payload>(item);
 
             // Get the best position on the screen
-            Vector2 respawn = playerManager.GetBestRespawnPoint(p.IdealDirection, movingCamera.GetAllNearbyChunks(), movingCamera.ViewBounds);
+            Vector2 respawn = playerManager.GetBestRespawnPoint(Payload.Direction.None, movingCamera.GetAllNearbyChunks(), movingCamera.ViewBounds);
             p.SetPosition(respawn);
         }
     }

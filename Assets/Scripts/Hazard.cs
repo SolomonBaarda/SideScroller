@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Hazard : MonoBehaviour
 {
+    public const string LAYER = "Hazard";
+
     public void OnTriggerEnter2D(Collider2D collision)
     {
         // A player is colliding with this

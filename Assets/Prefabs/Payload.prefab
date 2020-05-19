@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5291220104402161033}
   - component: {fileID: 5291220104402161035}
   - component: {fileID: 5591323304260338127}
-  m_Layer: 19
+  m_Layer: 14
   m_Name: Payload
   m_TagString: Untagged
   m_Icon: {fileID: 0}

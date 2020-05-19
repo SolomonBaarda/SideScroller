@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Payload : CollectableItem, ILocatable
@@ -10,7 +9,6 @@ public class Payload : CollectableItem, ILocatable
     public Vector2 Position { get { return transform.position; } }
 
     public Transform groundPosition;
-    private Vector2 lastGroundPosition;
 
     public Direction IdealDirection { get; private set; } = Direction.None;
 
@@ -26,6 +24,7 @@ public class Payload : CollectableItem, ILocatable
     private void FixedUpdate()
     {
         UpdateCurrentChunk();
+        CheckOutOfBounds();
     }
 
     public void UpdateCurrentChunk()
@@ -37,19 +36,30 @@ public class Payload : CollectableItem, ILocatable
         if (currentNew != null)
         {
             CurrentChunk = currentNew;
-
-            if (GroundCheck.IsOnGround(groundPosition.position))
-            {
-                lastGroundPosition = transform.position;
-            }
         }
         // Is null, don't update current chunk
         else
         {
             // Move to the last valid ground position
-            //Drop(lastGroundPosition, Vector2.zero);
+            ItemManager.OnItemOutOfBounds(gameObject);
         }
     }
+
+    private void CheckOutOfBounds()
+    {
+        Collider2D[] collisions = new Collider2D[1];
+        ContactFilter2D filter = new ContactFilter2D();
+        filter.SetLayerMask(LayerMask.GetMask(Hazard.LAYER));
+        filter.useTriggers = true;
+
+        // The payload is colliding with a hazard, therefore out of bounds
+        if (Physics2D.OverlapCollider(trigger, filter, collisions) > 0)
+        {
+            // Move to the last valid ground position
+            ItemManager.OnItemOutOfBounds(gameObject);
+        }
+    }
+
 
 
 
@@ -84,15 +94,14 @@ public class Payload : CollectableItem, ILocatable
 
     public void SetPosition(Vector2 position)
     {
-        Rigidbody2D r = GetComponent<Rigidbody2D>();
-        Vector2 vel = r.velocity;
+        Vector2 vel = rigid.velocity;
         vel.y = 0;
-        r.velocity = vel;
+        rigid.velocity = vel;
 
-        float height = trigger.bounds.max.y;
+        float extents = Mathf.Abs(transform.position.y - groundPosition.position.y);
 
         // Add a little to centre the player
-        transform.position = new Vector2(position.x, position.y + (height / 2));
+        transform.position = new Vector2(position.x, position.y + extents);
     }
 
 
