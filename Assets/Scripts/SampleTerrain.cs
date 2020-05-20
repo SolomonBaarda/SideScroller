@@ -37,6 +37,7 @@ public class SampleTerrain : MonoBehaviour
 
     public List<Exit> exitTilePositions;
     public List<Spawn> extraRespawnPoints;
+    public List<Vector2Int> endTileLocations = null;
     // Item stuff
     public List<Item> items;
     [Range(0, 1)] public float itemChance = 1;
@@ -87,6 +88,7 @@ public class SampleTerrain : MonoBehaviour
         exitTilePositions = new List<Exit>();
         items = new List<Item>();
         extraRespawnPoints = new List<Spawn>();
+        endTileLocations = new List<Vector2Int>();
 
         tilemap_dev_AllCameraPaths = new List<Tilemap>();
 
@@ -148,6 +150,7 @@ public class SampleTerrain : MonoBehaviour
         FindCameraPathPositions(ref exitTilePositions, tilemap_dev_AllCameraPaths);
         // Load any extra respawn points
         FindRespawnPoints(ref extraRespawnPoints);
+        FindEndBounds(ref endTileLocations);
 
         // Load the item types and positions
         LoadItems(ref items, tilemap_dev);
@@ -426,6 +429,28 @@ public class SampleTerrain : MonoBehaviour
                 // Add the new exit
                 Vector2Int tile = new Vector2Int(current.x, current.y) - entryTilePositionLocal;
                 respawns.Add(new Spawn(direction, tile));
+            }
+        }
+    }
+
+
+
+    private void FindEndBounds(ref List<Vector2Int> points)
+    {
+        points.Clear();
+
+        // Get an iterator for the bounds of the tilemap 
+        BoundsInt.PositionEnumerator p = tilemap_dev.cellBounds.allPositionsWithin.GetEnumerator();
+        while (p.MoveNext())
+        {
+            Vector3Int current = p.Current;
+            if (tilemap_dev.GetTile(current) != null)
+            {
+                // Check if it is a finish tile, and if so add it
+                if (tilemap_dev.GetTile(current).Equals(manager.dev_finish))
+                {
+                    points.Add(new Vector2Int(current.x, current.y) - entryTilePositionLocal);
+                }                
             }
         }
     }

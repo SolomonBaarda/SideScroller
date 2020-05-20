@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 {
     public static UnityAction<Presets> OnSetPresets;
     public static UnityAction OnGameStart;
+    public static UnityAction OnGameEnd;
 
     [Header("Player")]
     public GameObject playerManagerObject;
@@ -76,6 +77,8 @@ public class GameManager : MonoBehaviour
         OnSetPresets += Initialise;
 
         ItemManager.OnItemOutOfBounds += ItemOutOfBounds;
+
+        OnGameEnd += SceneLoader.EMPTY;
 
         // If the Menu is loaded, wait for presets 
         if (SceneLoader.Instance != null && SceneLoader.Instance.SceneIsLoaded(SceneLoader.MENU_SCENE))

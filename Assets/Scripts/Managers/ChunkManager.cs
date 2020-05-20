@@ -40,6 +40,10 @@ public class ChunkManager : MonoBehaviour
 
         // Create the chunk
         c.CreateChunk(t.bounds, t.cellSize, t.centre, t.enteranceWorldPosition, t.exits, t.respawnPoints, t.direction, t.sampleIndex, t.chunkID);
+        if(t.finishArea.isFinish)
+        {
+            Debug.Log("chunk " + t.chunkID + " has finish");
+        }
 
         // Instantiate all extra objects
         for(int i = 0; i < t.extraWorldObjects.Count; i++)

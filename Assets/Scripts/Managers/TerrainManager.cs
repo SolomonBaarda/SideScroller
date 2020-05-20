@@ -405,9 +405,35 @@ public class TerrainManager : MonoBehaviour
             extraWorldObjects.Add((terrain.extraGameObjects[i].Item1, position, localScale));
         }
 
+        // Get the finishing bounds if this chunk is a finish
+        TerrainChunk.Finish f = new TerrainChunk.Finish();
+        if(terrain.endTileLocations != null)
+        {
+            if(terrain.endTileLocations.Count >= 1)
+            {
+                Vector2Int minTile = entryTile + terrain.endTileLocations[0], maxTile = entryTile + terrain.endTileLocations[0];
+                foreach (Vector2Int exitTile in terrain.endTileLocations)
+                {
+                    // Set the min and max points
+                    Vector2Int tile = entryTile + exitTile;
+                    minTile.x = tile.x < minTile.x ? tile.x : minTile.x;
+                    minTile.y = tile.y < minTile.y ? tile.y : minTile.y;
+
+                    maxTile.x = tile.x > maxTile.x ? tile.x : maxTile.x;
+                    maxTile.y = tile.y > maxTile.y ? tile.y : maxTile.y;
+                }
+
+                Vector2 min = grid.CellToWorld(new Vector3Int(minTile.x, minTile.y, 0));
+                Vector2 max = (Vector2)grid.CellToWorld(new Vector3Int(maxTile.x, maxTile.y, 0)) + CellSize;
+                Vector2 size = max - min;
+                f.bounds = new Bounds(min + (size / 2), size);
+            }
+        }
+
+
         // Return the TerrainChunk object for use in the ChunkManager
         return new TerrainChunk(b.boundsReal, CellSize, centre, entryPositionWorld, exits, respawnPoints, directionToGenerate, chunkID,
-            allItemPositions, terrain.itemChance, extraWorldObjects, terrain.index);
+            allItemPositions, terrain.itemChance, extraWorldObjects, f, terrain.index);
     }
 
 
@@ -558,8 +584,11 @@ public class TerrainManager : MonoBehaviour
 
         public int sampleIndex;
 
+        public Finish finishArea;
+
         public TerrainChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldPosition, List<Exit> exits, List<Respawn> respawnPoints,
-            Direction direction, Vector2Int chunkID, List<Item> items, float itemChance, List<(GameObject, Vector2, Vector3)> extraWorldObjects, int sampleIndex)
+            Direction direction, Vector2Int chunkID, List<Item> items, float itemChance, List<(GameObject, Vector2, Vector3)> extraWorldObjects, Finish finishArea, 
+            int sampleIndex)
         {
             this.bounds = bounds;
             this.cellSize = cellSize;
@@ -572,6 +601,7 @@ public class TerrainManager : MonoBehaviour
             this.items = items;
             this.itemChance = itemChance;
             this.extraWorldObjects = extraWorldObjects;
+            this.finishArea = finishArea;
             this.sampleIndex = sampleIndex;
         }
 
@@ -622,6 +652,20 @@ public class TerrainManager : MonoBehaviour
             {
                 this.itemType = itemType;
                 this.centreOfTile = centreOfTile;
+            }
+        }
+
+
+        public struct Finish
+        {
+            public bool isFinish;
+            public Bounds bounds;
+
+
+            public Finish(Bounds bounds)
+            {
+                this.bounds = bounds;
+                isFinish = true;
             }
         }
     }
