@@ -16,8 +16,12 @@ public class PlayerInventory : MonoBehaviour
 
     public GameObject payload;
 
+    private Player player;
+
     public void Awake()
     {
+        player = GetComponent<Player>();
+
         buffs = new List<InventoryItem<Buff>>();
 
         health = new SimpleInventoryItem<Health>(10, 10);
@@ -80,7 +84,7 @@ public class PlayerInventory : MonoBehaviour
                 Payload p = (Payload)WorldItem.GetClass<Payload>(g);
                 payload = g;
 
-                p.PickUp(gameObject, new Vector2(transform.position.x, transform.position.y + 1));
+                p.PickUp(gameObject, player.headPosition.position - player.transform.position);
             }
             // Weapon
             else if (item is Weapon)

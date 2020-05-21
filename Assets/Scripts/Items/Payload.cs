@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class Payload : CollectableItem, ILocatable
 {
-    public const string LAYER = "Payload";
 
     public Chunk CurrentChunk { get; private set; }
     public Vector2 Position { get { return transform.position; } }
@@ -63,9 +62,10 @@ public class Payload : CollectableItem, ILocatable
 
 
 
-    public void PickUp(GameObject player, Vector2 newPosition)
+    public void PickUp(GameObject player, Vector2 localPosition)
     {
         // Disable physics while picked up
+        rigid.velocity = Vector2.zero;
         rigid.isKinematic = true;
         trigger.enabled = false;
 
@@ -73,9 +73,11 @@ public class Payload : CollectableItem, ILocatable
         Player p = player.GetComponent<Player>();
         IdealDirection = p.IdealDirection;
 
+        localPosition.y += GetHeightExtent();
+
         // Pick up
         transform.parent = player.transform;
-        transform.position = newPosition;
+        transform.localPosition = localPosition;
     }
 
     public new void Drop(Vector2 position, Vector2 velocity)
@@ -98,10 +100,13 @@ public class Payload : CollectableItem, ILocatable
         vel.y = 0;
         rigid.velocity = vel;
 
-        float extents = Mathf.Abs(transform.position.y - groundPosition.position.y);
-
         // Add a little to centre the player
-        transform.position = new Vector2(position.x, position.y + extents);
+        transform.position = new Vector2(position.x, position.y + GetHeightExtent());
+    }
+
+    private float GetHeightExtent()
+    {
+        return Mathf.Abs(transform.position.y - groundPosition.position.y);
     }
 
 
