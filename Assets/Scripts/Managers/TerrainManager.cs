@@ -409,9 +409,10 @@ public class TerrainManager : MonoBehaviour
         TerrainChunk.Finish f = new TerrainChunk.Finish();
         if(terrain.endTileLocations != null)
         {
-            if(terrain.endTileLocations.Count >= 1)
+            if(terrain.endTileLocations.Count > 0)
             {
-                Vector2Int minTile = entryTile + terrain.endTileLocations[0], maxTile = entryTile + terrain.endTileLocations[0];
+                Vector2Int defaultValue = entryTile + terrain.endTileLocations[0];
+                Vector2Int minTile = defaultValue, maxTile = defaultValue;
                 foreach (Vector2Int exitTile in terrain.endTileLocations)
                 {
                     // Set the min and max points
@@ -426,7 +427,8 @@ public class TerrainManager : MonoBehaviour
                 Vector2 min = grid.CellToWorld(new Vector3Int(minTile.x, minTile.y, 0));
                 Vector2 max = (Vector2)grid.CellToWorld(new Vector3Int(maxTile.x, maxTile.y, 0)) + CellSize;
                 Vector2 size = max - min;
-                f.bounds = new Bounds(min + (size / 2), size);
+
+                f = new TerrainChunk.Finish(new Bounds(min + (size / 2), size));
             }
         }
 

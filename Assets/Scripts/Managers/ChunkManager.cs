@@ -40,9 +40,11 @@ public class ChunkManager : MonoBehaviour
 
         // Create the chunk
         c.CreateChunk(t.bounds, t.cellSize, t.centre, t.enteranceWorldPosition, t.exits, t.respawnPoints, t.direction, t.sampleIndex, t.chunkID);
+
+        // Add a finish to the chunk if it needs one
         if(t.finishArea.isFinish)
         {
-            Debug.Log("chunk " + t.chunkID + " has finish");
+            c.AddFinish(t.finishArea);
         }
 
         // Instantiate all extra objects

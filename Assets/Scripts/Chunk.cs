@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
-using PathCreation;
 using System.Linq;
+using UnityEditor;
 
 public class Chunk : MonoBehaviour
 {
@@ -19,6 +17,8 @@ public class Chunk : MonoBehaviour
     private Vector2 cellSize;
     public Vector2Int chunkID;
     public int sampleTerrainIndex;
+
+    public Finish finish;
 
     [Header("Camera Path Prefab Reference")]
     public GameObject cameraPathPrefab;
@@ -55,7 +55,11 @@ public class Chunk : MonoBehaviour
     }
 
 
-
+    public void AddFinish(TerrainManager.TerrainChunk.Finish finish)
+    {
+        Finish f = gameObject.AddComponent<Finish>();
+        f.CreateFinish(finish.bounds);
+    }
 
     private void InitialiseCameraPaths(List<TerrainManager.TerrainChunk.Exit> exits)
     {
