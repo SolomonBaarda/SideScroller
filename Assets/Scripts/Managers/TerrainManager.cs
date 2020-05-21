@@ -71,6 +71,7 @@ public class TerrainManager : MonoBehaviour
         }
         random = new System.Random(seedHash);
 
+        OnSpawnGenerated += SceneLoader.EMPTY;
 
         // Get the references
         grid = GetComponent<Grid>();
