@@ -58,7 +58,7 @@ public class Chunk : MonoBehaviour
     public void AddFinish(TerrainManager.TerrainChunk.Finish finish)
     {
         Finish f = gameObject.AddComponent<Finish>();
-        f.CreateFinish(finish.bounds);
+        f.CreateFinish(finish.bounds, finish.direction);
     }
 
     private void InitialiseCameraPaths(List<TerrainManager.TerrainChunk.Exit> exits)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -8,7 +9,7 @@ public class GameManager : MonoBehaviour
 {
     public static UnityAction<Presets> OnSetPresets;
     public static UnityAction OnGameStart;
-    public static UnityAction OnGameEnd;
+    public static UnityAction<Payload.Direction> OnGameEnd;
 
     [Header("Player")]
     public GameObject playerManagerObject;
@@ -78,7 +79,7 @@ public class GameManager : MonoBehaviour
 
         ItemManager.OnItemOutOfBounds += ItemOutOfBounds;
 
-        OnGameEnd += SceneLoader.EMPTY;
+        OnGameEnd += EndGame;
 
         // If the Menu is loaded, wait for presets 
         if (SceneLoader.Instance != null && SceneLoader.Instance.SceneIsLoaded(SceneLoader.MENU_SCENE))
@@ -130,6 +131,38 @@ public class GameManager : MonoBehaviour
         // Generate spawn chunk
         terrainManager.GenerateSpawn(presets.terrain_generation, presets.terrain_limit_not_endless);
     }
+
+
+    private void EndGame(Payload.Direction winningDirection)
+    {
+        if(!isGameOver)
+        {
+            isGameOver = true;
+
+
+            // Get a list of all the players meant to be moving in that direction
+            List<Player> winningPlayers = new List<Player>();
+            foreach (Player p in playerManager.AllPlayers)
+            {
+                p.enabled = false;
+
+                if (p.IdealDirection == winningDirection)
+                {
+                    winningPlayers.Add(p);
+                }
+            }
+            // Get the message
+            string winners = "";
+            foreach (Player p in winningPlayers)
+            {
+                winners += p.PlayerID + " ";
+            }
+
+            Debug.Log(winners + "won!");
+            Debug.Log("The game lasted " + GameTimeSeconds.ToString("0.0") + " seconds.");
+        }
+    }
+
 
 
     private void CountDownGameStart()
@@ -358,13 +391,23 @@ public class GameManager : MonoBehaviour
 
     private void ItemOutOfBounds(GameObject item)
     {
-        if(WorldItem.ExtendsClass<Payload>(item))
+        if(!isGameOver)
         {
-            Payload p = (Payload)WorldItem.GetClass<Payload>(item);
+            if (WorldItem.ExtendsClass<Payload>(item))
+            {
+                Payload p = (Payload)WorldItem.GetClass<Payload>(item);
 
-            // Get the best position on the screen
-            Vector2 respawn = playerManager.GetBestRespawnPoint(Payload.Direction.None, movingCamera.GetAllNearbyChunks(), movingCamera.ViewBounds);
-            p.SetPosition(respawn);
+                // Get the best position on the screen
+                try
+                {
+                    Vector2 respawn = playerManager.GetBestRespawnPoint(Payload.Direction.None, movingCamera.GetAllNearbyChunks(), movingCamera.ViewBounds);
+                    p.SetPosition(respawn);
+                }
+                catch (Exception)
+                {
+                    Debug.Log(item.name + " cannot be respawned. There are no respawn points nearby.");
+                }
+            }
         }
     }
 

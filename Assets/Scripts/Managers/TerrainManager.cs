@@ -388,7 +388,7 @@ public class TerrainManager : MonoBehaviour
 
         // Get all extra world objects
         List<(GameObject, Vector2, Vector3)> extraWorldObjects = new List<(GameObject, Vector2, Vector3)>();
-        for(int i = 0; i < terrain.extraGameObjects.Count; i++)
+        for (int i = 0; i < terrain.extraGameObjects.Count; i++)
         {
             // Calculate the new position and rotation
             Vector2 position = entryPositionWorldCorner + (new Vector2(invert * terrain.extraGameObjects[i].Item2.x, terrain.extraGameObjects[i].Item2.y) * CellSize);
@@ -401,22 +401,22 @@ public class TerrainManager : MonoBehaviour
 
                 localScale.x *= -1;
             }
-            
+
             extraWorldObjects.Add((terrain.extraGameObjects[i].Item1, position, localScale));
         }
 
         // Get the finishing bounds if this chunk is a finish
-        TerrainChunk.Finish f = new TerrainChunk.Finish();
-        if(terrain.endTileLocations != null)
+        TerrainChunk.Finish finish = new TerrainChunk.Finish();
+        if (terrain.endTileLocations != null)
         {
-            if(terrain.endTileLocations.Count > 0)
+            if (terrain.endTileLocations.Count > 0)
             {
-                Vector2Int defaultValue = entryTile + terrain.endTileLocations[0];
+                Vector2Int defaultValue = entryTile + new Vector2Int(invert * terrain.endTileLocations[0].x, terrain.endTileLocations[0].y);
                 Vector2Int minTile = defaultValue, maxTile = defaultValue;
                 foreach (Vector2Int exitTile in terrain.endTileLocations)
                 {
                     // Set the min and max points
-                    Vector2Int tile = entryTile + exitTile;
+                    Vector2Int tile = entryTile + new Vector2Int(invert * exitTile.x, exitTile.y);
                     minTile.x = tile.x < minTile.x ? tile.x : minTile.x;
                     minTile.y = tile.y < minTile.y ? tile.y : minTile.y;
 
@@ -428,14 +428,24 @@ public class TerrainManager : MonoBehaviour
                 Vector2 max = (Vector2)grid.CellToWorld(new Vector3Int(maxTile.x, maxTile.y, 0)) + CellSize;
                 Vector2 size = max - min;
 
-                f = new TerrainChunk.Finish(new Bounds(min + (size / 2), size));
+                Payload.Direction direction = Payload.Direction.None;
+                if(chunkID.x < ChunkManager.initialChunkID.x)
+                {
+                    direction = Payload.Direction.Left;
+                }
+                else if (chunkID.x > ChunkManager.initialChunkID.x)
+                {
+                    direction = Payload.Direction.Right;
+                }
+
+                finish = new TerrainChunk.Finish(new Bounds(min + (size / 2), size), direction);
             }
         }
 
 
         // Return the TerrainChunk object for use in the ChunkManager
         return new TerrainChunk(b.boundsReal, CellSize, centre, entryPositionWorld, exits, respawnPoints, directionToGenerate, chunkID,
-            allItemPositions, terrain.itemChance, extraWorldObjects, f, terrain.index);
+            allItemPositions, terrain.itemChance, extraWorldObjects, finish, terrain.index);
     }
 
 
@@ -459,12 +469,12 @@ public class TerrainManager : MonoBehaviour
             TileBase newTileType = tile.tileType;
 
             // Check if we need to flip the tile type
-            if(invert < 0)
+            if (invert < 0)
             {
-                if(tile.tileType is RuleTile)
+                if (tile.tileType is RuleTile)
                 {
                     // Swap the direction
-                    if(tile.tileType.Equals(sampleTerrainManager.rampLeft))
+                    if (tile.tileType.Equals(sampleTerrainManager.rampLeft))
                     {
                         newTileType = sampleTerrainManager.rampRight;
                     }
@@ -589,7 +599,7 @@ public class TerrainManager : MonoBehaviour
         public Finish finishArea;
 
         public TerrainChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldPosition, List<Exit> exits, List<Respawn> respawnPoints,
-            Direction direction, Vector2Int chunkID, List<Item> items, float itemChance, List<(GameObject, Vector2, Vector3)> extraWorldObjects, Finish finishArea, 
+            Direction direction, Vector2Int chunkID, List<Item> items, float itemChance, List<(GameObject, Vector2, Vector3)> extraWorldObjects, Finish finishArea,
             int sampleIndex)
         {
             this.bounds = bounds;
@@ -662,12 +672,15 @@ public class TerrainManager : MonoBehaviour
         {
             public bool isFinish;
             public Bounds bounds;
+            public Payload.Direction direction;
 
 
-            public Finish(Bounds bounds)
+            public Finish(Bounds bounds, Payload.Direction direction)
             {
-                this.bounds = bounds;
                 isFinish = true;
+
+                this.bounds = bounds;
+                this.direction = direction;
             }
         }
     }
