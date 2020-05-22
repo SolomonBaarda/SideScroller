@@ -140,10 +140,12 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
                 // Loop through each target and hit them
                 foreach (GameObject g in targets)
                 {
+                    // Ensure it can be attacked (sanity check)
                     if (WorldItem.ExtendsClass<ICanBeAttacked>(g))
                     {
-                        ICanBeAttacked a = (ICanBeAttacked)WorldItem.GetClass<ICanBeAttacked>(g);
-                        a.WasAttacked(transform.position);
+                        // Attack that object
+                        ICanBeAttacked target = (ICanBeAttacked)WorldItem.GetClass<ICanBeAttacked>(g);
+                        target.WasAttacked(transform.position);
                     }
                 }
             }
@@ -190,21 +192,12 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         return validTargets;
     }
 
+
+
     public void WasAttacked(Vector2 attackerPosition)
     {
-        int direction = 1;
-        if(attackerPosition.x > transform.position.x)
-        {
-            direction = -1;
-        }
-
-        
-        Vector2 force = new Vector2(direction * 8, 12);
-
-        rigid.AddForce(force, ForceMode2D.Impulse);
+        PlayerManager.OnPlayerDie.Invoke(GetComponent<Player>());
     }
-
-
 
 }
 

@@ -12,7 +12,8 @@ public class Player : MonoBehaviour, ILocatable
 
     public Collider2D torsoCollider, feetCollider, areaOfAttackCollider;
 
-    public bool IsAlive { get; private set; }
+    public bool IsAlive { get; private set; } = false;
+    public int Deaths { get; private set; } = 0;
     public string PLAYER_ID { get; private set; }
     public string PLAYER_LAYER { get; private set; }
     public const string DEFAULT_PLAYER_LAYER = "Player";
@@ -23,11 +24,10 @@ public class Player : MonoBehaviour, ILocatable
 
     public Chunk CurrentChunk { get; private set; }
     public Vector2 Position { get { return transform.position; } }
-
     public Payload.Direction IdealDirection { get; private set; }
-
     public Vector2 NearestSpawnPoint { get; private set; }
 
+    private Rigidbody2D rigid;
 
     public enum ID
     {
@@ -61,6 +61,9 @@ public class Player : MonoBehaviour, ILocatable
         movement = GetComponent<PlayerMovement>();
         movement.SetColliders(torsoCollider, feetCollider);
 
+        renderer = GetComponent<SpriteRenderer>();
+        rigid = GetComponent<Rigidbody2D>();
+
         // Player variables
         IsAlive = false;
     }
@@ -79,10 +82,9 @@ public class Player : MonoBehaviour, ILocatable
 
     public void SetPosition(Vector2 position)
     {
-        Rigidbody2D r = GetComponent<Rigidbody2D>();
-        Vector2 vel = r.velocity;
+        Vector2 vel = rigid.velocity;
         vel.y = 0;
-        r.velocity = vel;
+        rigid.velocity = vel;
 
         float height = headPosition.position.y - feetPosition.position.y;
 
@@ -93,10 +95,19 @@ public class Player : MonoBehaviour, ILocatable
 
     public void SetDead()
     {
-        IsAlive = false;
-        controller.enabled = false;
+        if(IsAlive)
+        {
+            // Set dead and disable controls
+            IsAlive = false;
+            controller.enabled = false;
+            gameObject.SetActive(false);
 
-        inventory.DropItem();
+            // Count the deaths
+            Deaths++;
+
+            // Drop any items
+            inventory.DropItem();
+        }
     }
 
 
@@ -105,6 +116,7 @@ public class Player : MonoBehaviour, ILocatable
         // Set player to be alive and enable controls
         IsAlive = true;
         controller.enabled = true;
+        gameObject.SetActive(true);
     }
 
 
