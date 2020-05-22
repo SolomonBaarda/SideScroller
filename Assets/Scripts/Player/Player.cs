@@ -8,7 +8,21 @@ public class Player : MonoBehaviour, ILocatable
     private PlayerInteraction interaction;
     private PlayerMovement movement;
 
-    public Transform headPosition, feetPosition;
+    public Transform headPosition, feetPosition, crouchingHeadPosition;
+    public Transform Head
+    {
+        get
+        {
+            if (movement.IsCrouching)
+            {
+                return crouchingHeadPosition;
+            }
+            else
+            {
+                return headPosition;
+            }
+        }
+    }
 
     public Collider2D torsoCollider, feetCollider, areaOfAttackCollider;
 
@@ -54,14 +68,13 @@ public class Player : MonoBehaviour, ILocatable
         controller.SetControls(PLAYER_ID, canUseController);
 
         interaction = GetComponent<PlayerInteraction>();
-        interaction.SetColliders(new List<Collider2D>(new Collider2D[] { torsoCollider, feetCollider}), areaOfAttackCollider);
+        interaction.SetColliders(new List<Collider2D>(new Collider2D[] { torsoCollider, feetCollider }), areaOfAttackCollider);
 
         inventory = GetComponent<PlayerInventory>();
 
         movement = GetComponent<PlayerMovement>();
         movement.SetColliders(torsoCollider, feetCollider);
 
-        renderer = GetComponent<SpriteRenderer>();
         rigid = GetComponent<Rigidbody2D>();
 
         // Player variables
@@ -89,13 +102,13 @@ public class Player : MonoBehaviour, ILocatable
         float height = headPosition.position.y - feetPosition.position.y;
 
         // Add a little to centre the player
-        transform.position = new Vector2(position.x, position.y + (height/2));
+        transform.position = new Vector2(position.x, position.y + (height / 2));
     }
 
 
     public void SetDead()
     {
-        if(IsAlive)
+        if (IsAlive)
         {
             // Set dead and disable controls
             IsAlive = false;
@@ -106,7 +119,7 @@ public class Player : MonoBehaviour, ILocatable
             Deaths++;
 
             // Drop any items
-            inventory.DropItem();
+            inventory.DropAllItems();
         }
     }
 
@@ -123,7 +136,7 @@ public class Player : MonoBehaviour, ILocatable
 
 
 
-    public PlayerInventory.Inventory<T> GetInventory<T>() where T : class
+    public PlayerInventory.IInventory<T> GetInventory<T>() where T : class
     {
         return inventory.GetInventory<T>();
     }

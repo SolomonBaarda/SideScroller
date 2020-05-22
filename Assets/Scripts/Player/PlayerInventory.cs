@@ -29,30 +29,25 @@ public class PlayerInventory : MonoBehaviour
     }
 
 
-    public bool CanDropItem()
+    public void DropAllItems()
     {
-        // Check if player has payload in inventory
-        Payload p = GetComponentInChildren<Payload>();
-        if (p != null)
-        {
-            payload = p.gameObject;
-        }
-        else
-        {
-            payload = null;
-        }
-
-        return p != null;
+        DropPayload();
     }
 
-    public void DropItem()
+    public bool CanDropPayload()
     {
-        if (CanDropItem())
+        return payload != null;
+    }
+
+    public void DropPayload()
+    {
+        if (CanDropPayload())
         {
             Payload p = payload.GetComponent<Payload>();
 
             // Drop the payload
-            p.Drop(p.Position, GetComponent<Rigidbody2D>().velocity);
+            p.Drop(player.Head.position, GetComponent<Rigidbody2D>().velocity);
+            payload = null;
         }
     }
 
@@ -83,14 +78,12 @@ public class PlayerInventory : MonoBehaviour
             {
                 Payload p = (Payload)WorldItem.GetClass<Payload>(g);
                 payload = g;
-
-                p.PickUp(gameObject, player.headPosition.position - player.transform.position);
+                
+                p.PickUp(gameObject, player.Head.position);
             }
             // Weapon
-            else if (item is Weapon)
+            else if (item is Weapon w)
             {
-                Weapon w = (Weapon)item;
-
                 if (weapon.item == null)
                 {
                     weapon.worldItem = c;
@@ -99,9 +92,8 @@ public class PlayerInventory : MonoBehaviour
                 }
             }
             // Buff
-            else if (item is Buff)
+            else if (item is Buff b)
             {
-                Buff b = (Buff)item;
                 CombineBuff(c, b);
                 Destroy(c.gameObject);
                 return true;
@@ -113,31 +105,23 @@ public class PlayerInventory : MonoBehaviour
 
 
 
-    public void Attack(float cycleWeapons, bool usePrimary, bool useSecondary, Vector2 playerVelocity)
+
+    public void UpdateHoldingPayloadPosition()
     {
+        // Check if player has payload in inventory
+        Payload p = GetComponentInChildren<Payload>();
+        if (p != null)
+        {
+            payload = p.gameObject;
 
+            // Set the correct local position
+            p.SetLocalPosition(player.Head.localPosition);
+        }
+        else
+        {
+            payload = null;
+        }
     }
-
-
-    private void CycleWeapons(float direction)
-    {
-
-    }
-
-
-
-    private void UsePrimary(bool isUsing)
-    {
-
-    }
-
-
-    private void UseSecondary(bool isUsing)
-    {
-
-    }
-
-
 
 
     private void CombineBuff(CollectableItem worldItem, Buff buff)
@@ -155,15 +139,15 @@ public class PlayerInventory : MonoBehaviour
 
 
 
-    public Inventory<T> GetInventory<T>() where T : class
+    public IInventory<T> GetInventory<T>() where T : class
     {
         if (typeof(T).Equals(typeof(Health)))
         {
-            return (Inventory<T>)health;
+            return (IInventory<T>)health;
         }
         else if (typeof(T).Equals(typeof(Coin)))
         {
-            return (Inventory<T>)coins;
+            return (IInventory<T>)coins;
         }
 
         return null;
@@ -186,7 +170,7 @@ public class PlayerInventory : MonoBehaviour
 
 
     [System.Serializable]
-    public class SimpleInventoryItem<T> : Inventory<T> where T : class
+    public class SimpleInventoryItem<T> : IInventory<T> where T : class
     {
         public int total;
         public int max;
@@ -203,7 +187,7 @@ public class PlayerInventory : MonoBehaviour
     }
 
 
-    public interface Inventory<T> where T : class
+    public interface IInventory<T> where T : class
     {
         int Total { get; }
         int Max { get; }

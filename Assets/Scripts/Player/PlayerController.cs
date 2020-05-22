@@ -115,6 +115,8 @@ public class PlayerController : MonoBehaviour
         // Interact with items
         interaction.Interact(isInteract1);
 
+        inventory.UpdateHoldingPayloadPosition();
+
         // Move last
         movement.Move(horizontalMovement * Time.fixedDeltaTime, isCrouch, isJump);
         isJump = false;

@@ -73,11 +73,9 @@ public class Payload : CollectableItem, ILocatable
         Player p = player.GetComponent<Player>();
         IdealDirection = p.IdealDirection;
 
-        localPosition.y += GetHeightExtent();
-
         // Pick up
         transform.parent = player.transform;
-        transform.localPosition = localPosition;
+        SetLocalPosition(localPosition);
     }
 
     public new void Drop(Vector2 position, Vector2 velocity)
@@ -92,6 +90,13 @@ public class Payload : CollectableItem, ILocatable
 
         // Drop
         base.Drop(position, velocity);
+    }
+
+    public void SetLocalPosition(Vector2 local)
+    {
+        // Add a little to centre the height
+        local.y += GetHeightExtent();
+        transform.localPosition = local;
     }
 
     public void SetPosition(Vector2 position)
