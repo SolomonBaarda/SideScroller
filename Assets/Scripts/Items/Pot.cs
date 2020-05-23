@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pot : WorldItem, IInteractable, ILootable, ILoot
+public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked
 {
     public LootTable table;
 
@@ -46,5 +46,10 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot
     public void Loot()
     {
         hasContents = false;
+    }
+
+    public void WasAttacked(Vector2 attackerPosition, Vector2 attackerVelocity)
+    {
+        InteractionManager.OnPlayerInteractWithItem(gameObject, null);
     }
 }

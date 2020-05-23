@@ -1,15 +1,17 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Payload : CollectableItem, ILocatable
+public class Payload : CollectableItem, ILocatable, ICanBeAttacked
 {
-
     public Chunk CurrentChunk { get; private set; }
     public Vector2 Position { get { return transform.position; } }
 
     public Transform groundPosition;
 
     public Direction IdealDirection { get; private set; } = Direction.None;
+
+    [Range(0, 100)]
+    public int onAttackMultiplier = 10;
 
     public override void Awake()
     {
@@ -114,6 +116,16 @@ public class Payload : CollectableItem, ILocatable
         return Mathf.Abs(transform.position.y - groundPosition.position.y);
     }
 
+    public void WasAttacked(Vector2 attackerPosition, Vector2 attackerVelocity)
+    {
+        // Direction vector from attacker to this
+        Vector2 normal = ((Vector2)transform.position - attackerPosition).normalized;
+
+        // Combine with attacker velocity
+        rigid.velocity += attackerVelocity;
+        // Add a directional force to the payload
+        rigid.AddForce(normal * onAttackMultiplier, ForceMode2D.Impulse);
+    }
 
     public enum Direction
     {

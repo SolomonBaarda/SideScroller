@@ -56,6 +56,7 @@ MonoBehaviour:
   collideToPickUp: 0
   interactToPickUp: 0
   groundPosition: {fileID: 1926676552870462114}
+  onAttackMultiplier: 25
 --- !u!212 &5291220104402161032
 SpriteRenderer:
   m_ObjectHideFlags: 0

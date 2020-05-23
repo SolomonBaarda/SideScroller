@@ -57,18 +57,18 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         foreach (Collider2D collider in areaOfInteraction)
         {
             // List will be resized if its too small
-            Collider2D[] collisions = new Collider2D[1];
+            Collider2D[] collisions = new Collider2D[8];
 
             Physics2D.OverlapCollider(collider, filter, collisions);
 
             // Ensure the collider has not already been added
-            foreach (Collider2D col in collisions)
+            foreach (Collider2D c in collisions)
             {
-                if (col != null)
+                if (c != null)
                 {
-                    if (!collisionItems.Contains(col))
+                    if (!collisionItems.Contains(c))
                     {
-                        collisionItems.Add(col);
+                        collisionItems.Add(c);
                     }
                 }
             }
@@ -114,7 +114,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
                             // Interact with that one item only
                             InteractionManager.OnPlayerInteractWithItem(g, inventory);
                             interact_timeout = 0;
-                            return;
+                            break;
                         }
                     }
                 }
@@ -127,12 +127,12 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
     public void Attack(bool isAttacking)
     {
         // Vaid time to attack
-        if(interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS && isAttacking)
+        if (interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS && isAttacking)
         {
             // Get all the targets
             List<GameObject> targets = InAreaOfAttack();
 
-            if(targets.Count > 0)
+            if (targets.Count > 0)
             {
                 // Reset the timer
                 interact_timeout = 0;
@@ -145,7 +145,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
                     {
                         // Attack that object
                         ICanBeAttacked target = (ICanBeAttacked)WorldItem.GetClass<ICanBeAttacked>(g);
-                        target.WasAttacked(transform.position);
+                        target.WasAttacked(transform.position, rigid.velocity);
                     }
                 }
             }
@@ -174,17 +174,20 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         List<GameObject> validTargets = new List<GameObject>();
 
         // Get all possible collisions
-        Collider2D[] allCollisions = new Collider2D[1];
+        Collider2D[] allCollisions = new Collider2D[8];
         if (Physics2D.OverlapCollider(AreaOfAttack, contactFilter, allCollisions) > 0)
         {
             foreach (Collider2D c in allCollisions)
             {
-                GameObject g = c.gameObject;
-
-                // Remove all that can't be attacked and ensure there are no duplicates
-                if (WorldItem.ExtendsClass<ICanBeAttacked>(g) && !validTargets.Contains(g))
+                if(c != null)
                 {
-                    validTargets.Add(g);
+                    GameObject g = c.gameObject;
+
+                    // Remove all that can't be attacked and ensure there are no duplicates
+                    if (WorldItem.ExtendsClass<ICanBeAttacked>(g) && !validTargets.Contains(g))
+                    {
+                        validTargets.Add(g);
+                    }
                 }
             }
         }
@@ -194,7 +197,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
 
 
 
-    public void WasAttacked(Vector2 attackerPosition)
+    public void WasAttacked(Vector2 attackerPosition, Vector2 attackerVelocity)
     {
         PlayerManager.OnPlayerDie.Invoke(GetComponent<Player>());
     }

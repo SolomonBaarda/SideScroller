@@ -12,6 +12,11 @@ public class InteractionManager : MonoBehaviour
         OnPlayerInteractWithItem += InteractWithItem;
     }
 
+    private void OnDestroy()
+    {
+        OnPlayerInteractWithItem -= InteractWithItem;
+    }
+
 
     private void InteractWithItem(GameObject item, PlayerInventory inventory)
     {
@@ -36,10 +41,18 @@ public class InteractionManager : MonoBehaviour
                 }
             }
 
-
             // Interct with it last
             IInteractable interactable = (IInteractable)WorldItem.GetClass<IInteractable>(item);
-            interactable.Interact(inventory);
+            try
+            {
+                interactable.Interact(inventory);
+            }
+            // The PlayerInventory could be null if the object didn't have access to it
+            catch (System.NullReferenceException)
+            {
+                Debug.LogError("Item interact called on item " + item.name + " with null PlayerInventory.");
+            }
+
         }
     }
 

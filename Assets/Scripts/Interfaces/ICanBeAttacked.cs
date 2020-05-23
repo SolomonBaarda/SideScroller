@@ -4,6 +4,6 @@ using UnityEngine;
 
 public interface ICanBeAttacked
 {
-    void WasAttacked(Vector2 attackerPosition);
+    void WasAttacked(Vector2 attackerPosition, Vector2 attackerVelocity);
 
 }
