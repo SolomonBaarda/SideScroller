@@ -10,16 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d1514134bc4fbd41bb739b1b9a49231, type: 3}
-  m_Name: Flag
+  m_Name: Banner
   m_EditorClassIdentifier: 
-  m_DefaultSprite: {fileID: 2187011968806798870, guid: 92bb2c4709b330b4bb3828f69703d7ed,
-    type: 3}
+  m_DefaultSprite: {fileID: 21300000, guid: b162f38278465834d8fb79ce41c0026b, type: 3}
   m_DefaultGameObject: {fileID: 0}
   m_DefaultColliderType: 2
   m_TilingRules:
   - m_Id: 0
     m_Sprites:
-    - {fileID: 182855423865772039, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
+    - {fileID: 21300000, guid: b2710bebd78e1ef449bf4e692be0c12a, type: 3}
     m_GameObject: {fileID: 0}
     m_AnimationSpeed: 1
     m_PerlinScale: 0.389
