@@ -59,16 +59,17 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
             // List will be resized if its too small
             Collider2D[] collisions = new Collider2D[8];
 
-            Physics2D.OverlapCollider(collider, filter, collisions);
-
-            // Ensure the collider has not already been added
-            foreach (Collider2D c in collisions)
+            if (Physics2D.OverlapCollider(collider, filter, collisions) > 0)
             {
-                if (c != null)
+                // Ensure the collider has not already been added
+                foreach (Collider2D c in collisions)
                 {
-                    if (!collisionItems.Contains(c))
+                    if (c != null)
                     {
-                        collisionItems.Add(c);
+                        if (!collisionItems.Contains(c))
+                        {
+                            collisionItems.Add(c);
+                        }
                     }
                 }
             }
@@ -77,12 +78,15 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         // Only bother if there are items
         if (collisionItems.Count > 0)
         {
-            // Sort by renderer sorting layer, always use item in front first
-            collisionItems.Sort((x, y) => SortingLayer.GetLayerValueFromID(x.gameObject.GetComponent<SpriteRenderer>().sortingLayerID).CompareTo(SortingLayer.GetLayerValueFromID(y.gameObject.GetComponent<SpriteRenderer>().sortingLayerID)));
-            Collider2D[] collisionArray = collisionItems.ToArray();
+            // Sort by renderer sorting layer
+            collisionItems.Sort(
+                (x, y) => SortingLayer.GetLayerValueFromID(x.gameObject.GetComponent<SpriteRenderer>().sortingLayerID)
+                    .CompareTo(SortingLayer.GetLayerValueFromID(y.gameObject.GetComponent<SpriteRenderer>().sortingLayerID)));
+            // Must reverse after as we want the front most item (highest value) first
+            collisionItems.Reverse();
 
             // Check if any items can be picked up by the player
-            foreach (Collider2D c in collisionArray)
+            foreach (Collider2D c in collisionItems)
             {
                 GameObject g = c.gameObject;
 
@@ -96,7 +100,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
                 }
             }
 
-            foreach (Collider2D c in collisionArray)
+            foreach (Collider2D c in collisionItems)
             {
                 // Need to check if not null as collision may have deleted the item by now
                 if (c != null)
@@ -179,7 +183,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         {
             foreach (Collider2D c in allCollisions)
             {
-                if(c != null)
+                if (c != null)
                 {
                     GameObject g = c.gameObject;
 

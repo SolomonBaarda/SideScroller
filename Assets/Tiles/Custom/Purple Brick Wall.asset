@@ -35,12 +35,10 @@ MonoBehaviour:
   m_Flags: 1
   m_ColliderType: 2
   m_Sprites:
-  - {fileID: -240354900566299995, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: 186474529398628479, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: 8949524173279496114, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: 6254140142004695674, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: 6790191102165906828, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: -7047398473009245730, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: -4420156478132245166, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: -63601338102671413, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: 8280328747157175589, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
+  - {fileID: 21300000, guid: e775c716fe67acd49bd7dc38900d65ac, type: 3}
+  - {fileID: 21300000, guid: ca14948ff80c89e4bb251f2019fe389b, type: 3}
+  - {fileID: 21300000, guid: 3e258a3884bc6734d9cc62eb18a6c409, type: 3}
+  - {fileID: 21300000, guid: ce6a68f67ca2ea149af0a768251f9cde, type: 3}
+  - {fileID: 21300000, guid: 255b4028778cf5141a6b843a7e0294f5, type: 3}
+  - {fileID: 21300000, guid: 84ca2f6e5df421b42b6810cac3a3bdc1, type: 3}
+  - {fileID: 21300000, guid: f3213bc49c82a554e80c9a465eaefdb6, type: 3}

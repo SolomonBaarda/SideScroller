@@ -33,18 +33,12 @@ MonoBehaviour:
     e33: 1
   m_InstancedGameObject: {fileID: 0}
   m_Flags: 1
-  m_ColliderType: 1
+  m_ColliderType: 2
   m_Sprites:
-  - {fileID: -2246785312577182959, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: 2219867676500113121, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: 329741474373194174, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: -1320805414613252145, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: 7449991471481685683, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: -3369721890301556507, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: 217715615791910595, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: -1579199442788823788, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: -5655290248936911217, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: -1182907825491217643, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: 8459592965685882786, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: -189984430579890490, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
-  - {fileID: -6364447030386406113, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
+  - {fileID: 21300000, guid: 4bb905f2fea64e04e8f20c73bc482c92, type: 3}
+  - {fileID: 21300000, guid: ce4c45fb5d71ccf4ca5d36f84e3314ab, type: 3}
+  - {fileID: 21300000, guid: 69a402ec0eedd6a42a9a840e42d2a24d, type: 3}
+  - {fileID: 21300000, guid: 46a1df8595ed9fd41a5e07796a2a9736, type: 3}
+  - {fileID: 21300000, guid: a6aec37bc2e8d4645a749a29882c7100, type: 3}
+  - {fileID: 21300000, guid: 1613b0cb5e8d6234bb3f8bb2c55ba709, type: 3}
+  - {fileID: 21300000, guid: a22d003af04dd0647a686ba172e3cda0, type: 3}
