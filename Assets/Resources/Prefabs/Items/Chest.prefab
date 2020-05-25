@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   item: {fileID: 0}
   itemName: 3
-  sprite: {fileID: -1066343038762166336, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
+  sprite: {fileID: -6834524911116659543, guid: 5005f74a6c197c647bc06acccaa7759c, type: 3}
   state: 1
   contents: 0
   inventory_size: 3
@@ -91,7 +91,7 @@ SpriteRenderer:
   m_SortingLayerID: 94643921
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1066343038762166336, guid: 92bb2c4709b330b4bb3828f69703d7ed,
+  m_Sprite: {fileID: -6834524911116659543, guid: 5005f74a6c197c647bc06acccaa7759c,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

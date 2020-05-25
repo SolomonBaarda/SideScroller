@@ -44,7 +44,7 @@ SpriteAtlas:
     packables:
     - {fileID: 102900000, guid: b938bde620428f543a3db06844b849ac, type: 3}
     - {fileID: 102900000, guid: 04928d5ea21809d4ba641c4f21f486e1, type: 3}
-    totalSpriteSurfaceArea: 38656
+    totalSpriteSurfaceArea: 41088
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -136,6 +136,10 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 937e310abec03f1448e6811e57984a4a, type: 3}
   - {fileID: 21300000, guid: 20e5ed2ab97c94a4b9fac37e334f5bc8, type: 3}
   - {fileID: 21300000, guid: a22d003af04dd0647a686ba172e3cda0, type: 3}
+  - {fileID: -4166000864571609707, guid: 5005f74a6c197c647bc06acccaa7759c, type: 3}
+  - {fileID: -1089752354001653685, guid: 5005f74a6c197c647bc06acccaa7759c, type: 3}
+  - {fileID: 5045073161074915229, guid: 5005f74a6c197c647bc06acccaa7759c, type: 3}
+  - {fileID: -6834524911116659543, guid: 5005f74a6c197c647bc06acccaa7759c, type: 3}
   - {fileID: 21300000, guid: 03ad5b4a62be4b14f8beeac179041417, type: 3}
   - {fileID: 21300000, guid: 7f6ed05a824da1b49a432dee7f742b8b, type: 3}
   - {fileID: 21300000, guid: 780e266a7f9035e4d8c305658d601594, type: 3}
@@ -190,6 +194,10 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b37d53febf0ffe7448229e91efbd1ef4, type: 3}
   - {fileID: 21300000, guid: fafa9b0f7cba9cd4f9176ea14bf62c5a, type: 3}
   - {fileID: 21300000, guid: 45b3645f4f4cd4843b53ac3a97a65f23, type: 3}
+  - {fileID: -6233325959761703947, guid: 81ef0d7fc2268944e896548188e56b9b, type: 3}
+  - {fileID: 6256885226258279612, guid: 81ef0d7fc2268944e896548188e56b9b, type: 3}
+  - {fileID: -5025815261079487931, guid: 81ef0d7fc2268944e896548188e56b9b, type: 3}
+  - {fileID: -1450293698637138751, guid: 81ef0d7fc2268944e896548188e56b9b, type: 3}
   - {fileID: 21300000, guid: ca14948ff80c89e4bb251f2019fe389b, type: 3}
   - {fileID: 21300000, guid: a7230bbf8067c444994ac3a3c6de4045, type: 3}
   - {fileID: 21300000, guid: c3d97ecf5481b2041abb143c3409d1a5, type: 3}
@@ -284,6 +292,10 @@ SpriteAtlas:
   - brick-left
   - tile233
   - brown-wall6
+  - chest_3
+  - chest_2
+  - chest_1
+  - chest_0
   - tile255
   - lever1
   - brick-dark
@@ -338,6 +350,10 @@ SpriteAtlas:
   - post-right
   - window-2,1
   - tile207
+  - chest1_2
+  - chest1_3
+  - chest1_0
+  - chest1_1
   - purple-wall1
   - bars
   - spikes-up-blood

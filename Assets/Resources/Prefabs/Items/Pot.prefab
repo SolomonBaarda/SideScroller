@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   item: {fileID: 0}
   itemName: 2
-  sprite: {fileID: -7850777724529354880, guid: 92bb2c4709b330b4bb3828f69703d7ed, type: 3}
+  sprite: {fileID: 21300000, guid: 4022953ce3b89a74eb9ad2abeca26715, type: 3}
   table: {fileID: 11400000, guid: a8c2045a22d823c41985408f6b3ccda6, type: 2}
   inventory_size: 1
 --- !u!95 &1134636932641857486
@@ -108,8 +108,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -7850777724529354880, guid: 92bb2c4709b330b4bb3828f69703d7ed,
-    type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4022953ce3b89a74eb9ad2abeca26715, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   item: {fileID: 0}
   itemName: 1
-  sprite: {fileID: 21300000, guid: 848038db28b4e0d4982d1594c700e696, type: 2}
+  sprite: {fileID: 21300000, guid: 2cb4eb3c542579445a332f27a01356f0, type: 3}
   collideToPickUp: 1
   interactToPickUp: 0
   initialSetupTime: 0.5
@@ -90,7 +90,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 848038db28b4e0d4982d1594c700e696, type: 2}
+  m_Sprite: {fileID: 21300000, guid: 2cb4eb3c542579445a332f27a01356f0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
