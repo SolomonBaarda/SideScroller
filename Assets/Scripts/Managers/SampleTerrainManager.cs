@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -43,6 +44,11 @@ public class SampleTerrainManager : MonoBehaviour
     [Header("Custom Rule Tiles")]
     public RuleTile rampLeft;
     public RuleTile rampRight;
+    public RuleTile groundLeft;
+    public RuleTile groundRight;
+    public RuleTile roofLeft;
+    public RuleTile roofRight;
+    public List<(RuleTile, RuleTile)> tilesToSwapWhenInverted;
 
 
     public void LoadAllSampleTerrain()
@@ -64,5 +70,13 @@ public class SampleTerrainManager : MonoBehaviour
         Transform finish = transform.Find("Finish");
         finishArea = finish.GetComponentInChildren<SampleTerrain>();
         finishArea.LoadSample(0);
+
+        // Add all the tiles to the list
+        tilesToSwapWhenInverted = new List<(RuleTile, RuleTile)>
+        {
+            (rampLeft, rampRight),
+            (groundLeft, groundRight),
+            (roofLeft, roofRight)
+        };
     }
 }

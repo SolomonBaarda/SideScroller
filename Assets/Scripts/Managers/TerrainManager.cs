@@ -474,14 +474,19 @@ public class TerrainManager : MonoBehaviour
             {
                 if (tile.tileType is RuleTile)
                 {
-                    // Swap the direction
-                    if (tile.tileType.Equals(sampleTerrainManager.rampLeft))
+                    // Check each type of tile that needs to be swapped, and apply it if it is correct
+                    foreach((RuleTile, RuleTile) r in sampleTerrainManager.tilesToSwapWhenInverted)
                     {
-                        newTileType = sampleTerrainManager.rampRight;
-                    }
-                    else if (tile.tileType.Equals(sampleTerrainManager.rampRight))
-                    {
-                        newTileType = sampleTerrainManager.rampLeft;
+                        if (tile.tileType.Equals(r.Item1))
+                        {
+                            newTileType = r.Item2;
+                            break;
+                        }
+                        else if (tile.tileType.Equals(r.Item2))
+                        {
+                            newTileType = r.Item1;
+                            break;
+                        }
                     }
                 }
             }
