@@ -52,7 +52,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   item: {fileID: 0}
   itemName: 0
-  sprite: {fileID: 0}
+  sprite: {fileID: -5025815261079487931, guid: 81ef0d7fc2268944e896548188e56b9b, type: 3}
   collideToPickUp: 0
   interactToPickUp: 0
   groundPosition: {fileID: 1926676552870462114}
@@ -96,13 +96,13 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -9201025921574318732, guid: 92bb2c4709b330b4bb3828f69703d7ed,
+  m_Sprite: {fileID: -5025815261079487931, guid: 81ef0d7fc2268944e896548188e56b9b,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1, y: 1.1875}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -165,8 +165,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
+    oldSize: {x: 1, y: 1.1875}
+    newSize: {x: 1, y: 1.1875}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0

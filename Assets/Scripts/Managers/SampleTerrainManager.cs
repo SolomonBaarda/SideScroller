@@ -40,15 +40,17 @@ public class SampleTerrainManager : MonoBehaviour
     public Tile dev_itemPot;
     public Tile dev_itemChest;
 
-
-    [Header("Custom Rule Tiles")]
+    public List<(TileBase, TileBase)> tilesToSwapWhenInverted;
+    [Header("Tiles to be swapped when inverted")]
     public RuleTile rampLeft;
     public RuleTile rampRight;
     public RuleTile groundLeft;
     public RuleTile groundRight;
     public RuleTile roofLeft;
     public RuleTile roofRight;
-    public List<(RuleTile, RuleTile)> tilesToSwapWhenInverted;
+    public WeightedRandomTile spikeLeft;
+    public WeightedRandomTile spikeRight;
+
 
 
     public void LoadAllSampleTerrain()
@@ -72,11 +74,12 @@ public class SampleTerrainManager : MonoBehaviour
         finishArea.LoadSample(0);
 
         // Add all the tiles to the list
-        tilesToSwapWhenInverted = new List<(RuleTile, RuleTile)>
+        tilesToSwapWhenInverted = new List<(TileBase, TileBase)>
         {
             (rampLeft, rampRight),
             (groundLeft, groundRight),
-            (roofLeft, roofRight)
+            (roofLeft, roofRight),
+            (spikeLeft, spikeRight)
         };
     }
 }

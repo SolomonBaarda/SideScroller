@@ -430,7 +430,7 @@ public class TerrainManager : MonoBehaviour
                 Vector2 size = max - min;
 
                 Payload.Direction direction = Payload.Direction.None;
-                if(chunkID.x < ChunkManager.initialChunkID.x)
+                if (chunkID.x < ChunkManager.initialChunkID.x)
                 {
                     direction = Payload.Direction.Left;
                 }
@@ -472,25 +472,23 @@ public class TerrainManager : MonoBehaviour
             // Check if we need to flip the tile type
             if (invert < 0)
             {
-                if (tile.tileType is RuleTile)
+                // Check each tile that can be swapped 
+                foreach ((TileBase, TileBase) t in sampleTerrainManager.tilesToSwapWhenInverted)
                 {
-                    // Check each type of tile that needs to be swapped, and apply it if it is correct
-                    foreach((RuleTile, RuleTile) r in sampleTerrainManager.tilesToSwapWhenInverted)
+                    if (tile.tileType.Equals(t.Item1))
                     {
-                        if (tile.tileType.Equals(r.Item1))
-                        {
-                            newTileType = r.Item2;
-                            break;
-                        }
-                        else if (tile.tileType.Equals(r.Item2))
-                        {
-                            newTileType = r.Item1;
-                            break;
-                        }
+                        newTileType = t.Item2;
+                        break;
+                    }
+                    else if (tile.tileType.Equals(t.Item2))
+                    {
+                        newTileType = t.Item1;
+                        break;
                     }
                 }
             }
 
+            // Set the tile
             SetTile(tilemap, newTileType, newTilePos);
         }
     }
