@@ -44,7 +44,7 @@ SpriteAtlas:
     packables:
     - {fileID: 102900000, guid: b938bde620428f543a3db06844b849ac, type: 3}
     - {fileID: 102900000, guid: 04928d5ea21809d4ba641c4f21f486e1, type: 3}
-    totalSpriteSurfaceArea: 39296
+    totalSpriteSurfaceArea: 38272
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -55,7 +55,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d194f3a0f818afa449bce50484b31245, type: 3}
   - {fileID: 21300000, guid: 259a0ea00f808fc4ba5ab9b8606b2d10, type: 3}
   - {fileID: 21300000, guid: 9cdd0bc09ddaaa249ac181ae21798b6d, type: 3}
-  - {fileID: 21300000, guid: e65c17f09d5188e41abd1f061a32b78a, type: 3}
   - {fileID: 21300000, guid: 750ead01fda05ce4483e6b288c894995, type: 3}
   - {fileID: 21300000, guid: 646d8611b93e3ea4ca1b025223e4992f, type: 3}
   - {fileID: 21300000, guid: 471cc5211aee2de4faf268ce535a79e8, type: 3}
@@ -63,7 +62,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 6e7c7d51bfcb21740b8f2ba0460915f6, type: 3}
   - {fileID: 21300000, guid: b1878091986eeab419217a56389e4f14, type: 3}
   - {fileID: 21300000, guid: 18f429912393d5e488d87eacbfa7f3bc, type: 3}
-  - {fileID: 21300000, guid: 6c1dfc91904f1e84ba2eca706475a8ce, type: 3}
   - {fileID: 21300000, guid: 53df75c1973aee7449c3891b7a8bb7f2, type: 3}
   - {fileID: 21300000, guid: 0dc2b6d1065c53747bfa128d82cdebf9, type: 3}
   - {fileID: 21300000, guid: 9cebefd1d34be554e8ca9ac09dd6e9ed, type: 3}
@@ -84,7 +82,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 62423cb33fbdb7f428c3b4d7c70b0aa6, type: 3}
   - {fileID: 21300000, guid: ff28f5c32a897b04a92002861ec6e8c8, type: 3}
   - {fileID: 21300000, guid: 93860ec3dc3c0a041a053b7d0fcfadfa, type: 3}
-  - {fileID: 21300000, guid: fc162d74addea704f99a21d59942aa92, type: 3}
   - {fileID: 21300000, guid: 59775784a0f56a5468cbe2afbac274ed, type: 3}
   - {fileID: 21300000, guid: be7f5f848a87f0d4286807665f1428ed, type: 3}
   - {fileID: 21300000, guid: 51e426c4a3ca90f4cb02253d45b79752, type: 3}
@@ -194,7 +191,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ca14948ff80c89e4bb251f2019fe389b, type: 3}
   - {fileID: 21300000, guid: a7230bbf8067c444994ac3a3c6de4045, type: 3}
   - {fileID: 21300000, guid: c3d97ecf5481b2041abb143c3409d1a5, type: 3}
-  - {fileID: 21300000, guid: a0749adfee8cde746b8ce3bf88b98510, type: 3}
   - {fileID: 21300000, guid: edb53bdf468ce944eb2db3b43db1fb63, type: 3}
   m_PackedSpriteNamesToIndex:
   - cage-top
@@ -204,7 +200,6 @@ SpriteAtlas:
   - window-4,0
   - Idle
   - post5
-  - brick-bottom-right
   - spikes-down
   - spikes-right
   - pot2
@@ -212,7 +207,6 @@ SpriteAtlas:
   - tile034
   - Down
   - post2
-  - brick-top-left1
   - window-1,2
   - tile057
   - empty
@@ -233,7 +227,6 @@ SpriteAtlas:
   - brick-top-left-inside
   - cage-bottom
   - cage-centre-right
-  - brick-top-right1
   - tile118
   - grass
   - cage-bottom-right
@@ -243,7 +236,7 @@ SpriteAtlas:
   - Crouch Down
   - tile033
   - chain-floor-mount
-  - brick-bottom-right1
+  - brick-bottom-right
   - window-0,2
   - Crouch Right
   - brown-wall3
@@ -343,7 +336,6 @@ SpriteAtlas:
   - purple-wall1
   - bars
   - spikes-up-blood
-  - brick-bottom-left1
   - gem
   m_Tag: Main
   m_IsVariant: 0
