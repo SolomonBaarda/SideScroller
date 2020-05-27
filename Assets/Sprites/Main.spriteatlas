@@ -44,7 +44,7 @@ SpriteAtlas:
     packables:
     - {fileID: 102900000, guid: b938bde620428f543a3db06844b849ac, type: 3}
     - {fileID: 102900000, guid: 04928d5ea21809d4ba641c4f21f486e1, type: 3}
-    totalSpriteSurfaceArea: 47848
+    totalSpriteSurfaceArea: 46312
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -115,7 +115,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: cbb779d6c5cf9e743a6f9984a16a82ea, type: 3}
   - {fileID: 21300000, guid: 229ed8e640fe59747bab3acfba5c0814, type: 3}
   - {fileID: 21300000, guid: 15a4a4f6c20acdf44babdf7e6b343c7c, type: 3}
-  - {fileID: 21300000, guid: ce6a68f67ca2ea149af0a768251f9cde, type: 3}
   - {fileID: 21300000, guid: d7cc7c27cf0456e4d9300aaa4bec6d22, type: 3}
   - {fileID: 21300000, guid: 23b144373ddb7ed4fb1e4a03113acaab, type: 3}
   - {fileID: 21300000, guid: 2e429437ee7c7ae4aa9ebf88924d19b0, type: 3}
@@ -127,7 +126,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e194d6d7971e92245b6e830b67a99147, type: 3}
   - {fileID: 21300000, guid: aa9f68080b7e9ab45a3ba39c324d9b41, type: 3}
   - {fileID: 21300000, guid: 255b4028778cf5141a6b843a7e0294f5, type: 3}
-  - {fileID: 21300000, guid: 3e258a3884bc6734d9cc62eb18a6c409, type: 3}
   - {fileID: 21300000, guid: a676a46866640364b9b61f228a026084, type: 3}
   - {fileID: 21300000, guid: 287b9c780f35bef4f899e5a5b3a9d8b0, type: 3}
   - {fileID: 21300000, guid: 3846e288d5f0a444bb7de1672eadcb38, type: 3}
@@ -159,16 +157,13 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 551ff3fad8897bc488eef6db994f22ce, type: 3}
   - {fileID: 21300000, guid: 92ab5b2b1f180c04e98410c2ce26a389, type: 3}
   - {fileID: 21300000, guid: f0c37f2bc8d13f84e8133263bf004515, type: 3}
-  - {fileID: 21300000, guid: a6aec37bc2e8d4645a749a29882c7100, type: 3}
   - {fileID: 21300000, guid: e29ee1bb28190f043a354474d6c1080f, type: 3}
   - {fileID: 21300000, guid: a6a9f2bb30fad4b4fb5be66b2af35cc5, type: 3}
   - {fileID: 21300000, guid: 48c1fabbc563539459a045c136992e92, type: 3}
   - {fileID: 21300000, guid: c25300cb7b34d3048b5424d7764d91ab, type: 3}
   - {fileID: 21300000, guid: ae0d40cb46e495b49a47275e69ac08f3, type: 3}
-  - {fileID: 21300000, guid: 1613b0cb5e8d6234bb3f8bb2c55ba709, type: 3}
   - {fileID: 21300000, guid: b2710bebd78e1ef449bf4e692be0c12a, type: 3}
   - {fileID: 21300000, guid: 967480fb067f30c419b6f819764c7c11, type: 3}
-  - {fileID: 21300000, guid: ce4c45fb5d71ccf4ca5d36f84e3314ab, type: 3}
   - {fileID: 21300000, guid: ef936dfb9f0219743b4760188de8491b, type: 3}
   - {fileID: 21300000, guid: 6512241cc2d525a409bccbf168d36b7d, type: 3}
   - {fileID: 21300000, guid: e683553c5a1b44c409a452ebd4c0e785, type: 3}
@@ -208,7 +203,6 @@ SpriteAtlas:
   - {fileID: 6256885226258279612, guid: 81ef0d7fc2268944e896548188e56b9b, type: 3}
   - {fileID: -5025815261079487931, guid: 81ef0d7fc2268944e896548188e56b9b, type: 3}
   - {fileID: -1450293698637138751, guid: 81ef0d7fc2268944e896548188e56b9b, type: 3}
-  - {fileID: 21300000, guid: ca14948ff80c89e4bb251f2019fe389b, type: 3}
   - {fileID: 21300000, guid: f7d247afc5a0c544bb2e54d67ed78cc0, type: 3}
   - {fileID: 21300000, guid: a7230bbf8067c444994ac3a3c6de4045, type: 3}
   - {fileID: 21300000, guid: c3d97ecf5481b2041abb143c3409d1a5, type: 3}
@@ -256,7 +250,7 @@ SpriteAtlas:
   - tile118
   - grass
   - cage-bottom-right
-  - purple-wall6
+  - purple-wall3
   - gem3
   - gem1
   - Crouch Down
@@ -281,7 +275,6 @@ SpriteAtlas:
   - diamond-04
   - diamond-03
   - window-2,2
-  - purple-wall3
   - chain
   - tile011
   - window-5,2
@@ -292,7 +285,6 @@ SpriteAtlas:
   - post1
   - brick-top-right-inside
   - bars-locked
-  - purple-wall4
   - purple-wall2
   - torch-A-02
   - tile058
@@ -307,7 +299,7 @@ SpriteAtlas:
   - window-4,2
   - brick-left
   - window-4,3
-  - brown-wall6
+  - brown-wall2
   - chest_3
   - chest_2
   - chest_1
@@ -325,16 +317,13 @@ SpriteAtlas:
   - window-3,3
   - lever
   - brick-smooth
-  - brown-wall4
   - window-4,1
   - torch-B-04
   - tile010
   - dirt1
   - spikes-left
-  - brown-wall5
   - banner1
   - spikes-left-blood
-  - brown-wall1
   - window-1,3
   - grass1
   - cage-centre
@@ -347,7 +336,7 @@ SpriteAtlas:
   - brick-bottom-left
   - light-02
   - pot3
-  - brown-wall2
+  - brown-wall1
   - window-5,1
   - torch-C-02
   - spikes-up
@@ -363,7 +352,7 @@ SpriteAtlas:
   - torch-A-04
   - spikes-right-blood
   - tile056
-  - purple-wall5
+  - purple-wall1
   - brick-top-right
   - brick-bottom
   - Up
@@ -374,7 +363,6 @@ SpriteAtlas:
   - chest1_3
   - chest1_0
   - chest1_1
-  - purple-wall1
   - torch-C-04
   - bars
   - spikes-up-blood
