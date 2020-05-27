@@ -41,8 +41,16 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked
         // Is null, don't update current chunk
         else
         {
-            // Move to the last valid ground position
-            ItemManager.OnItemOutOfBounds(gameObject);
+            try
+            {
+                // Try to inform the ItemManager that this is out of bounds
+                ItemManager.OnItemOutOfBounds(gameObject);
+            }
+            catch (System.NullReferenceException)
+            {
+                // May not have an ItemManager in the scene
+            }
+            
         }
     }
 
