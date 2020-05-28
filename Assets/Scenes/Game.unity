@@ -2565,8 +2565,8 @@ GameObject:
   m_Component:
   - component: {fileID: 953929489}
   - component: {fileID: 953929492}
-  - component: {fileID: 953929491}
   - component: {fileID: 953929490}
+  - component: {fileID: 953929491}
   m_Layer: 9
   m_Name: Tilemap Ground
   m_TagString: Untagged
@@ -2949,9 +2949,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1727077217}
   - component: {fileID: 1727077219}
-  - component: {fileID: 1727077218}
   - component: {fileID: 1727077221}
   - component: {fileID: 1727077220}
+  - component: {fileID: 1727077218}
   m_Layer: 11
   m_Name: Tilemap Hazard
   m_TagString: Untagged
