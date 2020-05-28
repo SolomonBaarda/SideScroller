@@ -62,16 +62,19 @@ public class SampleTerrainManager : MonoBehaviour
         {
             allSamples[i].LoadSample(i);
         }
+        terrain.gameObject.SetActive(false);
 
         // Load spawn
         Transform spawn = transform.Find("Spawn");
         startingArea = spawn.GetComponentInChildren<SampleTerrain>();
         startingArea.LoadSample(0);
+        spawn.gameObject.SetActive(false);
 
         // Load spawn
         Transform finish = transform.Find("Finish");
         finishArea = finish.GetComponentInChildren<SampleTerrain>();
         finishArea.LoadSample(0);
+        finish.gameObject.SetActive(false);
 
         // Add all the tiles to the list
         tilesToSwapWhenInverted = new List<(TileBase, TileBase)>
@@ -81,5 +84,6 @@ public class SampleTerrainManager : MonoBehaviour
             (roofLeft, roofRight),
             (spikeLeft, spikeRight)
         };
+
     }
 }

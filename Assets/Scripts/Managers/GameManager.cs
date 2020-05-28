@@ -134,7 +134,7 @@ public class GameManager : MonoBehaviour
 
     private void EndGame(Payload.Direction winningDirection)
     {
-        if(!isGameOver)
+        if (!isGameOver)
         {
             isGameOver = true;
 
@@ -254,33 +254,13 @@ public class GameManager : MonoBehaviour
                     player.GetInventory<Health>().Max, GameTimeSeconds, fps_last_framerate);
                 this.hud.UpdateHUD(in hud);
             }
-        }
-
-        // Update FPS
-        if (fps_time_counter < fps_refresh_time)
-        {
-            fps_time_counter += Time.deltaTime;
-            fps_frame_counter++;
-        }
-        else
-        {
-            fps_last_framerate = fps_frame_counter / fps_time_counter;
-            fps_frame_counter = 0;
-            fps_time_counter = 0;
-        }
-    }
 
 
+            // Check each chunk
+            List<Chunk> nearbyChunksToCamera = movingCamera.GetAllNearbyChunks();
+            CheckGenrateNewChunks(nearbyChunksToCamera);
 
-    private void LateUpdate()
-    {
-        // Check each chunk
-        List<Chunk> nearbyChunksToCamera = movingCamera.GetAllNearbyChunks();
 
-        CheckGenrateNewChunks(nearbyChunksToCamera);
-
-        if (!isGameOver)
-        {
             // Update the nav meshes
             if (presets.DoEnemySpawning)
             {
@@ -312,8 +292,23 @@ public class GameManager : MonoBehaviour
 
                 enemyManager.CheckUpdateSize(currentMaxTilesFromOrigin);
             }
+
+        }
+
+        // Update FPS
+        if (fps_time_counter < fps_refresh_time)
+        {
+            fps_time_counter += Time.deltaTime;
+            fps_frame_counter++;
+        }
+        else
+        {
+            fps_last_framerate = fps_frame_counter / fps_time_counter;
+            fps_frame_counter = 0;
+            fps_time_counter = 0;
         }
     }
+
 
 
 
@@ -390,7 +385,7 @@ public class GameManager : MonoBehaviour
 
     private void ItemOutOfBounds(GameObject item)
     {
-        if(!isGameOver)
+        if (!isGameOver)
         {
             if (WorldItem.ExtendsClass<Payload>(item))
             {

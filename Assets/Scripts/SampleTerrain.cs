@@ -55,16 +55,12 @@ public class SampleTerrain : MonoBehaviour
 
         grid = GetComponentInChildren<Grid>();
 
-        // Disable renderers for all tilemaps
-        for (int i = 0; i < grid.transform.childCount; i++)
+        // Destroy all TilemapRenderers connected
+        foreach(TilemapRenderer r in GetComponentsInChildren<TilemapRenderer>())
         {
-            GameObject g = grid.transform.GetChild(i).gameObject;
-            TilemapRenderer r = g.GetComponent<TilemapRenderer>();
-            if (r != null)
-            {
-                r.enabled = false;
-            }
+            Destroy(r);
         }
+
 
 
         extraObjectsParent = transform.Find("Extras").gameObject;
