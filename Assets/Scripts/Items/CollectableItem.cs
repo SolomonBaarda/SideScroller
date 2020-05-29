@@ -29,8 +29,6 @@ public class CollectableItem : WorldItem, ICollidable, IInteractable, ICollectab
         this.item = item;
         base.Awake();
 
-        SetRendererSortingLayer(ItemManager.RENDERING_LAYER_ITEM_COLLISION);
-
         this.collideToPickUp = collideToPickUp;
         this.interactToPickUp = interactToPickUp;
 

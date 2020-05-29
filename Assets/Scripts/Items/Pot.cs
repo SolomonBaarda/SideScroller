@@ -14,8 +14,6 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked
     new private void Awake()
     {
         base.Awake();
-
-        SetRendererSortingLayer(ItemManager.RENDERING_LAYER_ITEM_INVENTORY_FRONT);
     }
 
 

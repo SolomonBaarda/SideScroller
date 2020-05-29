@@ -78,12 +78,11 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         // Only bother if there are items
         if (collisionItems.Count > 0)
         {
-            // Sort by renderer sorting layer
+            // Reverse sort by renderer sorting layer
             collisionItems.Sort(
-                (x, y) => SortingLayer.GetLayerValueFromID(x.gameObject.GetComponent<SpriteRenderer>().sortingLayerID)
-                    .CompareTo(SortingLayer.GetLayerValueFromID(y.gameObject.GetComponent<SpriteRenderer>().sortingLayerID)));
-            // Must reverse after as we want the front most item (highest value) first
-            collisionItems.Reverse();
+                (x, y) => -SortingLayer.GetLayerValueFromID(x.gameObject.GetComponent<SpriteRenderer>().sortingLayerID)
+                    .CompareTo(SortingLayer.GetLayerValueFromID(y.gameObject.GetComponent<SpriteRenderer>().sortingLayerID))
+            );
 
             // Check if any items can be picked up by the player
             foreach (Collider2D c in collisionItems)

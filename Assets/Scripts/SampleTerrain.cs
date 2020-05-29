@@ -97,11 +97,15 @@ public class SampleTerrain : MonoBehaviour
 
             if (r.sortingLayerName.Equals(TerrainManager.LAYER_NAME_WALL))
             {
-                tilemap_wall = t;
-            }
-            else if (r.sortingLayerName.Equals(TerrainManager.LAYER_NAME_WALL_DETAIL))
-            {
-                tilemap_wallDetail = t;
+                if(r.sortingOrder == 0)
+                {
+                    tilemap_wall = t;
+                }
+                else if (r.sortingOrder > 0)
+                {
+                    tilemap_wallDetail = t;
+                }
+
             }
             else if (r.sortingLayerName.Equals(TerrainManager.LAYER_NAME_BACKGROUND))
             {
@@ -166,9 +170,12 @@ public class SampleTerrain : MonoBehaviour
 
             if (g != null)
             {
-                // Add the object and its relative position to the entry tile
-                Vector2 objectPosition = g.transform.position - grid.CellToWorld(new Vector3Int(entryTilePositionLocal.x, entryTilePositionLocal.y, 0));
-                extraGameObjects.Add((g, objectPosition/grid.cellSize));
+                if(g.activeInHierarchy)
+                {
+                    // Add the object and its relative position to the entry tile
+                    Vector2 objectPosition = g.transform.position - grid.CellToWorld(new Vector3Int(entryTilePositionLocal.x, entryTilePositionLocal.y, 0));
+                    extraGameObjects.Add((g, objectPosition / grid.cellSize));
+                }
             }
         }
     }

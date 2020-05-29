@@ -1,12 +1,7 @@
-﻿using Pathfinding.Ionic.Zip;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Profiling;
 using UnityEngine.Tilemaps;
 
 public class TerrainManager : MonoBehaviour
@@ -54,7 +49,6 @@ public class TerrainManager : MonoBehaviour
 
     // Layers
     public const string LAYER_NAME_WALL = "Wall";
-    public const string LAYER_NAME_WALL_DETAIL = "Wall Detail";
     public const string LAYER_NAME_BACKGROUND = "Background";
     public const string LAYER_NAME_HAZARD = "Hazard";
     public const string LAYER_NAME_GROUND = "Ground";
@@ -88,11 +82,15 @@ public class TerrainManager : MonoBehaviour
 
             if (r.sortingLayerName.Equals(LAYER_NAME_WALL))
             {
-                wall = t;
-            }
-            else if (r.sortingLayerName.Equals(LAYER_NAME_WALL_DETAIL))
-            {
-                wallDetail = t;
+                if(r.sortingOrder == 0)
+                {
+                    wall = t;
+                }
+                else if(r.sortingOrder > 0)
+                {
+                    wallDetail = t;
+                }
+                
             }
             else if (r.sortingLayerName.Equals(LAYER_NAME_BACKGROUND))
             {

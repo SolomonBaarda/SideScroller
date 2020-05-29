@@ -7,9 +7,7 @@ using System;
 public class ItemManager : MonoBehaviour
 {
     public static string ITEM_LAYER = "Item";
-    public static string RENDERING_LAYER_ITEM_INVENTORY = "Item_Inventory";
-    public static string RENDERING_LAYER_ITEM_INVENTORY_FRONT = "Item_Inventory_Front";
-    public static string RENDERING_LAYER_ITEM_COLLISION = "Item_Collision";
+    public static string RENDERING_LAYER_ITEM = ITEM_LAYER;
 
     public static UnityAction<GameObject> OnGenerateLoot;
     public static UnityAction<GameObject> OnItemOutOfBounds;

@@ -44,26 +44,17 @@ TagManager:
   - name: Wall
     uniqueID: 140553299
     locked: 0
-  - name: Wall Detail
-    uniqueID: 1171291907
-    locked: 0
   - name: Background
     uniqueID: 2231643803
-    locked: 0
-  - name: Item_Inventory
-    uniqueID: 94643921
-    locked: 0
-  - name: Item_Inventory_Front
-    uniqueID: 2183198855
-    locked: 0
-  - name: Item_Collision
-    uniqueID: 3972413987
     locked: 0
   - name: Hazard
     uniqueID: 1024329537
     locked: 0
   - name: Ground
     uniqueID: 1186609393
+    locked: 0
+  - name: Item
+    uniqueID: 3972413987
     locked: 0
   - name: Enemy
     uniqueID: 904382589
