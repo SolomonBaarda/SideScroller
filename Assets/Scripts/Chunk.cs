@@ -143,6 +143,26 @@ public class Chunk : MonoBehaviour
 
 
 
+
+    public void SetNotActive()
+    {
+        // Disable all children
+        for(int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).gameObject.SetActive(false);
+        }
+    }
+
+    public void SetActive()
+    {
+        // Enable all children
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).gameObject.SetActive(true);
+        }
+    }
+
+
     private Vector2[] RemoveMiddlePointsIfStraightPath(Vector2[] points, TerrainManager.Direction exitDirection)
     {
         Vector2 first = points[0], last = points[points.Length - 1];

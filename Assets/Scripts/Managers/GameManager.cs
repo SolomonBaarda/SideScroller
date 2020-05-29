@@ -238,10 +238,12 @@ public class GameManager : MonoBehaviour
             // Update the game time
             GameTimeSeconds += Time.deltaTime;
 
+            chunkManager.UpdateLoadedChunks(movingCamera.GetAllNearbyChunks());
+
             // Check if a player is outside the bounds
             playerManager.CheckPlayersOutsideBounds(movingCamera.ViewBounds);
             // Check if a player needs to be respawned
-            playerManager.CheckAllRespawns(movingCamera.GetAllNearbyChunks(), movingCamera.ViewBounds);
+            playerManager.CheckAllRespawns(chunkManager.LoadedChunks, movingCamera.ViewBounds);
 
 
             // Update HUD stuff
@@ -255,24 +257,22 @@ public class GameManager : MonoBehaviour
                 this.hud.UpdateHUD(in hud);
             }
 
-
             // Check each chunk
-            List<Chunk> nearbyChunksToCamera = movingCamera.GetAllNearbyChunks();
-            CheckGenrateNewChunks(nearbyChunksToCamera);
+            CheckGenrateNewChunks(chunkManager.LoadedChunks);
 
 
             // Update the nav meshes
             if (presets.DoEnemySpawning)
             {
                 // Check if we need to update the nav mesh
-                foreach (Chunk c in nearbyChunksToCamera)
+                foreach (Chunk c in chunkManager.LoadedChunks)
                 {
                     UpdateNavMesh(c);
                 }
 
                 // Check if we need to update the size of the nav mesh
                 Vector2Int currentMaxTilesFromOrigin = Vector2Int.zero;
-                foreach (Chunk c in nearbyChunksToCamera)
+                foreach (Chunk c in chunkManager.LoadedChunks)
                 {
                     foreach (TerrainManager.TerrainChunk.Exit e in c.exits)
                     {
@@ -394,7 +394,7 @@ public class GameManager : MonoBehaviour
                 // Get the best position on the screen
                 try
                 {
-                    Vector2 respawn = playerManager.GetBestRespawnPoint(Payload.Direction.None, movingCamera.GetAllNearbyChunks(), movingCamera.ViewBounds);
+                    Vector2 respawn = playerManager.GetBestRespawnPoint(Payload.Direction.None, chunkManager.LoadedChunks, movingCamera.ViewBounds);
                     p.SetPosition(respawn);
                 }
                 catch (Exception)

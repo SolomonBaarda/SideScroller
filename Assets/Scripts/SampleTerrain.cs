@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class SampleTerrain : MonoBehaviour 
+public class SampleTerrain : MonoBehaviour
 {
     // Reference to manager
     private SampleTerrainManager manager;
@@ -56,7 +56,7 @@ public class SampleTerrain : MonoBehaviour
         grid = GetComponentInChildren<Grid>();
 
         // Destroy all TilemapRenderers connected
-        foreach(TilemapRenderer r in GetComponentsInChildren<TilemapRenderer>())
+        foreach (TilemapRenderer r in GetComponentsInChildren<TilemapRenderer>())
         {
             Destroy(r);
         }
@@ -66,11 +66,11 @@ public class SampleTerrain : MonoBehaviour
         extraObjectsParent = transform.Find("Extras").gameObject;
 
         // Disable all extras for now
-        for(int i = 0; i < extraObjectsParent.transform.childCount; i++)
+        for (int i = 0; i < extraObjectsParent.transform.childCount; i++)
         {
             GameObject g = extraObjectsParent.transform.GetChild(i).gameObject;
 
-            if(g != null)
+            if (g != null)
             {
                 g.SetActive(false);
             }
@@ -97,7 +97,7 @@ public class SampleTerrain : MonoBehaviour
 
             if (r.sortingLayerName.Equals(TerrainManager.LAYER_NAME_WALL))
             {
-                if(r.sortingOrder == 0)
+                if (r.sortingOrder == 0)
                 {
                     tilemap_wall = t;
                 }
@@ -170,12 +170,9 @@ public class SampleTerrain : MonoBehaviour
 
             if (g != null)
             {
-                if(g.activeInHierarchy)
-                {
-                    // Add the object and its relative position to the entry tile
-                    Vector2 objectPosition = g.transform.position - grid.CellToWorld(new Vector3Int(entryTilePositionLocal.x, entryTilePositionLocal.y, 0));
-                    extraGameObjects.Add((g, objectPosition / grid.cellSize));
-                }
+                // Add the object and its relative position to the entry tile
+                Vector2 objectPosition = g.transform.position - grid.CellToWorld(new Vector3Int(entryTilePositionLocal.x, entryTilePositionLocal.y, 0));
+                extraGameObjects.Add((g, objectPosition / grid.cellSize));
             }
         }
     }
@@ -453,7 +450,7 @@ public class SampleTerrain : MonoBehaviour
                 if (tilemap_dev.GetTile(current).Equals(manager.dev_finish))
                 {
                     points.Add(new Vector2Int(current.x, current.y) - entryTilePositionLocal);
-                }                
+                }
             }
         }
     }
@@ -475,7 +472,7 @@ public class SampleTerrain : MonoBehaviour
                 Vector2Int tilePos = new Vector2Int(current.x, current.y) - entryTilePositionLocal;
 
                 // Assign the correct type
-                if(t.Equals(manager.dev_itemCoin))
+                if (t.Equals(manager.dev_itemCoin))
                 {
                     itemType = WorldItem.Name.Coin;
                 }

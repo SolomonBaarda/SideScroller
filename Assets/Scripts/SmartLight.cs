@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data.SqlTypes;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
 
 public class SmartLight : MonoBehaviour
@@ -10,7 +8,17 @@ public class SmartLight : MonoBehaviour
 
     private void Awake()
     {
-        
+        Off();
+    }
+
+    private void OnEnable()
+    {
+        On();
+    }
+
+    private void OnDisable()
+    {
+        Off();
     }
 
     public void Off()

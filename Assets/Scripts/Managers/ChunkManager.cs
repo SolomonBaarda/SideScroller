@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -13,6 +12,8 @@ public class ChunkManager : MonoBehaviour
 
     private Dictionary<Vector2Int, Chunk> chunks;
     public static readonly Vector2Int initialChunkID = Vector2Int.zero;
+
+    public List<Chunk> LoadedChunks { get; private set; } = new List<Chunk>();
 
     private void Awake()
     {
@@ -52,8 +53,8 @@ public class ChunkManager : MonoBehaviour
         {
             GameObject g = Instantiate(t.extraWorldObjects[i].Item1, t.extraWorldObjects[i].Item2, t.extraWorldObjects[i].Item1.transform.rotation, chunkObject.transform);
             g.transform.localScale = t.extraWorldObjects[i].Item3;
-            g.SetActive(true);
         }
+        c.SetNotActive();
 
         if(chunks.ContainsKey(t.chunkID))
         {
@@ -61,6 +62,23 @@ public class ChunkManager : MonoBehaviour
         }
         // Add the new chunk
         chunks.Add(t.chunkID, c);
+    }
+
+
+    public void UpdateLoadedChunks(List<Chunk> nearby)
+    {
+        // Disable all chunks
+        foreach(Chunk c in chunks.Values)
+        {
+            c.SetNotActive();
+        }
+
+        // Set to be the new chunks and set active
+        LoadedChunks = nearby;
+        foreach(Chunk c in LoadedChunks)
+        {
+            c.SetActive();
+        }
     }
 
 
