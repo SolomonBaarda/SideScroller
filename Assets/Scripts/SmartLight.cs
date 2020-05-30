@@ -23,13 +23,13 @@ public class SmartLight : MonoBehaviour
 
     public void Off()
     {
-        background.enabled = false;
-        interactive.enabled = false;
+        background.gameObject.SetActive(false);
+        interactive.gameObject.SetActive(false);
     }
 
     public void On()
     {
-        background.enabled = true;
-        interactive.enabled = true;
+        background.gameObject.SetActive(true);
+        interactive.gameObject.SetActive(true);
     }
 }
