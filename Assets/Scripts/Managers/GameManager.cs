@@ -338,10 +338,11 @@ public class GameManager : MonoBehaviour
                 int symmetricChunkIndex = -1;
                 if (presets.terrain_generation.ToString().Contains("Symmetrical"))
                 {
+                    Vector2Int symmetricChunkID = exit.newChunkID;
+
                     // Try to get the symmetrical chunk. If it fails, just generate a random one
                     try
                     {
-                        Vector2Int symmetricChunkID = exit.newChunkID;
                         if (exit.newChunkID.x < ChunkManager.initialChunkID.x)
                         {
                             symmetricChunkID.x = ChunkManager.initialChunkID.x + Mathf.Abs(exit.newChunkID.x);
@@ -355,14 +356,19 @@ public class GameManager : MonoBehaviour
                         if (symmetric.chunkID != ChunkManager.initialChunkID)
                         {
                             symmetricChunkIndex = symmetric.sampleTerrainIndex;
-                        }
 
-                        // Generate the symmetrical chunk
-                        terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID, terrainManager.GetSampleTerrain(symmetricChunkIndex));
-                        continue;
+                            // Generate the symmetrical chunk
+                            terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID, terrainManager.GetSampleTerrain(symmetricChunkIndex));
+                            continue;
+                        }
                     }
                     catch (Exception)
                     {
+                        // Check that the symmetric chunk has not already been chosen and is being generated now 
+                        if(terrainManager.ChunkAlreadyGenerating(symmetricChunkID))
+                        {
+                            continue;
+                        }
                     }
                 }
 
