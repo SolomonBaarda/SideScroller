@@ -49,8 +49,6 @@ public class WorldItem : MonoBehaviour
         }
 
         spriteRenderer.sprite = sprite;
-        // Set back most item layer by default
-        SetRendererSortingLayer(ItemManager.RENDERING_LAYER_ITEM);
 
         // Set up the box collider
         if (trigger == null)
@@ -63,13 +61,6 @@ public class WorldItem : MonoBehaviour
         }
 
         trigger.isTrigger = true;
-    }
-
-
-
-    protected void SetRendererSortingLayer(string layer)
-    {
-        spriteRenderer.sortingLayerID = SortingLayer.NameToID(layer);
     }
 
 

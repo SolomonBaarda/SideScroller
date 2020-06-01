@@ -45,14 +45,9 @@ public class TerrainManager : MonoBehaviour
     public Tile groundTile;
     public RandomTile backgroundWallTile;
 
-    private System.Random random;
-
-    // Layers
-    public const string LAYER_NAME_WALL = "Wall";
-    public const string LAYER_NAME_BACKGROUND = "Background";
-    public const string LAYER_NAME_HAZARD = "Hazard";
     public const string LAYER_NAME_GROUND = "Ground";
-    public const string LAYER_NAME_DEV = "Dev";
+
+    private System.Random random;
 
     private void Awake()
     {
@@ -73,34 +68,38 @@ public class TerrainManager : MonoBehaviour
         GameObject sampleGameObject = Instantiate(sampleTerrainManagerObjectPrefab);
         sampleTerrainManager = sampleGameObject.GetComponent<SampleTerrainManager>();
 
-        // Assign the tilemaps
+        // Assign the tilemaps 
         for (int i = 0; i < grid.transform.childCount; i++)
         {
             GameObject g = grid.transform.GetChild(i).gameObject;
             Tilemap t = g.GetComponent<Tilemap>();
-            TilemapRenderer r = g.GetComponent<TilemapRenderer>();
 
-            if (r.sortingLayerName.Equals(LAYER_NAME_WALL))
+            // Walls
+            if (g.name.Contains("Wall"))
             {
-                if(r.sortingOrder == 0)
-                {
-                    wall = t;
-                }
-                else if(r.sortingOrder > 0)
+                // Wall detail
+                if (g.name.Contains("Detail"))
                 {
                     wallDetail = t;
                 }
-                
+                // Wall
+                else
+                {
+                    wall = t;
+                }
             }
-            else if (r.sortingLayerName.Equals(LAYER_NAME_BACKGROUND))
+            // Background
+            else if (g.name.Contains("Background"))
             {
                 background = t;
             }
-            else if (r.sortingLayerName.Equals(LAYER_NAME_HAZARD))
+            // Hazard
+            else if (g.name.Contains("Hazard"))
             {
                 hazard = t;
             }
-            else if (r.sortingLayerName.Equals(LAYER_NAME_GROUND))
+            // Ground
+            else if (g.name.Contains("Ground"))
             {
                 ground = t;
             }

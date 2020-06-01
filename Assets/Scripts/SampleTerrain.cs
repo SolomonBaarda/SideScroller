@@ -93,39 +93,45 @@ public class SampleTerrain : MonoBehaviour
         {
             GameObject g = grid.transform.GetChild(i).gameObject;
             Tilemap t = g.GetComponent<Tilemap>();
-            TilemapRenderer r = g.GetComponent<TilemapRenderer>();
 
-            if (r.sortingLayerName.Equals(TerrainManager.LAYER_NAME_WALL))
+            // Walls
+            if (g.name.Contains("Wall"))
             {
-                if (r.sortingOrder == 0)
-                {
-                    tilemap_wall = t;
-                }
-                else if (r.sortingOrder > 0)
+                // Wall detail
+                if(g.name.Contains("Detail"))
                 {
                     tilemap_wallDetail = t;
                 }
-
+                // Wall
+                else
+                {
+                    tilemap_wall = t;
+                }
             }
-            else if (r.sortingLayerName.Equals(TerrainManager.LAYER_NAME_BACKGROUND))
+            // Background
+            else if (g.name.Contains("Background"))
             {
                 tilemap_background = t;
             }
-            else if (r.sortingLayerName.Equals(TerrainManager.LAYER_NAME_HAZARD))
+            // Hazard
+            else if (g.name.Contains("Hazard"))
             {
                 tilemap_hazard = t;
             }
-            else if (r.sortingLayerName.Equals(TerrainManager.LAYER_NAME_GROUND))
+            // Ground
+            else if (g.name.Contains("Ground"))
             {
                 tilemap_ground = t;
             }
-            else if (r.sortingLayerName.Equals(TerrainManager.LAYER_NAME_DEV))
+            // Devs
+            else if (g.name.Contains("Dev"))
             {
                 // Add the camera path tilemaps
-                if (g.name.Contains("Camera"))
+                if (g.name.Contains("Camera Path"))
                 {
                     tilemap_dev_AllCameraPaths.Add(t);
                 }
+                // Dev
                 else
                 {
                     tilemap_dev = t;

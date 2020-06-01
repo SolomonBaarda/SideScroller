@@ -163,7 +163,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         LayerMask layerMask = ~(
             (1 << gameObject.layer) | (1 << LayerMask.NameToLayer(Player.LAYER_ONLY_GROUND)) |
             (1 << LayerMask.NameToLayer(Chunk.CHUNK_LAYER)) | (1 << LayerMask.NameToLayer(TerrainManager.LAYER_NAME_GROUND)) |
-            (1 << LayerMask.NameToLayer(TerrainManager.LAYER_NAME_HAZARD))
+            (1 << LayerMask.NameToLayer(Hazard.LAYER))
         );
 
         // Set the contact filter

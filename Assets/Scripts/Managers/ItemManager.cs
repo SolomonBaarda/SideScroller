@@ -7,7 +7,6 @@ using System;
 public class ItemManager : MonoBehaviour
 {
     public static string ITEM_LAYER = "Item";
-    public static string RENDERING_LAYER_ITEM = ITEM_LAYER;
 
     public static UnityAction<GameObject> OnGenerateLoot;
     public static UnityAction<GameObject> OnItemOutOfBounds;

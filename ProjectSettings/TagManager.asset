@@ -41,30 +41,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Wall
-    uniqueID: 140553299
+  - name: Environment
+    uniqueID: 2505273183
     locked: 0
-  - name: Background
-    uniqueID: 2231643803
-    locked: 0
-  - name: Hazard
-    uniqueID: 1024329537
-    locked: 0
-  - name: Ground
-    uniqueID: 1186609393
-    locked: 0
-  - name: Item
-    uniqueID: 3972413987
-    locked: 0
-  - name: Enemy
-    uniqueID: 904382589
-    locked: 0
-  - name: Player
-    uniqueID: 813624947
-    locked: 0
-  - name: Front
-    uniqueID: 2133282741
-    locked: 0
-  - name: Dev
-    uniqueID: 2384808933
+  - name: Entity
+    uniqueID: 3886315007
     locked: 0

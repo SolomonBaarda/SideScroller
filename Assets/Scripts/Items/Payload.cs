@@ -16,7 +16,6 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked
     public override void Awake()
     {
         base.Awake();
-        SetRendererSortingLayer("Front");
         interactToPickUp = true;
         trigger.enabled = true;
     }
