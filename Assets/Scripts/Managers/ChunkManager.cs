@@ -5,6 +5,7 @@ using UnityEngine.Events;
 
 public class ChunkManager : MonoBehaviour
 {
+    public static UnityAction<Vector2Int> OnChunkCreated;
     public static UnityAction<Vector2Int> OnChunkDestroyed;
 
     [Header("Chunk Prefab Reference")]
@@ -62,6 +63,8 @@ public class ChunkManager : MonoBehaviour
         }
         // Add the new chunk
         chunks.Add(t.chunkID, c);
+
+        OnChunkCreated.Invoke(t.chunkID);
     }
 
 
@@ -97,8 +100,7 @@ public class ChunkManager : MonoBehaviour
 
     public Chunk GetChunk(Vector2Int chunkID)
     {
-        Chunk chunk;
-        if (!chunks.TryGetValue(chunkID, out chunk))
+        if (!chunks.TryGetValue(chunkID, out Chunk chunk))
         {
             throw new Exception("Chunk (" + chunkID.x + "," + chunkID.y + ") could not be found.");
         }

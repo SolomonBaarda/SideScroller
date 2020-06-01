@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -220,41 +221,69 @@ public class TerrainManager : MonoBehaviour
 
     private void GenerateFromSampleTerrain(Vector2Int entryTile, bool flipAxisX, Direction directionToGenerate, SampleTerrain terrain, Vector2Int chunkID)
     {
+        StartCoroutine(WaitForCopyTerrain(entryTile, flipAxisX, directionToGenerate, terrain, chunkID));
+    }
+
+
+    private IEnumerator WaitForCopyTerrain(Vector2Int entryTile, bool flipAxisX, Direction directionToGenerate, SampleTerrain terrain, Vector2Int chunkID)
+    {
         // Copy the terrain, each layer at a time
-        CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wall, ref wall);
-        CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wallDetail, ref wallDetail);
-        CopySampleTerrainLayer(entryTile, flipAxisX, terrain.background, ref background);
-        CopySampleTerrainLayer(entryTile, flipAxisX, terrain.hazard, ref hazard);
-        CopySampleTerrainLayer(entryTile, flipAxisX, terrain.ground, ref ground);
+        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wall, wall));
+        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wallDetail, wallDetail));
+        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.background, background));
+        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.hazard, hazard));
+        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.ground, ground));
 
         // Generate the chunk
         TerrainChunk c = GenerateTerrainChunk(entryTile, flipAxisX, directionToGenerate, terrain, chunkID);
 
-
-        // Add some walls
-        /*
-        Vector3Int centre = grid.WorldToCell(c.centre);
-        Vector2Int extents = new Vector2Int((int)(c.bounds / c.cellSize / 2).x, (int)(c.bounds / c.cellSize / 2).y);
-        Vector3Int offset = new Vector3Int();
-
-
-        int offsetDistance = 4;
-
-        if (directionToGenerate == Direction.Left || directionToGenerate == Direction.Right || directionToGenerate == Direction.Both)
-        {
-            offset.y = (int)(c.bounds.y / 2) + offsetDistance;
-        }
-
-        //wall.BoxFill(centre, backgroundWallTile, centre.x -extents.x, centre.y + offset.y, centre.x + extents.x, centre.y + offset.y);
-        //wall.BoxFill(centre, backgroundWallTile, centre.x - extents.x, centre.y - offset.y, centre.x + extents.x, centre.y - offset.y);
-
-        // Do a flood fill of wall tiles
-        wall.FloodFill(centre + offset, backgroundWallTile);
-        wall.FloodFill(centre - offset, backgroundWallTile);
-        */
-
         // Tell the ChunkManager that the terrain has been generated
         OnTerrainChunkGenerated.Invoke(c);
+    }
+
+
+    private IEnumerator CopySampleTerrainLayer(Vector2Int entryPosition, bool flipAxisX, SampleTerrain.Layer layer, Tilemap tilemap)
+    {
+        Vector2Int entry = new Vector2Int(entryPosition.x, entryPosition.y);
+
+        int invert = 1;
+        if (flipAxisX)
+        {
+            invert = -1;
+        }
+
+        // Copy wall
+        foreach (SampleTerrain.Layer.Tile tile in layer.tilesInThisLayer)
+        {
+            // Position of the new tile
+            Vector2Int newTilePos = entry + new Vector2Int(invert * tile.position.x, tile.position.y);
+
+            TileBase newTileType = tile.tileType;
+
+            // Check if we need to flip the tile type
+            if (invert < 0)
+            {
+                // Check each tile that can be swapped 
+                foreach ((TileBase, TileBase) t in sampleTerrainManager.tilesToSwapWhenInverted)
+                {
+                    if (tile.tileType.Equals(t.Item1))
+                    {
+                        newTileType = t.Item2;
+                        break;
+                    }
+                    else if (tile.tileType.Equals(t.Item2))
+                    {
+                        newTileType = t.Item1;
+                        break;
+                    }
+                }
+            }
+
+            // Set the tile
+            SetTile(tilemap, newTileType, newTilePos);
+
+            yield return null;
+        }
     }
 
 
@@ -446,49 +475,6 @@ public class TerrainManager : MonoBehaviour
             allItemPositions, terrain.itemChance, extraWorldObjects, finish, terrain.index);
     }
 
-
-
-    private void CopySampleTerrainLayer(Vector2Int entryPosition, bool flipAxisX, SampleTerrain.Layer layer, ref Tilemap tilemap)
-    {
-        Vector2Int entry = new Vector2Int(entryPosition.x, entryPosition.y);
-
-        int invert = 1;
-        if (flipAxisX)
-        {
-            invert = -1;
-        }
-
-        // Copy wall
-        foreach (SampleTerrain.Layer.Tile tile in layer.tilesInThisLayer)
-        {
-            // Position of the new tile
-            Vector2Int newTilePos = entry + new Vector2Int(invert * tile.position.x, tile.position.y);
-
-            TileBase newTileType = tile.tileType;
-
-            // Check if we need to flip the tile type
-            if (invert < 0)
-            {
-                // Check each tile that can be swapped 
-                foreach ((TileBase, TileBase) t in sampleTerrainManager.tilesToSwapWhenInverted)
-                {
-                    if (tile.tileType.Equals(t.Item1))
-                    {
-                        newTileType = t.Item2;
-                        break;
-                    }
-                    else if (tile.tileType.Equals(t.Item2))
-                    {
-                        newTileType = t.Item1;
-                        break;
-                    }
-                }
-            }
-
-            // Set the tile
-            SetTile(tilemap, newTileType, newTilePos);
-        }
-    }
 
 
     private bool IsValidDirection(Direction directionToGenerate, Direction sampleTerrainDirection)

@@ -80,15 +80,15 @@ public class GameManager : MonoBehaviour
 
         OnGameEnd += EndGame;
 
+        ChunkManager.OnChunkCreated += CheckStartOfGame;
+
         // If the Menu is loaded, wait for presets 
         if (SceneLoader.Instance != null && SceneLoader.Instance.SceneIsLoaded(SceneLoader.MENU_SCENE))
         {
-            SceneLoader.Instance.OnScenesLoaded += CountDownGameStart;
         }
         // Just start the game and do defaut presets, must be running in the editor
         else
         {
-            TerrainManager.OnSpawnGenerated += CountDownGameStart;
             OnSetPresets.Invoke(new Presets());
         }
     }
@@ -97,17 +97,9 @@ public class GameManager : MonoBehaviour
     {
         HUD.OnHUDLoaded -= SetUpHUD;
         OnSetPresets -= Initialise;
-
-        if (SceneLoader.Instance != null)
-        {
-            SceneLoader.Instance.OnScenesLoaded -= CountDownGameStart;
-        }
-        else
-        {
-            TerrainManager.OnSpawnGenerated -= CountDownGameStart;
-        }
-
-        Menu.OnMenuClose -= CountDownGameStart;
+        ItemManager.OnItemOutOfBounds -= ItemOutOfBounds;
+        OnGameEnd -= EndGame;
+        ChunkManager.OnChunkCreated -= CheckStartOfGame;
     }
 
 
@@ -163,23 +155,21 @@ public class GameManager : MonoBehaviour
     }
 
 
-
-    private void CountDownGameStart()
+    private void CheckStartOfGame(Vector2Int chunkID)
     {
-        StartCoroutine(WaitForGameStart());
+        if(chunkID.Equals(ChunkManager.initialChunkID))
+        {
+            StartGame();
+        }
     }
 
 
-    private IEnumerator WaitForGameStart()
-    {
-        yield return new WaitForSeconds(GAME_START_WAIT_SECONDS);
-
-        StartGame();
-    }
 
 
     private void StartGame()
     {
+        Debug.Log("Game Starting!");
+
         if (presets.DoEnemySpawning)
         {
             enemyManager.ScanWholeNavMesh();
