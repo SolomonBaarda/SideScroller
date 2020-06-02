@@ -27,6 +27,7 @@ public class TerrainManager : MonoBehaviour
     public Generation GenerationRule { get; private set; }
 
     private Dictionary<Vector2Int, bool> generatedChunks = new Dictionary<Vector2Int, bool>();
+    public const float PERCENTAGE_OF_CHUNK_LAYER_TO_GEN_EACH_FRAME = .25f;
 
     public Vector2 CellSize { get { return grid.cellSize; } }
 
@@ -123,7 +124,7 @@ public class TerrainManager : MonoBehaviour
         GenerateInitialTile(initialTilePos);
 
         // Generate the spawn area
-        Generate(initialTilePos, Direction.Both, ChunkManager.initialChunkID, sampleTerrainManager.startingArea);
+        Generate(initialTilePos, Direction.Both, ChunkManager.initialChunkID, sampleTerrainManager.startingArea, true);
 
         OnSpawnGenerated.Invoke();
     }
@@ -146,7 +147,7 @@ public class TerrainManager : MonoBehaviour
 
 
 
-    public void GenerateRandom(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID)
+    public void GenerateRandom(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID, bool loadInBackground)
     {
         // Get a list of only the valid sample terrain
         List<SampleTerrain> allValidSamples = new List<SampleTerrain>();
@@ -188,21 +189,21 @@ public class TerrainManager : MonoBehaviour
         }
 
 
-        GenerateRandom(startTileWorldSpace, directionToGenerate, chunkID, allValidSamples);
+        GenerateRandom(startTileWorldSpace, directionToGenerate, chunkID, allValidSamples, loadInBackground);
     }
 
 
-    public void GenerateRandom(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID, List<SampleTerrain> validTerrain)
+    public void GenerateRandom(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID, List<SampleTerrain> validTerrain, bool loadInBackground)
     {
         // Randomly choose one to generate
         int index = random.Next(0, validTerrain.Count);
         SampleTerrain chosen = validTerrain[index];
 
-        Generate(startTileWorldSpace, directionToGenerate, chunkID, chosen);
+        Generate(startTileWorldSpace, directionToGenerate, chunkID, chosen, loadInBackground);
     }
 
 
-    public void Generate(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID, SampleTerrain terrain)
+    public void Generate(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID, SampleTerrain terrain, bool loadInBackground)
     {
         // Ensure the chunk is not already being generated 
         if(!ChunkAlreadyGenerating(chunkID))
@@ -220,7 +221,7 @@ public class TerrainManager : MonoBehaviour
             Vector3Int entryPos = grid.WorldToCell(startTileWorldSpace);
 
             // Generate the new chunk and update the tile reference
-            GenerateFromSampleTerrain(new Vector2Int(entryPos.x, entryPos.y), flipAxisX, directionToGenerate, terrain, chunkID);
+            GenerateFromSampleTerrain(new Vector2Int(entryPos.x, entryPos.y), flipAxisX, directionToGenerate, terrain, chunkID, loadInBackground);
         }
     }
 
@@ -241,22 +242,22 @@ public class TerrainManager : MonoBehaviour
     }
 
 
-    private void GenerateFromSampleTerrain(Vector2Int entryTile, bool flipAxisX, Direction directionToGenerate, SampleTerrain terrain, Vector2Int chunkID)
+    private void GenerateFromSampleTerrain(Vector2Int entryTile, bool flipAxisX, Direction directionToGenerate, SampleTerrain terrain, Vector2Int chunkID, bool loadInBackground)
     {
         Debug.Log("Starting copy sample coroutine for chunk " + chunkID);
 
-        StartCoroutine(WaitForCopyTerrain(entryTile, flipAxisX, directionToGenerate, terrain, chunkID));
+        StartCoroutine(WaitForCopyTerrain(entryTile, flipAxisX, directionToGenerate, terrain, chunkID, loadInBackground));
     }
 
 
-    private IEnumerator WaitForCopyTerrain(Vector2Int entryTile, bool flipAxisX, Direction directionToGenerate, SampleTerrain terrain, Vector2Int chunkID)
+    private IEnumerator WaitForCopyTerrain(Vector2Int entryTile, bool flipAxisX, Direction directionToGenerate, SampleTerrain terrain, Vector2Int chunkID, bool loadInBackground)
     {
         // Copy the terrain, each layer at a time
-        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wall, wall));
-        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wallDetail, wallDetail));
-        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.background, background));
-        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.hazard, hazard));
-        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.ground, ground));
+        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wall, wall, loadInBackground));
+        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wallDetail, wallDetail, loadInBackground));
+        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.background, background, loadInBackground));
+        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.hazard, hazard, loadInBackground));
+        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.ground, ground, loadInBackground));
 
         // Generate the chunk
         TerrainChunk c = GenerateTerrainChunk(entryTile, flipAxisX, directionToGenerate, terrain, chunkID);
@@ -266,7 +267,7 @@ public class TerrainManager : MonoBehaviour
     }
 
 
-    private IEnumerator CopySampleTerrainLayer(Vector2Int entryPosition, bool flipAxisX, SampleTerrain.Layer layer, Tilemap tilemap)
+    private IEnumerator CopySampleTerrainLayer(Vector2Int entryPosition, bool flipAxisX, SampleTerrain.Layer layer, Tilemap tilemap, bool loadInBackground)
     {
         Vector2Int entry = new Vector2Int(entryPosition.x, entryPosition.y);
 
@@ -277,6 +278,8 @@ public class TerrainManager : MonoBehaviour
         }
         
         float currentFrameTime = 0;
+        float tilesSinceLastPause = 0;
+        int minimumTilesPerFrame = (int) (layer.tilesInThisLayer.Count * PERCENTAGE_OF_CHUNK_LAYER_TO_GEN_EACH_FRAME);
 
         // Copy wall
         foreach (SampleTerrain.Layer.Tile tile in layer.tilesInThisLayer)
@@ -285,7 +288,6 @@ public class TerrainManager : MonoBehaviour
 
             // Position of the new tile
             Vector2Int newTilePos = entry + new Vector2Int(invert * tile.position.x, tile.position.y);
-
             TileBase newTileType = tile.tileType;
 
             // Check if we need to flip the tile type
@@ -310,16 +312,23 @@ public class TerrainManager : MonoBehaviour
             // Set the tile
             SetTile(tilemap, newTileType, newTilePos);
 
-            // Calculate the time since the last coroutine return 
-            DateTime after = DateTime.Now;
-            currentFrameTime += (float)(after - before).TotalMilliseconds;
-
-            // If the time exceeds the frame time, then call a break
-            if(currentFrameTime >= Time.deltaTime)
+            if(loadInBackground)
             {
-                currentFrameTime = 0;
-                yield return null;
+                // Calculate the time since the last coroutine return 
+                DateTime after = DateTime.Now;
+                currentFrameTime += (float)(after - before).TotalMilliseconds;
+
+                tilesSinceLastPause++;
+
+                // If the time exceeds the frame time, then call a break
+                if (currentFrameTime >= Time.deltaTime && tilesSinceLastPause >= minimumTilesPerFrame)
+                {
+                    currentFrameTime = 0;
+                    tilesSinceLastPause = 0;
+                    yield return null;
+                }
             }
+
         }
     }
 

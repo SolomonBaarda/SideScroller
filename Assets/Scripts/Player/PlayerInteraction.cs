@@ -80,8 +80,8 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         {
             // Reverse sort by renderer sorting layer
             collisionItems.Sort(
-                (x, y) => -SortingLayer.GetLayerValueFromID(x.gameObject.GetComponent<SpriteRenderer>().sortingLayerID)
-                    .CompareTo(SortingLayer.GetLayerValueFromID(y.gameObject.GetComponent<SpriteRenderer>().sortingLayerID))
+                (x, y) => -(SortingLayer.GetLayerValueFromID(x.gameObject.GetComponent<SpriteRenderer>().sortingLayerID)
+                    .CompareTo(SortingLayer.GetLayerValueFromID(y.gameObject.GetComponent<SpriteRenderer>().sortingLayerID)))
             );
 
             // Check if any items can be picked up by the player
