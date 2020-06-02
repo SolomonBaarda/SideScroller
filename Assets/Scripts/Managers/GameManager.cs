@@ -282,7 +282,6 @@ public class GameManager : MonoBehaviour
 
                 enemyManager.CheckUpdateSize(currentMaxTilesFromOrigin);
             }
-
         }
 
         // Update FPS
@@ -311,19 +310,28 @@ public class GameManager : MonoBehaviour
 
 
 
-    private void CheckGenrateNewChunks(List<Chunk> toCheck)
+    private bool CheckGenrateNewChunks(List<Chunk> toCheck)
     {
+        bool chunksAreGenerating = false;
+
         // Check each chunk
         foreach (Chunk c in toCheck)
         {
             // Check if we need to generate any new chunks
-            CheckGenerateNewChunks(c);
+            if(CheckGenerateNewChunks(c))
+            {
+                chunksAreGenerating = true;
+            }
         }
+
+        return chunksAreGenerating;
     }
 
 
-    private void CheckGenerateNewChunks(Chunk current)
+    private bool CheckGenerateNewChunks(Chunk current)
     {
+        bool chunksAreGenerating = false;
+
         // See if any of the neighbour chunks exists
         foreach (TerrainManager.TerrainChunk.Exit exit in current.exits)
         {
@@ -359,6 +367,7 @@ public class GameManager : MonoBehaviour
 
                             // Generate the symmetrical chunk
                             terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID, terrainManager.GetSampleTerrain(symmetricChunkIndex), true);
+                            chunksAreGenerating = true;
                             continue;
                         }
                     }
@@ -367,6 +376,7 @@ public class GameManager : MonoBehaviour
                         // Check that the symmetric chunk has not already been chosen and is being generated now 
                         if(terrainManager.ChunkAlreadyGenerating(symmetricChunkID))
                         {
+                            chunksAreGenerating = true;
                             continue;
                         }
                     }
@@ -374,8 +384,12 @@ public class GameManager : MonoBehaviour
 
                 // Generate a new random chunk
                 terrainManager.GenerateRandom(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID, true);
+                chunksAreGenerating = true;
+                continue;
             }
         }
+
+        return chunksAreGenerating;
     }
 
 
