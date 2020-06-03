@@ -36,13 +36,13 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
     public void Interact(bool interact1)
     {
         // First check if the item needs to be dropped
-        if (inventory.CanDropPayload())
+        if (inventory.CanDropHeldItem())
         {
             // Drop the item
             if (interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)
             {
                 interact_timeout = 0;
-                inventory.DropPayload();
+                inventory.DropHeldItem();
             }
         }
 

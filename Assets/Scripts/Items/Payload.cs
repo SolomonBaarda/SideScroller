@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 
-public class Payload : CollectableItem, ILocatable, ICanBeAttacked
+public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
 {
     public Chunk CurrentChunk { get; private set; }
     public Vector2 Position { get { return transform.position; } }
@@ -9,6 +10,8 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked
     public Transform groundPosition;
 
     public Direction IdealDirection { get; private set; } = Direction.None;
+
+    public Transform GroundPosition { get { return groundPosition; } }
 
     [Range(0, 100)]
     public int onAttackMultiplier = 10;
@@ -136,6 +139,11 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked
         rigid.velocity += attackerVelocity;
         // Add a directional force to the payload
         rigid.AddForce(normal * onAttackMultiplier, ForceMode2D.Impulse);
+    }
+
+    public void Hold(GameObject player, Vector2 localPosition)
+    {
+        PickUp(player, localPosition);
     }
 
     public enum Direction

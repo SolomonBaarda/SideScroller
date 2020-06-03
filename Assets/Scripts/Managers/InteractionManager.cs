@@ -40,7 +40,6 @@ public class InteractionManager : MonoBehaviour
                     ItemManager.OnGenerateLoot.Invoke(item);
                 }
             }
-
             // Interct with it last
             IInteractable interactable = (IInteractable)WorldItem.GetClass<IInteractable>(item);
             try

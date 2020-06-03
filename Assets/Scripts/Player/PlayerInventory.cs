@@ -1,20 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
 {
     // Inventories for simple items 
-    private SimpleInventoryItem<Health> health;
     private SimpleInventoryItem<Coin> coins;
 
-    // Complex items
-    [SerializeField] private InventoryItem<Weapon> weapon;
-
-    [SerializeField] private List<InventoryItem<Buff>> buffs;
-    [SerializeField] private Buff currentTotal;
-
-    public GameObject payload;
+    public GameObject HeldItem;
 
     private Player player;
 
@@ -22,44 +16,50 @@ public class PlayerInventory : MonoBehaviour
     {
         player = GetComponent<Player>();
 
-        buffs = new List<InventoryItem<Buff>>();
-
-        health = new SimpleInventoryItem<Health>(10, 10);
         coins = new SimpleInventoryItem<Coin>(0, int.MaxValue);
     }
 
 
-    public void DropAllItems()
+    public bool CanDropHeldItem()
     {
-        DropPayload();
+        return HeldItem != null;
     }
 
-    public bool CanDropPayload()
+    public void DropHeldItem()
     {
-        return payload != null;
-    }
-
-    public void DropPayload()
-    {
-        if (CanDropPayload())
+        if (CanDropHeldItem())
         {
-            Payload p = payload.GetComponent<Payload>();
+            ICanBeHeld p = HeldItem.GetComponent<ICanBeHeld>();
 
             // Drop the payload
             p.Drop(player.Head.position, GetComponent<Rigidbody2D>().velocity);
-            payload = null;
+            HeldItem = null;
         }
     }
 
 
     public bool PickUp(GameObject g)
     {
+        // Item can be held
+        if (WorldItem.ExtendsClass<ICanBeHeld>(g))
+        {
+            if (HeldItem == null)
+            {
+                // Hold the item
+                ICanBeHeld h = (ICanBeHeld)WorldItem.GetClass<ICanBeHeld>(g);
+                h.Hold(gameObject, player.Head.localPosition);
+                HeldItem = g;
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         // It is collectable
         if (WorldItem.ExtendsClass<ICollectable>(g))
         {
-            CollectableItem c = (CollectableItem)WorldItem.GetClass<CollectableItem>(g);
-            ItemBase item = c.item;
-
             // Coin
             if (WorldItem.ExtendsClass<Coin>(g))
             {
@@ -73,31 +73,6 @@ public class PlayerInventory : MonoBehaviour
 
                 return true;
             }
-            // Payload
-            else if (WorldItem.ExtendsClass<Payload>(g))
-            {
-                Payload p = (Payload)WorldItem.GetClass<Payload>(g);
-                payload = g;
-                
-                p.PickUp(gameObject, player.Head.position);
-            }
-            // Weapon
-            else if (item is Weapon w)
-            {
-                if (weapon.item == null)
-                {
-                    weapon.worldItem = c;
-                    weapon.item = w;
-                    return true;
-                }
-            }
-            // Buff
-            else if (item is Buff b)
-            {
-                CombineBuff(c, b);
-                Destroy(c.gameObject);
-                return true;
-            }
         }
 
         return false;
@@ -106,46 +81,22 @@ public class PlayerInventory : MonoBehaviour
 
 
 
-    public void UpdateHoldingPayloadPosition()
+    public void UpdateHeldItemPosition()
     {
-        // Check if player has payload in inventory
-        Payload p = GetComponentInChildren<Payload>();
-        if (p != null)
+        if (HeldItem != null)
         {
-            payload = p.gameObject;
-
-            // Set the correct local position
-            p.SetLocalPosition(player.Head.localPosition);
-        }
-        else
-        {
-            payload = null;
+            ICanBeHeld h = (ICanBeHeld)WorldItem.GetClass<ICanBeHeld>(HeldItem);
+            h.SetLocalPosition(player.Head.localPosition);
         }
     }
 
-
-    private void CombineBuff(CollectableItem worldItem, Buff buff)
-    {
-        if (currentTotal == null)
-        {
-            // Create a new buff instance
-            currentTotal = ScriptableObject.CreateInstance<Buff>();
-        }
-
-        // Combine the buff
-        currentTotal.CombineBuffs(buff);
-    }
 
 
 
 
     public IInventory<T> GetInventory<T>() where T : class
     {
-        if (typeof(T).Equals(typeof(Health)))
-        {
-            return (IInventory<T>)health;
-        }
-        else if (typeof(T).Equals(typeof(Coin)))
+        if (typeof(T).Equals(typeof(Coin)))
         {
             return (IInventory<T>)coins;
         }

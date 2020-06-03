@@ -48,7 +48,13 @@ public class EnemyAI : MonoBehaviour
     }
 
 
+    private void Update()
+    {
+        if(reachedEndOfPath)
+        {
 
+        }
+    }
 
 
     private void FixedUpdate()

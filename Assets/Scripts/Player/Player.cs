@@ -122,7 +122,7 @@ public class Player : MonoBehaviour, ILocatable
             Deaths++;
 
             // Drop any items
-            inventory.DropAllItems();
+            inventory.DropHeldItem();
         }
     }
 

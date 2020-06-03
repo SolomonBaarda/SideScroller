@@ -244,8 +244,6 @@ public class TerrainManager : MonoBehaviour
 
     private void GenerateFromSampleTerrain(Vector2Int entryTile, bool flipAxisX, Direction directionToGenerate, SampleTerrain terrain, Vector2Int chunkID, bool loadInBackground)
     {
-        Debug.Log("Starting copy sample coroutine for chunk " + chunkID);
-
         StartCoroutine(WaitForCopyTerrain(entryTile, flipAxisX, directionToGenerate, terrain, chunkID, loadInBackground));
     }
 
