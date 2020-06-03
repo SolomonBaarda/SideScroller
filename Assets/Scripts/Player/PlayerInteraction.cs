@@ -12,6 +12,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
     public Collider2D AreaOfAttack { get; private set; }
 
     private PlayerInventory inventory;
+    private Player player;
     private Rigidbody2D rigid;
 
     public void SetColliders(List<Collider2D> areaOfInteraction, Collider2D areaOfAttack)
@@ -20,6 +21,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         AreaOfAttack = areaOfAttack;
 
         inventory = GetComponent<PlayerInventory>();
+        player = GetComponent<Player>();
         rigid = GetComponent<Rigidbody2D>();
     }
 
@@ -80,11 +82,10 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         {
             // Reverse sort by renderer sorting layer
             collisionItems.Sort(
-                (x, y) => -(SortingLayer.GetLayerValueFromID(x.gameObject.GetComponent<SpriteRenderer>().sortingLayerID)
-                    .CompareTo(SortingLayer.GetLayerValueFromID(y.gameObject.GetComponent<SpriteRenderer>().sortingLayerID)))
+                (x, y) => -x.gameObject.GetComponent<SpriteRenderer>().sortingOrder.CompareTo(y.gameObject.GetComponent<SpriteRenderer>().sortingOrder)
             );
 
-            // Check if any items can be picked up by the player
+            // Collide with all items
             foreach (Collider2D c in collisionItems)
             {
                 GameObject g = c.gameObject;
@@ -95,10 +96,11 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
                     ICollidable collidable = (ICollidable)WorldItem.GetClass<ICollidable>(g);
 
                     // Collide with it
-                    collidable.Collide(inventory);
+                    collidable.Collide(player);
                 }
             }
 
+            // Interact with all items
             foreach (Collider2D c in collisionItems)
             {
                 // Need to check if not null as collision may have deleted the item by now
@@ -115,7 +117,8 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
                         if (interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)
                         {
                             // Interact with that one item only
-                            InteractionManager.OnPlayerInteractWithItem(g, inventory);
+                            interactable.Interact(player);
+                            InteractionManager.OnInteractWithItem(g);
                             interact_timeout = 0;
                             break;
                         }

@@ -18,4 +18,5 @@ public class GroundCheck : MonoBehaviour
     {
         return GetGroundCollisions(position, collisionCheckRadius).Length != 0;
     }
+
 }

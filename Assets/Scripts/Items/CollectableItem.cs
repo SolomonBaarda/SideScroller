@@ -38,29 +38,29 @@ public class CollectableItem : WorldItem, ICollidable, IInteractable, ICollectab
 
 
 
-    public void Collide(PlayerInventory inventory)
+    public void Collide(Player player)
     {
         if (collideToPickUp)
         {
-            Collect(inventory);
+            Collect(player);
         }
     }
 
 
-    public void Interact(PlayerInventory inventory)
+    public void Interact(Player player)
     {
         if (interactToPickUp)
         {
-            Collect(inventory);
+            Collect(player);
         }
     }
 
 
 
-    public void Collect(PlayerInventory inventory)
+    public void Collect(Player player)
     {
         // Inventory succesfully picked this up
-        if (inventory.PickUp(gameObject))
+        if (player.Inventory.PickUp(gameObject))
         {
             trigger.enabled = false;
         }

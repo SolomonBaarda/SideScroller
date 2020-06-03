@@ -8,7 +8,7 @@ public class Hazard : MonoBehaviour
     public void OnTriggerEnter2D(Collider2D collision)
     {
         // A player is colliding with this
-        if (LayerMask.LayerToName(collision.gameObject.layer).Contains(Player.DEFAULT_PLAYER_LAYER))
+        if (LayerMask.LayerToName(collision.gameObject.layer).Contains(Player.DEFAULT_LAYER))
         {
             // Ensure it is a valid collision
             if (!collision.isTrigger)

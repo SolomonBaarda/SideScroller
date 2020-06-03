@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, ICanBeHeld
 {
@@ -10,6 +8,7 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
     private int inventory_size = 1;
 
     private bool hasContents = true;
+    private bool isBeingHeld = false;
 
     private Rigidbody2D rigid;
 
@@ -25,11 +24,11 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
     }
 
 
-    public void Interact(PlayerInventory inventory)
+    public void Interact(Player player)
     {
-        if(inventory.PickUp(gameObject))
+        if (player.Inventory.PickUp(gameObject))
         {
-            Hold(inventory.gameObject, inventory.GetComponent<Player>().Head.localPosition);
+            Hold(player, player.Head.localPosition);
         }
     }
 
@@ -47,7 +46,7 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
 
     public bool IsLootable()
     {
-        return hasContents;
+        return hasContents && !isBeingHeld;
     }
 
     public void Loot()
@@ -57,15 +56,32 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
 
     public void WasAttacked(Vector2 attackerPosition, Vector2 attackerVelocity)
     {
-        InteractionManager.OnPlayerInteractWithItem(gameObject, null);
+        Break();
+    }
+
+    private void Break()
+    {
+        InteractionManager.OnInteractWithItem(gameObject);
 
         // Break the pot
         Animator a = GetComponent<Animator>();
         a.SetTrigger("Break");
     }
 
-    public void Hold(GameObject player, Vector2 localPosition)
+    private void CheckIfBreakWhenThrown()
     {
+        // Check if we have just collided with the ground
+        float radius = Mathf.Abs(GroundPosition.localPosition.y);
+        if (GroundCheck.IsOnGround(transform.position, radius))
+        {
+            Break();
+        }
+    }
+
+    public void Hold(Player player, Vector2 localPosition)
+    {
+        isBeingHeld = true;
+
         transform.parent = player.transform;
         transform.localPosition = localPosition;
 
@@ -77,6 +93,8 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
 
     public void Drop(Vector2 position, Vector2 velocity)
     {
+        isBeingHeld = false;
+
         transform.parent = null;
         transform.position = position;
 
@@ -84,6 +102,8 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
         rigid.velocity = velocity;
 
         trigger.enabled = true;
+
+        InvokeRepeating("CheckIfBreakWhenThrown", 1, 0.1f);
     }
 
     public void SetLocalPosition(Vector2 local)

@@ -19,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 previousVelocity = Vector2.zero;
     private bool previouslyGrounded = false;
     private bool previouslySliding = false;
-    private float minimum_slide_time = 0.5f;
+    private const float minimum_slide_time = 0.5f;
     private float slideTime = 0;
     private bool previouslyCrouchWalking = false;
 

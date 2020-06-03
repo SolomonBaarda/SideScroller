@@ -47,7 +47,7 @@ public class PlayerInventory : MonoBehaviour
             {
                 // Hold the item
                 ICanBeHeld h = (ICanBeHeld)WorldItem.GetClass<ICanBeHeld>(g);
-                h.Hold(gameObject, player.Head.localPosition);
+                h.Hold(player, player.Head.localPosition);
                 HeldItem = g;
 
                 return true;

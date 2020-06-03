@@ -3,17 +3,17 @@ using UnityEngine;
 
 public class Player : MonoBehaviour, ILocatable
 {
-    private PlayerController controller;
-    private PlayerInventory inventory;
-    private PlayerInteraction interaction;
-    private PlayerMovement movement;
+    private PlayerController Controller;
+    public PlayerInventory Inventory { get; private set; }
+    public PlayerInteraction Interaction { get; private set; }
+    private PlayerMovement Movement;
 
     public Transform headPosition, feetPosition, crouchingHeadPosition;
     public Transform Head
     {
         get
         {
-            if (movement.IsCrouching)
+            if (Movement.IsCrouching)
             {
                 return crouchingHeadPosition;
             }
@@ -29,8 +29,8 @@ public class Player : MonoBehaviour, ILocatable
     public bool IsAlive { get; private set; } = false;
     public int Deaths { get; private set; } = 0;
     public string PLAYER_ID { get; private set; }
-    public string PLAYER_LAYER { get; private set; }
-    public const string DEFAULT_PLAYER_LAYER = "Player";
+    public string LAYER { get; private set; }
+    public const string DEFAULT_LAYER = "Player";
 
     public const string LAYER_ONLY_GROUND = "OnlyGround";
 
@@ -57,23 +57,23 @@ public class Player : MonoBehaviour, ILocatable
 
         // Set the player
         PLAYER_ID = PlayerID.ToString();
-        PLAYER_LAYER = DEFAULT_PLAYER_LAYER + "_" + PLAYER_ID;
-        gameObject.layer = LayerMask.NameToLayer(PLAYER_LAYER);
+        LAYER = DEFAULT_LAYER + "_" + PLAYER_ID;
+        gameObject.layer = LayerMask.NameToLayer(LAYER);
 
         // Controller reference
-        controller = GetComponent<PlayerController>();
-        controller.enabled = false;
-        controller.SetDefaults(headPosition, feetPosition);
+        Controller = GetComponent<PlayerController>();
+        Controller.enabled = false;
+        Controller.SetDefaults(headPosition, feetPosition);
 
-        controller.SetControls(PLAYER_ID, canUseController);
+        Controller.SetControls(PLAYER_ID, canUseController);
 
-        interaction = GetComponent<PlayerInteraction>();
-        interaction.SetColliders(new List<Collider2D>(new Collider2D[] { torsoCollider, feetCollider }), areaOfAttackCollider);
+        Interaction = GetComponent<PlayerInteraction>();
+        Interaction.SetColliders(new List<Collider2D>(new Collider2D[] { torsoCollider, feetCollider }), areaOfAttackCollider);
 
-        inventory = GetComponent<PlayerInventory>();
+        Inventory = GetComponent<PlayerInventory>();
 
-        movement = GetComponent<PlayerMovement>();
-        movement.SetColliders(torsoCollider, feetCollider);
+        Movement = GetComponent<PlayerMovement>();
+        Movement.SetColliders(torsoCollider, feetCollider);
 
         rigid = GetComponent<Rigidbody2D>();
 
@@ -115,14 +115,14 @@ public class Player : MonoBehaviour, ILocatable
         {
             // Set dead and disable controls
             IsAlive = false;
-            controller.enabled = false;
+            Controller.enabled = false;
             gameObject.SetActive(false);
 
             // Count the deaths
             Deaths++;
 
             // Drop any items
-            inventory.DropHeldItem();
+            Inventory.DropHeldItem();
         }
     }
 
@@ -131,7 +131,7 @@ public class Player : MonoBehaviour, ILocatable
     {
         // Set player to be alive and enable controls
         IsAlive = true;
-        controller.enabled = true;
+        Controller.enabled = true;
         gameObject.SetActive(true);
     }
 
@@ -141,7 +141,7 @@ public class Player : MonoBehaviour, ILocatable
 
     public PlayerInventory.IInventory<T> GetInventory<T>() where T : class
     {
-        return inventory.GetInventory<T>();
+        return Inventory.GetInventory<T>();
     }
 
 

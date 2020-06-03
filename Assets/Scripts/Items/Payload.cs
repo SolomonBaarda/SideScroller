@@ -141,9 +141,9 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
         rigid.AddForce(normal * onAttackMultiplier, ForceMode2D.Impulse);
     }
 
-    public void Hold(GameObject player, Vector2 localPosition)
+    public void Hold(Player player, Vector2 localPosition)
     {
-        PickUp(player, localPosition);
+        PickUp(player.gameObject, localPosition);
     }
 
     public enum Direction

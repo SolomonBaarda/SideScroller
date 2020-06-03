@@ -5,20 +5,20 @@ using UnityEngine.Events;
 
 public class InteractionManager : MonoBehaviour
 {
-    public static UnityAction<GameObject, PlayerInventory> OnPlayerInteractWithItem;
+    public static UnityAction<GameObject> OnInteractWithItem;
 
     private void Awake()
     {
-        OnPlayerInteractWithItem += InteractWithItem;
+        OnInteractWithItem += InteractWithItem;
     }
 
     private void OnDestroy()
     {
-        OnPlayerInteractWithItem -= InteractWithItem;
+        OnInteractWithItem -= InteractWithItem;
     }
 
 
-    private void InteractWithItem(GameObject item, PlayerInventory inventory)
+    private void InteractWithItem(GameObject item)
     {
         // Ensure it is a valid interaction
         if (WorldItem.ExtendsClass<IInteractable>(item))
@@ -40,26 +40,8 @@ public class InteractionManager : MonoBehaviour
                     ItemManager.OnGenerateLoot.Invoke(item);
                 }
             }
-            // Interct with it last
-            IInteractable interactable = (IInteractable)WorldItem.GetClass<IInteractable>(item);
-            try
-            {
-                interactable.Interact(inventory);
-            }
-            // The PlayerInventory could be null if the object didn't have access to it
-            catch (System.NullReferenceException)
-            {
-                Debug.LogError("Item interact called on item " + item.name + " with null PlayerInventory.");
-            }
-
         }
     }
-
-    private void CollideWithItem(GameObject item, GameObject player)
-    {
-        // TODO
-    }
-
 
 
 }

@@ -8,5 +8,5 @@ public interface ICollidable
     /// Method to be called when the item is collided with. 
     /// </summary>
     /// <returns></returns>
-    void Collide(PlayerInventory player);
+    void Collide(Player player);
 }
