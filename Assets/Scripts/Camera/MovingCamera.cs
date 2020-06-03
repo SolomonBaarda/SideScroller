@@ -172,21 +172,20 @@ public class MovingCamera : MonoBehaviour, ILocatable
         if (chunk != null)
         {
             // Get array of camera paths
-            CameraPath[] paths = chunk.cameraPaths.ToArray();
-
-            if (paths.Length > 0)
+            if (chunk.cameraPaths.Count> 0)
             {
                 // Get first point
-                Vector3 point = paths[0].GetClosestPosition(position);
                 int index = 0;
+                Vector3 point = chunk.cameraPaths[index].GetClosestPosition(position);
 
                 // Loop through each other path
-                for (int i = 1; i < paths.Length; i++)
+                for (int i = 1; i < chunk.cameraPaths.Count; i++)
                 {
                     // Calculate the distance
                     float posToPoint = Vector3.Distance(position, point);
+
                     // Calculate current new point
-                    Vector3 newPoint = paths[i].GetClosestPosition(position);
+                    Vector3 newPoint = chunk.cameraPaths[i].GetClosestPosition(position);
                     float posToNewPoint = Vector3.Distance(position, newPoint);
 
                     // Find the closest point of the two
@@ -198,7 +197,7 @@ public class MovingCamera : MonoBehaviour, ILocatable
                     }
                 }
 
-                return paths[index];
+                return chunk.cameraPaths[index];
             }
         }
 

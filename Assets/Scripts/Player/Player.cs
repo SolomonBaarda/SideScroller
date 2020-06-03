@@ -79,11 +79,14 @@ public class Player : MonoBehaviour, ILocatable
 
         // Player variables
         IsAlive = false;
+
+        // Call the UpdatePayload method repeatedly
+        InvokeRepeating("UpdatePlayer", 1, Chunk.UPDATE_CHUNK_REPEATING_DEFAULT_TIME);
     }
 
 
 
-    private void FixedUpdate()
+    private void UpdatePlayer()
     {
         if (IsAlive)
         {

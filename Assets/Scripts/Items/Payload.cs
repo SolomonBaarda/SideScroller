@@ -18,14 +18,18 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked
         base.Awake();
         interactToPickUp = true;
         trigger.enabled = true;
+
+        // Call the UpdatePayload method repeatedly
+        InvokeRepeating("UpdatePayload", 1, Chunk.UPDATE_CHUNK_REPEATING_DEFAULT_TIME);
     }
 
 
-    private void FixedUpdate()
+    private void UpdatePayload()
     {
         UpdateCurrentChunk();
         CheckOutOfBounds();
     }
+
 
     public void UpdateCurrentChunk()
     {

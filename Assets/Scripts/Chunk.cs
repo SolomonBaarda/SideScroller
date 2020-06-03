@@ -7,6 +7,8 @@ public class Chunk : MonoBehaviour
 {
     public const string CHUNK_LAYER = "Chunk";
 
+    public const float UPDATE_CHUNK_REPEATING_DEFAULT_TIME = 0.25f;
+
     [Header("Chunk Information")]
     public Vector2 enteranceWorldSpace;
     public List<TerrainManager.TerrainChunk.Exit> exits;

@@ -330,6 +330,9 @@ public class TerrainManager : MonoBehaviour
             }
 
         }
+
+        // Don't need this atm as tiles auto update
+        //tilemap.RefreshAllTiles();
     }
 
 

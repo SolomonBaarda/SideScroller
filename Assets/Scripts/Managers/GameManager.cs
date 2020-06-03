@@ -91,6 +91,10 @@ public class GameManager : MonoBehaviour
         {
             OnSetPresets.Invoke(new Presets());
         }
+
+
+        // Call the UpdatePayload method repeatedly
+        InvokeRepeating("UpdateChunks", 1, Chunk.UPDATE_CHUNK_REPEATING_DEFAULT_TIME);
     }
 
     private void OnDestroy()
@@ -129,7 +133,6 @@ public class GameManager : MonoBehaviour
         if (!isGameOver)
         {
             isGameOver = true;
-
 
             // Get a list of all the players meant to be moving in that direction
             List<Player> winningPlayers = new List<Player>();
@@ -228,8 +231,6 @@ public class GameManager : MonoBehaviour
             // Update the game time
             GameTimeSeconds += Time.deltaTime;
 
-            chunkManager.UpdateLoadedChunks(movingCamera.GetAllNearbyChunks());
-
             // Check if a player is outside the bounds
             playerManager.CheckPlayersOutsideBounds(movingCamera.ViewBounds);
             // Check if a player needs to be respawned
@@ -246,10 +247,6 @@ public class GameManager : MonoBehaviour
                     player.GetInventory<Health>().Max, GameTimeSeconds, fps_last_framerate);
                 this.hud.UpdateHUD(in hud);
             }
-
-            // Check each chunk
-            CheckGenrateNewChunks(chunkManager.LoadedChunks);
-
 
             // Update the nav meshes
             if (presets.DoEnemySpawning)
@@ -298,6 +295,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
+
+    private void UpdateChunks()
+    {
+        if (!isGameOver)
+        {
+            chunkManager.UpdateLoadedChunks(movingCamera.GetAllNearbyChunks());
+
+            // Check each chunk
+            CheckGenrateNewChunks(chunkManager.LoadedChunks);
+        }
+
+    }
 
 
 
