@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public interface IWeapon
+public interface IWeapon : IInteractable, ICanBeHeld
 {
     string Name { get; }
 

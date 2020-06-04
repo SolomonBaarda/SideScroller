@@ -93,7 +93,12 @@ public class PlayerInventory : MonoBehaviour
 
     public IWeapon GetPrimaryWeapon()
     {
-        return null;
+        if (WorldItem.ExtendsClass<IWeapon>(HeldItem))
+        {
+            return (IWeapon)WorldItem.GetClass<IWeapon>(HeldItem);
+        }
+
+        else return null;
     }
 
 
@@ -112,10 +117,10 @@ public class PlayerInventory : MonoBehaviour
     [System.Serializable]
     public class InventoryItem<T> where T : class
     {
-        public CollectableItem worldItem;
+        public GameObject worldItem;
         public T item;
 
-        public InventoryItem(CollectableItem worldItem, T item)
+        public InventoryItem(GameObject worldItem, T item)
         {
             this.worldItem = worldItem;
             this.item = item;
