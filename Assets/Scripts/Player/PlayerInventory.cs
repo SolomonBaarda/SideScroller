@@ -91,7 +91,10 @@ public class PlayerInventory : MonoBehaviour
     }
 
 
-
+    public IWeapon GetPrimaryWeapon()
+    {
+        return null;
+    }
 
 
     public IInventory<T> GetInventory<T>() where T : class

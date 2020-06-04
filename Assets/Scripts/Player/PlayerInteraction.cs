@@ -11,6 +11,8 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
     private List<Collider2D> areaOfInteraction;
     public Collider2D AreaOfAttack { get; private set; }
 
+    public IWeapon Weapon => inventory.GetPrimaryWeapon();
+
     private PlayerInventory inventory;
     private Player player;
     private Rigidbody2D rigid;
@@ -59,7 +61,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         foreach (Collider2D collider in areaOfInteraction)
         {
             // List will be resized if its too small
-            Collider2D[] collisions = new Collider2D[8];
+            Collider2D[] collisions = new Collider2D[WorldItem.DEFAULT_MAX_OVERLAP_COLLISIONS];
 
             if (Physics2D.OverlapCollider(collider, filter, collisions) > 0)
             {
@@ -129,42 +131,45 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
     }
 
 
-
-    public void Attack(bool isAttacking)
+    public void Attack(bool attack)
     {
-        // Vaid time to attack
-        if (interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS && isAttacking)
+        // Ensure it is a valid time to attack
+        if (interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS && attack)
         {
-            // Get all the targets
-            List<GameObject> targets = InAreaOfAttack();
+            // Attack with the weapon
+            Weapon.Attack(transform.position, rigid.velocity);
 
-            if (targets.Count > 0)
-            {
-                // Reset the timer
-                interact_timeout = 0;
-
-                // Loop through each target and hit them
-                foreach (GameObject g in targets)
-                {
-                    // Ensure it can be attacked (sanity check)
-                    if (WorldItem.ExtendsClass<ICanBeAttacked>(g))
-                    {
-                        // Attack that object
-                        ICanBeAttacked target = (ICanBeAttacked)WorldItem.GetClass<ICanBeAttacked>(g);
-                        target.WasAttacked(transform.position, rigid.velocity);
-                    }
-                }
-            }
+            // Reset the timer
+            interact_timeout = 0;
         }
     }
 
 
-    public List<GameObject> InAreaOfAttack()
+
+
+    public void WasAttacked(Vector2 attackerPosition, Vector2 attackerVelocity)
+    {
+        PlayerManager.OnPlayerDie.Invoke(player);
+    }
+
+
+
+
+
+
+
+    /// <summary>
+    /// Checks the Collider2D area for any GameObjects implementing ICanBeAttacked. Filters out thisObject.layer.
+    /// </summary>
+    /// <param name="area"></param>
+    /// <param name="thisObject"></param>
+    /// <returns></returns>
+    public static List<GameObject> InAreaOfAttack(Collider2D area, GameObject thisObject)
     {
         // Set the layermask
         // Don't allow player to attack themselves and remove some common layers for performance reasons
         LayerMask layerMask = ~(
-            (1 << gameObject.layer) | (1 << LayerMask.NameToLayer(Player.LAYER_ONLY_GROUND)) |
+            (1 << thisObject.layer) | (1 << LayerMask.NameToLayer(Player.LAYER_ONLY_GROUND)) |
             (1 << LayerMask.NameToLayer(Chunk.CHUNK_LAYER)) | (1 << LayerMask.NameToLayer(TerrainManager.LAYER_NAME_GROUND)) |
             (1 << LayerMask.NameToLayer(Hazard.LAYER))
         );
@@ -180,8 +185,8 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         List<GameObject> validTargets = new List<GameObject>();
 
         // Get all possible collisions
-        Collider2D[] allCollisions = new Collider2D[8];
-        if (Physics2D.OverlapCollider(AreaOfAttack, contactFilter, allCollisions) > 0)
+        Collider2D[] allCollisions = new Collider2D[WorldItem.DEFAULT_MAX_OVERLAP_COLLISIONS];
+        if (Physics2D.OverlapCollider(area, contactFilter, allCollisions) > 0)
         {
             foreach (Collider2D c in allCollisions)
             {
@@ -201,12 +206,6 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         return validTargets;
     }
 
-
-
-    public void WasAttacked(Vector2 attackerPosition, Vector2 attackerVelocity)
-    {
-        PlayerManager.OnPlayerDie.Invoke(GetComponent<Player>());
-    }
 
 }
 

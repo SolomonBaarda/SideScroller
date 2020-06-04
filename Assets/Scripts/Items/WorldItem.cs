@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class WorldItem : MonoBehaviour
 {
+    public const int DEFAULT_MAX_OVERLAP_COLLISIONS = 8;
+
     [SerializeField]
     public ItemBase item;
     public Name itemName;

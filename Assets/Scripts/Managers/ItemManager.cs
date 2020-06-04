@@ -16,7 +16,7 @@ public class ItemManager : MonoBehaviour
     private Dictionary<WorldItem.Name, GameObject> lootPrefabs;
 
     private Dictionary<WorldItem.Name, GameObject> worldObjectPrefabs;
-    private Dictionary<Weapon.Name, Weapon> weaponScriptableObjectPrefabs;
+    private Dictionary<string, IWeapon> weaponScriptableObjectPrefabs;
     private Dictionary<Buff.Name, Buff> buffScriptableObjectPrefabs;
 
     public GameObject collectableItemPrefab;
@@ -30,12 +30,12 @@ public class ItemManager : MonoBehaviour
 
         lootPrefabs = new Dictionary<WorldItem.Name, GameObject>();
         worldObjectPrefabs = new Dictionary<WorldItem.Name, GameObject>();
-        weaponScriptableObjectPrefabs = new Dictionary<Weapon.Name, Weapon>();
+        weaponScriptableObjectPrefabs = new Dictionary<string, IWeapon>();
         buffScriptableObjectPrefabs = new Dictionary<Buff.Name, Buff>();
 
         // Load all items 
         LoadAllItemPrefabs(ref worldObjectPrefabs, "Prefabs/Items");
-        LoadAllScriptableItems(ref weaponScriptableObjectPrefabs, "Scripts/Weapons");
+        //LoadAllScriptableItems(ref weaponScriptableObjectPrefabs, "Scripts/Weapons");
         LoadAllScriptableItems(ref buffScriptableObjectPrefabs, "Scripts/Buffs");
 
 

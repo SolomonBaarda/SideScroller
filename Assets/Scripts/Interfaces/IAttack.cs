@@ -4,9 +4,7 @@ using UnityEngine;
 
 public interface IAttack 
 {
-    Collider2D AreaOfAttack { get; }
+    IWeapon Weapon { get; }
 
     void Attack(bool attack);
-
-    List<GameObject> InAreaOfAttack();
 }
