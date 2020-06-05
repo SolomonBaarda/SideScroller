@@ -119,4 +119,6 @@ public class SceneLoader : MonoBehaviour
 
 
     public static void EMPTY() { }
+
+    public static void EMPTY<T>(T _) { }
 }

@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -2013,7 +2013,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &1909616350
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2121,12 +2121,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1015e2ef423cfe4438e31bafb92016b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerManagerObject: {fileID: 1069008923}
-  cameraGameObject: {fileID: 925318498}
-  terrainManagerObject: {fileID: 876974039}
-  chunkManagerObject: {fileID: 489454952}
-  itemManagerObject: {fileID: 292633088}
-  interactionManagerObject: {fileID: 1539556900}
-  enemyManagerObject: {fileID: 128989138}
+  playerManager: {fileID: 1069008925}
+  movingCamera: {fileID: 925318503}
+  terrainManager: {fileID: 876974042}
+  chunkManager: {fileID: 489454954}
+  itemManager: {fileID: 292633090}
+  interactionManager: {fileID: 1539556901}
+  enemyManager: {fileID: 128989141}
   fps_refresh_time: 0.5
   printDebug: 1

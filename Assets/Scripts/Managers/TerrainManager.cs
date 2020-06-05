@@ -7,10 +7,6 @@ using UnityEngine.Tilemaps;
 
 public class TerrainManager : MonoBehaviour
 {
-    /// <summary>
-    ///  
-    /// </summary>
-    public static UnityAction OnSpawnGenerated;
 
     /// <summary>
     /// Called when a terrain chunk has been generated.  
@@ -28,6 +24,8 @@ public class TerrainManager : MonoBehaviour
 
     private Dictionary<Vector2Int, bool> generatedChunks = new Dictionary<Vector2Int, bool>();
     public const float PERCENTAGE_OF_CHUNK_LAYER_TO_GEN_EACH_FRAME = .25f;
+
+    public bool IsGenerating { get; private set; } = false;
 
     public Vector2 CellSize { get { return grid.cellSize; } }
 
@@ -63,8 +61,6 @@ public class TerrainManager : MonoBehaviour
             seedHash = Environment.TickCount;
         }
         random = new System.Random(seedHash);
-
-        OnSpawnGenerated += SceneLoader.EMPTY;
 
         // Get the references
         grid = GetComponent<Grid>();
@@ -125,8 +121,6 @@ public class TerrainManager : MonoBehaviour
 
         // Generate the spawn area
         Generate(initialTilePos, Direction.Both, ChunkManager.initialChunkID, sampleTerrainManager.startingArea, true);
-
-        OnSpawnGenerated.Invoke();
     }
 
 
@@ -250,12 +244,16 @@ public class TerrainManager : MonoBehaviour
 
     private IEnumerator WaitForCopyTerrain(Vector2Int entryTile, bool flipAxisX, Direction directionToGenerate, SampleTerrain terrain, Vector2Int chunkID, bool loadInBackground)
     {
+        IsGenerating = true;
+
         // Copy the terrain, each layer at a time
         yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wall, wall, loadInBackground));
         yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wallDetail, wallDetail, loadInBackground));
         yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.background, background, loadInBackground));
         yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.hazard, hazard, loadInBackground));
         yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.ground, ground, loadInBackground));
+
+        IsGenerating = false;
 
         // Generate the chunk
         TerrainChunk c = GenerateTerrainChunk(entryTile, flipAxisX, directionToGenerate, terrain, chunkID);
@@ -283,6 +281,8 @@ public class TerrainManager : MonoBehaviour
         foreach (SampleTerrain.Layer.Tile tile in layer.tilesInThisLayer)
         {
             DateTime before = DateTime.Now;
+
+            IsGenerating = true;
 
             // Position of the new tile
             Vector2Int newTilePos = entry + new Vector2Int(invert * tile.position.x, tile.position.y);
@@ -326,8 +326,9 @@ public class TerrainManager : MonoBehaviour
                     yield return null;
                 }
             }
-
         }
+
+        IsGenerating = false;
 
         // Don't need this atm as tiles auto update
         //tilemap.RefreshAllTiles();

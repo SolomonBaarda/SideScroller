@@ -11,32 +11,17 @@ public class GameManager : MonoBehaviour
     public static UnityAction<Payload.Direction> OnGameEnd;
 
     [Header("Player")]
-    public GameObject playerManagerObject;
-    private PlayerManager playerManager;
+    public PlayerManager playerManager;
 
     [Header("Camera")]
-    public GameObject cameraGameObject;
-    private MovingCamera movingCamera;
+    public MovingCamera movingCamera;
 
-    [Header("Terrain Manager")]
-    public GameObject terrainManagerObject;
-    private TerrainManager terrainManager;
-
-    [Header("Chunk Manager")]
-    public GameObject chunkManagerObject;
-    private ChunkManager chunkManager;
-
-    [Header("Item Manager")]
-    public GameObject itemManagerObject;
-    private ItemManager itemManager;
-
-    [Header("Interaction Manager")]
-    public GameObject interactionManagerObject;
-    private InteractionManager interactionManager;
-
-    [Header("Enemy Manager")]
-    public GameObject enemyManagerObject;
-    private EnemyManager enemyManager;
+    [Header("Managers")]
+    public TerrainManager terrainManager;
+    public ChunkManager chunkManager;
+    public ItemManager itemManager;
+    public InteractionManager interactionManager;
+    public EnemyManager enemyManager;
 
     private HUD hud;
 
@@ -50,10 +35,11 @@ public class GameManager : MonoBehaviour
 
     // FPS variables
     [Header("FPS Settings")]
-    private int fps_frame_counter;
+    private int fps_frame_counter = 0;
     private float fps_time_counter = 0.0f;
     private float fps_last_framerate = 0.0f;
     public float fps_refresh_time = 0.5f;
+    public static int FPS_IDEAL = 60;
 
     [Header("Debug")]
     public bool printDebug = true;
@@ -61,15 +47,6 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         isGameOver = true;
-
-        // References to scripts
-        playerManager = playerManagerObject.GetComponent<PlayerManager>();
-        movingCamera = cameraGameObject.GetComponent<MovingCamera>();
-        terrainManager = terrainManagerObject.GetComponent<TerrainManager>();
-        chunkManager = chunkManagerObject.GetComponent<ChunkManager>();
-        itemManager = itemManagerObject.GetComponent<ItemManager>();
-        interactionManager = interactionManagerObject.GetComponent<InteractionManager>();
-        enemyManager = enemyManagerObject.GetComponent<EnemyManager>();
 
         // Load HUD
         HUD.OnHUDLoaded += SetUpHUD;
@@ -82,16 +59,11 @@ public class GameManager : MonoBehaviour
 
         ChunkManager.OnChunkCreated += CheckStartOfGame;
 
-        // If the Menu is loaded, wait for presets 
-        if (SceneLoader.Instance != null && SceneLoader.Instance.SceneIsLoaded(SceneLoader.MENU_SCENE))
-        {
-        }
-        // Just start the game and do defaut presets, must be running in the editor
-        else
+        // If the game scene is just open by its self, do default presets
+        if (SceneLoader.Instance == null)
         {
             OnSetPresets.Invoke(new Presets());
         }
-
 
         // Call the UpdatePayload method repeatedly
         InvokeRepeating("UpdateChunks", 1, Chunk.UPDATE_CHUNK_REPEATING_DEFAULT_TIME);
@@ -103,7 +75,6 @@ public class GameManager : MonoBehaviour
         OnSetPresets -= Initialise;
         ItemManager.OnItemOutOfBounds -= ItemOutOfBounds;
         OnGameEnd -= EndGame;
-        ChunkManager.OnChunkCreated -= CheckStartOfGame;
     }
 
 
@@ -160,12 +131,48 @@ public class GameManager : MonoBehaviour
 
     private void CheckStartOfGame(Vector2Int chunkID)
     {
-        if(chunkID.Equals(ChunkManager.initialChunkID))
+        if (chunkID.Equals(ChunkManager.initialChunkID))
         {
-            StartGame();
+            StartCoroutine(WaitForStartOfGame(2));
+
+            ChunkManager.OnChunkCreated -= CheckStartOfGame;
         }
     }
 
+
+
+
+    private IEnumerator WaitForStartOfGame(float seconds)
+    {
+        int consecutiveFramesWithNoGeneration = 0;
+        int targetFPS;
+
+        do
+        {
+            if (terrainManager.IsGenerating)
+            {
+                consecutiveFramesWithNoGeneration = 0;
+            }
+            else
+            {
+                consecutiveFramesWithNoGeneration++;
+            }
+
+            // Get the current number of frames in a second
+            targetFPS = (int)fps_last_framerate;
+            if (fps_last_framerate == 0)
+            {
+                targetFPS = FPS_IDEAL;
+            }
+
+            yield return null;
+
+        // Wait for seconds * frames frames since no generation has taken place
+        } while (consecutiveFramesWithNoGeneration <= seconds * targetFPS);
+
+        // Then start the game
+        StartGame();
+    }
 
 
 
@@ -179,10 +186,7 @@ public class GameManager : MonoBehaviour
         }
 
         // Add only the spawn for initial start
-        List<Chunk> onlySpawnChunk = new List<Chunk>
-        {
-            chunkManager.GetChunk(ChunkManager.initialChunkID)
-        };
+        List<Chunk> onlySpawnChunk = new List<Chunk> { chunkManager.GetChunk(ChunkManager.initialChunkID) };
 
         // Single player game
         if (presets.DoSinglePlayer)
@@ -226,6 +230,19 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        // Update FPS
+        if (fps_time_counter < fps_refresh_time)
+        {
+            fps_time_counter += Time.deltaTime;
+            fps_frame_counter++;
+        }
+        else
+        {
+            fps_last_framerate = fps_frame_counter / fps_time_counter;
+            fps_frame_counter = 0;
+            fps_time_counter = 0;
+        }
+
         if (!isGameOver)
         {
             // Update the game time
@@ -242,10 +259,8 @@ public class GameManager : MonoBehaviour
             {
                 Player player = playerManager.GetPlayer(Player.ID.P1);
 
-                this.hud.SetVisible(true);
-                HUD.HUDElements hud = new HUD.HUDElements(player.GetInventory<Coin>().Total, player.GetInventory<Health>().Total,
-                    player.GetInventory<Health>().Max, GameTimeSeconds, fps_last_framerate);
-                this.hud.UpdateHUD(in hud);
+                hud.SetVisible(true);
+                hud.UpdateHUD(new HUD.HUDElements(player.GetInventory<Coin>().Total, GameTimeSeconds, fps_last_framerate));
             }
 
             // Update the nav meshes
@@ -280,33 +295,16 @@ public class GameManager : MonoBehaviour
                 enemyManager.CheckUpdateSize(currentMaxTilesFromOrigin);
             }
         }
-
-        // Update FPS
-        if (fps_time_counter < fps_refresh_time)
-        {
-            fps_time_counter += Time.deltaTime;
-            fps_frame_counter++;
-        }
-        else
-        {
-            fps_last_framerate = fps_frame_counter / fps_time_counter;
-            fps_frame_counter = 0;
-            fps_time_counter = 0;
-        }
     }
 
 
 
     private void UpdateChunks()
     {
-        if (!isGameOver)
-        {
-            chunkManager.UpdateLoadedChunks(movingCamera.GetAllNearbyChunks());
+        chunkManager.UpdateLoadedChunks(movingCamera.GetAllNearbyChunks());
 
-            // Check each chunk
-            CheckGenrateNewChunks(chunkManager.LoadedChunks);
-        }
-
+        // Check each chunk
+        CheckGenrateNewChunks(chunkManager.LoadedChunks);
     }
 
 
@@ -328,7 +326,7 @@ public class GameManager : MonoBehaviour
         foreach (Chunk c in toCheck)
         {
             // Check if we need to generate any new chunks
-            if(CheckGenerateNewChunks(c))
+            if (CheckGenerateNewChunks(c))
             {
                 chunksAreGenerating = true;
             }
@@ -384,7 +382,7 @@ public class GameManager : MonoBehaviour
                     catch (Exception)
                     {
                         // Check that the symmetric chunk has not already been chosen and is being generated now 
-                        if(terrainManager.ChunkAlreadyGenerating(symmetricChunkID))
+                        if (terrainManager.ChunkAlreadyGenerating(symmetricChunkID))
                         {
                             chunksAreGenerating = true;
                             continue;

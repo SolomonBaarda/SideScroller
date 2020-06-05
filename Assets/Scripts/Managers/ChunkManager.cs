@@ -23,6 +23,8 @@ public class ChunkManager : MonoBehaviour
         // Generate a new chunk when needed 
         TerrainManager.OnTerrainChunkGenerated += GenerateNewChunk;
 
+        OnChunkCreated += SceneLoader.EMPTY;
+
         OnChunkDestroyed += RemoveChunk;
     }
 
