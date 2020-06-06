@@ -80683,15 +80683,6 @@ Tilemap:
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
       m_AllTileFlags: 2147483650
-  - first: {x: -28, y: -18, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 1
-      m_TileSpriteIndex: 12
-      m_TileMatrixIndex: 0
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      m_AllTileFlags: 0
   - first: {x: -22, y: -18, z: 0}
     second:
       serializedVersion: 2
@@ -80989,22 +80980,12 @@ Tilemap:
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
       m_AllTileFlags: 1073741826
-  m_AnimatedTiles:
-  - first: {x: -28, y: -18, z: 0}
-    second:
-      m_AnimatedSprites:
-      - {fileID: 21300000, guid: 2c1d74718a0c47344b350844dea7a445, type: 3}
-      - {fileID: 21300000, guid: 5e03c12d8355e6d44a6f593da22d9c22, type: 3}
-      - {fileID: 21300000, guid: e130139305779674d875b642f80649a1, type: 3}
-      - {fileID: 21300000, guid: f7d247afc5a0c544bb2e54d67ed78cc0, type: 3}
-      m_AnimationSpeed: 4
-      m_AnimationTimeOffset: 0
-      m_IsLooping: 1
+  m_AnimatedTiles: {}
   m_TileAssetArray:
   - m_RefCount: 77
     m_Data: {fileID: 11400000, guid: 570098a89ef3c3342a63de23cb7a9c5a, type: 2}
-  - m_RefCount: 1
-    m_Data: {fileID: 11400000, guid: 405fc897106160742a1334d37c3a663e, type: 2}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 50
     m_Data: {fileID: 11400000, guid: 173d96deb4625354e84717798f2cb316, type: 2}
   m_TileSpriteArray:
@@ -81032,8 +81013,8 @@ Tilemap:
     m_Data: {fileID: 0}
   - m_RefCount: 0
     m_Data: {fileID: 0}
-  - m_RefCount: 1
-    m_Data: {fileID: 21300000, guid: f7d247afc5a0c544bb2e54d67ed78cc0, type: 3}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 1
     m_Data: {fileID: 21300000, guid: f0c5418ac3a76774cab1c9cebb3777cf, type: 3}
   - m_RefCount: 1
@@ -81093,7 +81074,7 @@ Tilemap:
   - m_RefCount: 1
     m_Data: {fileID: 21300000, guid: 53df75c1973aee7449c3891b7a8bb7f2, type: 3}
   m_TileMatrixArray:
-  - m_RefCount: 128
+  - m_RefCount: 127
     m_Data:
       e00: 1
       e01: 0
@@ -81112,7 +81093,7 @@ Tilemap:
       e32: 0
       e33: 1
   m_TileColorArray:
-  - m_RefCount: 128
+  - m_RefCount: 127
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
@@ -81178,7 +81159,7 @@ TilemapRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 2
   m_ChunkSize: {x: 32, y: 32, z: 32}
-  m_ChunkCullingBounds: {x: 0, y: 0.5, z: 0}
+  m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 0
@@ -84970,7 +84951,7 @@ GameObject:
   - component: {fileID: 8302271725630750381}
   - component: {fileID: 7515010990337227542}
   m_Layer: 0
-  m_Name: Freeform Light 2D
+  m_Name: Spike Glow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -96011,7 +95992,7 @@ GameObject:
   - component: {fileID: 6263277387955184748}
   - component: {fileID: 5883614630194119046}
   m_Layer: 0
-  m_Name: Point Light 2D
+  m_Name: Skylight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
