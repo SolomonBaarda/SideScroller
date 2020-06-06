@@ -7,7 +7,7 @@ public class PlayerInventory : MonoBehaviour
     // Inventories for simple items 
     private SimpleInventoryItem<Coin> coins;
 
-    public GameObject HeldItem;
+    public GameObject HeldItemLeft, HeldItemRight;
 
     private Player player;
 
@@ -19,21 +19,47 @@ public class PlayerInventory : MonoBehaviour
     }
 
 
-    public bool CanDropHeldItem()
+    public bool IsHoldingItems()
     {
-        return HeldItem != null;
+        return HeldItemLeft != null || HeldItemRight != null;
     }
 
-    public void DropHeldItem()
+    public bool DropLeftHand()
     {
-        if (CanDropHeldItem())
+        if (HeldItemLeft != null)
         {
-            ICanBeHeld p = HeldItem.GetComponent<ICanBeHeld>();
+            ICanBeHeld p = HeldItemLeft.GetComponent<ICanBeHeld>();
 
-            // Drop the payload
+            // Drop the item in the left hand
             p.Drop(player.Head.position, GetComponent<Rigidbody2D>().velocity);
-            HeldItem = null;
+            HeldItemLeft = null;
+
+            return true;
         }
+
+        return false;
+    }
+
+    public bool DropRightHand()
+    {
+        if (HeldItemRight != null)
+        {
+            ICanBeHeld p = HeldItemRight.GetComponent<ICanBeHeld>();
+
+            // Drop the item in right hand
+            p.Drop(player.Head.position, GetComponent<Rigidbody2D>().velocity);
+            HeldItemRight = null;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public void DropAllHeldItems()
+    {
+        DropLeftHand();
+        DropRightHand();
     }
 
 
@@ -42,19 +68,42 @@ public class PlayerInventory : MonoBehaviour
         // Item can be held
         if (WorldItem.ExtendsClass<ICanBeHeld>(g))
         {
-            if (HeldItem == null)
+            // Hold it in the left hand
+            if(WorldItem.ExtendsClass<Payload>(g))
             {
-                // Hold the item
-                ICanBeHeld h = (ICanBeHeld)WorldItem.GetClass<ICanBeHeld>(g);
-                h.Hold(player, player.Head.localPosition);
-                HeldItem = g;
+                if(HeldItemLeft == null)
+                {
+                    // Hold the payload
+                    ICanBeHeld h = (ICanBeHeld)WorldItem.GetClass<ICanBeHeld>(g);
+                    h.Hold(player, player.LeftHand.localPosition);
+                    HeldItemLeft = g;
+                    HeldItemLeft.transform.localScale = transform.localScale;
 
-                return true;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {
-                return false;
+                if (HeldItemRight == null)
+                {
+                    // Hold the payload
+                    ICanBeHeld h = (ICanBeHeld)WorldItem.GetClass<ICanBeHeld>(g);
+                    h.Hold(player, player.RightHand.localPosition);
+                    HeldItemRight = g;
+                    HeldItemRight.transform.localScale = transform.localScale;
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
+
         }
         // It is collectable
         if (WorldItem.ExtendsClass<ICollectable>(g))
@@ -82,21 +131,25 @@ public class PlayerInventory : MonoBehaviour
 
     public void UpdateHeldItemPosition()
     {
-        if (HeldItem != null)
+        if (HeldItemLeft != null)
         {
-            ICanBeHeld h = (ICanBeHeld)WorldItem.GetClass<ICanBeHeld>(HeldItem);
-            h.SetLocalPosition(player.Head.localPosition);
+            ICanBeHeld h = (ICanBeHeld)WorldItem.GetClass<ICanBeHeld>(HeldItemLeft);
+            h.SetLocalPosition(player.LeftHand.localPosition);
+        }
+        if (HeldItemRight != null)
+        {
+            ICanBeHeld h = (ICanBeHeld)WorldItem.GetClass<ICanBeHeld>(HeldItemRight);
+            h.SetLocalPosition(player.RightHand.localPosition);
         }
     }
 
 
     public IWeapon GetPrimaryWeapon()
     {
-        if (WorldItem.ExtendsClass<IWeapon>(HeldItem))
+        if (WorldItem.ExtendsClass<IWeapon>(HeldItemRight))
         {
-            return (IWeapon)WorldItem.GetClass<IWeapon>(HeldItem);
+            return (IWeapon)WorldItem.GetClass<IWeapon>(HeldItemRight);
         }
-
         else return null;
     }
 

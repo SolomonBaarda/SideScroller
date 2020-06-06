@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
 
 public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
 {
@@ -13,7 +12,8 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
 
     public float AttackTimeSeconds => 0.5f;
 
-    public Transform GroundPosition => throw new System.NotImplementedException();
+    public Transform HandlePosition;
+    public Transform GroundPosition => HandlePosition;
 
     private Rigidbody2D rigid;
 
@@ -25,11 +25,12 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
 
     public List<GameObject> InAreaOfAttack()
     {
-        return PlayerInteraction.InAreaOfAttack(blade, gameObject);
+        // Pass parent game object - should be Player
+        return PlayerInteraction.InAreaOfAttack(blade, transform.parent.gameObject);
     }
 
 
-    private void CheckAttack(Vector2 attackerPosition, Vector2 attackerVelocity)
+    private void AttackAllOnce(Vector2 attackerPosition, Vector2 attackerVelocity)
     {
         foreach (GameObject g in InAreaOfAttack())
         {
@@ -42,28 +43,36 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
         }
     }
 
+
     private IEnumerator SwingSword(Vector2 attackerPosition, Vector2 attackerVelocity)
     {
-        Debug.Log("starting");
         IsAttacking = true;
 
-        // Stab forward
+        // Attack forward
         float attackTimer = 0;
         while (attackTimer <= AttackTimeSeconds)
         {
-            CheckAttack(attackerPosition, attackerVelocity);
+            AttackAllOnce(attackerPosition, attackerVelocity);
+
             attackTimer += Time.deltaTime;
-            Debug.Log(attackTimer);
             yield return null;
         }
 
-        Debug.Log("finished attacking");
+        // Bring sword back (cooldown)
+        attackTimer = 0;
+        while (attackTimer <= AttackTimeSeconds)
+        {
+            attackTimer += Time.deltaTime;
+            yield return null;
+        }
+
         IsAttacking = false;
     }
 
 
     public void Attack(Vector2 attackerPosition, Vector2 attackerVelocity)
     {
+        // Only attack if not already doing so
         if (!IsAttacking)
         {
             // Start attack coroutine
@@ -78,7 +87,7 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
         rigid.velocity = Vector2.zero;
 
         transform.parent = player.transform;
-        transform.localPosition = localPosition;
+        SetLocalPosition(localPosition);
     }
 
     public void Drop(Vector2 position, Vector2 velocity)
@@ -92,7 +101,8 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
 
     public void SetLocalPosition(Vector2 local)
     {
-        transform.localPosition = local;
+        transform.rotation = Quaternion.identity;
+        transform.localPosition = local + -(Vector2)GroundPosition.localPosition;
     }
 
     public void Interact(Player player)

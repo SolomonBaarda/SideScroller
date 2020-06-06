@@ -24,6 +24,8 @@ public class Player : MonoBehaviour, ILocatable
         }
     }
 
+    public Transform RightHand, LeftHand;
+
     public Collider2D torsoCollider, feetCollider, areaOfAttackCollider;
 
     public bool IsAlive { get; private set; } = false;
@@ -122,7 +124,7 @@ public class Player : MonoBehaviour, ILocatable
             Deaths++;
 
             // Drop any items
-            Inventory.DropHeldItem();
+            Inventory.DropAllHeldItems();
         }
     }
 

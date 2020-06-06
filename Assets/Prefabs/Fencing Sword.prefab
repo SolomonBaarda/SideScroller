@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7642302495449562870}
-  - component: {fileID: 7642302495449562871}
+  - component: {fileID: 2888903886056033336}
   m_Layer: 15
   m_Name: Ground
   m_TagString: Untagged
@@ -31,7 +31,7 @@ Transform:
   m_Father: {fileID: 7642302496285722236}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!60 &7642302495449562871
+--- !u!60 &2888903886056033336
 PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,19 +47,21 @@ PolygonCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2, y: 2}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.5, y: 0}
-      - {x: 1, y: 0}
-      - {x: 1, y: 0.125}
-      - {x: -0.5, y: 0.125}
+    - - {x: 1.50147, y: 0.06368178}
+      - {x: -1.3147005, y: 0.1877053}
+      - {x: -1.4986364, y: 0.061296053}
+      - {x: -1.5030643, y: -0.05571298}
+      - {x: -1.3118622, y: -0.18736039}
+      - {x: 1.5019202, y: -0.066485435}
 --- !u!1 &7642302496285722238
 GameObject:
   m_ObjectHideFlags: 0
@@ -92,6 +94,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7642302495449562870}
+  - {fileID: 4002787606832203612}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -162,7 +165,7 @@ PolygonCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2, y: 2}
+    oldSize: {x: 3, y: 1}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -170,10 +173,10 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.5, y: 0}
-      - {x: 1, y: 0}
-      - {x: 1, y: 0.125}
-      - {x: -0.5, y: 0.125}
+    - - {x: -1.25, y: -0.0625}
+      - {x: 1.5, y: -0.0625}
+      - {x: 1.5, y: 0.0625}
+      - {x: -1.25, y: 0.0625}
 --- !u!50 &7642302496285722226
 Rigidbody2D:
   serializedVersion: 4
@@ -208,3 +211,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blade: {fileID: 7642302496285722237}
+  HandlePosition: {fileID: 4002787606832203612}
+--- !u!1 &8638601881271324384
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4002787606832203612}
+  m_Layer: 14
+  m_Name: Handle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4002787606832203612
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8638601881271324384}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.5, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7642302496285722236}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

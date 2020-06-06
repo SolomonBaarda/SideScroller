@@ -39,17 +39,6 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
 
     public void Interact(bool interact1)
     {
-        // First check if the item needs to be dropped
-        if (inventory.CanDropHeldItem())
-        {
-            // Drop the item
-            if (interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)
-            {
-                interact_timeout = 0;
-                inventory.DropHeldItem();
-            }
-        }
-
         List<Collider2D> collisionItems = new List<Collider2D>();
 
         // Filter colliders to be only item layer
@@ -78,6 +67,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
                 }
             }
         }
+
 
         // Only bother if there are items
         if (collisionItems.Count > 0)
@@ -122,8 +112,23 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
                             interactable.Interact(player);
                             InteractionManager.OnInteractWithItem(g);
                             interact_timeout = 0;
-                            break;
+                            return;
                         }
+                    }
+                }
+            }
+
+            // Finally, check if any items need to be dropped
+            // If we get here then the player can't do anything else
+            if (inventory.IsHoldingItems())
+            {
+                // Drop the item
+                if (interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)
+                {
+                    if (inventory.DropLeftHand() || inventory.DropRightHand())
+                    {
+                        interact_timeout = 0;
+                        return;
                     }
                 }
             }
