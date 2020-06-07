@@ -180,8 +180,6 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Game Starting!");
 
-        //OnGameStart.Invoke();
-
         if (presets.DoEnemySpawning)
         {
             enemyManager.ScanWholeNavMesh();
