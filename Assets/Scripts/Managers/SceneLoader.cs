@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
+using TMPro;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -13,8 +14,9 @@ public class SceneLoader : MonoBehaviour
     public static string HUD_SCENE = "HUD";
 
     public GameObject loadingScreen;
+    public TMP_Text loadingScreenText;
 
-    List<AsyncOperation> scenesLoading = new List<AsyncOperation>();
+    private List<AsyncOperation> scenesLoading = new List<AsyncOperation>();
     public UnityAction OnScenesLoaded;
 
     private GameManager.Presets lastPreset;
@@ -47,6 +49,11 @@ public class SceneLoader : MonoBehaviour
 
     public void LoadGame(GameManager.Presets presets)
     {
+        StartCoroutine(WaitForLoadGame(presets));
+    }
+
+    private IEnumerator WaitForLoadGame(GameManager.Presets presets)
+    {
         lastPreset = presets;
 
         // Load the game and HUD
@@ -57,9 +64,29 @@ public class SceneLoader : MonoBehaviour
         // Unload the menu
         scenesLoading.Add(SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(MENU_SCENE)));
 
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        // Load scenes first
+        yield return WaitForLoadScenes();
 
-        StartCoroutine(WaitForLoadScenes());
+        // Need to enable the loadins screen again
+        loadingScreen.SetActive(true);
+
+        // Set bool value to true once the game has started
+        bool gameHasStarted = false;
+        GameManager.OnGameStart += () =>
+        {
+            gameHasStarted = true;
+        };
+
+        // Wait for game start
+        while(!gameHasStarted)
+        {
+            yield return null;
+        }
+
+        // Disable the loading screen
+        loadingScreen.SetActive(false);
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
 
