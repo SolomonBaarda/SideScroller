@@ -14,7 +14,7 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
     public Transform GroundPosition { get { return groundPosition; } }
 
     [Range(0, 100)]
-    public int onAttackMultiplier = 10;
+    public int onAttackMultiplier = 4;
 
     public override void Awake()
     {

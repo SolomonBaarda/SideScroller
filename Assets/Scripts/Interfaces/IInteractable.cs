@@ -8,6 +8,6 @@ public interface IInteractable
     /// Method to be called when the item is interacted with. 
     /// </summary>
     /// <returns></returns>
-    void Interact(Player player);
+    bool Interact(Player player);
 
 }

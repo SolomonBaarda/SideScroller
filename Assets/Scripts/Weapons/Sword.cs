@@ -105,11 +105,8 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
         transform.localPosition = local + -(Vector2)GroundPosition.localPosition;
     }
 
-    public void Interact(Player player)
+    public bool Interact(Player player)
     {
-        if(player.Inventory.PickUp(gameObject))
-        {
-            Hold(player, player.Head.localPosition);
-        }
+        return player.Inventory.PickUp(gameObject);
     }
 }

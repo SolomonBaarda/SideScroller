@@ -7,7 +7,9 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
     [SerializeField]
     private int inventory_size = 1;
 
+    [SerializeField]
     private bool hasContents = true;
+    [SerializeField]
     private bool isBeingHeld = false;
 
     private Rigidbody2D rigid;
@@ -24,12 +26,9 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
     }
 
 
-    public void Interact(Player player)
+    public bool Interact(Player player)
     {
-        if (player.Inventory.PickUp(gameObject))
-        {
-            Hold(player, player.Head.localPosition);
-        }
+        return player.Inventory.PickUp(gameObject);
     }
 
 

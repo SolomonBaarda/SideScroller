@@ -51,7 +51,7 @@ public class Chest : WorldItem, IInteractable, ILootable
         }
     }
 
-    public void Interact(Player player)
+    public bool Interact(Player player)
     {
         if (state == ChestState.Locked)
         {
@@ -65,6 +65,8 @@ public class Chest : WorldItem, IInteractable, ILootable
         {
             Close();
         }
+
+        return true;
     }
 
     public LootTable GetLootTable()

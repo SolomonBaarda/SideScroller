@@ -75,9 +75,9 @@ public class PlayerInventory : MonoBehaviour
                 {
                     // Hold the payload
                     ICanBeHeld h = (ICanBeHeld)WorldItem.GetClass<ICanBeHeld>(g);
+                    g.transform.localScale = transform.localScale;
                     h.Hold(player, player.LeftHand.localPosition);
                     HeldItemLeft = g;
-                    HeldItemLeft.transform.localScale = transform.localScale;
 
                     return true;
                 }
@@ -92,9 +92,9 @@ public class PlayerInventory : MonoBehaviour
                 {
                     // Hold the payload
                     ICanBeHeld h = (ICanBeHeld)WorldItem.GetClass<ICanBeHeld>(g);
+                    g.transform.localScale = transform.localScale;
                     h.Hold(player, player.RightHand.localPosition);
                     HeldItemRight = g;
-                    HeldItemRight.transform.localScale = transform.localScale;
 
                     return true;
                 }
@@ -146,7 +146,7 @@ public class PlayerInventory : MonoBehaviour
 
     public IWeapon GetPrimaryWeapon()
     {
-        if (WorldItem.ExtendsClass<IWeapon>(HeldItemRight))
+        if (HeldItemRight != null && WorldItem.ExtendsClass<IWeapon>(HeldItemRight))
         {
             return (IWeapon)WorldItem.GetClass<IWeapon>(HeldItemRight);
         }

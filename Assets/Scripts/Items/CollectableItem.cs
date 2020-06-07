@@ -47,12 +47,15 @@ public class CollectableItem : WorldItem, ICollidable, IInteractable, ICollectab
     }
 
 
-    public void Interact(Player player)
+    public bool Interact(Player player)
     {
         if (interactToPickUp)
         {
             Collect(player);
+            return true;
         }
+            
+        return false;
     }
 
 

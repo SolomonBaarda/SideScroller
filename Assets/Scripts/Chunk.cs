@@ -28,8 +28,8 @@ public class Chunk : MonoBehaviour
     public List<CameraPath> cameraPaths;
     private Transform cameraPathChild;
 
-    public void CreateChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldSpace, 
-        List<TerrainManager.TerrainChunk.Exit> exits, List<TerrainManager.TerrainChunk.Respawn> respawnPoints, 
+    public void CreateChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldSpace,
+        List<TerrainManager.TerrainChunk.Exit> exits, List<TerrainManager.TerrainChunk.Respawn> respawnPoints,
         TerrainManager.Direction direction, int sampleTerrainIndex, Vector2Int chunkID)
     {
         // Assign variables 
@@ -149,7 +149,7 @@ public class Chunk : MonoBehaviour
     public void SetNotActive()
     {
         // Disable all children
-        for(int i = 0; i < transform.childCount; i++)
+        for (int i = 0; i < transform.childCount; i++)
         {
             transform.GetChild(i).gameObject.SetActive(false);
         }
@@ -172,9 +172,9 @@ public class Chunk : MonoBehaviour
         // Horizontal case
         if (exitDirection == TerrainManager.Direction.Left || exitDirection == TerrainManager.Direction.Right)
         {
-            for(int i = 1; i < points.Length; i++)
+            for (int i = 1; i < points.Length; i++)
             {
-                if(points[i-1].y != points[i].y)
+                if (points[i - 1].y != points[i].y)
                 {
                     // Point isn't the same height
                     return points;
@@ -188,7 +188,7 @@ public class Chunk : MonoBehaviour
             {
                 if (points[i - 1].x != points[i].x)
                 {
-                    // Point isn't the same height
+                    // Point isn't the same width
                     return points;
                 }
             }
@@ -202,7 +202,7 @@ public class Chunk : MonoBehaviour
     private void OnDestroy()
     {
         // Ensure the ChunkManager still exists before invoking
-        if(ChunkManager.OnChunkDestroyed != null)
+        if (ChunkManager.OnChunkDestroyed != null)
         {
             ChunkManager.OnChunkDestroyed.Invoke(chunkID);
         }
@@ -244,7 +244,7 @@ public class Chunk : MonoBehaviour
         }
 
         // Draw all respawn points
-        foreach(TerrainManager.TerrainChunk.Respawn r in respawnPoints)
+        foreach (TerrainManager.TerrainChunk.Respawn r in respawnPoints)
         {
             Gizmos.color = Color.red;
             Gizmos.DrawSphere(r.position, 0.25f);

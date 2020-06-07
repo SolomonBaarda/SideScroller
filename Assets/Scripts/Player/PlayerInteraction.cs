@@ -37,7 +37,12 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
     }
 
 
-    public void Interact(bool interact1)
+
+    /// <summary>
+    /// Returns the Collider2D of all Items within the AreaOfInteraction.
+    /// </summary>
+    /// <returns></returns>
+    private List<Collider2D> GetValidInteractionCollisions()
     {
         List<Collider2D> collisionItems = new List<Collider2D>();
 
@@ -68,16 +73,23 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
             }
         }
 
+        return collisionItems;
+    }
+
+
+    public void Interact(bool interact1)
+    {
+        List<Collider2D> collisionItems = GetValidInteractionCollisions();
 
         // Only bother if there are items
         if (collisionItems.Count > 0)
         {
-            // Reverse sort by renderer sorting layer
+            // Reverse sort by renderer sorting layer - use front most Item first
             collisionItems.Sort(
                 (x, y) => -x.gameObject.GetComponent<SpriteRenderer>().sortingOrder.CompareTo(y.gameObject.GetComponent<SpriteRenderer>().sortingOrder)
             );
 
-            // Collide with all items
+            // Do basic collision with Item
             foreach (Collider2D c in collisionItems)
             {
                 GameObject g = c.gameObject;
@@ -92,43 +104,49 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
                 }
             }
 
-            // Interact with all items
-            foreach (Collider2D c in collisionItems)
+
+            // Ensure it is a valid time to interact
+            if (interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)
             {
-                // Need to check if not null as collision may have deleted the item by now
-                if (c != null)
+
+                // Do basic interact with Item
+                foreach (Collider2D c in collisionItems)
                 {
-                    GameObject g = c.gameObject;
-
-                    // If it can be collided with
-                    if (WorldItem.ExtendsClass<IInteractable>(g))
+                    // Need to check if not null as ICollidable may have deleted the item by now
+                    if (c != null)
                     {
-                        IInteractable interactable = (IInteractable)WorldItem.GetClass<IInteractable>(g);
+                        GameObject g = c.gameObject;
 
-                        // Check if it is a valid time to interact
-                        if (interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)
+                        // If it can be interacted with
+                        if (WorldItem.ExtendsClass<IInteractable>(g))
                         {
-                            // Interact with that one item only
-                            interactable.Interact(player);
-                            InteractionManager.OnInteractWithItem(g);
-                            interact_timeout = 0;
-                            return;
+                            IInteractable interactable = (IInteractable)WorldItem.GetClass<IInteractable>(g);
+
+                            // Ensure it is a valid interact
+                            if(interactable.Interact(player))
+                            {
+                                // Interact with that one item only
+                                InteractionManager.OnInteractWithItem(g);
+                                interact_timeout = 0;
+                                break;
+                            }
                         }
                     }
                 }
             }
-
-            // Finally, check if any items need to be dropped
-            // If we get here then the player can't do anything else
+        }
+        else
+        {
+            // Check if any items need to be dropped
+            // If we get here then there aren't any Items for the player to interact with
             if (inventory.IsHoldingItems())
             {
-                // Drop the item
                 if (interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)
                 {
+                    // Drop the item - always try left hand first
                     if (inventory.DropLeftHand() || inventory.DropRightHand())
                     {
                         interact_timeout = 0;
-                        return;
                     }
                 }
             }
@@ -141,11 +159,14 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         // Ensure it is a valid time to attack
         if (interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS && attack)
         {
-            // Attack with the weapon
-            Weapon.Attack(transform.position, rigid.velocity);
+            if(Weapon != null)
+            {
+                // Attack with the weapon
+                Weapon.Attack(transform.position, rigid.velocity);
 
-            // Reset the timer
-            interact_timeout = 0;
+                // Reset the timer
+                interact_timeout = 0;
+            }
         }
     }
 
