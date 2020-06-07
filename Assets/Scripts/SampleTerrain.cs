@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -98,7 +99,7 @@ public class SampleTerrain : MonoBehaviour
             if (g.name.Contains("Wall"))
             {
                 // Wall detail
-                if(g.name.Contains("Detail"))
+                if (g.name.Contains("Detail"))
                 {
                     tilemap_wallDetail = t;
                 }
@@ -474,30 +475,20 @@ public class SampleTerrain : MonoBehaviour
             TileBase t = tilemap.GetTile(current);
             if (t != null)
             {
-                WorldItem.Name itemType = WorldItem.Name.Coin;
                 Vector2Int tilePos = new Vector2Int(current.x, current.y) - entryTilePositionLocal;
 
-                // Assign the correct type
-                if (t.Equals(manager.dev_itemCoin))
+                // Look for the item
+                foreach ((TileBase, GameObject) tuple in manager.itemsToSpawn)
                 {
-                    itemType = WorldItem.Name.Coin;
-                }
-                else if (t.Equals(manager.dev_itemPot))
-                {
-                    itemType = WorldItem.Name.Pot;
-                }
-                else if (t.Equals(manager.dev_itemChest))
-                {
-                    itemType = WorldItem.Name.Chest;
-                }
-                else
-                {
-                    // If not an item, do nothing
-                    continue;
+                    if (t.Equals(tuple.Item1))
+                    {
+                        // Add the new item
+                        items.Add(new Item(tuple.Item2.name, tilePos));
+                        break;
+                    }
                 }
 
-                // Add the new item
-                items.Add(new Item(itemType, tilePos));
+
             }
         }
     }
@@ -535,12 +526,12 @@ public class SampleTerrain : MonoBehaviour
 
     public class Item
     {
-        public WorldItem.Name type;
+        public string name;
         public Vector2Int tilePos;
 
-        public Item(WorldItem.Name type, Vector2Int tilePos)
+        public Item(string name, Vector2Int tilePos)
         {
-            this.type = type;
+            this.name = name;
             this.tilePos = tilePos;
         }
     }

@@ -13,11 +13,8 @@ public class ItemManager : MonoBehaviour
 
     private System.Random random;
 
-    private Dictionary<WorldItem.Name, GameObject> lootPrefabs;
-
-    private Dictionary<WorldItem.Name, GameObject> worldObjectPrefabs;
-    private Dictionary<string, IWeapon> weaponScriptableObjectPrefabs;
-    private Dictionary<Buff.Name, Buff> buffScriptableObjectPrefabs;
+    private Dictionary<string, GameObject> worldObjectPrefabs;
+    private Dictionary<string, GameObject> weaponPrefabs;
 
     public GameObject collectableItemPrefab;
 
@@ -28,22 +25,17 @@ public class ItemManager : MonoBehaviour
     {
         DateTime before = DateTime.Now;
 
-        lootPrefabs = new Dictionary<WorldItem.Name, GameObject>();
-        worldObjectPrefabs = new Dictionary<WorldItem.Name, GameObject>();
-        weaponScriptableObjectPrefabs = new Dictionary<string, IWeapon>();
-        buffScriptableObjectPrefabs = new Dictionary<Buff.Name, Buff>();
+        worldObjectPrefabs = new Dictionary<string, GameObject>();
+        weaponPrefabs = new Dictionary<string, GameObject>();
 
         // Load all items 
-        LoadAllItemPrefabs(ref worldObjectPrefabs, "Prefabs/Items");
-        //LoadAllScriptableItems(ref weaponScriptableObjectPrefabs, "Scripts/Weapons");
-        LoadAllScriptableItems(ref buffScriptableObjectPrefabs, "Scripts/Buffs");
-
+        LoadItemPrefabs(ref worldObjectPrefabs, "Prefabs/Items");
+        LoadItemPrefabs(ref weaponPrefabs, "Scripts/Weapons");
 
         DateTime after = DateTime.Now;
         TimeSpan time = after - before;
 
-        Debug.Log("Loaded items in " + time.Milliseconds + "ms: (" + worldObjectPrefabs.Count + " interactable items), (" + lootPrefabs.Count + " loot), (" + buffScriptableObjectPrefabs.Count + " buffs), (" +
-                weaponScriptableObjectPrefabs.Count + " weapons)");
+        Debug.Log("Loaded items in " + time.Milliseconds + "ms: (" + worldObjectPrefabs.Count + " world items), (" + weaponPrefabs.Count + " weapons)");
 
         TerrainManager.OnTerrainChunkGenerated += GenerateItemsForChunk;
         OnGenerateLoot += GenerateLootForItem;
@@ -63,6 +55,7 @@ public class ItemManager : MonoBehaviour
     {
         Payload = SpawnItem(payloadPrefab, position, "Payload");
         Payload.GetComponent<Payload>().SetPosition(position);
+        Payload.transform.parent = null;
         return Payload;
     }
 
@@ -81,31 +74,12 @@ public class ItemManager : MonoBehaviour
             {
                 // Choose a random piece of loot
                 int value = random.Next(0, table.GetTotalWeight());
-                WorldItem.Name drop = table.GetLoot(value);
-
-                GameObject g;
-                if (!lootPrefabs.TryGetValue(drop, out g))
-                {
-                    Debug.LogError("Failed to get loot " + drop);
-                    continue;
-                }
-
-                // Loot the item
-                l.Loot();
+                GameObject dropPrefab = table.GetLoot(value);
 
                 // Spawn the drops
-                Vector2 pos = item.transform.position;
-                SpawnItem(g, pos, drop.ToString());
-
-                /*
-                Buff b;
-                buffScriptableObjectPrefabs.TryGetValue(Buff.Name.SpeedBoost, out b);
-                SpawnCollectableItem(b, pos, b.buffName.ToString(), true, false) ;
-                */
+                SpawnItem(dropPrefab, item.transform.position, dropPrefab.name);
             }
-
         }
-
     }
 
 
@@ -119,8 +93,7 @@ public class ItemManager : MonoBehaviour
         foreach (TClass t in allScripts)
         {
             // Try and get the enum type from the name
-            TEnum type;
-            if (!Enum.TryParse(t.name, out type))
+            if (!Enum.TryParse(t.name, out TEnum type))
             {
                 Debug.LogError("Could not parse prefab " + t.name + " to enum type.");
                 continue;
@@ -150,32 +123,17 @@ public class ItemManager : MonoBehaviour
     /// <typeparam name="TEnum"></typeparam>
     /// <param name="prefabs"></param>
     /// <param name="path"></param>
-    private void LoadAllItemPrefabs<TEnum>(ref Dictionary<TEnum, GameObject> prefabs, string path) where TEnum : struct
+    private void LoadItemPrefabs(ref Dictionary<string, GameObject> prefabs, string path)
     {
         // Load all objects from path
         GameObject[] allItemPrefabs = Resources.LoadAll<GameObject>(path);
 
         // Loop through each object
-        foreach (GameObject g in allItemPrefabs)
+        foreach (GameObject value in allItemPrefabs)
         {
-            // Try and get the enum type from the name
-            TEnum type;
-            if (!Enum.TryParse(g.name, out type))
-            {
-                Debug.LogError("Could not parse prefab " + g.name + " to enum type.");
-                continue;
-            }
-
             // Add it
-            prefabs.Add(type, g);
-
-            // GameObject is a loot item
-            if (WorldItem.ExtendsClass<ILoot>(g))
-            {
-                WorldItem loot = (WorldItem)WorldItem.GetClass<ILoot>(g);
-
-                lootPrefabs.Add(loot.itemName, g);
-            }
+            string key = value.name;
+            prefabs.Add(key, value);
         }
     }
 
@@ -187,12 +145,12 @@ public class ItemManager : MonoBehaviour
         // Loop through each item position
         foreach (TerrainManager.TerrainChunk.Item item in chunk.items)
         {
-            GameObject prefab;
-            if (worldObjectPrefabs.TryGetValue(item.itemType, out prefab))
+            // Check all the world items
+            if (worldObjectPrefabs.TryGetValue(item.name, out GameObject prefab))
             {
                 if (random.Next(0, 1) <= itemChance)
                 {
-                    SpawnItem(prefab, item.centreOfTile, item.itemType.ToString());
+                    SpawnItem(prefab, item.centreOfTile, item.name.ToString());
                 }
             }
         }
@@ -216,10 +174,4 @@ public class ItemManager : MonoBehaviour
         c.SetCollectableItem(item, collideToPickUp, interactToPickUp);
     }
 
-
-    public enum Loot
-    {
-        Coin,
-        Pot
-    }
 }

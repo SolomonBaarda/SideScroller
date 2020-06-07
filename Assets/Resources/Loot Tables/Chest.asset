@@ -13,7 +13,12 @@ MonoBehaviour:
   m_Name: Chest
   m_EditorClassIdentifier: 
   drops:
-  - item: 1
-    dropChance: 3
-  - item: 2
+  - itemPrefab: {fileID: 3703472953814519117, guid: e892fb5038d66e64d9878bf5aa4927d8,
+      type: 3}
+    dropChance: 1
+  - itemPrefab: {fileID: 2728906868157985042, guid: 860b583c84402914c82954fcd04b8d5d,
+      type: 3}
+    dropChance: 1
+  - itemPrefab: {fileID: 7642302496285722238, guid: a8951c4f7a2095a4ea855491d6bc26f2,
+      type: 3}
     dropChance: 1

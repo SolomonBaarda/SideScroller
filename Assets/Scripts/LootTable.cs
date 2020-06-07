@@ -12,13 +12,12 @@ public class LootTable : ScriptableObject
 {
     public Drop[] drops;
 
-
     /// <summary>
     /// Returns the Item with value. Value should be between 0 and GetTotalWeight().
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    public WorldItem.Name GetLoot(int value)
+    public GameObject GetLoot(int value)
     {
         int total = 0;
         for (int i = 0; i < drops.Length; i++)
@@ -27,7 +26,7 @@ public class LootTable : ScriptableObject
 
             if (value < total)
             {
-                return drops[i].item;
+                return drops[i].itemPrefab;
             }
         }
 
@@ -55,7 +54,7 @@ public class LootTable : ScriptableObject
     public class Drop
     {
         [SerializeField]
-        public WorldItem.Name item;
+        public GameObject itemPrefab;
         [SerializeField]
         public int dropChance;
     }

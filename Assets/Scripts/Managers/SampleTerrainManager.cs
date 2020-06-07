@@ -40,6 +40,7 @@ public class SampleTerrainManager : MonoBehaviour
     public Tile dev_itemPot;
     public Tile dev_itemChest;
 
+    [HideInInspector]
     public List<(TileBase, TileBase)> tilesToSwapWhenInverted;
     [Header("Tiles to be swapped when inverted")]
     public RuleTile rampLeft;
@@ -51,10 +52,32 @@ public class SampleTerrainManager : MonoBehaviour
     public WeightedRandomTile spikeLeft;
     public WeightedRandomTile spikeRight;
 
-
+    [HideInInspector]
+    public List<(TileBase, GameObject)> itemsToSpawn;
+    public GameObject coinPrefab;
+    public GameObject potPrefab;
+    public GameObject chestPrefab;
 
     public void LoadAllSampleTerrain()
     {
+        // Add all the tiles to the list
+        tilesToSwapWhenInverted = new List<(TileBase, TileBase)>
+        {
+            (rampLeft, rampRight),
+            (groundLeft, groundRight),
+            (roofLeft, roofRight),
+            (spikeLeft, spikeRight)
+        };
+
+        // Add the items to the list
+        itemsToSpawn = new List<(TileBase, GameObject)>
+        {
+            (dev_itemCoin, coinPrefab),
+            (dev_itemPot, potPrefab),
+            (dev_itemChest, chestPrefab),
+        };
+
+
         // Load terrain
         Transform terrain = transform.Find("Terrain");
         allSamples = terrain.GetComponentsInChildren<SampleTerrain>();
@@ -75,15 +98,5 @@ public class SampleTerrainManager : MonoBehaviour
         finishArea = finish.GetComponentInChildren<SampleTerrain>();
         finishArea.LoadSample(0);
         finish.gameObject.SetActive(false);
-
-        // Add all the tiles to the list
-        tilesToSwapWhenInverted = new List<(TileBase, TileBase)>
-        {
-            (rampLeft, rampRight),
-            (groundLeft, groundRight),
-            (roofLeft, roofRight),
-            (spikeLeft, spikeRight)
-        };
-
     }
 }
