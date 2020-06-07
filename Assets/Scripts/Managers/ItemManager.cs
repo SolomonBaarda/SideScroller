@@ -30,7 +30,7 @@ public class ItemManager : MonoBehaviour
 
         // Load all items 
         LoadItemPrefabs(ref worldObjectPrefabs, "Prefabs/Items");
-        LoadItemPrefabs(ref weaponPrefabs, "Scripts/Weapons");
+        LoadItemPrefabs(ref weaponPrefabs, "Prefabs/Weapons");
 
         DateTime after = DateTime.Now;
         TimeSpan time = after - before;

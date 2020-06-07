@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, ICanBeHeld
 {
@@ -17,6 +18,10 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
     public Transform groundPosition;
 
     public Transform GroundPosition { get { return groundPosition; } }
+
+    //string IWeapon.Name => "Pot";
+
+    public bool IsAttacking => false;
 
     new private void Awake()
     {
@@ -109,5 +114,15 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
     {
         local.y += Mathf.Abs(GroundPosition.localPosition.y);
         transform.localPosition = local;
+    }
+
+    public List<GameObject> InAreaOfAttack()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Attack(Vector2 attackerPosition, Vector2 attackerVelocity)
+    {
+        Drop(attackerPosition, attackerVelocity);
     }
 }
