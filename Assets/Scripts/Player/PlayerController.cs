@@ -115,11 +115,11 @@ public class PlayerController : MonoBehaviour
 
         // Move weapon first
         // If the weapon didn't move
-        if(!interaction.MoveWeaponPosition(verticalMovement))
+        if(!interaction.UpdateHandAndWeaponPosition(verticalMovement))
         {
             // Update the crouch and jump values as well (disable for now)
-            //jump = GetMax(jump, verticalMovement > 0);
-            //crouch = GetMax(crouch, verticalMovement < 0);
+            //jump = GetMax(jump, verticalMovement < 0);
+            //crouch = GetMax(crouch, verticalMovement > 0);
         }
         
         // Then attack 

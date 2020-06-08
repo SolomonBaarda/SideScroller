@@ -15,7 +15,7 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
     public Transform HandlePosition;
     public Transform GroundPosition => HandlePosition;
 
-    public WeaponPosition Position { get; private set; } = WeaponPosition.Down;
+    public WeaponPosition Position { get; set; } = WeaponPosition.Down;
 
     private Rigidbody2D rigid;
 
@@ -113,35 +113,5 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
         return player.Inventory.PickUp(gameObject);
     }
 
-    public bool MoveWeapon(WeaponPosition direction)
-    {
-        switch (Position)
-        {
-            case WeaponPosition.Up:
-                switch (direction)
-                {
-                    // Can't move up as already up
-                    case WeaponPosition.Up:
-                        return false;
-                    // Move down
-                    case WeaponPosition.Down:
-                        Position = WeaponPosition.Down;
-                        return true;
-                }
-                break;
-            case WeaponPosition.Down:
-                switch (direction)
-                {
-                    // Move up
-                    case WeaponPosition.Up:
-                        Position = WeaponPosition.Up;
-                        return true;
-                    // Can't move down as already down
-                    case WeaponPosition.Down:
-                        return false;
-                }
-                break;
-        }
-        return false;
-    }
+
 }

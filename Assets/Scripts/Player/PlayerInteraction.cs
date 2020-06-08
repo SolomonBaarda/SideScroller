@@ -38,32 +38,33 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
 
 
 
-
-    public bool MoveWeaponPosition(float direction)
+    public bool UpdateHandAndWeaponPosition(float direction)
     {
-        // Ensure valid weapon first
-        if (Weapon != null)
+        // Ensure valid direction
+        if (direction != 0)
         {
-            // Ensure valid direction
-            if (direction != 0)
+            WeaponPosition weaponDirecion = WeaponPosition.Up;
+
+            // Move up
+            if (direction < 0)
             {
-                WeaponPosition weaponDirecion = WeaponPosition.Up;
-
-                // Move up
-                if (direction > 0)
-                {
-                    weaponDirecion = WeaponPosition.Up;
-                }
-                // Move down
-                else if (direction < 0)
-                {
-                    weaponDirecion = WeaponPosition.Down;
-                }
-
-                // Move the weapon
-                return Weapon.MoveWeapon(weaponDirecion);
+                weaponDirecion = WeaponPosition.Up;
             }
+            // Move down
+            else if (direction > 0)
+            {
+                weaponDirecion = WeaponPosition.Down;
+            }
+
+            // Move the weapon
+            bool didMove = player.MoveHandPosition(weaponDirecion);
+            if(Weapon != null)
+            {
+                Weapon.Position = player.HandPosition;
+            }
+            return didMove;
         }
+
 
         return false;
     }

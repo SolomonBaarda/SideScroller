@@ -10,14 +10,7 @@ public interface IWeapon : IInteractable, ICanBeHeld
     /// <summary>
     /// The current position state of the weapon.
     /// </summary>
-    WeaponPosition Position { get; }
-
-    /// <summary>
-    /// Function to return true if the weapon was succesfully moved in direction.
-    /// </summary>
-    /// <param name="direction"></param>
-    /// <returns></returns>
-    bool MoveWeapon(WeaponPosition direction);
+    WeaponPosition Position { get; set; }
 
     /// <summary>
     /// Returns all GameObjects within the weapons current area of attack.

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
 using UnityEngine;
 
 public class Player : MonoBehaviour, ILocatable
@@ -24,7 +25,53 @@ public class Player : MonoBehaviour, ILocatable
         }
     }
 
-    public Transform RightHand, LeftHand;
+    public Transform leftHand, leftHandCrouching, rightHand, rightHandUp, rightHandCrouching;
+
+
+    /// <summary>
+    /// The current position of the Player's left hand.
+    /// </summary>
+    public Transform LeftHand
+    {
+        get
+        {
+            if (Movement.IsCrouching)
+            {
+                return leftHandCrouching;
+            }
+            else
+            {
+                return leftHand;
+            }
+        }
+    }
+
+    /// <summary>
+    /// The current position of the Player's right hand.
+    /// </summary>
+    public Transform RightHand
+    {
+        get
+        {
+            if (Movement.IsCrouching)
+            {
+                return rightHandCrouching;
+            }
+            else
+            {
+                if (HandPosition == WeaponPosition.Up)
+                {
+                    return rightHandUp;
+                }
+                else
+                {
+                    return rightHand;
+                }
+            }
+        }
+    }
+
+    public WeaponPosition HandPosition { get; private set; }
 
     public Collider2D torsoCollider, feetCollider, areaOfAttackCollider;
 
@@ -137,6 +184,38 @@ public class Player : MonoBehaviour, ILocatable
         gameObject.SetActive(true);
     }
 
+
+    public bool MoveHandPosition(WeaponPosition direction)
+    {
+        switch (HandPosition)
+        {
+            case WeaponPosition.Up:
+                switch (direction)
+                {
+                    // Can't move up as already up
+                    case WeaponPosition.Up:
+                        return false;
+                    // Move down
+                    case WeaponPosition.Down:
+                        HandPosition = WeaponPosition.Down;
+                        return true;
+                }
+                break;
+            case WeaponPosition.Down:
+                switch (direction)
+                {
+                    // Move up
+                    case WeaponPosition.Up:
+                        HandPosition = WeaponPosition.Up;
+                        return true;
+                    // Can't move down as already down
+                    case WeaponPosition.Down:
+                        return false;
+                }
+                break;
+        }
+        return false;
+    }
 
 
 
