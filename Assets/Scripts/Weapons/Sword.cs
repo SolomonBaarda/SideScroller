@@ -10,7 +10,9 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
 
     public Collider2D blade;
 
-    public float AttackTimeSeconds => 0.5f;
+    public float AttackTimeSeconds => 2 * StabTimeSeconds;
+    private const float StabTimeSeconds = 0.25f;
+    private const float StabSpeed = 4f;
 
     public Transform HandlePosition;
     public Transform GroundPosition => HandlePosition;
@@ -53,18 +55,31 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
 
         // Attack forward
         float attackTimer = 0;
-        while (attackTimer <= AttackTimeSeconds)
+        while (attackTimer <= StabTimeSeconds)
         {
+            // Attack everything 
             AttackAllOnce(attackerPosition, attackerVelocity);
 
+            // Stab forward for next frame
+            Vector2 currentPos = transform.position;
+            currentPos.x += transform.parent.localScale.x * (StabSpeed * Time.deltaTime);
+            transform.position = currentPos;
+
+            // Update the timer
             attackTimer += Time.deltaTime;
             yield return null;
         }
 
         // Bring sword back (cooldown)
         attackTimer = 0;
-        while (attackTimer <= AttackTimeSeconds)
+        while (attackTimer <= StabTimeSeconds)
         {
+            // Stab forward for next frame
+            Vector2 currentPos = transform.position;
+            currentPos.x -= transform.parent.localScale.x * (StabSpeed * Time.deltaTime);
+            transform.position = currentPos;
+
+            // Update the timer
             attackTimer += Time.deltaTime;
             yield return null;
         }
@@ -90,7 +105,6 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
         rigid.velocity = Vector2.zero;
 
         transform.parent = player.transform;
-        SetLocalPosition(localPosition);
     }
 
     public void Drop(Vector2 position, Vector2 velocity)
@@ -102,11 +116,21 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
         rigid.velocity = velocity;
     }
 
-    public void SetLocalPosition(Vector2 local)
+
+    public void SetHeldPosition(Transform t)
     {
-        transform.rotation = Quaternion.identity;
-        transform.localPosition = local + -(Vector2)GroundPosition.localPosition;
+        Vector2 vel = rigid.velocity;
+        vel.y = 0;
+        rigid.velocity = vel;
+
+        // Only update the position if the weapon is not attacking 
+        if (!IsAttacking)
+        {
+            transform.rotation = Quaternion.identity;
+            transform.localPosition = (Vector2)t.localPosition + -(Vector2)GroundPosition.localPosition;
+        }
     }
+
 
     public bool Interact(Player player)
     {

@@ -56,7 +56,7 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
             {
                 // May not have an ItemManager in the scene
             }
-            
+
         }
     }
 
@@ -91,7 +91,6 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
 
         // Pick up
         transform.parent = player.transform;
-        SetLocalPosition(localPosition);
     }
 
     public new void Drop(Vector2 position, Vector2 velocity)
@@ -108,11 +107,14 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
         base.Drop(position, velocity);
     }
 
-    public void SetLocalPosition(Vector2 local)
+    public void SetHeldPosition(Transform t)
     {
-        // Add a little to centre the height
-        local.y += GetHeightExtent();
-        transform.localPosition = local;
+        Vector2 vel = rigid.velocity;
+        vel.y = 0;
+        rigid.velocity = vel;
+
+        transform.rotation = Quaternion.identity;
+        transform.localPosition = (Vector2)t.localPosition + -(Vector2)GroundPosition.localPosition;
     }
 
     public void SetPosition(Vector2 position)
@@ -122,13 +124,9 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
         rigid.velocity = vel;
 
         // Add a little to centre the player
-        transform.position = new Vector2(position.x, position.y + GetHeightExtent());
+        transform.position = position + -(Vector2)GroundPosition.localPosition;
     }
 
-    private float GetHeightExtent()
-    {
-        return Mathf.Abs(transform.position.y - groundPosition.position.y);
-    }
 
     public void WasAttacked(Vector2 attackerPosition, Vector2 attackerVelocity)
     {

@@ -134,12 +134,12 @@ public class PlayerInventory : MonoBehaviour
         if (HeldItemLeft != null)
         {
             ICanBeHeld h = (ICanBeHeld)WorldItem.GetClass<ICanBeHeld>(HeldItemLeft);
-            h.SetLocalPosition(player.LeftHand.localPosition);
+            h.SetHeldPosition(player.LeftHand);
         }
         if (HeldItemRight != null)
         {
             ICanBeHeld h = (ICanBeHeld)WorldItem.GetClass<ICanBeHeld>(HeldItemRight);
-            h.SetLocalPosition(player.RightHand.localPosition);
+            h.SetHeldPosition(player.RightHand);
         }
     }
 

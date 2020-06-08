@@ -10,5 +10,5 @@ public interface ICanBeHeld
 
     void Drop(Vector2 position, Vector2 velocity);
 
-    void SetLocalPosition(Vector2 local);
+    void SetHeldPosition(Transform t);
 }

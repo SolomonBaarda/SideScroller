@@ -110,11 +110,16 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
         InvokeRepeating("CheckIfBreakWhenThrown", 1, 0.1f);
     }
 
-    public void SetLocalPosition(Vector2 local)
+    public void SetHeldPosition(Transform t)
     {
-        local.y += Mathf.Abs(GroundPosition.localPosition.y);
-        transform.localPosition = local;
+        Vector2 vel = rigid.velocity;
+        vel.y = 0;
+        rigid.velocity = vel;
+
+        transform.rotation = Quaternion.identity;
+        transform.localPosition = (Vector2)t.localPosition + -(Vector2)GroundPosition.localPosition;
     }
+
 
     public List<GameObject> InAreaOfAttack()
     {
