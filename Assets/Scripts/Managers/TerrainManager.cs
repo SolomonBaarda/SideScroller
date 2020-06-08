@@ -530,7 +530,7 @@ public class TerrainManager : MonoBehaviour
         // Terrain is already the correct direction
         return directionToGenerate.Equals(sampleTerrainDirection)
             // Terrain can go both ways
-            || (directionToGenerate.Equals(Direction.Both) && (sampleTerrainDirection.Equals(Direction.Left) || (sampleTerrainDirection.Equals(Direction.Right))))
+            || (directionToGenerate.Equals(Direction.Both) && (sampleTerrainDirection.Equals(Direction.Left) || sampleTerrainDirection.Equals(Direction.Right)))
             // Terrain will need to be flipped
             || (directionToGenerate.Equals(Direction.Left) && sampleTerrainDirection.Equals(Direction.Right))
             || (directionToGenerate.Equals(Direction.Right) && sampleTerrainDirection.Equals(Direction.Left));
@@ -542,6 +542,7 @@ public class TerrainManager : MonoBehaviour
         wallDetail.ClearAllTiles();
         background.ClearAllTiles();
         ground.ClearAllTiles();
+        hazard.ClearAllTiles();
     }
 
 

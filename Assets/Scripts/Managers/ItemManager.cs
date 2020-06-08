@@ -52,6 +52,8 @@ public class ItemManager : MonoBehaviour
     {
         TerrainManager.OnTerrainChunkGenerated -= GenerateItemsForChunk;
         OnGenerateLoot -= GenerateLootForItem;
+
+        PlayerManager.OnPlayerRespawn -= GivePlayerRandomWeapon;
     }
 
 

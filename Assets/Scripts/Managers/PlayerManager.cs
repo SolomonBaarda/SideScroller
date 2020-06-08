@@ -28,6 +28,7 @@ public class PlayerManager : MonoBehaviour
     private void OnDestroy()
     {
         OnPlayerDie -= SetPlayerDead;
+        OnPlayerRespawn -= SceneLoader.EMPTY;
     }
 
 
