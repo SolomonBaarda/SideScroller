@@ -126,7 +126,6 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
                     // Move down
                     case WeaponPosition.Down:
                         Position = WeaponPosition.Down;
-                        Debug.Log("move down");
                         return true;
                 }
                 break;
@@ -136,7 +135,6 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
                     // Move up
                     case WeaponPosition.Up:
                         Position = WeaponPosition.Up;
-                        Debug.Log("move up");
                         return true;
                     // Can't move down as already down
                     case WeaponPosition.Down:

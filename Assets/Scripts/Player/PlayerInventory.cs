@@ -31,7 +31,7 @@ public class PlayerInventory : MonoBehaviour
             ICanBeHeld p = HeldItemLeft.GetComponent<ICanBeHeld>();
 
             // Drop the item in the left hand
-            p.Drop(player.Head.position, GetComponent<Rigidbody2D>().velocity);
+            p.Drop(HeldItemLeft.transform.position, GetComponent<Rigidbody2D>().velocity);
             HeldItemLeft = null;
 
             return true;
@@ -47,7 +47,7 @@ public class PlayerInventory : MonoBehaviour
             ICanBeHeld p = HeldItemRight.GetComponent<ICanBeHeld>();
 
             // Drop the item in right hand
-            p.Drop(player.Head.position, GetComponent<Rigidbody2D>().velocity);
+            p.Drop(HeldItemRight.transform.position, GetComponent<Rigidbody2D>().velocity);
             HeldItemRight = null;
 
             return true;
