@@ -110,17 +110,30 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // Attack first
+        bool jump = isJump, crouch = isCrouch;
+        isJump = false;
+
+        // Move weapon first
+        // If the weapon didn't move
+        if(!interaction.MoveWeaponPosition(verticalMovement))
+        {
+            // Update the crouch and jump values as well (disable for now)
+            //jump = GetMax(jump, verticalMovement > 0);
+            //crouch = GetMax(crouch, verticalMovement < 0);
+        }
+        
+        // Then attack 
         interaction.Attack(isInteract2);
-        // Interact with items
+        // Then interact with items
         interaction.Interact(isInteract1);
 
         inventory.UpdateHeldItemPosition();
 
         // Move last
-        movement.Move(horizontalMovement * Time.fixedDeltaTime, isCrouch, isJump);
-        isJump = false;
+        movement.Move(horizontalMovement * Time.fixedDeltaTime, crouch, jump);
     }
+
+
 
 
 
@@ -139,6 +152,7 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateAnimations()
     {
+        // X velocity is always positive, just flipped x on local scale
         animator.SetFloat("VelocityX", Mathf.Abs(movement.PlayerVelocity.x));
         animator.SetFloat("VelocityY", movement.PlayerVelocity.y);
         animator.SetBool("isJumping", !movement.IsOnGround);

@@ -38,6 +38,38 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
 
 
 
+
+    public bool MoveWeaponPosition(float direction)
+    {
+        // Ensure valid weapon first
+        if (Weapon != null)
+        {
+            // Ensure valid direction
+            if (direction != 0)
+            {
+                WeaponPosition weaponDirecion = WeaponPosition.Up;
+
+                // Move up
+                if (direction > 0)
+                {
+                    weaponDirecion = WeaponPosition.Up;
+                }
+                // Move down
+                else if (direction < 0)
+                {
+                    weaponDirecion = WeaponPosition.Down;
+                }
+
+                // Move the weapon
+                return Weapon.MoveWeapon(weaponDirecion);
+            }
+        }
+
+        return false;
+    }
+
+
+
     /// <summary>
     /// Returns the Collider2D of all Items within the AreaOfInteraction.
     /// </summary>
@@ -123,7 +155,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
                             IInteractable interactable = (IInteractable)WorldItem.GetClass<IInteractable>(g);
 
                             // Ensure it is a valid interact
-                            if(interactable.Interact(player))
+                            if (interactable.Interact(player))
                             {
                                 // Interact with that one item only
                                 InteractionManager.OnInteractWithItem(g);
@@ -159,7 +191,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         // Ensure it is a valid time to attack
         if (interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS && attack)
         {
-            if(Weapon != null)
+            if (Weapon != null)
             {
                 // Attack with the weapon
                 Weapon.Attack(transform.position, rigid.velocity);
