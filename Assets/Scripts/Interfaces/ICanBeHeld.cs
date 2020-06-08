@@ -6,7 +6,7 @@ public interface ICanBeHeld
 {
     Transform GroundPosition { get; }
 
-    void Hold(Player player, Vector2 localPosition);
+    void Hold(Player player);
 
     void Drop(Vector2 position, Vector2 velocity);
 

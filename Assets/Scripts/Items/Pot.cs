@@ -6,9 +6,6 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
     public LootTable table;
 
     [SerializeField]
-    private int inventory_size = 1;
-
-    [SerializeField]
     private bool hasContents = true;
     [SerializeField]
     private bool isBeingHeld = false;
@@ -45,7 +42,7 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
 
     public int GetTotalItemsToBeLooted()
     {
-        return inventory_size;
+        return table.InventorySize;
     }
 
     public bool IsLootable()
@@ -82,12 +79,11 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
         }
     }
 
-    public void Hold(Player player, Vector2 localPosition)
+    public void Hold(Player player)
     {
         isBeingHeld = true;
 
         transform.parent = player.transform;
-        transform.localPosition = localPosition;
 
         rigid.velocity = Vector2.zero;
         rigid.isKinematic = true;

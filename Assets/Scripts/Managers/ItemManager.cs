@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using System;
+using System.Linq;
 
 public class ItemManager : MonoBehaviour
 {
@@ -40,6 +41,9 @@ public class ItemManager : MonoBehaviour
         TerrainManager.OnTerrainChunkGenerated += GenerateItemsForChunk;
         OnGenerateLoot += GenerateLootForItem;
 
+        // Give the player a random weapon when they spawn
+        PlayerManager.OnPlayerRespawn += GivePlayerRandomWeapon;
+
         random = new System.Random(0);
     }
 
@@ -59,6 +63,18 @@ public class ItemManager : MonoBehaviour
         return Payload;
     }
 
+    private void GivePlayerRandomWeapon(Player p)
+    {
+        p.Inventory.DropRightHand();
+
+        // Choose a random weapon from the loaded weapons
+        GameObject prefab = weaponPrefabs.Values.ToArray()[random.Next(0, weaponPrefabs.Count)];
+
+        // Spawn in that weapon
+        GameObject weaponObject = SpawnItem(prefab, p.transform.position, prefab.name);
+        // Make the player hold the weapon
+        p.Inventory.PickUp(weaponObject);
+    }
 
 
     private void GenerateLootForItem(GameObject item)

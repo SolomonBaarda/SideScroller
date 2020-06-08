@@ -38,6 +38,7 @@ public class InteractionManager : MonoBehaviour
                 {
                     // Generate loot
                     ItemManager.OnGenerateLoot.Invoke(item);
+                    lootable.Loot();
                 }
             }
         }

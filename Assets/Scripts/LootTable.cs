@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -10,7 +8,10 @@ using UnityEngine;
 [CreateAssetMenu]
 public class LootTable : ScriptableObject
 {
-    public Drop[] drops;
+    [Range(0, 16)]
+    public int InventorySize = 1;
+
+    public Drop[] Drops;
 
     /// <summary>
     /// Returns the Item with value. Value should be between 0 and GetTotalWeight().
@@ -20,13 +21,13 @@ public class LootTable : ScriptableObject
     public GameObject GetLoot(int value)
     {
         int total = 0;
-        for (int i = 0; i < drops.Length; i++)
+        for (int i = 0; i < Drops.Length; i++)
         {
-            total += drops[i].dropChance;
+            total += Drops[i].dropChance;
 
             if (value < total)
             {
-                return drops[i].itemPrefab;
+                return Drops[i].itemPrefab;
             }
         }
 
@@ -41,7 +42,7 @@ public class LootTable : ScriptableObject
     public int GetTotalWeight()
     {
         int total = 0;
-        foreach (Drop d in drops)
+        foreach (Drop d in Drops)
         {
             total += d.dropChance;
         }

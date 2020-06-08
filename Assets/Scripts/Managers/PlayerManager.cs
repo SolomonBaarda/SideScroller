@@ -6,6 +6,7 @@ using UnityEngine.Events;
 public class PlayerManager : MonoBehaviour
 {
     public static UnityAction<Player> OnPlayerDie;
+    public static UnityAction<Player> OnPlayerRespawn;
 
     public const float DEFAULT_RESPAWN_WAIT_TIME_SECONDS = 1f;
     private DateTime lastRespawnCheck;
@@ -20,6 +21,8 @@ public class PlayerManager : MonoBehaviour
     private void Awake()
     {
         OnPlayerDie += SetPlayerDead;
+
+        OnPlayerRespawn += SceneLoader.EMPTY;
     }
 
     private void OnDestroy()
@@ -207,31 +210,46 @@ public class PlayerManager : MonoBehaviour
         return point.x >= b.min.x && point.x <= b.max.x && point.y >= b.min.y && point.y <= b.max.y;
     }
 
+
+
     private void RespawnPlayer(Player p, Vector2 position)
     {
         p.SetPosition(position);
+
+        // Make the player face their ideal direction
+        if(p.IdealDirection == Payload.Direction.Left)
+        {
+            p.Face(PlayerMovement.Direction.Left);
+        }
+        else
+        {
+            p.Face(PlayerMovement.Direction.Right);
+        }
+
         p.SetAlive();
+
+        // Call the event
+        OnPlayerRespawn.Invoke(p);
     }
 
 
 
 
-    public void SpawnPlayer(Player.ID playerID, Payload.Direction directionToMove, bool canUseController, List<Chunk> nearbyChunks, Bounds cameraViewBounds)
+    public Player SpawnPlayer(Player.ID playerID, Payload.Direction directionToMove, bool canUseController, List<Chunk> nearbyChunks, Bounds cameraViewBounds)
     {
         try
         {
             // Try to spawn the player
-            SpawnPlayer(GetBestRespawnPoint(directionToMove, nearbyChunks, cameraViewBounds), playerID, directionToMove, canUseController);
+            return SpawnPlayer(GetBestRespawnPoint(directionToMove, nearbyChunks, cameraViewBounds), playerID, directionToMove, canUseController);
         }
         catch (Exception)
         {
             throw new Exception("Player " + playerID + " could not be spawned.");
         }
-
     }
 
 
-    private void SpawnPlayer(Vector2 position, Player.ID playerID, Payload.Direction directionToMove, bool canUseController)
+    private Player SpawnPlayer(Vector2 position, Player.ID playerID, Payload.Direction directionToMove, bool canUseController)
     {
         GameObject g = Instantiate(playerPrefab, transform);
         g.name = playerID.ToString();
@@ -240,7 +258,9 @@ public class PlayerManager : MonoBehaviour
         p.SetPlayer(playerID, directionToMove, canUseController);
         AllPlayers.Add(p);
 
-        p.SetPosition(position);
+        RespawnPlayer(p, position);
+
+        return p;
     }
 
 

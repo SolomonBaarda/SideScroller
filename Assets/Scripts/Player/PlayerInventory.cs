@@ -76,7 +76,8 @@ public class PlayerInventory : MonoBehaviour
                     // Hold the payload
                     ICanBeHeld h = (ICanBeHeld)WorldItem.GetClass<ICanBeHeld>(g);
                     g.transform.localScale = transform.localScale;
-                    h.Hold(player, player.LeftHand.localPosition);
+                    h.Hold(player);
+                    h.SetHeldPosition(player.LeftHand);
                     HeldItemLeft = g;
 
                     return true;
@@ -93,7 +94,8 @@ public class PlayerInventory : MonoBehaviour
                     // Hold the payload
                     ICanBeHeld h = (ICanBeHeld)WorldItem.GetClass<ICanBeHeld>(g);
                     g.transform.localScale = transform.localScale;
-                    h.Hold(player, player.RightHand.localPosition);
+                    h.Hold(player);
+                    h.SetHeldPosition(player.RightHand);
                     HeldItemRight = g;
 
                     return true;

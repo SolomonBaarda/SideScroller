@@ -167,7 +167,7 @@ public class GameManager : MonoBehaviour
 
             yield return null;
 
-        // Wait for seconds * frames frames since no generation has taken place
+            // Wait for seconds * frames frames since no generation has taken place
         } while (consecutiveFramesWithNoGeneration <= seconds * targetFPS);
 
         // Then start the game

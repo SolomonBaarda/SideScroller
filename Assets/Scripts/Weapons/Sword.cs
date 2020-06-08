@@ -99,7 +99,7 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
     }
 
 
-    public void Hold(Player player, Vector2 localPosition)
+    public void Hold(Player player)
     {
         rigid.isKinematic = true;
         rigid.velocity = Vector2.zero;

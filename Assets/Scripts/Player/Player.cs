@@ -219,6 +219,11 @@ public class Player : MonoBehaviour, ILocatable
 
 
 
+    public void Face(PlayerMovement.Direction direction)
+    {
+        Movement.Face(direction);
+    }
+
 
     public PlayerInventory.IInventory<T> GetInventory<T>() where T : class
     {

@@ -8,9 +8,6 @@ public class Chest : WorldItem, IInteractable, ILootable
     private enum ChestContents { Full, Empty };
     [SerializeField] private ChestContents contents = ChestContents.Full;
 
-    [SerializeField]
-    private int inventory_size = 3;
-
     public LootTable table;
 
     private Animator a;
@@ -23,47 +20,33 @@ public class Chest : WorldItem, IInteractable, ILootable
     }
 
 
-
-    private void Open()
-    {
-        if (state.Equals(ChestState.Closed))
-        {
-            state = ChestState.Open;
-            a.SetTrigger("Open");
-        }
-    }
-
-
-    private void Close()
-    {
-        if (state.Equals(ChestState.Open))
-        {
-            a.SetTrigger("Close");
-            state = ChestState.Closed;
-        }
-    }
-
-    private void Unlock()
-    {
-        if (state.Equals(ChestState.Locked))
-        {
-            state = ChestState.Closed;
-        }
-    }
-
     public bool Interact(Player player)
     {
+        // Unlock the chest
         if (state == ChestState.Locked)
         {
-            Unlock();
+            if (state.Equals(ChestState.Locked))
+            {
+                state = ChestState.Closed;
+            }
         }
+        // Open the chest
         else if (state == ChestState.Closed)
         {
-            Open();
+            if (state.Equals(ChestState.Closed))
+            {
+                state = ChestState.Open;
+                a.SetTrigger("Open");
+            }
         }
+        // CLose the chest
         else if (state == ChestState.Open)
         {
-            Close();
+            if (state.Equals(ChestState.Open))
+            {
+                a.SetTrigger("Close");
+                state = ChestState.Closed;
+            }
         }
 
         return true;
@@ -76,21 +59,18 @@ public class Chest : WorldItem, IInteractable, ILootable
 
     public int GetTotalItemsToBeLooted()
     {
-        return inventory_size;
+        return table.InventorySize;
     }
 
 
     public bool IsLootable()
     {
-        return contents.Equals(ChestContents.Full);
+        return contents == ChestContents.Full && state == ChestState.Open;
     }
 
     public void Loot()
     {
-        if (contents.Equals(ChestContents.Full))
-        {
-            contents = ChestContents.Empty;
-        }
+        contents = ChestContents.Empty;
     }
 
 }

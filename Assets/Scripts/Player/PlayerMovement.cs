@@ -31,7 +31,7 @@ public class PlayerMovement : MonoBehaviour
     private Transform headPos;
     private Transform feetPos;
 
-    private enum Direction { Left, Right };
+    public enum Direction { Left, Right };
 
     private void Awake()
     {
@@ -288,7 +288,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-    private void Face(Direction d)
+    public void Face(Direction d)
     {
         facing = d;
 
