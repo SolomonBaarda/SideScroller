@@ -17,7 +17,7 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
     public Transform HandlePosition;
     public Transform GroundPosition => HandlePosition;
 
-    public WeaponPosition Position { get; set; } = WeaponPosition.Down;
+    //public Player.WeaponPosition Position { get; set; } = Player.WeaponPosition.Down;
 
     private Rigidbody2D rigid;
 
@@ -104,7 +104,11 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
         rigid.isKinematic = true;
         rigid.velocity = Vector2.zero;
 
+        trigger.enabled = false;
+        
         transform.parent = player.transform;
+
+        StopAllCoroutines();
     }
 
     public void Drop(Vector2 position, Vector2 velocity)
@@ -112,8 +116,12 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
         transform.parent = null;
         transform.position = position;
 
+        trigger.enabled = true;
+
         rigid.isKinematic = false;
         rigid.velocity = velocity;
+
+        StartCoroutine(WorldItem.WaitForHazardCollisionThenDestroy(gameObject));
     }
 
 

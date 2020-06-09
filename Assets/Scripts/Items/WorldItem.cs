@@ -6,9 +6,7 @@ public class WorldItem : MonoBehaviour
 {
     public const int DEFAULT_MAX_OVERLAP_COLLISIONS = 8;
 
-    [SerializeField]
     public ItemBase item;
-    public Name itemName;
     [Space]
 
     [SerializeField]
@@ -105,15 +103,33 @@ public class WorldItem : MonoBehaviour
 
 
 
-    /// <summary>
-    /// A list of all possible world items.
-    /// </summary>
-    public enum Name
+
+    public static IEnumerator WaitForHazardCollisionThenDestroy(GameObject item)
     {
-        WorldItem,
-        Coin,
-        Pot,
-        Chest
+        Collider2D[] allColliders = item.GetComponents<Collider2D>();
+        ContactFilter2D filter = new ContactFilter2D();
+        filter.SetLayerMask(LayerMask.GetMask(Hazard.LAYER));
+        bool hasCollided = false;
+
+        while(!hasCollided)
+        {
+            // Check each collider
+            foreach (Collider2D c in allColliders)
+            {
+                // Check if there has been at least one collision
+                if(Physics2D.OverlapCollider(c, filter, new Collider2D[1]) > 0)
+                {
+                    // Destroy the GameObject and exit
+                    hasCollided = true;
+                    Destroy(item);
+                    yield break;
+                }
+            }
+
+            yield return null;
+        }
+
     }
+
 
 }

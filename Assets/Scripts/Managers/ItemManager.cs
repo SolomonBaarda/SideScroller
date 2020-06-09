@@ -67,7 +67,13 @@ public class ItemManager : MonoBehaviour
 
     private void GivePlayerRandomWeapon(Player p)
     {
+        // If the player dies still with a weapon, destroy that weapon
+        GameObject oldWeaponObject = p.Inventory.HeldItemRight;
         p.Inventory.DropRightHand();
+        if(oldWeaponObject != null)
+        {
+            Destroy(oldWeaponObject);
+        }
 
         // Choose a random weapon from the loaded weapons
         GameObject prefab = weaponPrefabs.Values.ToArray()[random.Next(0, weaponPrefabs.Count)];

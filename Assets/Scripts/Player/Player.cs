@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.ExceptionServices;
 using UnityEngine;
 
 public class Player : MonoBehaviour, ILocatable
@@ -59,7 +58,7 @@ public class Player : MonoBehaviour, ILocatable
             }
             else
             {
-                if (HandPosition == WeaponPosition.Up)
+                if (RightHandPosition == HandPosition.Up)
                 {
                     return rightHandUp;
                 }
@@ -71,7 +70,24 @@ public class Player : MonoBehaviour, ILocatable
         }
     }
 
-    public WeaponPosition HandPosition { get; private set; }
+    public HandPosition RightHandPosition { get; private set; }
+
+    public State CurrentState
+    {
+        get
+        {
+            // Freeze the player while they are attacking
+            IWeapon w = Inventory.GetPrimaryWeapon();
+            if (w != null)
+            {
+                if(w.IsAttacking)
+                {
+                    return State.Frozen;
+                }
+            }
+            return State.Interactable;
+        }
+    }
 
     public Collider2D torsoCollider, feetCollider, areaOfAttackCollider;
 
@@ -143,6 +159,12 @@ public class Player : MonoBehaviour, ILocatable
         }
     }
 
+    private void Update()
+    {
+        // Disable the controler if the player is frozen
+        Controller.enabled = CurrentState == State.Interactable;
+    }
+
 
 
     public void SetPosition(Vector2 position)
@@ -185,31 +207,31 @@ public class Player : MonoBehaviour, ILocatable
     }
 
 
-    public bool MoveHandPosition(WeaponPosition direction)
+    public bool MoveHandPosition(HandPosition direction)
     {
-        switch (HandPosition)
+        switch (RightHandPosition)
         {
-            case WeaponPosition.Up:
+            case HandPosition.Up:
                 switch (direction)
                 {
                     // Can't move up as already up
-                    case WeaponPosition.Up:
+                    case HandPosition.Up:
                         return false;
                     // Move down
-                    case WeaponPosition.Down:
-                        HandPosition = WeaponPosition.Down;
+                    case HandPosition.Down:
+                        RightHandPosition = HandPosition.Down;
                         return true;
                 }
                 break;
-            case WeaponPosition.Down:
+            case HandPosition.Down:
                 switch (direction)
                 {
                     // Move up
-                    case WeaponPosition.Up:
-                        HandPosition = WeaponPosition.Up;
+                    case HandPosition.Up:
+                        RightHandPosition = HandPosition.Up;
                         return true;
                     // Can't move down as already down
-                    case WeaponPosition.Down:
+                    case HandPosition.Down:
                         return false;
                 }
                 break;
@@ -252,6 +274,20 @@ public class Player : MonoBehaviour, ILocatable
     {
         public const float SPEED = 40;
         public const float SPEED_MINIMUM = 20;
+    }
+
+
+    public enum HandPosition
+    {
+        Up,
+        Down,
+    }
+
+
+    public enum State
+    {
+        Interactable,
+        Frozen,
     }
 
 }

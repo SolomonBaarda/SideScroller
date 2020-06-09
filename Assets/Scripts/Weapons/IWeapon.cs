@@ -10,7 +10,7 @@ public interface IWeapon : IInteractable, ICanBeHeld
     /// <summary>
     /// The current position state of the weapon.
     /// </summary>
-    WeaponPosition Position { get; set; }
+    //Player.WeaponPosition Position { get; set; }
 
     /// <summary>
     /// Returns all GameObjects within the weapons current area of attack.
@@ -26,8 +26,3 @@ public interface IWeapon : IInteractable, ICanBeHeld
     void Attack(Vector2 attackerPosition, Vector2 attackerVelocity);
 }
 
-public enum WeaponPosition
-{
-    Up,
-    Down,
-}

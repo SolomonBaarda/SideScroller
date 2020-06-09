@@ -43,24 +43,24 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
         // Ensure valid direction
         if (direction != 0)
         {
-            WeaponPosition weaponDirecion = WeaponPosition.Up;
+            Player.HandPosition weaponDirecion = Player.HandPosition.Up;
 
             // Move up
             if (direction < 0)
             {
-                weaponDirecion = WeaponPosition.Up;
+                weaponDirecion = Player.HandPosition.Up;
             }
             // Move down
             else if (direction > 0)
             {
-                weaponDirecion = WeaponPosition.Down;
+                weaponDirecion = Player.HandPosition.Down;
             }
 
             // Move the weapon
             bool didMove = player.MoveHandPosition(weaponDirecion);
             if(Weapon != null)
             {
-                Weapon.Position = player.HandPosition;
+                //Weapon.Position = player.RightHandPosition;
             }
             return didMove;
         }
