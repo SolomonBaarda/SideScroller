@@ -17,6 +17,8 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
     public Transform HandlePosition;
     public Transform GroundPosition => HandlePosition;
 
+    public bool IsBeingHeld { get; private set; } = false;
+
     //public Player.WeaponPosition Position { get; set; } = Player.WeaponPosition.Down;
 
     private Rigidbody2D rigid;
@@ -101,10 +103,10 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
 
     public void Hold(Player player)
     {
+        IsBeingHeld = true;
+
         rigid.isKinematic = true;
         rigid.velocity = Vector2.zero;
-
-        trigger.enabled = false;
         
         transform.parent = player.transform;
 
@@ -113,10 +115,10 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
 
     public void Drop(Vector2 position, Vector2 velocity)
     {
+        IsBeingHeld = false;
+
         transform.parent = null;
         transform.position = position;
-
-        trigger.enabled = true;
 
         rigid.isKinematic = false;
         rigid.velocity = velocity;

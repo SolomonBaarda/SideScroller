@@ -102,8 +102,6 @@ public class WorldItem : MonoBehaviour
     }
 
 
-
-
     public static IEnumerator WaitForHazardCollisionThenDestroy(GameObject item)
     {
         Collider2D[] allColliders = item.GetComponents<Collider2D>();
@@ -128,7 +126,6 @@ public class WorldItem : MonoBehaviour
 
             yield return null;
         }
-
     }
 
 

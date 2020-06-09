@@ -69,9 +69,9 @@ public class PlayerInventory : MonoBehaviour
         if (WorldItem.ExtendsClass<ICanBeHeld>(g))
         {
             // Hold it in the left hand
-            if(WorldItem.ExtendsClass<Payload>(g))
+            if (WorldItem.ExtendsClass<Payload>(g))
             {
-                if(HeldItemLeft == null)
+                if (HeldItemLeft == null)
                 {
                     // Hold the payload
                     ICanBeHeld h = (ICanBeHeld)WorldItem.GetClass<ICanBeHeld>(g);
@@ -82,30 +82,27 @@ public class PlayerInventory : MonoBehaviour
 
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+                return false;
             }
             else
             {
                 if (HeldItemRight == null)
                 {
-                    // Hold the payload
+                    // Check the item is not already being held
                     ICanBeHeld h = (ICanBeHeld)WorldItem.GetClass<ICanBeHeld>(g);
-                    g.transform.localScale = transform.localScale;
-                    h.Hold(player);
-                    h.SetHeldPosition(player.RightHand);
-                    HeldItemRight = g;
+                    if (!h.IsBeingHeld)
+                    {
+                        // pick up the item
+                        g.transform.localScale = transform.localScale;
+                        h.Hold(player);
+                        h.SetHeldPosition(player.RightHand);
+                        HeldItemRight = g;
 
-                    return true;
-                }
-                else
-                {
-                    return false;
+                        return true;
+                    }
                 }
             }
-
+            return false;
         }
         // It is collectable
         if (WorldItem.ExtendsClass<ICollectable>(g))

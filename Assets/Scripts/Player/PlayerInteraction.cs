@@ -141,7 +141,6 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
             // Ensure it is a valid time to interact
             if (interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)
             {
-
                 // Do basic interact with Item
                 foreach (Collider2D c in collisionItems)
                 {
@@ -161,14 +160,14 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
                                 // Interact with that one item only
                                 InteractionManager.OnInteractWithItem(g);
                                 interact_timeout = 0;
-                                break;
+                                return;
                             }
                         }
                     }
                 }
             }
         }
-        else
+        
         {
             // Check if any items need to be dropped
             // If we get here then there aren't any Items for the player to interact with

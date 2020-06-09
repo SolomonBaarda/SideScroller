@@ -13,6 +13,9 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
 
     public Transform GroundPosition { get { return groundPosition; } }
 
+    public bool IsBeingHeld { get; private set; } = false;
+
+
     [Range(0, 100)]
     public int onAttackMultiplier = 4;
 
@@ -80,6 +83,8 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
 
     public void PickUp(GameObject player)
     {
+        IsBeingHeld = true;
+
         // Disable physics while picked up
         rigid.velocity = Vector2.zero;
         rigid.isKinematic = true;
@@ -95,6 +100,8 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
 
     public new void Drop(Vector2 position, Vector2 velocity)
     {
+        IsBeingHeld = false;
+
         // Enable physics again
         rigid.isKinematic = false;
         trigger.enabled = true;

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public interface ICanBeHeld
 {
+    bool IsBeingHeld { get; }
+
     Transform GroundPosition { get; }
 
     void Hold(Player player);

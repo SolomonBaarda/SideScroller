@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, ICanBeHeld
@@ -7,14 +8,15 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
 
     [SerializeField]
     private bool hasContents = true;
-    [SerializeField]
-    private bool isBeingHeld = false;
 
     private Rigidbody2D rigid;
 
     public Transform groundPosition;
 
     public Transform GroundPosition { get { return groundPosition; } }
+
+    public bool IsBeingHeld { get; private set; } = false;
+
 
     //string IWeapon.Name => "Pot";
 
@@ -47,7 +49,7 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
 
     public bool IsLootable()
     {
-        return hasContents && !isBeingHeld;
+        return hasContents && !IsBeingHeld;
     }
 
     public void Loot()
@@ -69,19 +71,40 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
         a.SetTrigger("Break");
     }
 
-    private void CheckIfBreakWhenThrown()
+    private IEnumerator WaitForCollisionWhenThrown()
     {
-        // Check if we have just collided with the ground
-        float radius = Mathf.Abs(GroundPosition.localPosition.y);
-        if (GroundCheck.IsOnGround(transform.position, radius))
+        Collider2D[] allColliders = GetComponents<Collider2D>();
+
+        // Set the layermask to be ground and hazard
+        ContactFilter2D filter = new ContactFilter2D();
+        filter.SetLayerMask(LayerMask.GetMask(Hazard.LAYER, GroundCheck.GROUND_LAYER));
+        filter.useTriggers = true;
+
+        bool hasCollided = false;
+
+        while (!hasCollided)
         {
-            Break();
+            // Check each collider
+            foreach (Collider2D c in allColliders)
+            {
+                // Check if there has been at least one collision
+                if (Physics2D.OverlapCollider(c, filter, new Collider2D[1]) > 0)
+                {
+                    // Destroy the GameObject and exit
+                    hasCollided = true;
+                    Break();
+                    yield break;
+                }
+            }
+
+            yield return null;
         }
     }
 
+
     public void Hold(Player player)
     {
-        isBeingHeld = true;
+        IsBeingHeld = true;
 
         transform.parent = player.transform;
 
@@ -93,7 +116,7 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
 
     public void Drop(Vector2 position, Vector2 velocity)
     {
-        isBeingHeld = false;
+        IsBeingHeld = false;
 
         transform.parent = null;
         transform.position = position;
@@ -103,7 +126,7 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
 
         trigger.enabled = true;
 
-        InvokeRepeating("CheckIfBreakWhenThrown", 1, 0.1f);
+        StartCoroutine(WaitForCollisionWhenThrown());
     }
 
     public void SetHeldPosition(Transform t)
