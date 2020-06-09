@@ -123,7 +123,17 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
         rigid.isKinematic = false;
         rigid.velocity = velocity;
 
-        StartCoroutine(WorldItem.WaitForHazardCollisionThenDestroy(gameObject));
+        // Destroy the sword if it collides with a hazard
+        ContactFilter2D filter = new ContactFilter2D();
+        filter.SetLayerMask(LayerMask.GetMask(Hazard.LAYER));
+        filter.useTriggers = true;
+        StartCoroutine(WorldItem.WaitForThenInvoke(gameObject, filter, Destroy));
+    }
+
+
+    private void Destroy()
+    {
+        Destroy(gameObject);
     }
 
 

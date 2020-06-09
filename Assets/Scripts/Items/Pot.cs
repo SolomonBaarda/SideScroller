@@ -90,7 +90,7 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
                 // Check if there has been at least one collision
                 if (Physics2D.OverlapCollider(c, filter, new Collider2D[1]) > 0)
                 {
-                    // Destroy the GameObject and exit
+                    // Break the GameObject and exit
                     hasCollided = true;
                     Break();
                     yield break;
@@ -112,6 +112,10 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
         rigid.isKinematic = true;
 
         trigger.enabled = false;
+
+        // Disable all coroutines if this is picked up
+        // e.g. player caught thrown pot out of the air
+        StopAllCoroutines();
     }
 
     public void Drop(Vector2 position, Vector2 velocity)
@@ -126,7 +130,11 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
 
         trigger.enabled = true;
 
-        StartCoroutine(WaitForCollisionWhenThrown());
+        // Break the pot when it hits the ground
+        ContactFilter2D filter = new ContactFilter2D();
+        filter.SetLayerMask(LayerMask.GetMask(Hazard.LAYER, GroundCheck.GROUND_LAYER));
+        filter.useTriggers = true;
+        StartCoroutine(WaitForThenInvoke(gameObject, filter, Break));
     }
 
     public void SetHeldPosition(Transform t)

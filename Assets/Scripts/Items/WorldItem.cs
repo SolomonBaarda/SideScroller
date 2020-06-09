@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -41,7 +42,7 @@ public class WorldItem : MonoBehaviour
             else
             {
                 // Check if it has a sprite
-                if(spriteRenderer.sprite != null)
+                if (spriteRenderer.sprite != null)
                 {
                     sprite = spriteRenderer.sprite;
                 }
@@ -102,30 +103,31 @@ public class WorldItem : MonoBehaviour
     }
 
 
-    public static IEnumerator WaitForHazardCollisionThenDestroy(GameObject item)
+    public static IEnumerator WaitForThenInvoke(GameObject item, ContactFilter2D filter, Action action, float secondsToCheck = 16)
     {
+        // Get colliders and set layer mask
         Collider2D[] allColliders = item.GetComponents<Collider2D>();
-        ContactFilter2D filter = new ContactFilter2D();
-        filter.SetLayerMask(LayerMask.GetMask(Hazard.LAYER));
-        bool hasCollided = false;
 
-        while(!hasCollided)
+        DateTime before = DateTime.Now;
+
+        do
         {
             // Check each collider
             foreach (Collider2D c in allColliders)
             {
                 // Check if there has been at least one collision
-                if(Physics2D.OverlapCollider(c, filter, new Collider2D[1]) > 0)
+                if (Physics2D.OverlapCollider(c, filter, new Collider2D[1]) > 0)
                 {
-                    // Destroy the GameObject and exit
-                    hasCollided = true;
-                    Destroy(item);
+                    // Call function then exit
+                    action();
                     yield break;
                 }
             }
 
             yield return null;
         }
+        // Check for a maximum amount of seconds
+        while ((DateTime.Now - before).TotalSeconds <= secondsToCheck);
     }
 
 

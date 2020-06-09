@@ -58,7 +58,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
 
             // Move the weapon
             bool didMove = player.MoveHandPosition(weaponDirecion);
-            if(Weapon != null)
+            if (Weapon != null)
             {
                 //Weapon.Position = player.RightHandPosition;
             }
@@ -167,19 +167,17 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
                 }
             }
         }
-        
+
+        // Check if any items need to be dropped
+        // If we get here then there aren't any Items for the player to interact with
+        if (inventory.IsHoldingItems())
         {
-            // Check if any items need to be dropped
-            // If we get here then there aren't any Items for the player to interact with
-            if (inventory.IsHoldingItems())
+            if (interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)
             {
-                if (interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)
+                // Drop the item - always try left hand first
+                if (inventory.DropLeftHand() || inventory.DropRightHand())
                 {
-                    // Drop the item - always try left hand first
-                    if (inventory.DropLeftHand() || inventory.DropRightHand())
-                    {
-                        interact_timeout = 0;
-                    }
+                    interact_timeout = 0;
                 }
             }
         }
