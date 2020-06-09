@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Dynamic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -23,15 +24,18 @@ public class PlayerMovement : MonoBehaviour
     private float slideTime = 0;
     private bool previouslyCrouchWalking = false;
 
-    [SerializeField] private Direction facing;
+    public Player.Facing Facing { get; private set; } = Player.Facing.Right;
+
+    public Vector2 PlayerVelocity { get { return rigid.velocity; } }
+
+    public bool IsCrouching { get; private set; }
+    public bool IsOnGround { get; private set; }
 
     private Rigidbody2D rigid;
     private Collider2D torsoCollider;
     private Collider2D feetCollider;
     private Transform headPos;
     private Transform feetPos;
-
-    public enum Direction { Left, Right };
 
     private void Awake()
     {
@@ -50,12 +54,6 @@ public class PlayerMovement : MonoBehaviour
     {
         headPos = headPosition;
         feetPos = feetPosition;
-    }
-
-    private void OnEnable()
-    {
-        // Face forward by default
-        facing = Direction.Right;
     }
 
 
@@ -233,16 +231,16 @@ public class PlayerMovement : MonoBehaviour
             if (!isSliding)
             {
                 // If the input is moving the player right and the player is facing left
-                if (move > 0 && !facing.Equals(Direction.Right))
+                if (move > 0 && !Facing.Equals(Player.Facing.Right))
                 {
                     // Face right
-                    Face(Direction.Right);
+                    Face(Player.Facing.Right);
                 }
                 // Otherwise if the input is moving the player left and the player is facing right
-                else if (move < 0 && !facing.Equals(Direction.Left))
+                else if (move < 0 && !Facing.Equals(Player.Facing.Left))
                 {
                     // Face left
-                    Face(Direction.Left);
+                    Face(Player.Facing.Left);
                 }
             }
 
@@ -288,19 +286,19 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-    public void Face(Direction d)
+    public void Face(Player.Facing d)
     {
-        facing = d;
+        Facing = d;
 
         // Flip the player
         Vector3 scale = transform.localScale;
 
         int i = 0;
-        if (d == Direction.Left)
+        if (d == Player.Facing.Left)
         {
             i = -1;
         }
-        else if (d == Direction.Right)
+        else if (d == Player.Facing.Right)
         {
             i = 1;
         }
@@ -317,12 +315,6 @@ public class PlayerMovement : MonoBehaviour
         theScale.x *= -1;
         transform.localScale = theScale;
     }
-
-
-    public Vector2 PlayerVelocity { get { return rigid.velocity; } }
-
-    public bool IsCrouching { get; private set; }
-    public bool IsOnGround { get; private set; }
 
 
     private void OnDrawGizmosSelected()

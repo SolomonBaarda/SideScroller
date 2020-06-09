@@ -24,7 +24,7 @@ public class InteractionManager : MonoBehaviour
         if (WorldItem.ExtendsClass<IInteractable>(item))
         {
             // It is loot that needs to be picked up
-            if (WorldItem.ExtendsClass<ILoot>(item))
+            if (WorldItem.ExtendsClass<IAmLoot>(item))
             {
 
             }

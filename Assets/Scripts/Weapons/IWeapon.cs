@@ -23,6 +23,6 @@ public interface IWeapon : IInteractable, ICanBeHeld
     /// </summary>
     /// <param name="attackerPosition"></param>
     /// <param name="attackerVelocity"></param>
-    void Attack(Vector2 attackerPosition, Vector2 attackerVelocity);
+    void Attack(Vector2 attackerPosition, Vector2 attackerVelocity, Player.Facing facing);
 }
 

@@ -8,6 +8,8 @@ public class Player : MonoBehaviour, ILocatable
     public PlayerInteraction Interaction { get; private set; }
     private PlayerMovement Movement;
 
+    public Facing DirectionFacing { get { return Movement.Facing; } }
+
     public Transform headPosition, feetPosition, crouchingHeadPosition;
     public Transform Head
     {
@@ -241,7 +243,7 @@ public class Player : MonoBehaviour, ILocatable
 
 
 
-    public void Face(PlayerMovement.Direction direction)
+    public void Face(Facing direction)
     {
         Movement.Face(direction);
     }
@@ -288,6 +290,12 @@ public class Player : MonoBehaviour, ILocatable
     {
         Interactable,
         Frozen,
+    }
+
+    public enum Facing
+    {
+        Right,
+        Left,
     }
 
 }

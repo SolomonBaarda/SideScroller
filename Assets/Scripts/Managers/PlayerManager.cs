@@ -220,11 +220,11 @@ public class PlayerManager : MonoBehaviour
         // Make the player face their ideal direction
         if(p.IdealDirection == Payload.Direction.Left)
         {
-            p.Face(PlayerMovement.Direction.Left);
+            p.Face(Player.Facing.Left);
         }
         else
         {
-            p.Face(PlayerMovement.Direction.Right);
+            p.Face(Player.Facing.Right);
         }
 
         p.SetAlive();

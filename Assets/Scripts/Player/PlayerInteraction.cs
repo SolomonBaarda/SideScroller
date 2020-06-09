@@ -192,7 +192,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
             if (Weapon != null)
             {
                 // Attack with the weapon
-                Weapon.Attack(transform.position, rigid.velocity);
+                Weapon.Attack(player.RightHand.transform.position, rigid.velocity, player.DirectionFacing);
 
                 // Reset the timer
                 interact_timeout = 0;

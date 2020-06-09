@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Coin : CollectableItem, ILoot
+public class Coin : CollectableItem, IAmLoot
 {
     public float initialSetupTime = DEFAULT_INITIAL_SETUP_TIME;
 

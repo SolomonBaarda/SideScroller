@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, ICanBeHeld
+public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked, ICanBeHeld, IWeapon
 {
     public LootTable table;
 
@@ -18,9 +18,10 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
     public bool IsBeingHeld { get; private set; } = false;
 
 
-    //string IWeapon.Name => "Pot";
+    public bool IsAttacking { get; private set; } = false;
 
-    public bool IsAttacking => false;
+    public string Name => "Pot";
+
 
     new private void Awake()
     {
@@ -64,43 +65,13 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
 
     private void Break()
     {
+        StopAllCoroutines();
         InteractionManager.OnInteractWithItem(gameObject);
 
         // Break the pot
         Animator a = GetComponent<Animator>();
         a.SetTrigger("Break");
     }
-
-    private IEnumerator WaitForCollisionWhenThrown()
-    {
-        Collider2D[] allColliders = GetComponents<Collider2D>();
-
-        // Set the layermask to be ground and hazard
-        ContactFilter2D filter = new ContactFilter2D();
-        filter.SetLayerMask(LayerMask.GetMask(Hazard.LAYER, GroundCheck.GROUND_LAYER));
-        filter.useTriggers = true;
-
-        bool hasCollided = false;
-
-        while (!hasCollided)
-        {
-            // Check each collider
-            foreach (Collider2D c in allColliders)
-            {
-                // Check if there has been at least one collision
-                if (Physics2D.OverlapCollider(c, filter, new Collider2D[1]) > 0)
-                {
-                    // Break the GameObject and exit
-                    hasCollided = true;
-                    Break();
-                    yield break;
-                }
-            }
-
-            yield return null;
-        }
-    }
-
 
     public void Hold(Player player)
     {
@@ -153,8 +124,12 @@ public class Pot : WorldItem, IInteractable, ILootable, ILoot, ICanBeAttacked, I
         throw new System.NotImplementedException();
     }
 
-    public void Attack(Vector2 attackerPosition, Vector2 attackerVelocity)
+    public void Attack(Vector2 attackerPosition, Vector2 attackerVelocity, Player.Facing facing)
     {
-        Drop(attackerPosition, attackerVelocity);
+        int direction = facing == Player.Facing.Right ? 1 : -1;
+        //Vector2 force = direction * new Vector2(1, 1);
+
+        Drop(attackerPosition, Vector2.zero);
     }
+
 }
