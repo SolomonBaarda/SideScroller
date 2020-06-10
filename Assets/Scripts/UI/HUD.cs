@@ -29,7 +29,12 @@ public class HUD : MonoBehaviour
     [Header("Quit")]
     public TMP_Text button_quit;
 
-    public SceneLoader sceneLoader;
+    [Header("Scoreboard")]
+    public GameObject scoreboard;
+
+
+    private SceneLoader sceneLoader;
+
 
     private void Awake()
     {
@@ -54,7 +59,10 @@ public class HUD : MonoBehaviour
 
     private void HUDLoaded(Scene s, LoadSceneMode l)
     {
-        OnHUDLoaded.Invoke(this);
+        if(s.name.Equals(SceneLoader.HUD_SCENE))
+        {
+            OnHUDLoaded.Invoke(this);
+        }
     }
 
 
@@ -113,8 +121,21 @@ public class HUD : MonoBehaviour
 
     public void SetVisible(bool enabled)
     {
-        canvas.enabled = enabled ? true : false;
+        canvas.enabled = enabled;
     }
+
+
+
+    public void ShowScoreboard(bool show)
+    {
+        scoreboard.SetActive(show);
+    }
+
+    public void UpdateScoreboardStats(GameManager.GameStats stats)
+    {
+        
+    }
+
 
 
     public readonly struct HUDElements

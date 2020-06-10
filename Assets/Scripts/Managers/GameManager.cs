@@ -25,6 +25,9 @@ public class GameManager : MonoBehaviour
 
     private HUD hud;
 
+    public GameStats Stats { get { return new GameStats(GameTimeSeconds, fps_last_framerate, playerManager); } }
+
+
     public float GameTimeSeconds { get; private set; }
     private bool isGameOver;
 
@@ -141,7 +144,6 @@ public class GameManager : MonoBehaviour
 
 
 
-
     private IEnumerator WaitForStartOfGame(float seconds)
     {
         int consecutiveFramesWithNoGeneration = 0;
@@ -230,6 +232,15 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        // Display the scoreboard 
+        bool showScoreboard = Input.GetButton("Scoreboard");
+        hud.ShowScoreboard(showScoreboard);
+        // Update the values if we need to
+        if(showScoreboard)
+        {
+            hud.UpdateScoreboardStats(Stats);
+        }
+
         // Update FPS
         if (fps_time_counter < fps_refresh_time)
         {
@@ -481,4 +492,53 @@ public class GameManager : MonoBehaviour
             this.hud.SetVisible(false);
         }
     }
+
+
+
+
+    public void ShowScoreBoard(bool show)
+    {
+        if(show)
+        {
+
+        }
+    }
+
+
+
+    public class GameStats
+    {
+        public readonly float game_time_seconds;
+        public readonly float last_fps;
+
+        public readonly List<PlayerStats> Players = new List<PlayerStats>();
+
+        public GameStats(float game_time_seconds, float last_fps, PlayerManager playerManager)
+        {
+            this.game_time_seconds = game_time_seconds;
+            this.last_fps = last_fps;
+
+            // Get the stats for each player
+            foreach (Player p in playerManager.AllPlayers)
+            {
+                Players.Add(new PlayerStats(p));
+            }
+        }
+
+
+        public class PlayerStats
+        {
+            public readonly string name;
+            public readonly int deaths;
+            public readonly int coins;
+
+            public PlayerStats(Player player)
+            {
+                name = player.PLAYER_ID;
+                deaths = player.Deaths;
+                coins = player.GetInventory<Coin>().Total;
+            }
+        }
+    }
+
 }
