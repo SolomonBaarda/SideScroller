@@ -311,9 +311,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateNavMesh(Chunk chunk)
     {
-        Vector2 centre = chunk.transform.position;
-
-        enemyManager.UpdateNavMesh(new Bounds(centre, chunk.bounds));
+        enemyManager.UpdateNavMesh(chunk.Bounds);
     }
 
 

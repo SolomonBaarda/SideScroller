@@ -61,6 +61,12 @@ public class PlayerController : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Returns the float with the largest absolute value.
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
     private float GetMax(float a, float b)
     {
         if(Mathf.Abs(a) > Mathf.Abs(b))
@@ -132,8 +138,6 @@ public class PlayerController : MonoBehaviour
         // Move last
         movement.Move(horizontalMovement * Time.fixedDeltaTime, crouch, jump);
     }
-
-
 
 
 

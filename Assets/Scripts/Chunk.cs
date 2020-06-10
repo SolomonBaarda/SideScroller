@@ -15,7 +15,7 @@ public class Chunk : MonoBehaviour
     public List<TerrainManager.TerrainChunk.Respawn> respawnPoints;
 
     public TerrainManager.Direction direction;
-    public Vector2 bounds;
+    public Bounds Bounds { get { return boxCollider.bounds; } }
     private Vector2 cellSize;
     public Vector2Int chunkID;
     public int sampleTerrainIndex;
@@ -28,12 +28,15 @@ public class Chunk : MonoBehaviour
     public List<CameraPath> cameraPaths;
     private Transform cameraPathChild;
 
+    private BoxCollider2D boxCollider;
+
     public void CreateChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldSpace,
         List<TerrainManager.TerrainChunk.Exit> exits, List<TerrainManager.TerrainChunk.Respawn> respawnPoints,
         TerrainManager.Direction direction, int sampleTerrainIndex, Vector2Int chunkID)
     {
+        boxCollider = GetComponent<BoxCollider2D>();
+
         // Assign variables 
-        this.bounds = bounds;
         this.cellSize = cellSize;
         this.enteranceWorldSpace = enteranceWorldSpace;
         this.exits = exits;
@@ -46,8 +49,7 @@ public class Chunk : MonoBehaviour
         transform.name = ToString();
 
         // Exit collider
-        BoxCollider2D b = GetComponent<BoxCollider2D>();
-        b.size = bounds;
+        boxCollider.size = bounds;
         transform.position = centre;
 
         // Get the camera paths
@@ -211,24 +213,22 @@ public class Chunk : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        BoxCollider2D b = GetComponent<BoxCollider2D>();
-
-        Vector2 i = new Vector2(b.bounds.max.x, b.bounds.min.y);
-        Vector2 j = new Vector2(b.bounds.min.x, b.bounds.max.y);
+        Vector2 i = new Vector2(Bounds.max.x, Bounds.min.y);
+        Vector2 j = new Vector2(Bounds.min.x, Bounds.max.y);
 
         // Draw a red border to the collision area
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(b.bounds.min, i);
-        Gizmos.DrawLine(b.bounds.min, j);
-        Gizmos.DrawLine(b.bounds.max, i);
-        Gizmos.DrawLine(b.bounds.max, j);
+        Gizmos.DrawLine(Bounds.min, i);
+        Gizmos.DrawLine(Bounds.min, j);
+        Gizmos.DrawLine(Bounds.max, i);
+        Gizmos.DrawLine(Bounds.max, j);
     }
 
     private void OnDrawGizmosSelected()
     {
         // Centre
         Gizmos.color = Color.white;
-        Gizmos.DrawCube(transform.position, 0.25f * Vector2.one);
+        Gizmos.DrawCube(Bounds.center, 0.25f * Vector2.one);
 
         // Enterance marker
         Gizmos.color = Color.yellow;

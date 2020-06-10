@@ -11,7 +11,7 @@ public class MovingCamera : MonoBehaviour, ILocatable
     private ILocatable following;
 
     private Camera c;
-    public static string LAYER_CAMERA = "Camera";
+    public static string LAYER = "Camera";
 
     public Chunk CurrentChunk { get; private set; }
     public Vector2 Position { get { return transform.position; } }
@@ -231,7 +231,11 @@ public class MovingCamera : MonoBehaviour, ILocatable
 
     public void UpdateCurrentChunk()
     {
-        CurrentChunk = Chunk.UpdateCurrentChunk(CurrentChunk, Position);
+        // Only update the current chunk if we are no longer in the old one
+        if(CurrentChunk == null || !CurrentChunk.Bounds.Contains(transform.position)) 
+        {
+            CurrentChunk = Chunk.UpdateCurrentChunk(CurrentChunk, Position);
+        }
     }
 
 
