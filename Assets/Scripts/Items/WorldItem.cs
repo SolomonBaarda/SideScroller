@@ -77,8 +77,9 @@ public class WorldItem : MonoBehaviour
     }
 
 
+
     /// <summary>
-    /// Returns the monobehaviour that implements class T in GameObject. 
+    /// Returns the monobehaviour that implements class T in the GameObject. 
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="toCheck"></param>
@@ -103,7 +104,17 @@ public class WorldItem : MonoBehaviour
     }
 
 
-    public static IEnumerator WaitForThenInvoke(GameObject item, ContactFilter2D filter, Action action, float secondsToCheck = 16)
+
+    /// <summary>
+    /// Checks all Collider2D's attached to the GameObject for any collisions using the filter for a maximum of secondsToCheck. 
+    /// If a collision occurs then Action is invoked and the method returns.
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="filter"></param>
+    /// <param name="action"></param>
+    /// <param name="secondsToCheck"></param>
+    /// <returns></returns>
+    public static IEnumerator WaitForThenInvoke(GameObject item, ContactFilter2D filter, Action action, float secondsToCheck = 8)
     {
         // Get colliders and set layer mask
         Collider2D[] allColliders = item.GetComponents<Collider2D>();

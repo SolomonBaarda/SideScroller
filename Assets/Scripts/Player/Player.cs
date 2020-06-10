@@ -72,7 +72,7 @@ public class Player : MonoBehaviour, ILocatable
         }
     }
 
-    public HandPosition RightHandPosition { get; private set; }
+    public HandPosition RightHandPosition { get; private set; } = HandPosition.Down;
 
     public State CurrentState
     {
