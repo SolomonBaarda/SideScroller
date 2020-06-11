@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 
@@ -15,15 +16,21 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
 
     public bool IsBeingHeld { get; private set; } = false;
 
+    public const float DEFAULT_ATTACKED_COOLDOWN_SECONDS = 0.25f;
+    private DateTime lastAttacked;
+    public bool CanBeAttacked => !IsBeingHeld && (DateTime.Now - lastAttacked).TotalSeconds >= DEFAULT_ATTACKED_COOLDOWN_SECONDS;
+
 
     [Range(0, 100)]
-    public int onAttackMultiplier = 4;
+    public int onAttackMultiplier = 8;
 
     public override void Awake()
     {
         base.Awake();
         interactToPickUp = true;
         trigger.enabled = true;
+
+        lastAttacked = DateTime.Now;
 
         // Call the UpdatePayload method repeatedly
         InvokeRepeating("UpdatePayload", 1, Chunk.UPDATE_CHUNK_REPEATING_DEFAULT_TIME);
@@ -137,13 +144,15 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
 
     public void WasAttacked(Vector2 attackerPosition, Vector2 attackerVelocity, IWeapon weapon)
     {
+        lastAttacked = DateTime.Now;
+
         // Direction vector from attacker to this
         Vector2 normal = ((Vector2)transform.position - attackerPosition).normalized;
 
         // Combine with attacker velocity
         rigid.velocity += attackerVelocity;
-        // Add a directional force to the payload
-        rigid.AddForce(normal * onAttackMultiplier, ForceMode2D.Impulse);
+        // Add a directional force to the payload (boost the y by a little bit)
+        rigid.AddForce(normal * new Vector2(1, 1.25f) * onAttackMultiplier, ForceMode2D.Impulse);
     }
 
     public void Hold(Player player)

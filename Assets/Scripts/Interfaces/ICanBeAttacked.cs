@@ -5,6 +5,11 @@ using UnityEngine;
 public interface ICanBeAttacked
 {
     /// <summary>
+    /// Returns if it is a valid time to attack this object.
+    /// </summary>
+    bool CanBeAttacked { get; }
+
+    /// <summary>
     /// Called when this item is attacked.
     /// </summary>
     /// <param name="attackerPosition"></param>

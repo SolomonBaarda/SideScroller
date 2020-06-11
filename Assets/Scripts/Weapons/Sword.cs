@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld, IBlock
@@ -23,15 +22,10 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld, IBlock
 
     private Rigidbody2D rigid;
 
+    // Pass parent game object - should be Player
+    public List<GameObject> AreaOfAttack => PlayerInteraction.InAreaOfAttack(blade, transform.parent.gameObject);
 
-    public List<GameObject> AreaOfAttack
-    {
-        get
-        {
-            // Pass parent game object - should be Player
-            return PlayerInteraction.InAreaOfAttack(blade, transform.parent.gameObject);
-        }
-    }
+    public bool CanBeAttacked => IsAttacking;
 
 
     private void Awake()
@@ -52,7 +46,10 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld, IBlock
                 {
                     // Attack all the items
                     ICanBeAttacked a = (ICanBeAttacked)WorldItem.GetClass<ICanBeAttacked>(g);
-                    a.WasAttacked(attackerPosition, attackerVelocity, (IWeapon)WorldItem.GetClass<IWeapon>(gameObject));
+                    if(a.CanBeAttacked)
+                    {
+                        a.WasAttacked(attackerPosition, attackerVelocity, (IWeapon)WorldItem.GetClass<IWeapon>(gameObject));
+                    }
                 }
             }
         }

@@ -51,12 +51,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  itemName: 0
   sprite: {fileID: -5025815261079487931, guid: 81ef0d7fc2268944e896548188e56b9b, type: 3}
   collideToPickUp: 0
   interactToPickUp: 0
   groundPosition: {fileID: 1926676552870462114}
-  onAttackMultiplier: 2
+  onAttackMultiplier: 14
 --- !u!212 &5291220104402161032
 SpriteRenderer:
   m_ObjectHideFlags: 0

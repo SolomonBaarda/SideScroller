@@ -13,6 +13,8 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
 
     public IWeapon Weapon => inventory.GetPrimaryWeapon();
 
+    public bool CanBeAttacked => player.IsAlive;
+
     private PlayerInventory inventory;
     private Player player;
     private Rigidbody2D rigid;

@@ -20,6 +20,7 @@ public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked,
     public bool IsLootable => hasContents && !IsBeingHeld; 
 
     public bool IsAttacking { get; private set; } = false;
+    private bool isBroken = false;
 
     public string Name => "Pot";
 
@@ -27,6 +28,8 @@ public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked,
 
     // Return an empty list
     List<GameObject> IWeapon.AreaOfAttack => new List<GameObject>();
+
+    public bool CanBeAttacked => !isBroken;
 
     new private void Awake()
     {
@@ -55,12 +58,17 @@ public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked,
 
     private void Break()
     {
-        StopAllCoroutines();
-        InteractionManager.OnInteractWithItem(gameObject);
+        if(!isBroken)
+        {
+            isBroken = true;
 
-        // Break the pot
-        Animator a = GetComponent<Animator>();
-        a.SetTrigger("Break");
+            StopAllCoroutines();
+            InteractionManager.OnInteractWithItem(gameObject);
+
+            // Break the pot
+            Animator a = GetComponent<Animator>();
+            a.SetTrigger("Break");
+        }
     }
 
     public void Hold(Player player)
@@ -109,11 +117,6 @@ public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked,
     }
 
 
-    public List<GameObject> AreaOfAttack()
-    {
-        throw new System.NotImplementedException();
-    }
-
     public void Attack(Vector2 attackerPosition, Vector2 attackerVelocity, Player.Facing facing)
     {
         int direction = facing == Player.Facing.Right ? 1 : -1;
@@ -124,6 +127,6 @@ public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked,
 
     public void AttackWasBlocked()
     {
-        throw new System.NotImplementedException();
+        rigid.velocity = Vector2.zero;
     }
 }
