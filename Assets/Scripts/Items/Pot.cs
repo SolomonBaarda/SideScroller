@@ -131,7 +131,7 @@ public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked,
 
             // Throw the pot in the correct direction
             int xAxis = facing == Player.Facing.Right ? 1 : -1;
-            Vector2 direction = new Vector2(xAxis * 1, 1.1f);
+            Vector2 direction = new Vector2(xAxis * 1.15f, 1);
 
             Drop(attackerPosition, attackerVelocity + direction * ThrownForce);
         }
