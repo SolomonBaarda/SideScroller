@@ -103,7 +103,7 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld, IBlock
     }
 
 
-    public void Attack(Vector2 attackerPosition, Vector2 attackerVelocity, Player.Facing _)
+    public void Attack(Vector2 attackerPosition, Vector2 attackerVelocity, Player.Facing facing, ref GameObject inventoryReferenceToWeapon)
     {
         // Only attack if not already doing so
         if (!IsAttacking)

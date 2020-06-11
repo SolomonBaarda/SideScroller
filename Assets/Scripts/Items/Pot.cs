@@ -22,6 +22,8 @@ public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked,
     public bool IsAttacking { get; private set; } = false;
     private bool isBroken = false;
 
+    public const float ThrownForce = 14f;
+
     public string Name => "Pot";
 
     public bool WasBlocked { get; private set; } = false;
@@ -103,6 +105,7 @@ public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked,
         ContactFilter2D filter = new ContactFilter2D();
         filter.SetLayerMask(LayerMask.GetMask(Hazard.LAYER, GroundCheck.GROUND_LAYER));
         filter.useTriggers = true;
+
         StartCoroutine(WaitForThenInvoke(gameObject, filter, Break));
     }
 
@@ -117,12 +120,21 @@ public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked,
     }
 
 
-    public void Attack(Vector2 attackerPosition, Vector2 attackerVelocity, Player.Facing facing)
+    public void Attack(Vector2 attackerPosition, Vector2 attackerVelocity, Player.Facing facing, ref GameObject inventoryReferenceToThisWeapon)
     {
-        int direction = facing == Player.Facing.Right ? 1 : -1;
-        //Vector2 force = direction * new Vector2(1, 1);
+        if(!IsAttacking)
+        {
+            // Attack
+            IsAttacking = true;
+            // Unassign the weapon from the inventory
+            inventoryReferenceToThisWeapon = null;
 
-        Drop(attackerPosition, Vector2.zero);
+            // Throw the pot in the correct direction
+            int xAxis = facing == Player.Facing.Right ? 1 : -1;
+            Vector2 direction = new Vector2(xAxis * 1, 1.1f);
+
+            Drop(attackerPosition, attackerVelocity + direction * ThrownForce);
+        }
     }
 
     public void AttackWasBlocked()
