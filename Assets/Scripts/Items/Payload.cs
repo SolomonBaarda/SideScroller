@@ -133,9 +133,8 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
 
     public void SetPosition(Vector2 position)
     {
-        Vector2 vel = rigid.velocity;
-        vel.y = 0;
-        rigid.velocity = vel;
+        rigid.velocity = Vector2.zero;
+        transform.rotation = Quaternion.identity;
 
         // Add a little to centre the player
         transform.position = position + -(Vector2)GroundPosition.localPosition;

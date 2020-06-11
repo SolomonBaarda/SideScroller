@@ -14,7 +14,7 @@ public class WorldItem : MonoBehaviour
     protected Sprite sprite;
     protected SpriteRenderer spriteRenderer;
     [Space]
-    protected BoxCollider2D trigger;
+    protected Collider2D trigger;
 
     public virtual void Awake()
     {
@@ -54,7 +54,7 @@ public class WorldItem : MonoBehaviour
         // Set up the box collider
         if (trigger == null)
         {
-            trigger = GetComponent<BoxCollider2D>();
+            trigger = GetComponent<Collider2D>();
             if (trigger == null)
             {
                 trigger = gameObject.AddComponent<BoxCollider2D>();

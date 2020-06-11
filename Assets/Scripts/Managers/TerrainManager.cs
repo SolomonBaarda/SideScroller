@@ -200,7 +200,7 @@ public class TerrainManager : MonoBehaviour
     public void Generate(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID, SampleTerrain terrain, bool loadInBackground)
     {
         // Ensure the chunk is not already being generated 
-        if(!ChunkAlreadyGenerating(chunkID))
+        if (!ChunkAlreadyGenerating(chunkID))
         {
             SetChunkGenerating(chunkID);
 
@@ -272,10 +272,10 @@ public class TerrainManager : MonoBehaviour
         {
             invert = -1;
         }
-        
+
         float currentFrameTime = 0;
         float tilesSinceLastPause = 0;
-        int minimumTilesPerFrame = (int) (layer.tilesInThisLayer.Count * PERCENTAGE_OF_CHUNK_LAYER_TO_GEN_EACH_FRAME);
+        int minimumTilesPerFrame = (int)(layer.tilesInThisLayer.Count * PERCENTAGE_OF_CHUNK_LAYER_TO_GEN_EACH_FRAME);
 
         // Copy wall
         foreach (SampleTerrain.Layer.Tile tile in layer.tilesInThisLayer)
@@ -310,7 +310,7 @@ public class TerrainManager : MonoBehaviour
             // Set the tile
             SetTile(tilemap, newTileType, newTilePos);
 
-            if(loadInBackground)
+            if (loadInBackground)
             {
                 // Calculate the time since the last coroutine return 
                 DateTime after = DateTime.Now;
@@ -358,8 +358,10 @@ public class TerrainManager : MonoBehaviour
         if (b.boundsTile.y % 2 == 1) { centre.y += CellSize.y / 2; }
 
         // Add extra respawn points 
-        List<TerrainChunk.Respawn> respawnPoints = new List<TerrainChunk.Respawn>();
-        respawnPoints.Add(new TerrainChunk.Respawn(Payload.Direction.None, entryPositionWorld));
+        List<TerrainChunk.Respawn> respawnPoints = new List<TerrainChunk.Respawn>
+        {
+            new TerrainChunk.Respawn(Payload.Direction.None, new Vector2(entryPositionWorld.x, entryPositionWorld.y + CellSize.y/2))
+        };
 
         // Add all the extra respawn points
         foreach (SampleTerrain.Spawn s in terrain.extraRespawnPoints)
@@ -380,6 +382,7 @@ public class TerrainManager : MonoBehaviour
 
             Vector2Int respawnTile = entryTile + new Vector2Int(invert * s.tilePos.x, s.tilePos.y);
             Vector2 spawnPos = (Vector2)grid.CellToWorld(new Vector3Int(respawnTile.x, respawnTile.y, 0)) + CellSize / 2;
+            spawnPos.y += CellSize.y / 2;
             respawnPoints.Add(new TerrainChunk.Respawn(dir, spawnPos));
         }
 
