@@ -129,11 +129,11 @@ public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked,
             // Unassign the weapon from the inventory
             inventoryReferenceToThisWeapon = null;
 
-            // Throw the pot in the correct direction
-            int xAxis = facing == Player.Facing.Right ? 1 : -1;
-            Vector2 direction = new Vector2(xAxis * 1.15f, 1);
+            // Calculate the correct trajectory for pot to be thrown
+            // TODO
+            Vector2 normal = (attackerVelocity).normalized;
 
-            Drop(attackerPosition, attackerVelocity + direction * ThrownForce);
+            Drop(attackerPosition, attackerVelocity + normal * ThrownForce);
         }
     }
 

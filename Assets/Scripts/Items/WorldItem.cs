@@ -65,6 +65,14 @@ public class WorldItem : MonoBehaviour
     }
 
 
+    public virtual void SetPosition(Vector2 position)
+    {
+        transform.position = position;
+    }
+
+
+
+
     /// <summary>
     /// Returns true if the attached GameObject has a script that implements the class T.
     /// </summary>

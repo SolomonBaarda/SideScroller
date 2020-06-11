@@ -461,7 +461,7 @@ public class TerrainManager : MonoBehaviour
             // Get position of the centre of the tile
             Vector2 pos = (Vector2)grid.CellToWorld(new Vector3Int(entryTile.x + invert * item.tilePos.x, entryTile.y + item.tilePos.y, 0)) + (CellSize / 2);
             // And add it
-            allItemPositions.Add(new TerrainChunk.Item(item.name, pos));
+            allItemPositions.Add(new TerrainChunk.Item(item.name, pos, new Vector2(pos.x, pos.y - CellSize.y/2)));
         }
 
         // Get all extra world objects
@@ -698,11 +698,13 @@ public class TerrainManager : MonoBehaviour
         {
             public string name;
             public Vector2 centreOfTile;
+            public Vector2 groundPosition;
 
-            public Item(string name, Vector2 centreOfTile)
+            public Item(string name, Vector2 centreOfTile, Vector2 groundPosition)
             {
                 this.name = name;
                 this.centreOfTile = centreOfTile;
+                this.groundPosition = groundPosition;
             }
         }
 

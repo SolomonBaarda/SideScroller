@@ -14,6 +14,8 @@ public class Chest : WorldItem, IInteractable, ILootable
     private enum ChestContents { Full, Empty };
     [SerializeField] private ChestContents contents = ChestContents.Full;
 
+    public Transform groundPosition;
+
     private Animator a;
 
     new private void Awake()
@@ -21,6 +23,12 @@ public class Chest : WorldItem, IInteractable, ILootable
         base.Awake();
 
         a = GetComponent<Animator>();
+    }
+
+
+    public new void SetPosition(Vector2 position)
+    {
+        transform.position = position + -(Vector2)groundPosition.localPosition;
     }
 
 

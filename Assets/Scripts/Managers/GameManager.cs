@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
     public float GameTimeSeconds { get; private set; }
     private bool isGameOver;
 
-    public const float GAME_START_WAIT_SECONDS = 1f;
+    public const float GAME_START_WAIT_SECONDS = 2f;
 
     // Game rules
     public Presets presets;
@@ -136,7 +136,7 @@ public class GameManager : MonoBehaviour
     {
         if (chunkID.Equals(ChunkManager.initialChunkID))
         {
-            StartCoroutine(WaitForStartOfGame(2));
+            StartCoroutine(WaitForStartOfGame(GAME_START_WAIT_SECONDS));
 
             ChunkManager.OnChunkCreated -= CheckStartOfGame;
         }

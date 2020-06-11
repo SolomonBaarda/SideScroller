@@ -75,7 +75,7 @@ public class CollectableItem : WorldItem, ICollidable, IInteractable, ICollectab
     {
         // Set position and velocity to throw the item
         transform.parent = null;
-        transform.position = position;
+        SetPosition(position);
 
         rigid.velocity = velocity;
 

@@ -16,28 +16,28 @@ TextureImporter:
     second: chest1_3
   - first:
       213: -6834524911116659543
-    second: chest_0
+    second: chest
   - first:
       213: 5045073161074915229
-    second: chest_1
+    second: chest1
   - first:
       213: -1089752354001653685
-    second: chest_2
+    second: chest2
   - first:
       213: -4166000864571609707
-    second: chest_3
+    second: chest3
   - first:
       213: -3736696228594050809
-    second: chest_0
+    second: chest
   - first:
       213: -1871430693553657475
-    second: chest_1
+    second: chest1
   - first:
       213: -8805590474859406771
-    second: chest_2
+    second: chest2
   - first:
       213: 4098908431922667116
-    second: chest_3
+    second: chest3
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -122,17 +122,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: chest_0
+      name: chest
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 16
         height: 19
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42105263}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
+      outline:
+      - - {x: -6, y: 6.5}
+        - {x: -8, y: 4.5}
+        - {x: -8, y: -9.5}
+        - {x: 8, y: -9.5}
+        - {x: 8, y: 4.5}
+        - {x: 6, y: 6.5}
       physicsShape: []
       tessellationDetail: 0
       bones: []
@@ -143,17 +149,23 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: chest_1
+      name: chest1
       rect:
         serializedVersion: 2
         x: 16
         y: 0
         width: 16
         height: 19
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42105263}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
+      outline:
+      - - {x: -6, y: 7.5}
+        - {x: -8, y: 5.5}
+        - {x: -8, y: -9.5}
+        - {x: 8, y: -9.5}
+        - {x: 8, y: 5.5}
+        - {x: 6, y: 7.5}
       physicsShape: []
       tessellationDetail: 0
       bones: []
@@ -164,17 +176,23 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: chest_2
+      name: chest2
       rect:
         serializedVersion: 2
         x: 32
         y: 0
         width: 16
         height: 19
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42105263}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
+      outline:
+      - - {x: 6, y: 8.5}
+        - {x: -6, y: 8.5}
+        - {x: -8, y: 7.5}
+        - {x: -8, y: -9.5}
+        - {x: 8, y: -9.5}
+        - {x: 8, y: 7.5}
       physicsShape: []
       tessellationDetail: 0
       bones: []
@@ -185,17 +203,23 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: chest_3
+      name: chest3
       rect:
         serializedVersion: 2
         x: 48
         y: 0
         width: 16
         height: 19
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.42105263}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
+      outline:
+      - - {x: 6, y: 9.5}
+        - {x: -5, y: 9.5}
+        - {x: -8, y: 8.5}
+        - {x: -8, y: -9.5}
+        - {x: 8, y: -9.5}
+        - {x: 8, y: 8.5}
       physicsShape: []
       tessellationDetail: 0
       bones: []

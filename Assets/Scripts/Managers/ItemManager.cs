@@ -174,18 +174,25 @@ public class ItemManager : MonoBehaviour
             {
                 if (random.Next(0, 1) <= itemChance)
                 {
-                    SpawnItem(prefab, item.centreOfTile, item.name.ToString());
+                    GameObject g = SpawnItem(prefab, item.centreOfTile, item.name.ToString());
                 }
             }
         }
     }
 
 
-    private GameObject SpawnItem(GameObject item, Vector2 position, string name)
+    private GameObject SpawnItem(GameObject itemPrefab, Vector2 position, string name)
     {
-        GameObject g = Instantiate(item, position, Quaternion.identity, transform);
+        GameObject g = Instantiate(itemPrefab, position, Quaternion.identity, transform);
         g.layer = LayerMask.NameToLayer(ITEM_LAYER);
         g.name = name;
+
+        // Set the position precisely if it is a world item
+        if(WorldItem.ExtendsClass<WorldItem>(g))
+        {
+            WorldItem i = (WorldItem)WorldItem.GetClass<WorldItem>(g);
+            i.SetPosition(position);
+        }
 
         return g;
     }
