@@ -135,7 +135,7 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
     }
 
 
-    public void WasAttacked(Vector2 attackerPosition, Vector2 attackerVelocity)
+    public void WasAttacked(Vector2 attackerPosition, Vector2 attackerVelocity, IWeapon weapon)
     {
         // Direction vector from attacker to this
         Vector2 normal = ((Vector2)transform.position - attackerPosition).normalized;

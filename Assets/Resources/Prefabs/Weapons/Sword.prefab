@@ -76,7 +76,7 @@ GameObject:
   - component: {fileID: 7642302496285722226}
   - component: {fileID: 857970901709866055}
   m_Layer: 14
-  m_Name: Fencing Sword
+  m_Name: Sword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

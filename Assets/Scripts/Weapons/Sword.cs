@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
-public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
+public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld, IBlock
 {
     public string Name => "Sword";
 
     public bool IsAttacking { get; private set; } = false;
+    public bool WasBlocked { get; private set; } = false;
 
     public Collider2D blade;
 
@@ -19,10 +21,17 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
 
     public bool IsBeingHeld { get; private set; } = false;
 
-    //public Player.WeaponPosition Position { get; set; } = Player.WeaponPosition.Down;
-
     private Rigidbody2D rigid;
 
+
+    public List<GameObject> AreaOfAttack
+    {
+        get
+        {
+            // Pass parent game object - should be Player
+            return PlayerInteraction.InAreaOfAttack(blade, transform.parent.gameObject);
+        }
+    }
 
 
     private void Awake()
@@ -30,22 +39,21 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
         rigid = GetComponent<Rigidbody2D>();
     }
 
-    public List<GameObject> InAreaOfAttack()
-    {
-        // Pass parent game object - should be Player
-        return PlayerInteraction.InAreaOfAttack(blade, transform.parent.gameObject);
-    }
 
-
-    private void AttackAllOnce(Vector2 attackerPosition, Vector2 attackerVelocity)
+    private void TryAttackAllOnce(Vector2 attackerPosition, Vector2 attackerVelocity)
     {
-        foreach (GameObject g in InAreaOfAttack())
+        // Ensure the sword hasn't been blocked first
+        if (!WasBlocked)
         {
-            if (WorldItem.ExtendsClass<ICanBeAttacked>(g))
+            foreach (GameObject g in AreaOfAttack)
             {
-                // Attack all the items
-                ICanBeAttacked a = (ICanBeAttacked)WorldItem.GetClass<ICanBeAttacked>(g);
-                a.WasAttacked(attackerPosition, attackerVelocity);
+                // The object can be attacked
+                if (WorldItem.ExtendsClass<ICanBeAttacked>(g))
+                {
+                    // Attack all the items
+                    ICanBeAttacked a = (ICanBeAttacked)WorldItem.GetClass<ICanBeAttacked>(g);
+                    a.WasAttacked(attackerPosition, attackerVelocity, (IWeapon)WorldItem.GetClass<IWeapon>(gameObject));
+                }
             }
         }
     }
@@ -54,18 +62,26 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
     private IEnumerator SwingSword(Vector2 attackerPosition, Vector2 attackerVelocity)
     {
         IsAttacking = true;
+        WasBlocked = false;
+        Vector2 originalPosition = transform.localPosition;
 
         // Attack forward
         float attackTimer = 0;
-        while (attackTimer <= StabTimeSeconds)
+        while (attackTimer <= StabTimeSeconds && !WasBlocked)
         {
             // Attack everything 
-            AttackAllOnce(attackerPosition, attackerVelocity);
+            TryAttackAllOnce(attackerPosition, attackerVelocity);
+
+            // Break out if was just blocked
+            if(WasBlocked)
+            {
+                break;
+            }
 
             // Stab forward for next frame
-            Vector2 currentPos = transform.position;
-            currentPos.x += transform.parent.localScale.x * (StabSpeed * Time.deltaTime);
-            transform.position = currentPos;
+            Vector2 currentPos = transform.localPosition;
+            currentPos.x += StabSpeed * Time.deltaTime;
+            transform.localPosition = currentPos;
 
             // Update the timer
             attackTimer += Time.deltaTime;
@@ -74,12 +90,12 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
 
         // Bring sword back (cooldown)
         attackTimer = 0;
-        while (attackTimer <= StabTimeSeconds)
+        while (attackTimer <= StabTimeSeconds && transform.localPosition.x > originalPosition.x)
         {
-            // Stab forward for next frame
-            Vector2 currentPos = transform.position;
-            currentPos.x -= transform.parent.localScale.x * (StabSpeed * Time.deltaTime);
-            transform.position = currentPos;
+            // Bring the sword back
+            Vector2 currentPos = transform.localPosition;
+            currentPos.x -= StabSpeed * Time.deltaTime;
+            transform.localPosition = currentPos;
 
             // Update the timer
             attackTimer += Time.deltaTime;
@@ -107,7 +123,7 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
 
         rigid.isKinematic = true;
         rigid.velocity = Vector2.zero;
-        
+
         transform.parent = player.transform;
 
         StopAllCoroutines();
@@ -158,4 +174,30 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld
     }
 
 
+    public bool DidBlock(IWeapon weapon)
+    {
+        // Parry the sword
+        if (weapon is Sword)
+        {
+            return true;
+        }
+        return false;
+    }
+
+
+    public void AttackWasBlocked()
+    {
+        WasBlocked = true;
+    }
+
+
+    public void WasAttacked(Vector2 attackerPosition, Vector2 attackerVelocity, IWeapon weapon)
+    {
+        if(DidBlock(weapon))
+        {
+            // Block attack from weapon and also cancel this attack if it was going on
+            weapon.AttackWasBlocked();
+            AttackWasBlocked();
+        }
+    }
 }

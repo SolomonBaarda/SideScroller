@@ -22,6 +22,9 @@ public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked,
 
     public string Name => "Pot";
 
+    public bool WasBlocked => throw new System.NotImplementedException();
+
+    List<GameObject> IWeapon.AreaOfAttack => throw new System.NotImplementedException();
 
     new private void Awake()
     {
@@ -58,7 +61,7 @@ public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked,
         hasContents = false;
     }
 
-    public void WasAttacked(Vector2 attackerPosition, Vector2 attackerVelocity)
+    public void WasAttacked(Vector2 attackerPosition, Vector2 attackerVelocity, IWeapon weapon)
     {
         Break();
     }
@@ -119,7 +122,7 @@ public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked,
     }
 
 
-    public List<GameObject> InAreaOfAttack()
+    public List<GameObject> AreaOfAttack()
     {
         throw new System.NotImplementedException();
     }
@@ -132,4 +135,8 @@ public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked,
         Drop(attackerPosition, Vector2.zero);
     }
 
+    public void AttackWasBlocked()
+    {
+        throw new System.NotImplementedException();
+    }
 }

@@ -7,16 +7,13 @@ public interface IWeapon : IInteractable, ICanBeHeld
 
     bool IsAttacking { get; }
 
-    /// <summary>
-    /// The current position state of the weapon.
-    /// </summary>
-    //Player.WeaponPosition Position { get; set; }
+    bool WasBlocked { get; }
 
     /// <summary>
     /// Returns all GameObjects within the weapons current area of attack.
     /// </summary>
     /// <returns></returns>
-    List<GameObject> InAreaOfAttack();
+    List<GameObject> AreaOfAttack { get; }
 
     /// <summary>
     /// Attack all enemies in area of attack.
@@ -24,5 +21,7 @@ public interface IWeapon : IInteractable, ICanBeHeld
     /// <param name="attackerPosition"></param>
     /// <param name="attackerVelocity"></param>
     void Attack(Vector2 attackerPosition, Vector2 attackerVelocity, Player.Facing facing);
+
+    void AttackWasBlocked();
 }
 

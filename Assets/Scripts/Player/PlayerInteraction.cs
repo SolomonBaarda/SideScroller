@@ -203,7 +203,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
 
 
 
-    public void WasAttacked(Vector2 attackerPosition, Vector2 attackerVelocity)
+    public void WasAttacked(Vector2 attackerPosition, Vector2 attackerVelocity, IWeapon weapon)
     {
         PlayerManager.OnPlayerDie.Invoke(player);
     }

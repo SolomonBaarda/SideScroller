@@ -232,15 +232,6 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        // Display the scoreboard 
-        bool showScoreboard = Input.GetButton("Scoreboard");
-        hud.ShowScoreboard(showScoreboard);
-        // Update the values if we need to
-        if(showScoreboard)
-        {
-            hud.UpdateScoreboardStats(Stats);
-        }
-
         // Update FPS
         if (fps_time_counter < fps_refresh_time)
         {
@@ -253,6 +244,21 @@ public class GameManager : MonoBehaviour
             fps_frame_counter = 0;
             fps_time_counter = 0;
         }
+
+
+        // Display the scoreboard 
+        if (hud != null)
+        {
+            bool showScoreboard = Input.GetButton("Scoreboard");
+            hud.ShowScoreboard(showScoreboard);
+            // Update the values if we need to
+            if (showScoreboard)
+            {
+                hud.UpdateScoreboardStats(Stats);
+            }
+        }
+
+
 
         if (!isGameOver)
         {
