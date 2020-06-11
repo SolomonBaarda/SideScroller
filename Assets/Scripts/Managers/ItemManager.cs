@@ -91,10 +91,10 @@ public class ItemManager : MonoBehaviour
         if (WorldItem.ExtendsClass<ILootable>(item))
         {
             ILootable l = (ILootable)WorldItem.GetClass<ILootable>(item);
-            LootTable table = l.GetLootTable();
+            LootTable table = l.Table;
 
             // Generate each item
-            for (int i = 0; i < l.GetTotalItemsToBeLooted(); i++)
+            for (int i = 0; i < l.TotalItemsToBeLooted; i++)
             {
                 // Choose a random piece of loot
                 int value = random.Next(0, table.GetTotalWeight());

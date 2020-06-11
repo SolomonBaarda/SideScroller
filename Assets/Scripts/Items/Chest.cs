@@ -2,13 +2,17 @@
 
 public class Chest : WorldItem, IInteractable, ILootable
 {
+    public LootTable lootTable;
+    public LootTable Table => lootTable;
+    public int TotalItemsToBeLooted => Table.InventorySize;
+
+    public bool IsLootable => contents == ChestContents.Full && state == ChestState.Open;
+
     private enum ChestState { Locked, Closed, Open };
     [SerializeField] private ChestState state = ChestState.Closed;
 
     private enum ChestContents { Full, Empty };
     [SerializeField] private ChestContents contents = ChestContents.Full;
-
-    public LootTable table;
 
     private Animator a;
 
@@ -52,21 +56,6 @@ public class Chest : WorldItem, IInteractable, ILootable
         return true;
     }
 
-    public LootTable GetLootTable()
-    {
-        return table;
-    }
-
-    public int GetTotalItemsToBeLooted()
-    {
-        return table.InventorySize;
-    }
-
-
-    public bool IsLootable()
-    {
-        return contents == ChestContents.Full && state == ChestState.Open;
-    }
 
     public void Loot()
     {

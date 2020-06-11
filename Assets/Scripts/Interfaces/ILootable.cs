@@ -4,11 +4,11 @@ using UnityEngine;
 
 public interface ILootable 
 {
-    LootTable GetLootTable();
+    LootTable Table { get; }
 
-    int GetTotalItemsToBeLooted();
+    int TotalItemsToBeLooted { get; }
 
-    bool IsLootable();
+    bool IsLootable { get; }
 
     void Loot();
 }

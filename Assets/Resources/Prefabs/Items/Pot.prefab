@@ -50,10 +50,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  itemName: 2
   sprite: {fileID: 21300000, guid: 4022953ce3b89a74eb9ad2abeca26715, type: 3}
-  table: {fileID: 11400000, guid: a8c2045a22d823c41985408f6b3ccda6, type: 2}
-  inventory_size: 1
+  lootTable: {fileID: 11400000, guid: a8c2045a22d823c41985408f6b3ccda6, type: 2}
+  hasContents: 1
   groundPosition: {fileID: 1407149155974484415}
 --- !u!95 &1134636932641857486
 Animator:

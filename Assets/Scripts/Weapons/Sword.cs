@@ -176,8 +176,8 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld, IBlock
 
     public bool DidBlock(IWeapon weapon)
     {
-        // Parry the sword
-        if (weapon is Sword)
+        // Parry the sword if this weapon is attaking
+        if (weapon is Sword && IsAttacking)
         {
             return true;
         }

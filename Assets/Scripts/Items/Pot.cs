@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked, ICanBeHeld, IWeapon
 {
-    public LootTable table;
+    public LootTable lootTable;
+    public LootTable Table => lootTable;
 
     [SerializeField]
     private bool hasContents = true;
@@ -12,19 +13,20 @@ public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked,
     private Rigidbody2D rigid;
 
     public Transform groundPosition;
-
     public Transform GroundPosition { get { return groundPosition; } }
 
     public bool IsBeingHeld { get; private set; } = false;
-
+    public int TotalItemsToBeLooted => Table.InventorySize;
+    public bool IsLootable => hasContents && !IsBeingHeld; 
 
     public bool IsAttacking { get; private set; } = false;
 
     public string Name => "Pot";
 
-    public bool WasBlocked => throw new System.NotImplementedException();
+    public bool WasBlocked { get; private set; } = false;
 
-    List<GameObject> IWeapon.AreaOfAttack => throw new System.NotImplementedException();
+    // Return an empty list
+    List<GameObject> IWeapon.AreaOfAttack => new List<GameObject>();
 
     new private void Awake()
     {
@@ -40,21 +42,6 @@ public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked,
     }
 
 
-    public LootTable GetLootTable()
-    {
-        return table;
-    }
-
-
-    public int GetTotalItemsToBeLooted()
-    {
-        return table.InventorySize;
-    }
-
-    public bool IsLootable()
-    {
-        return hasContents && !IsBeingHeld;
-    }
 
     public void Loot()
     {

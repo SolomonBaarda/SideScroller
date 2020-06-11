@@ -34,7 +34,7 @@ public class InteractionManager : MonoBehaviour
                 ILootable lootable = (ILootable)WorldItem.GetClass<ILootable>(item);
 
                 // Ensure it is not empty
-                if (lootable.IsLootable())
+                if (lootable.IsLootable)
                 {
                     // Generate loot
                     ItemManager.OnGenerateLoot.Invoke(item);
