@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 
 public class Player : MonoBehaviour, ILocatable
@@ -112,7 +113,9 @@ public class Player : MonoBehaviour, ILocatable
 
     public enum ID
     {
+        [Description("Player 1")]
         P1,
+        [Description("Player 2")]
         P2,
     }
 

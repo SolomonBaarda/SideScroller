@@ -245,7 +245,7 @@ public class GameManager : MonoBehaviour
             fps_time_counter = 0;
         }
 
-
+        // Input.GetButton("Scoreboard")
         CheckUpdateScoreboard(Input.GetButton("Scoreboard"));
 
         if (!isGameOver)
@@ -531,7 +531,7 @@ public class GameManager : MonoBehaviour
 
             public PlayerStats(Player player)
             {
-                name = player.PLAYER_ID;
+                name = player.PlayerID.ToString();
                 deaths = player.Deaths;
                 coins = player.GetInventory<Coin>().Total;
             }

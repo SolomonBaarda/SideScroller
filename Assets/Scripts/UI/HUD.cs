@@ -31,10 +31,10 @@ public class HUD : MonoBehaviour
 
     [Header("Scoreboard")]
     public GameObject scoreboard;
-    public GameObject scoreboardPlayersParent;
+    public GameObject scoreboardRowsParent;
 
-    public GameObject scoreboardPlayerPrefab;
-    private List<GameObject> scoreboardPlayers = new List<GameObject>();
+    public GameObject scoreboardRowPrefab;
+    private List<GameObject> scoreboardRows = new List<GameObject>();
 
 
     private SceneLoader sceneLoader;
@@ -137,22 +137,33 @@ public class HUD : MonoBehaviour
 
     public void UpdateScoreboardStats(GameManager.GameStats stats)
     {
-        // Add extra rows to the scoreboard if we need
-        while(scoreboardPlayers.Count < stats.Players.Count)
+        if(scoreboardRows.Count != stats.Players.Count)
         {
-            scoreboardPlayers.Add(Instantiate(scoreboardPlayerPrefab, scoreboardPlayersParent.transform));
-        }
-        // Remove excess rows if there are any
-        while (scoreboardPlayers.Count > stats.Players.Count)
-        {
-            GameObject toRemove = scoreboardPlayers[0];
-            scoreboardPlayers.RemoveAt(0);
-            Destroy(toRemove);
+            // Add extra rows to the scoreboard if we need
+            while (scoreboardRows.Count < stats.Players.Count)
+            {
+                scoreboardRows.Add(Instantiate(scoreboardRowPrefab, scoreboardRowsParent.transform));
+            }
+            // Remove excess rows if there are any
+            while (scoreboardRows.Count > stats.Players.Count)
+            {
+                GameObject toRemove = scoreboardRows[0];
+                scoreboardRows.RemoveAt(0);
+                Destroy(toRemove);
+            }
         }
 
-        for(int i = 0; i < scoreboardPlayers.Count; i++)
-        {
 
+        // Loop through each row in the scoreboard
+        for(int i = 0; i < scoreboardRows.Count; i++)
+        {
+            GameManager.GameStats.PlayerStats player = stats.Players[i];
+
+            // Set the player's stats
+            ScoreboardRow r = scoreboardRows[i].GetComponent<ScoreboardRow>();
+            r.SetColumnText(r.columns[0], player.name);
+            r.SetColumnText(r.columns[1], player.deaths.ToString());
+            r.SetColumnText(r.columns[2], player.coins.ToString());
         }
     }
 
