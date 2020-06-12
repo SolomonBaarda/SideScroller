@@ -246,19 +246,7 @@ public class GameManager : MonoBehaviour
         }
 
 
-        // Display the scoreboard 
-        if (hud != null)
-        {
-            bool showScoreboard = Input.GetButton("Scoreboard");
-            hud.ShowScoreboard(showScoreboard);
-            // Update the values if we need to
-            if (showScoreboard)
-            {
-                hud.UpdateScoreboardStats(Stats);
-            }
-        }
-
-
+        CheckUpdateScoreboard(Input.GetButton("Scoreboard"));
 
         if (!isGameOver)
         {
@@ -502,11 +490,14 @@ public class GameManager : MonoBehaviour
 
 
 
-    public void ShowScoreBoard(bool show)
+    public void CheckUpdateScoreboard(bool showScoreboard)
     {
-        if(show)
+        // Display the scoreboard 
+        if (hud != null)
         {
+            hud.UpdateScoreboardStats(Stats);
 
+            hud.ShowScoreboard(showScoreboard);
         }
     }
 

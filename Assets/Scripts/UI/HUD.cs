@@ -31,6 +31,10 @@ public class HUD : MonoBehaviour
 
     [Header("Scoreboard")]
     public GameObject scoreboard;
+    public GameObject scoreboardPlayersParent;
+
+    public GameObject scoreboardPlayerPrefab;
+    private List<GameObject> scoreboardPlayers = new List<GameObject>();
 
 
     private SceneLoader sceneLoader;
@@ -133,7 +137,23 @@ public class HUD : MonoBehaviour
 
     public void UpdateScoreboardStats(GameManager.GameStats stats)
     {
-        
+        // Add extra rows to the scoreboard if we need
+        while(scoreboardPlayers.Count < stats.Players.Count)
+        {
+            scoreboardPlayers.Add(Instantiate(scoreboardPlayerPrefab, scoreboardPlayersParent.transform));
+        }
+        // Remove excess rows if there are any
+        while (scoreboardPlayers.Count > stats.Players.Count)
+        {
+            GameObject toRemove = scoreboardPlayers[0];
+            scoreboardPlayers.RemoveAt(0);
+            Destroy(toRemove);
+        }
+
+        for(int i = 0; i < scoreboardPlayers.Count; i++)
+        {
+
+        }
     }
 
 
