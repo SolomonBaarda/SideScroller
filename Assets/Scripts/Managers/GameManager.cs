@@ -214,17 +214,14 @@ public class GameManager : MonoBehaviour
             // Set up camera
             movingCamera.SetFollowingTarget(payload);
             movingCamera.direction = MovingCamera.Direction.Following;
-
-            if (hud != null)
-            {
-                hud.SetMultiplayer();
-            }
         }
 
         foreach (Player p in playerManager.AllPlayers)
         {
             p.SetAlive();
         }
+
+        hud.SetVisible(true);
 
         isGameOver = false;
     }
@@ -246,7 +243,7 @@ public class GameManager : MonoBehaviour
         }
 
         // Input.GetButton("Scoreboard")
-        CheckUpdateScoreboard(Input.GetButton("Scoreboard"));
+        UpdateHUD(Input.GetButton("Scoreboard"));
 
         if (!isGameOver)
         {
@@ -257,16 +254,6 @@ public class GameManager : MonoBehaviour
             playerManager.CheckPlayersOutsideBounds(movingCamera.ViewBounds);
             // Check if a player needs to be respawned
             playerManager.CheckAllRespawns(chunkManager.LoadedChunks, movingCamera.ViewBounds);
-
-
-            // Update HUD stuff
-            if (hud != null)
-            {
-                Player player = playerManager.GetPlayer(Player.ID.P1);
-
-                hud.SetVisible(true);
-                hud.UpdateHUD(new HUD.HUDElements(player.GetInventory<Coin>().Total, GameTimeSeconds, fps_last_framerate));
-            }
 
             // Update the nav meshes
             if (presets.DoEnemySpawning)
@@ -480,24 +467,20 @@ public class GameManager : MonoBehaviour
     private void SetUpHUD(HUD hud)
     {
         this.hud = hud;
-
-        if (isGameOver)
-        {
-            this.hud.SetVisible(false);
-        }
+        this.hud.SetVisible(isGameOver);
     }
 
 
 
 
-    public void CheckUpdateScoreboard(bool showScoreboard)
+    public void UpdateHUD(bool showScoreboard)
     {
         // Display the scoreboard 
         if (hud != null)
         {
             hud.UpdateScoreboardStats(Stats);
 
-            hud.ShowScoreboard(showScoreboard);
+            hud.SetScoreboardVisible(showScoreboard);
         }
     }
 
