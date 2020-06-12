@@ -23,7 +23,6 @@ public class TerrainManager : MonoBehaviour
     public Generation GenerationRule { get; private set; }
 
     private Dictionary<Vector2Int, bool> generatedChunks = new Dictionary<Vector2Int, bool>();
-    public const float PERCENTAGE_OF_CHUNK_LAYER_TO_GEN_EACH_FRAME = .25f;
 
     public bool IsGenerating { get; private set; } = false;
 
@@ -120,7 +119,7 @@ public class TerrainManager : MonoBehaviour
         GenerateInitialTile(initialTilePos);
 
         // Generate the spawn area
-        Generate(initialTilePos, Direction.Both, ChunkManager.initialChunkID, sampleTerrainManager.startingArea, true);
+        Generate(initialTilePos, Direction.Both, ChunkManager.initialChunkID, sampleTerrainManager.startingArea);
     }
 
 
@@ -141,7 +140,7 @@ public class TerrainManager : MonoBehaviour
 
 
 
-    public void GenerateRandom(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID, bool loadInBackground)
+    public void GenerateRandom(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID)
     {
         // Get a list of only the valid sample terrain
         List<SampleTerrain> allValidSamples = new List<SampleTerrain>();
@@ -183,21 +182,21 @@ public class TerrainManager : MonoBehaviour
         }
 
 
-        GenerateRandom(startTileWorldSpace, directionToGenerate, chunkID, allValidSamples, loadInBackground);
+        GenerateRandom(startTileWorldSpace, directionToGenerate, chunkID, allValidSamples);
     }
 
 
-    public void GenerateRandom(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID, List<SampleTerrain> validTerrain, bool loadInBackground)
+    public void GenerateRandom(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID, List<SampleTerrain> validTerrain)
     {
         // Randomly choose one to generate
         int index = random.Next(0, validTerrain.Count);
         SampleTerrain chosen = validTerrain[index];
 
-        Generate(startTileWorldSpace, directionToGenerate, chunkID, chosen, loadInBackground);
+        Generate(startTileWorldSpace, directionToGenerate, chunkID, chosen);
     }
 
 
-    public void Generate(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID, SampleTerrain terrain, bool loadInBackground)
+    public void Generate(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID, SampleTerrain terrain)
     {
         // Ensure the chunk is not already being generated 
         if (!ChunkAlreadyGenerating(chunkID))
@@ -215,7 +214,7 @@ public class TerrainManager : MonoBehaviour
             Vector3Int entryPos = grid.WorldToCell(startTileWorldSpace);
 
             // Generate the new chunk and update the tile reference
-            GenerateFromSampleTerrain(new Vector2Int(entryPos.x, entryPos.y), flipAxisX, directionToGenerate, terrain, chunkID, loadInBackground);
+            GenerateFromSampleTerrain(new Vector2Int(entryPos.x, entryPos.y), flipAxisX, directionToGenerate, terrain, chunkID);
         }
     }
 
@@ -236,22 +235,16 @@ public class TerrainManager : MonoBehaviour
     }
 
 
-    private void GenerateFromSampleTerrain(Vector2Int entryTile, bool flipAxisX, Direction directionToGenerate, SampleTerrain terrain, Vector2Int chunkID, bool loadInBackground)
-    {
-        StartCoroutine(WaitForCopyTerrain(entryTile, flipAxisX, directionToGenerate, terrain, chunkID, loadInBackground));
-    }
-
-
-    private IEnumerator WaitForCopyTerrain(Vector2Int entryTile, bool flipAxisX, Direction directionToGenerate, SampleTerrain terrain, Vector2Int chunkID, bool loadInBackground)
+    private void GenerateFromSampleTerrain(Vector2Int entryTile, bool flipAxisX, Direction directionToGenerate, SampleTerrain terrain, Vector2Int chunkID)
     {
         IsGenerating = true;
 
         // Copy the terrain, each layer at a time
-        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wall, wall, loadInBackground));
-        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wallDetail, wallDetail, loadInBackground));
-        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.background, background, loadInBackground));
-        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.hazard, hazard, loadInBackground));
-        yield return StartCoroutine(CopySampleTerrainLayer(entryTile, flipAxisX, terrain.ground, ground, loadInBackground));
+        CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wall, wall);
+        CopySampleTerrainLayer(entryTile, flipAxisX, terrain.wallDetail, wallDetail);
+        CopySampleTerrainLayer(entryTile, flipAxisX, terrain.background, background);
+        CopySampleTerrainLayer(entryTile, flipAxisX, terrain.hazard, hazard);
+        CopySampleTerrainLayer(entryTile, flipAxisX, terrain.ground, ground);
 
         IsGenerating = false;
 
@@ -263,7 +256,16 @@ public class TerrainManager : MonoBehaviour
     }
 
 
-    private IEnumerator CopySampleTerrainLayer(Vector2Int entryPosition, bool flipAxisX, SampleTerrain.Layer layer, Tilemap tilemap, bool loadInBackground)
+    /// <summary>
+    /// My very cool coroutine method i wrote that is now obsolete.
+    /// </summary>
+    /// <param name="entryPosition"></param>
+    /// <param name="flipAxisX"></param>
+    /// <param name="layer"></param>
+    /// <param name="tilemap"></param>
+    /// <param name="loadInBackground"></param>
+    /// <returns></returns>
+    private IEnumerator CopySampleTerrainLayerOld(Vector2Int entryPosition, bool flipAxisX, SampleTerrain.Layer layer, Tilemap tilemap, bool loadInBackground)
     {
         Vector2Int entry = new Vector2Int(entryPosition.x, entryPosition.y);
 
@@ -275,7 +277,7 @@ public class TerrainManager : MonoBehaviour
 
         float currentFrameTime = 0;
         float tilesSinceLastPause = 0;
-        int minimumTilesPerFrame = (int)(layer.tilesInThisLayer.Count * PERCENTAGE_OF_CHUNK_LAYER_TO_GEN_EACH_FRAME);
+        int minimumTilesPerFrame = (int)(layer.tilesInThisLayer.Count * 0.25f);
 
         // Copy wall
         foreach (SampleTerrain.Layer.Tile tile in layer.tilesInThisLayer)
@@ -332,6 +334,59 @@ public class TerrainManager : MonoBehaviour
 
         // Don't need this atm as tiles auto update
         //tilemap.RefreshAllTiles();
+    }
+
+
+    private void CopySampleTerrainLayer(Vector2Int entryPosition, bool flipAxisX, SampleTerrain.Layer layer, Tilemap tilemap)
+    {
+        IsGenerating = true;
+
+        Vector3Int entry = new Vector3Int(entryPosition.x, entryPosition.y, 0);
+
+        int invert = 1;
+        if (flipAxisX)
+        {
+            invert = -1;
+        }
+
+        TileBase[] tileTypes = new TileBase[layer.tilesInThisLayer.Count];
+        Vector3Int[] tilePositions = new Vector3Int[layer.tilesInThisLayer.Count];
+
+        // Copy this layer
+        for (int i = 0; i < layer.tilesInThisLayer.Count; i++)
+        {
+            // Position and type of the new tile
+            Vector3Int newTilePos = entry + new Vector3Int(invert * layer.tilesInThisLayer[i].position.x, layer.tilesInThisLayer[i].position.y, 0);
+            TileBase newTileType = layer.tilesInThisLayer[i].tileType;
+
+            // Check if we need to flip the tile type
+            if (invert < 0)
+            {
+                // Check each tile that can be swapped 
+                foreach ((TileBase, TileBase) t in sampleTerrainManager.tilesToSwapWhenInverted)
+                {
+                    if (layer.tilesInThisLayer[i].tileType.Equals(t.Item1))
+                    {
+                        newTileType = t.Item2;
+                        break;
+                    }
+                    else if (layer.tilesInThisLayer[i].tileType.Equals(t.Item2))
+                    {
+                        newTileType = t.Item1;
+                        break;
+                    }
+                }
+            }
+
+            // Add the tile to array
+            tileTypes[i] = newTileType;
+            tilePositions[i] = newTilePos;  
+        }
+
+        // Set the tiles all in one go
+        SetTileCollection(tilemap, tileTypes, tilePositions);
+
+        IsGenerating = false;
     }
 
 
@@ -564,6 +619,13 @@ public class TerrainManager : MonoBehaviour
         return tilePos;
     }
 
+
+    private void SetTileCollection(Tilemap tilemap, TileBase[] tileTypes, Vector3Int[] tilePositions)
+    {
+        // Pass an array of tiles to be set
+        // This is insanely better for performance
+        tilemap.SetTiles(tilePositions, tileTypes);
+    }
 
     private void SetTile(Tilemap tilemap, TileBase tileType, Vector2Int tilePosition)
     {

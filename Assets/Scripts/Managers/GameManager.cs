@@ -389,7 +389,7 @@ public class GameManager : MonoBehaviour
                             symmetricChunkIndex = symmetric.sampleTerrainIndex;
 
                             // Generate the symmetrical chunk
-                            terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID, terrainManager.GetSampleTerrain(symmetricChunkIndex), true);
+                            terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID, terrainManager.GetSampleTerrain(symmetricChunkIndex));
                             chunksAreGenerating = true;
                             continue;
                         }
@@ -406,7 +406,7 @@ public class GameManager : MonoBehaviour
                 }
 
                 // Generate a new random chunk
-                terrainManager.GenerateRandom(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID, true);
+                terrainManager.GenerateRandom(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID);
                 chunksAreGenerating = true;
                 continue;
             }
