@@ -3,13 +3,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
+using UnityEditor.Build.Player;
 
 public class Menu : MonoBehaviour
 {
     public static UnityAction OnMenuClose;
 
     [Header("Play Button")]
-    public TMP_Text play_button;
+    public Button play_button;
 
     [Header("Multiplayer Toggle")]
     public Toggle multiplayer_toggle;
@@ -20,17 +21,20 @@ public class Menu : MonoBehaviour
 
     private void Awake()
     {
-        // Set the button text
-        SetMenuStyleTMPro(ref play_button);
-
         LoadPresetMenu();
+
+        play_button.onClick.AddListener(OnPlayPressed);
     }
 
+    private void OnDestroy()
+    {
+        play_button.onClick.RemoveAllListeners();
+    }
 
     private void Update()
     {
         // Only enable the slider if it is multiplayer mode
-        map_length_slider_parent.SetActive(multiplayer_toggle.isOn);
+        //map_length_slider_parent.SetActive(multiplayer_toggle.isOn);
     }
 
 
@@ -43,7 +47,7 @@ public class Menu : MonoBehaviour
         GameManager.Presets preset = new GameManager.Presets
         {
             DoSinglePlayer = !multiplayer_toggle.isOn,
-            terrain_limit_not_endless = (int)map_length_slider.value,
+            //terrain_limit_not_endless = (int)map_length_slider.value,
         };
 
         // Load the game
@@ -58,39 +62,8 @@ public class Menu : MonoBehaviour
         allPresetValues.Add(GameManager.PresetValues.Less);
         allPresetValues.Add(GameManager.PresetValues.More);
         allPresetValues.Add(GameManager.PresetValues.Random);
-
-        //AddDropdown(presetMenuParent, "Player speed", allPresetValues);
     }
 
-
-
-    private void AddDropdown(Transform parent, string item_text, List<GameManager.PresetValues> presetOptions)
-    {
-        GameObject newDropdown = new GameObject(item_text);
-        newDropdown.transform.parent = parent;
-        TMP_Dropdown d = newDropdown.AddComponent<TMP_Dropdown>();
-
-        GameObject text = new GameObject("text");
-        text.transform.parent = newDropdown.transform;
-        TMP_Text t = text.AddComponent<TextMeshProUGUI>();
-        SetMenuStyleTMPro(ref t);
-        t.text = item_text;
-
-        d.itemText = t;
-
-        List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
-        foreach (GameManager.PresetValues p in presetOptions)
-        {
-            options.Add(new TMP_Dropdown.OptionData
-            {
-                text = p.ToString()
-            });
-        }
-
-        d.options = options;
-
-        d.template = parent.GetComponent<RectTransform>();
-    }
 
     public static void SetMenuStyleTMPro(ref TMP_Text t)
     {
