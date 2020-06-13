@@ -1402,6 +1402,57 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5330469752559978370, guid: 3179a1a412f732345bbd4f4c349f15d2,
+        type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 34dee61221e571c48a3df7ce135e9bce,
+        type: 2}
+    - target: {fileID: 5330469752559978370, guid: 3179a1a412f732345bbd4f4c349f15d2,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 1969274729584798403, guid: 34dee61221e571c48a3df7ce135e9bce,
+        type: 2}
+    - target: {fileID: 5330469752559978370, guid: 3179a1a412f732345bbd4f4c349f15d2,
+        type: 3}
+      propertyPath: m_fontSize
+      value: 65.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6688979753225247742, guid: 3179a1a412f732345bbd4f4c349f15d2,
+        type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 34dee61221e571c48a3df7ce135e9bce,
+        type: 2}
+    - target: {fileID: 6688979753225247742, guid: 3179a1a412f732345bbd4f4c349f15d2,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 1969274729584798403, guid: 34dee61221e571c48a3df7ce135e9bce,
+        type: 2}
+    - target: {fileID: 6688979753225247742, guid: 3179a1a412f732345bbd4f4c349f15d2,
+        type: 3}
+      propertyPath: m_fontSize
+      value: 54.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 7376727932595191396, guid: 3179a1a412f732345bbd4f4c349f15d2,
+        type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 34dee61221e571c48a3df7ce135e9bce,
+        type: 2}
+    - target: {fileID: 7376727932595191396, guid: 3179a1a412f732345bbd4f4c349f15d2,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 1969274729584798403, guid: 34dee61221e571c48a3df7ce135e9bce,
+        type: 2}
+    - target: {fileID: 7376727932595191396, guid: 3179a1a412f732345bbd4f4c349f15d2,
+        type: 3}
+      propertyPath: m_fontSize
+      value: 65.6
+      objectReference: {fileID: 0}
     - target: {fileID: 8670764310486398607, guid: 3179a1a412f732345bbd4f4c349f15d2,
         type: 3}
       propertyPath: m_AnchorMin.y

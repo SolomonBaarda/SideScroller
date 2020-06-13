@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
-using UnityEditor.Build.Player;
 
 public class Menu : MonoBehaviour
 {
@@ -14,6 +13,12 @@ public class Menu : MonoBehaviour
 
     [Header("Multiplayer Toggle")]
     public Toggle multiplayer_toggle;
+
+    [Header("Menus")]
+    public Button showPresetMenu;
+    public GameObject presetMenu;
+    public Button showSettingsMenu;
+    public GameObject settingsMenu;
 
     [Header("Slider")]
     public GameObject map_length_slider_parent;
@@ -57,33 +62,13 @@ public class Menu : MonoBehaviour
 
     private void LoadPresetMenu()
     {
-        List<GameManager.PresetValues> allPresetValues = new List<GameManager.PresetValues>();
-        allPresetValues.Add(GameManager.PresetValues.Default);
-        allPresetValues.Add(GameManager.PresetValues.Less);
-        allPresetValues.Add(GameManager.PresetValues.More);
-        allPresetValues.Add(GameManager.PresetValues.Random);
-    }
-
-
-    public static void SetMenuStyleTMPro(ref TMP_Text t)
-    {
-        // Button colours
-        Button b = t.GetComponent<Button>();
-        if (b != null)
+        List<GameManager.PresetValues> allPresetValues = new List<GameManager.PresetValues>
         {
-            ColorBlock bl = ColorBlock.defaultColorBlock;
-
-            bl.normalColor = Color.white;
-            bl.highlightedColor = Color.gray;
-            bl.pressedColor = Color.gray;
-
-            b.colors = bl;
-        }
-        // Text colours
-        else
-        {
-            t.color = Color.white;
-        }
+            GameManager.PresetValues.Default,
+            GameManager.PresetValues.Less,
+            GameManager.PresetValues.More,
+            GameManager.PresetValues.Random
+        };
     }
 
 }
