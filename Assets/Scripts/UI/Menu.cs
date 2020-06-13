@@ -15,10 +15,13 @@ public class Menu : MonoBehaviour
     public Toggle multiplayer_toggle;
 
     [Header("Menus")]
-    public Button showPresetMenu;
-    public GameObject presetMenu;
-    public Button showSettingsMenu;
-    public GameObject settingsMenu;
+    public GameObject allMenusParent;
+    public Button[] all_close_menu_buttons;
+
+    public Button preset_menu_button;
+    public GameObject preset_menu;
+    public Button settings_menu_button;
+    public GameObject settings_menu;
 
     [Header("Slider")]
     public GameObject map_length_slider_parent;
@@ -26,14 +29,33 @@ public class Menu : MonoBehaviour
 
     private void Awake()
     {
-        LoadPresetMenu();
+        //LoadPresetMenu();
 
+        // Add all the button methods
         play_button.onClick.AddListener(OnPlayPressed);
+        preset_menu_button.onClick.AddListener(OnShowPresetMenu);
+        settings_menu_button.onClick.AddListener(OnShowSettingsMenu);
+
+        // Set the close buttons
+        foreach(Button b in all_close_menu_buttons)
+        {
+            b.onClick.AddListener(OnCloseAllMenus);
+        }
+
+        OnCloseAllMenus();
     }
 
     private void OnDestroy()
     {
+        // Remove all listeners
         play_button.onClick.RemoveAllListeners();
+        preset_menu_button.onClick.RemoveAllListeners();
+        settings_menu_button.onClick.RemoveAllListeners();
+
+        foreach (Button b in all_close_menu_buttons)
+        {
+            b.onClick.RemoveAllListeners();
+        }
     }
 
     private void Update()
@@ -57,6 +79,28 @@ public class Menu : MonoBehaviour
 
         // Load the game
         SceneLoader.Instance.LoadGame(preset);
+    }
+
+    public void OnShowPresetMenu()
+    {
+        OnCloseAllMenus();
+        preset_menu.SetActive(true);
+    }
+
+    public void OnShowSettingsMenu()
+    {
+        OnCloseAllMenus();
+        settings_menu.SetActive(true);
+    }
+
+    public void OnCloseAllMenus()
+    {
+        // Disable all children menus
+        for(int i = 0; i < allMenusParent.transform.childCount; i++)
+        {
+            allMenusParent.transform.GetChild(i).gameObject.SetActive(false);
+        }
+        allMenusParent.SetActive(true);
     }
 
 
