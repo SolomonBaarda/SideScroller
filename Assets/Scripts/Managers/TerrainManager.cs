@@ -13,12 +13,10 @@ public class TerrainManager : MonoBehaviour
     /// </summary>
     public static UnityAction<TerrainChunk> OnTerrainChunkGenerated;
 
-    [Header("General Generation Settings")]
-    public string seed;
-    public bool useRandomSeed;
+    private System.Random Random;
 
-    public const int DEAULT_WORLD_LENGTH_NOT_ENDLESS = 8;
-    public int WorldLength { get; private set; } = DEAULT_WORLD_LENGTH_NOT_ENDLESS;
+    public static Presets.VariableValue<int> WorldLengthPreset => new Presets.VariableValue<int>(8, 2, 16);
+    public int WorldLength { get; private set; }
 
     public Generation GenerationRule { get; private set; }
 
@@ -48,19 +46,9 @@ public class TerrainManager : MonoBehaviour
 
     public const string LAYER_NAME_GROUND = "Ground";
 
-    private System.Random random;
 
     private void Awake()
     {
-        // Set up the random generator
-        int seedHash = seed.GetHashCode();
-        // Get a random seed
-        if (useRandomSeed)
-        {
-            seedHash = Environment.TickCount;
-        }
-        random = new System.Random(seedHash);
-
         // Get the references
         grid = GetComponent<Grid>();
 
@@ -107,10 +95,15 @@ public class TerrainManager : MonoBehaviour
 
 
 
-    public void GenerateSpawn(Generation worldgenerationType, int worldLength = DEAULT_WORLD_LENGTH_NOT_ENDLESS)
+    public void GenerateSpawn(Generation worldgenerationType, int worldLength, int seedHash)
     {
+        Random = new System.Random(seedHash);
         GenerationRule = worldgenerationType;
-        WorldLength = worldLength;
+
+        if (GenerationRule.ToString().Contains("Limit"))
+        {
+            WorldLength = worldLength;
+        }
 
         // Reset the tilemaps 
         ClearAllTiles();
@@ -189,7 +182,7 @@ public class TerrainManager : MonoBehaviour
     public void GenerateRandom(Vector2 startTileWorldSpace, Direction directionToGenerate, Vector2Int chunkID, List<SampleTerrain> validTerrain)
     {
         // Randomly choose one to generate
-        int index = random.Next(0, validTerrain.Count);
+        int index = Random.Next(0, validTerrain.Count);
         SampleTerrain chosen = validTerrain[index];
 
         Generate(startTileWorldSpace, directionToGenerate, chunkID, chosen);
@@ -380,7 +373,7 @@ public class TerrainManager : MonoBehaviour
 
             // Add the tile to array
             tileTypes[i] = newTileType;
-            tilePositions[i] = newTilePos;  
+            tilePositions[i] = newTilePos;
         }
 
         // Set the tiles all in one go
@@ -516,7 +509,7 @@ public class TerrainManager : MonoBehaviour
             // Get position of the centre of the tile
             Vector2 pos = (Vector2)grid.CellToWorld(new Vector3Int(entryTile.x + invert * item.tilePos.x, entryTile.y + item.tilePos.y, 0)) + (CellSize / 2);
             // And add it
-            allItemPositions.Add(new TerrainChunk.Item(item.name, pos, new Vector2(pos.x, pos.y - CellSize.y/2)));
+            allItemPositions.Add(new TerrainChunk.Item(item.name, pos, new Vector2(pos.x, pos.y - CellSize.y / 2)));
         }
 
         // Get all extra world objects

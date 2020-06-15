@@ -10,6 +10,27 @@ public class GameManager : MonoBehaviour
     public static UnityAction OnGameStart;
     public static UnityAction<Payload.Direction> OnGameEnd;
 
+
+    [Header("General Generation Settings")]
+    public string seed = "";
+    public bool useRandomSeed = false;
+    public int Seed
+    {
+        get
+        {
+            // Set up the random generator
+            int seedHash = seed.GetHashCode();
+            // Get a random seed
+            if (useRandomSeed)
+            {
+                seedHash = Environment.TickCount;
+            }
+            return seedHash;
+        }
+    }
+    private System.Random random;
+
+
     [Header("Player")]
     public PlayerManager playerManager;
 
@@ -84,8 +105,10 @@ public class GameManager : MonoBehaviour
     private void Initialise(Presets presets)
     {
         this.presets = presets;
+        random = new System.Random(Seed);
 
         // Apply game rules
+        int length = TerrainManager.WorldLengthPreset.Default;
         if (presets.DoSinglePlayer)
         {
             presets.terrain_generation = TerrainManager.Generation.Multidirectional_Endless;
@@ -93,12 +116,16 @@ public class GameManager : MonoBehaviour
         else
         {
             presets.terrain_generation = TerrainManager.Generation.Symmetrical_Limit;
+
+            length = Presets.CalculateVariableValue(TerrainManager.WorldLengthPreset, presets.terrain_limit_if_not_endless, random);
         }
+
+        Debug.Log(length);
 
         terrainManager.LoadSampleTerrain(printDebug);
 
         // Generate spawn chunk
-        terrainManager.GenerateSpawn(presets.terrain_generation, presets.terrain_limit_not_endless);
+        terrainManager.GenerateSpawn(presets.terrain_generation, length, Seed);
     }
 
 

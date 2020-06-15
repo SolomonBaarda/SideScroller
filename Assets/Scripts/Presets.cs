@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Linq;
+using UnityEngine.UIElements;
 
 public class Presets
 {
@@ -8,10 +11,12 @@ public class Presets
     public bool DoSinglePlayer;
     public bool DoEnemySpawning;
     public bool DoItemDrops;
+    public bool DoGenerateItemsWithWorld;
+    public bool DoSpawnWithRandomWeapons;
 
     // Map generation stuff
     public TerrainManager.Generation terrain_generation;
-    public int terrain_limit_not_endless;
+    public Value terrain_limit_if_not_endless;
 
     // Objective stuff
 
@@ -19,35 +24,64 @@ public class Presets
     public Value player_gravity;
     public Value player_speed;
 
-    public Presets() : this(false, false, true, TerrainManager.Generation.Symmetrical_Limit, TerrainManager.DEAULT_WORLD_LENGTH_NOT_ENDLESS,
-        Value.Default, Value.Default)
-    {
-    }
 
-    public Presets(bool DoSinglePlayer, bool DoEnemySpawning, bool DoItemDrops,
-        TerrainManager.Generation terrain_generation, int terrain_limit_not_endless,
+    /// <summary>
+    /// A list of all the default value enum types.
+    /// </summary>
+    public static List<Value> DefaultValues => new List<Value>(Enum.GetValues(typeof(Value)).Cast<Value>());
+    /// <summary>
+    /// A list of all possible default values as strings.
+    /// </summary>
+    public static List<string> DefaultValueStrings => new List<string>(Enumerable.Select(DefaultValues, x => x.ToString()));
+
+
+
+    public Presets() : this(false, false, true, true, true, TerrainManager.Generation.Symmetrical_Limit, Value.Default, Value.Default, Value.Default) { }
+
+
+    private Presets(bool DoSinglePlayer, bool DoEnemySpawning, bool DoItemDrops, bool DoGenerateItemsWithWorld, bool DoSpawnWithRandomWeapons,
+        TerrainManager.Generation terrain_generation, Value terrain_limit_if_not_endless,
         Value player_gravity, Value player_speed)
     {
         this.DoSinglePlayer = DoSinglePlayer;
         this.DoEnemySpawning = DoEnemySpawning;
         this.DoItemDrops = DoItemDrops;
+        this.DoGenerateItemsWithWorld = DoGenerateItemsWithWorld;
+        this.DoSpawnWithRandomWeapons = DoSpawnWithRandomWeapons;
 
         this.terrain_generation = terrain_generation;
-        this.terrain_limit_not_endless = terrain_limit_not_endless;
+        this.terrain_limit_if_not_endless = terrain_limit_if_not_endless;
 
         this.player_gravity = player_gravity;
         this.player_speed = player_speed;
     }
 
 
-    public void SetPreset(Conversion ID, Value newValue)
+    public void SetPreset(Conversion ID, object newValue)
     {
+        // Assign the correct variable
+        switch (ID)
+        {
+            case Conversion.Map_Length:
+                terrain_limit_if_not_endless = (Value)newValue;
+                break;
+            case Conversion.Player_Gravity:
+                player_gravity = (Value)newValue;
+                break;
+            case Conversion.Player_Speed:
+                player_speed = (Value)newValue;
+                break;
+            default:
+                Debug.LogError("Conversion ID undefined for type " + ID.ToString() + ".");
+                break;
+        }
 
     }
 
 
     public enum Conversion
     {
+        Map_Length,
         Player_Gravity,
         Player_Speed,
     }
@@ -59,5 +93,61 @@ public class Presets
         Less,
         More,
         Random,
+    }
+
+
+
+
+    public static T CalculateVariableValue<T>(VariableValue<T> variable, Value chosen, System.Random random)
+    {
+        switch (chosen)
+        {
+            // Return basic values
+            case Value.Default:
+                return variable.Default;
+            case Value.Less:
+                return variable.Minimum;
+            case Value.More:
+                return variable.Maximum;
+
+            // Calculate the random value
+            case Value.Random:
+                try
+                {
+                    // First convert to double
+                    double min = double.Parse(variable.Minimum.ToString());
+                    double max = double.Parse(variable.Maximum.ToString());
+
+                    // Then try and convert back to t
+                    double d = random.NextDouble() * (max - min) + min;
+
+                    return Utils.Parse<T>(d.ToString());
+                }
+                catch (Exception)
+                {
+                    Debug.LogError("in here");
+                }
+                break;
+
+        }
+        return variable.Default;
+    }
+
+
+
+
+
+    public class VariableValue<T>
+    {
+        public T Default;
+        public T Minimum;
+        public T Maximum;
+
+        public VariableValue(T defaultValue, T minimum, T maximum)
+        {
+            Default = defaultValue;
+            Minimum = minimum;
+            Maximum = maximum;
+        }
     }
 }

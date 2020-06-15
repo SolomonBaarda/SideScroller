@@ -4,6 +4,8 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
 using System;
+using UnityEditor.Presets;
+
 public class Menu : MonoBehaviour
 {
     public static UnityAction OnMenuClose;
@@ -31,13 +33,7 @@ public class Menu : MonoBehaviour
     public GameObject map_length_slider_parent;
     public Slider map_length_slider;
 
-    private readonly List<string> defaultPresetValues = new List<string>
-    {
-        Presets.Value.Default.ToString(),
-        Presets.Value.Less.ToString(),
-        Presets.Value.More.ToString(),
-        Presets.Value.Random.ToString(),
-    };
+
 
     private Presets presets;
     private Dictionary<Presets.Conversion, PresetItem> itemReferenceToVariable = new Dictionary<Presets.Conversion, PresetItem>();
@@ -101,17 +97,8 @@ public class Menu : MonoBehaviour
             string desciption = i.dropdown.options[i.dropdown.value].text;
             Presets.Value value = (Presets.Value)Enum.Parse(typeof(Presets.Value), desciption);
 
-            switch (key)
-            {
-                case Presets.Conversion.Player_Gravity:
-                    presets.player_gravity = value;
-                    break;
-                case Presets.Conversion.Player_Speed:
-                    break;
-                default:
-                    Debug.LogError("Preset conversion enum undefined.");
-                    break;
-            }
+            presets.SetPreset(key, value);
+            
         }
 
         // Load the game
@@ -146,9 +133,12 @@ public class Menu : MonoBehaviour
         Transform t = preset_menu_item_frame.transform;
         presets = new Presets();
 
+        // Set map length option
+        itemReferenceToVariable.Add(Presets.Conversion.Map_Length, AddPresetItem(t, Presets.DefaultValueStrings, "Map Length"));
+
+
         // Player gravity
-        string playerGrav = Presets.Conversion.Player_Gravity.ToString();
-        itemReferenceToVariable.Add(Presets.Conversion.Player_Gravity, AddPresetItem(t, defaultPresetValues, playerGrav));
+        itemReferenceToVariable.Add(Presets.Conversion.Player_Gravity, AddPresetItem(t, Presets.DefaultValueStrings, "Player Gravity"));
     }
 
 
