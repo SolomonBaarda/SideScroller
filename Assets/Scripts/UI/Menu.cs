@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
-
+using System;
 public class Menu : MonoBehaviour
 {
     public static UnityAction OnMenuClose;
@@ -20,6 +20,10 @@ public class Menu : MonoBehaviour
 
     public Button preset_menu_button;
     public GameObject preset_menu;
+    public GameObject preset_menu_item_frame;
+    public GameObject preset_item_prefab;
+
+    [Space]
     public Button settings_menu_button;
     public GameObject settings_menu;
 
@@ -27,23 +31,39 @@ public class Menu : MonoBehaviour
     public GameObject map_length_slider_parent;
     public Slider map_length_slider;
 
+    private readonly List<string> defaultPresetValues = new List<string>
+    {
+        GameManager.PresetValues.Default.ToString(),
+        GameManager.PresetValues.Less.ToString(),
+        GameManager.PresetValues.More.ToString(),
+        GameManager.PresetValues.Random.ToString(),
+    };
+
+    private GameManager.Presets presets;
+    private Dictionary<GameManager.Presets.Conversion, PresetItem> itemReferenceToVariable = new Dictionary<GameManager.Presets.Conversion, PresetItem>();
+
+
     private void Awake()
     {
-        //LoadPresetMenu();
-
         // Add all the button methods
         play_button.onClick.AddListener(OnPlayPressed);
         preset_menu_button.onClick.AddListener(OnShowPresetMenu);
         settings_menu_button.onClick.AddListener(OnShowSettingsMenu);
 
         // Set the close buttons
-        foreach(Button b in all_close_menu_buttons)
+        foreach (Button b in all_close_menu_buttons)
         {
             b.onClick.AddListener(OnCloseAllMenus);
         }
 
         OnCloseAllMenus();
+
+
+        // Set up the preset window
+        LoadPresetMenu();
     }
+
+
 
     private void OnDestroy()
     {
@@ -70,15 +90,32 @@ public class Menu : MonoBehaviour
         // Disable the button
         play_button.enabled = false;
 
-        // Apply the presets
-        GameManager.Presets preset = new GameManager.Presets
+        presets.DoSinglePlayer = !multiplayer_toggle.isOn;
+
+        // Check each entry and assign its value to the corresponding variable
+        foreach (GameManager.Presets.Conversion key in itemReferenceToVariable.Keys)
         {
-            DoSinglePlayer = !multiplayer_toggle.isOn,
-            //terrain_limit_not_endless = (int)map_length_slider.value,
-        };
+            itemReferenceToVariable.TryGetValue(key, out PresetItem i);
+
+            // Parse the enum type
+            string desciption = i.dropdown.options[i.dropdown.value].text;
+            GameManager.PresetValues value = (GameManager.PresetValues)Enum.Parse(typeof(GameManager.PresetValues), desciption);
+
+            switch (key)
+            {
+                case GameManager.Presets.Conversion.Player_Gravity:
+                    presets.player_gravity = value;
+                    break;
+                case GameManager.Presets.Conversion.Player_Speed:
+                    break;
+                default:
+                    Debug.LogError("Preset conversion enum undefined.");
+                    break;
+            }
+        }
 
         // Load the game
-        SceneLoader.Instance.LoadGame(preset);
+        SceneLoader.Instance.LoadGame(presets);
     }
 
     public void OnShowPresetMenu()
@@ -96,7 +133,7 @@ public class Menu : MonoBehaviour
     public void OnCloseAllMenus()
     {
         // Disable all children menus
-        for(int i = 0; i < allMenusParent.transform.childCount; i++)
+        for (int i = 0; i < allMenusParent.transform.childCount; i++)
         {
             allMenusParent.transform.GetChild(i).gameObject.SetActive(false);
         }
@@ -106,13 +143,25 @@ public class Menu : MonoBehaviour
 
     private void LoadPresetMenu()
     {
-        List<GameManager.PresetValues> allPresetValues = new List<GameManager.PresetValues>
-        {
-            GameManager.PresetValues.Default,
-            GameManager.PresetValues.Less,
-            GameManager.PresetValues.More,
-            GameManager.PresetValues.Random
-        };
+        Transform t = preset_menu_item_frame.transform;
+        presets = new GameManager.Presets();
+
+        // Player gravity
+        string playerGrav = GameManager.Presets.Conversion.Player_Gravity.ToString();
+        itemReferenceToVariable.Add(GameManager.Presets.Conversion.Player_Gravity, AddPresetItem(t, defaultPresetValues, playerGrav));
+    }
+
+
+
+    private PresetItem AddPresetItem(Transform parent, List<string> dropdownValues, string description)
+    {
+        GameObject newPresetItem = Instantiate(preset_item_prefab, parent);
+        PresetItem i = newPresetItem.GetComponent<PresetItem>();
+
+        i.SetDropdownValues(dropdownValues);
+        i.SetDescriptionText(description);
+
+        return i;
     }
 
 }

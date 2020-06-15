@@ -453,6 +453,12 @@ public class GameManager : MonoBehaviour
             this.player_gravity = player_gravity;
             this.player_speed = player_speed;
         }
+
+        public enum Conversion
+        {
+            Player_Gravity,
+            Player_Speed,
+        }
     }
 
 
