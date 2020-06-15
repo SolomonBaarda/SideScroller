@@ -33,14 +33,14 @@ public class Menu : MonoBehaviour
 
     private readonly List<string> defaultPresetValues = new List<string>
     {
-        GameManager.PresetValues.Default.ToString(),
-        GameManager.PresetValues.Less.ToString(),
-        GameManager.PresetValues.More.ToString(),
-        GameManager.PresetValues.Random.ToString(),
+        Presets.Value.Default.ToString(),
+        Presets.Value.Less.ToString(),
+        Presets.Value.More.ToString(),
+        Presets.Value.Random.ToString(),
     };
 
-    private GameManager.Presets presets;
-    private Dictionary<GameManager.Presets.Conversion, PresetItem> itemReferenceToVariable = new Dictionary<GameManager.Presets.Conversion, PresetItem>();
+    private Presets presets;
+    private Dictionary<Presets.Conversion, PresetItem> itemReferenceToVariable = new Dictionary<Presets.Conversion, PresetItem>();
 
 
     private void Awake()
@@ -93,20 +93,20 @@ public class Menu : MonoBehaviour
         presets.DoSinglePlayer = !multiplayer_toggle.isOn;
 
         // Check each entry and assign its value to the corresponding variable
-        foreach (GameManager.Presets.Conversion key in itemReferenceToVariable.Keys)
+        foreach (Presets.Conversion key in itemReferenceToVariable.Keys)
         {
             itemReferenceToVariable.TryGetValue(key, out PresetItem i);
 
             // Parse the enum type
             string desciption = i.dropdown.options[i.dropdown.value].text;
-            GameManager.PresetValues value = (GameManager.PresetValues)Enum.Parse(typeof(GameManager.PresetValues), desciption);
+            Presets.Value value = (Presets.Value)Enum.Parse(typeof(Presets.Value), desciption);
 
             switch (key)
             {
-                case GameManager.Presets.Conversion.Player_Gravity:
+                case Presets.Conversion.Player_Gravity:
                     presets.player_gravity = value;
                     break;
-                case GameManager.Presets.Conversion.Player_Speed:
+                case Presets.Conversion.Player_Speed:
                     break;
                 default:
                     Debug.LogError("Preset conversion enum undefined.");
@@ -144,11 +144,11 @@ public class Menu : MonoBehaviour
     private void LoadPresetMenu()
     {
         Transform t = preset_menu_item_frame.transform;
-        presets = new GameManager.Presets();
+        presets = new Presets();
 
         // Player gravity
-        string playerGrav = GameManager.Presets.Conversion.Player_Gravity.ToString();
-        itemReferenceToVariable.Add(GameManager.Presets.Conversion.Player_Gravity, AddPresetItem(t, defaultPresetValues, playerGrav));
+        string playerGrav = Presets.Conversion.Player_Gravity.ToString();
+        itemReferenceToVariable.Add(Presets.Conversion.Player_Gravity, AddPresetItem(t, defaultPresetValues, playerGrav));
     }
 
 

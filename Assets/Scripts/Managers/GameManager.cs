@@ -415,61 +415,6 @@ public class GameManager : MonoBehaviour
 
 
 
-    public class Presets
-    {
-        // Game rules
-        public bool DoSinglePlayer;
-        public bool DoEnemySpawning;
-        public bool DoItemDrops;
-
-        // Map generation stuff
-        public TerrainManager.Generation terrain_generation;
-        public int terrain_limit_not_endless;
-
-        // Objective stuff
-
-        // Player controller stuff
-        public PresetValues player_gravity;
-        public PresetValues player_speed;
-
-        public Presets() : this(false, false, true, TerrainManager.Generation.Symmetrical_Limit, TerrainManager.DEAULT_WORLD_LENGTH_NOT_ENDLESS,
-            PresetValues.Default, PresetValues.Default)
-        {
-        }
-
-        public Presets(bool DoSinglePlayer, bool DoEnemySpawning, bool DoItemDrops,
-            TerrainManager.Generation terrain_generation, int terrain_limit_not_endless,
-            PresetValues player_gravity, PresetValues player_speed)
-        {
-            this.DoSinglePlayer = DoSinglePlayer;
-            this.DoEnemySpawning = DoEnemySpawning;
-            this.DoItemDrops = DoItemDrops;
-
-            this.terrain_generation = terrain_generation;
-            this.terrain_limit_not_endless = terrain_limit_not_endless;
-
-
-
-            this.player_gravity = player_gravity;
-            this.player_speed = player_speed;
-        }
-
-        public enum Conversion
-        {
-            Player_Gravity,
-            Player_Speed,
-        }
-    }
-
-
-    public enum PresetValues
-    {
-        Default,
-        Less,
-        More,
-        Random,
-    }
-
     private void SetUpHUD(HUD hud)
     {
         this.hud = hud;

@@ -17,7 +17,7 @@ public class SceneLoader : MonoBehaviour
     List<AsyncOperation> scenesLoading = new List<AsyncOperation>();
     public UnityAction OnScenesLoaded;
 
-    private GameManager.Presets lastPreset;
+    private Presets lastPreset;
 
     public bool IsLoadingScenes { get { return scenesLoading.Count > 0; } }
 
@@ -45,7 +45,7 @@ public class SceneLoader : MonoBehaviour
     }
 
 
-    public void LoadGame(GameManager.Presets presets)
+    public void LoadGame(Presets presets)
     {
         lastPreset = presets;
 
