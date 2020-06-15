@@ -111,21 +111,19 @@ public class GameManager : MonoBehaviour
         int length = TerrainManager.WorldLengthPreset.Default;
         if (presets.DoSinglePlayer)
         {
-            presets.terrain_generation = TerrainManager.Generation.Multidirectional_Endless;
+            presets.TerrainGenerationStyle = TerrainManager.Generation.Multidirectional_Endless;
         }
         else
         {
-            presets.terrain_generation = TerrainManager.Generation.Symmetrical_Limit;
+            presets.TerrainGenerationStyle = TerrainManager.Generation.Symmetrical_Limit;
 
-            length = Presets.CalculateVariableValue(TerrainManager.WorldLengthPreset, presets.terrain_limit_if_not_endless, random);
+            length = Presets.CalculateVariableValue(TerrainManager.WorldLengthPreset, presets.TerrainWorldLengthIfNotEndless, random);
         }
-
-        Debug.Log(length);
 
         terrainManager.LoadSampleTerrain(printDebug);
 
         // Generate spawn chunk
-        terrainManager.GenerateSpawn(presets.terrain_generation, length, Seed);
+        terrainManager.GenerateSpawn(presets.TerrainGenerationStyle, length, Seed);
     }
 
 
@@ -369,7 +367,7 @@ public class GameManager : MonoBehaviour
             {
                 // Get the SampleTerrain for the chunk in a symmetrical position
                 int symmetricChunkIndex = -1;
-                if (presets.terrain_generation.ToString().Contains("Symmetrical"))
+                if (presets.TerrainGenerationStyle.ToString().Contains("Symmetrical"))
                 {
                     Vector2Int symmetricChunkID = exit.newChunkID;
 

@@ -1,37 +1,34 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
-using UnityEngine;
 
 public static class Utils
 {
+
+    /// <summary>
+    /// Parses a string to type T. Will fail if string is not identical to the desired format.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="input"></param>
+    /// <returns></returns>
     public static T Parse<T>(string input)
     {
         // https://stackoverflow.com/questions/2961656/generic-tryparse
+
         try
         {
+            // Get the converter for the type
             TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
             if (converter != null)
             {
-                try
-                {
-                    return (T)converter.ConvertFromString(input);
-                }
-                catch (Exception)
-                {
-                    // If we get here, then it failed to parse for some reason
-
-                    // It may be int, try to truncate first instead
-                    return Parse<T>(((int)Parse<double>(input)).ToString());
-                }
-
+                // Convert to T
+                // This will fail if string is not identical to type format
+                return (T)converter.ConvertFromString(input);
             }
         }
         catch (Exception)
         {
         }
 
-        return default;
+        throw new Exception("Failed to parse string " + input + " to " + typeof(T));
     }
 }

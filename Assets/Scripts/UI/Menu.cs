@@ -23,7 +23,8 @@ public class Menu : MonoBehaviour
     public Button preset_menu_button;
     public GameObject preset_menu;
     public GameObject preset_menu_item_frame;
-    public GameObject preset_item_prefab;
+    public GameObject preset_variable_item_prefab;
+    public GameObject preset_bool_item_prefab;
 
     [Space]
     public Button settings_menu_button;
@@ -94,11 +95,15 @@ public class Menu : MonoBehaviour
             itemReferenceToVariable.TryGetValue(key, out PresetItem i);
 
             // Parse the enum type
-            string desciption = i.dropdown.options[i.dropdown.value].text;
-            Presets.Value value = (Presets.Value)Enum.Parse(typeof(Presets.Value), desciption);
+            object value = i.GetValue();
+
+            if(i.type == Presets.Type.Value)
+            {
+                value = (Presets.Value)Enum.Parse(typeof(Presets.Value), i.GetDropdownOption());
+            }
 
             presets.SetPreset(key, value);
-            
+
         }
 
         // Load the game
@@ -133,22 +138,39 @@ public class Menu : MonoBehaviour
         Transform t = preset_menu_item_frame.transform;
         presets = new Presets();
 
-        // Set map length option
-        itemReferenceToVariable.Add(Presets.Conversion.Map_Length, AddPresetItem(t, Presets.DefaultValueStrings, "Map Length"));
+        // Generation settings
+        itemReferenceToVariable.Add(Presets.Conversion.Map_Length, AddDropdownPreset(t, Presets.DefaultValueStrings, "Map Length"));
 
+        itemReferenceToVariable.Add(Presets.Conversion.Single_Player, AddTogglePreset(t, presets.DoSinglePlayer, "Single Player"));
 
-        // Player gravity
-        itemReferenceToVariable.Add(Presets.Conversion.Player_Gravity, AddPresetItem(t, Presets.DefaultValueStrings, "Player Gravity"));
+        // Player settings
+        itemReferenceToVariable.Add(Presets.Conversion.Gravity_Modifier, AddDropdownPreset(t, Presets.DefaultValueStrings, "Gravity Scale"));
+        itemReferenceToVariable.Add(Presets.Conversion.Player_Speed, AddDropdownPreset(t, Presets.DefaultValueStrings, "Player Speed"));
+
+        // Item settings
     }
 
 
 
-    private PresetItem AddPresetItem(Transform parent, List<string> dropdownValues, string description)
+    private PresetItem AddDropdownPreset(Transform parent, List<string> dropdownValues, string description)
     {
-        GameObject newPresetItem = Instantiate(preset_item_prefab, parent);
+        GameObject newPresetItem = Instantiate(preset_variable_item_prefab, parent);
         PresetItem i = newPresetItem.GetComponent<PresetItem>();
 
+        i.type = Presets.Type.Value;
         i.SetDropdownValues(dropdownValues);
+        i.SetDescriptionText(description);
+
+        return i;
+    }
+
+    private PresetItem AddTogglePreset(Transform parent, bool isOn, string description)
+    {
+        GameObject newPresetItem = Instantiate(preset_bool_item_prefab, parent);
+        PresetItem i = newPresetItem.GetComponent<PresetItem>();
+
+        i.type = Presets.Type.Boolean;
+        i.SetToggleValue(isOn);
         i.SetDescriptionText(description);
 
         return i;

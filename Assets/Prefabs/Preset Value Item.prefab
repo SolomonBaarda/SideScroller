@@ -493,7 +493,7 @@ GameObject:
   - component: {fileID: 6935548222545695525}
   - component: {fileID: 5720612634776308493}
   m_Layer: 5
-  m_Name: Preset Item
+  m_Name: Preset Value Item
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -541,7 +541,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dropdown: {fileID: 6935548222704170058}
+  toggle: {fileID: 0}
   description: {fileID: 6935548223515871016}
+  type: 1
 --- !u!114 &6935548222545695525
 MonoBehaviour:
   m_ObjectHideFlags: 0

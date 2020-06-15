@@ -15,14 +15,17 @@ public class Presets
     public bool DoSpawnWithRandomWeapons;
 
     // Map generation stuff
-    public TerrainManager.Generation terrain_generation;
-    public Value terrain_limit_if_not_endless;
+    public TerrainManager.Generation TerrainGenerationStyle;
+    public Value TerrainWorldLengthIfNotEndless;
 
     // Objective stuff
 
     // Player controller stuff
-    public Value player_gravity;
-    public Value player_speed;
+    public Value PlayerSpeed;
+
+    public Value GravityModifier;
+
+
 
 
     /// <summary>
@@ -40,8 +43,8 @@ public class Presets
 
 
     private Presets(bool DoSinglePlayer, bool DoEnemySpawning, bool DoItemDrops, bool DoGenerateItemsWithWorld, bool DoSpawnWithRandomWeapons,
-        TerrainManager.Generation terrain_generation, Value terrain_limit_if_not_endless,
-        Value player_gravity, Value player_speed)
+        TerrainManager.Generation TerrainGenerationStyle, Value TerrainWorldLengthIfNotEndless,
+        Value GravityModifier, Value PlayerSpeed)
     {
         this.DoSinglePlayer = DoSinglePlayer;
         this.DoEnemySpawning = DoEnemySpawning;
@@ -49,11 +52,11 @@ public class Presets
         this.DoGenerateItemsWithWorld = DoGenerateItemsWithWorld;
         this.DoSpawnWithRandomWeapons = DoSpawnWithRandomWeapons;
 
-        this.terrain_generation = terrain_generation;
-        this.terrain_limit_if_not_endless = terrain_limit_if_not_endless;
+        this.TerrainGenerationStyle = TerrainGenerationStyle;
+        this.TerrainWorldLengthIfNotEndless = TerrainWorldLengthIfNotEndless;
 
-        this.player_gravity = player_gravity;
-        this.player_speed = player_speed;
+        this.GravityModifier = GravityModifier;
+        this.PlayerSpeed = PlayerSpeed;
     }
 
 
@@ -63,13 +66,16 @@ public class Presets
         switch (ID)
         {
             case Conversion.Map_Length:
-                terrain_limit_if_not_endless = (Value)newValue;
+                TerrainWorldLengthIfNotEndless = (Value)newValue;
                 break;
-            case Conversion.Player_Gravity:
-                player_gravity = (Value)newValue;
+            case Conversion.Gravity_Modifier:
+                GravityModifier = (Value)newValue;
                 break;
             case Conversion.Player_Speed:
-                player_speed = (Value)newValue;
+                PlayerSpeed = (Value)newValue;
+                break;
+            case Conversion.Single_Player:
+                DoSinglePlayer = (bool)newValue;
                 break;
             default:
                 Debug.LogError("Conversion ID undefined for type " + ID.ToString() + ".");
@@ -82,8 +88,9 @@ public class Presets
     public enum Conversion
     {
         Map_Length,
-        Player_Gravity,
+        Gravity_Modifier,
         Player_Speed,
+        Single_Player,
     }
 
 
@@ -96,6 +103,12 @@ public class Presets
     }
 
 
+    public enum Type
+    {
+        Boolean,
+        Value,
+    }
+        
 
 
     public static T CalculateVariableValue<T>(VariableValue<T> variable, Value chosen, System.Random random)
@@ -119,13 +132,18 @@ public class Presets
                     double max = double.Parse(variable.Maximum.ToString());
 
                     // Then try and convert back to t
-                    double d = random.NextDouble() * (max - min) + min;
+                    string s = (random.NextDouble() * (max - min) + min).ToString();
 
-                    return Utils.Parse<T>(d.ToString());
+                    // Round it to the nearest whole number if we need to
+                    if (variable.Default is int)
+                    {
+                        s = Mathf.RoundToInt(Utils.Parse<float>(s)).ToString();
+                    }
+
+                    return Utils.Parse<T>(s);
                 }
                 catch (Exception)
                 {
-                    Debug.LogError("in here");
                 }
                 break;
 
