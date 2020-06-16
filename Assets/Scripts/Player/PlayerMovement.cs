@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Dynamic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement Settings")]
-    [SerializeField] private float speed = 40;
+    [SerializeField] private float speed = SpeedPreset.Default;
+    public static Presets.VariableValue<int> SpeedPreset = new Presets.VariableValue<int>(40, 30, 50, 15, 80);
     [SerializeField] private float jump_force = 12;
     [SerializeField] private int default_double_jumps = 1;
     [SerializeField] private int max_double_jumps = 0;
@@ -33,7 +33,6 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D rigid;
     private Collider2D torsoCollider;
-    private Collider2D feetCollider;
     private Transform headPos;
     private Transform feetPos;
 
@@ -44,14 +43,13 @@ public class PlayerMovement : MonoBehaviour
         max_double_jumps = default_double_jumps;
     }
 
-    public void SetColliders(Collider2D torsoCollider, Collider2D feetCollider)
-    {
-        this.torsoCollider = torsoCollider;
-        this.feetCollider = feetCollider;
-    }
 
-    public void SetDefaults(Transform headPosition, Transform feetPosition)
+    public void Initialise(float speed, Collider2D torsoCollider, Transform headPosition, Transform feetPosition)
     {
+        this.speed = speed;
+
+        this.torsoCollider = torsoCollider;
+
         headPos = headPosition;
         feetPos = feetPosition;
     }

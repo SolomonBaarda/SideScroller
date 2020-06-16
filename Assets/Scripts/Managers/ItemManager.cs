@@ -22,8 +22,29 @@ public class ItemManager : MonoBehaviour
     public GameObject payloadPrefab;
     public GameObject Payload { get; private set; }
 
-    private void Awake()
+
+    private bool spawnItemsWithWorldGeneration;
+    private bool doItemDrops;
+    private bool respawnPlayerWithRandomWeapon;
+
+    public void Initialise(bool spawnItemsWithWorldGeneration, bool doItemDrops, bool respawnPlayerWithRandomWeapon, int seedHash)
     {
+        this.spawnItemsWithWorldGeneration = spawnItemsWithWorldGeneration;
+        this.doItemDrops = doItemDrops;
+        this.respawnPlayerWithRandomWeapon = respawnPlayerWithRandomWeapon;
+
+
+        // Assign event calls
+        TerrainManager.OnTerrainChunkGenerated += GenerateItemsForChunk;
+        OnGenerateLoot += GenerateLootForItem;
+        // Give the player a random weapon when they spawn
+        PlayerManager.OnPlayerRespawn += GivePlayerWeaponOnSpawn;
+
+        // Assign the random
+        random = new System.Random(seedHash);
+
+
+        // Load all the items from the /Resources folder
         DateTime before = DateTime.Now;
 
         worldObjectPrefabs = new Dictionary<string, GameObject>();
@@ -37,14 +58,6 @@ public class ItemManager : MonoBehaviour
         TimeSpan time = after - before;
 
         Debug.Log("Loaded items in " + time.Milliseconds + "ms: (" + worldObjectPrefabs.Count + " world items), (" + weaponPrefabs.Count + " weapons)");
-
-        TerrainManager.OnTerrainChunkGenerated += GenerateItemsForChunk;
-        OnGenerateLoot += GenerateLootForItem;
-
-        // Give the player a random weapon when they spawn
-        PlayerManager.OnPlayerRespawn += GivePlayerRandomWeapon;
-
-        random = new System.Random(0);
     }
 
 
@@ -53,7 +66,7 @@ public class ItemManager : MonoBehaviour
         TerrainManager.OnTerrainChunkGenerated -= GenerateItemsForChunk;
         OnGenerateLoot -= GenerateLootForItem;
 
-        PlayerManager.OnPlayerRespawn -= GivePlayerRandomWeapon;
+        PlayerManager.OnPlayerRespawn -= GivePlayerWeaponOnSpawn;
     }
 
 
@@ -65,18 +78,29 @@ public class ItemManager : MonoBehaviour
         return Payload;
     }
 
-    private void GivePlayerRandomWeapon(Player p)
+    private void GivePlayerWeaponOnSpawn(Player p)
     {
         // If the player dies still with a weapon, destroy that weapon
         GameObject oldWeaponObject = p.Inventory.HeldItemRight;
         p.Inventory.DropRightHand();
-        if(oldWeaponObject != null)
+        if (oldWeaponObject != null)
         {
             Destroy(oldWeaponObject);
         }
 
-        // Choose a random weapon from the loaded weapons
-        GameObject prefab = weaponPrefabs.Values.ToArray()[random.Next(0, weaponPrefabs.Count)];
+
+        GameObject prefab;
+        // Give the player a random weapon
+        if (respawnPlayerWithRandomWeapon)
+        {
+            // Choose a random weapon from the loaded weapons
+            prefab = weaponPrefabs.Values.ToArray()[random.Next(0, weaponPrefabs.Count)];
+        }
+        // Give the player sword
+        else
+        {
+            weaponPrefabs.TryGetValue("Sword", out prefab);
+        }
 
         // Spawn in that weapon
         GameObject weaponObject = SpawnItem(prefab, p.transform.position, prefab.name);
@@ -87,21 +111,24 @@ public class ItemManager : MonoBehaviour
 
     private void GenerateLootForItem(GameObject item)
     {
-        // Ensure its lootable
-        if (WorldItem.ExtendsClass<ILootable>(item))
+        if (doItemDrops)
         {
-            ILootable l = (ILootable)WorldItem.GetClass<ILootable>(item);
-            LootTable table = l.Table;
-
-            // Generate each item
-            for (int i = 0; i < l.TotalItemsToBeLooted; i++)
+            // Ensure its lootable
+            if (WorldItem.ExtendsClass<ILootable>(item))
             {
-                // Choose a random piece of loot
-                int value = random.Next(0, table.GetTotalWeight());
-                GameObject dropPrefab = table.GetLoot(value);
+                ILootable l = (ILootable)WorldItem.GetClass<ILootable>(item);
+                LootTable table = l.Table;
 
-                // Spawn the drops
-                SpawnItem(dropPrefab, item.transform.position, dropPrefab.name);
+                // Generate each item
+                for (int i = 0; i < l.TotalItemsToBeLooted; i++)
+                {
+                    // Choose a random piece of loot
+                    int value = random.Next(0, table.GetTotalWeight());
+                    GameObject dropPrefab = table.GetLoot(value);
+
+                    // Spawn the drops
+                    SpawnItem(dropPrefab, item.transform.position, dropPrefab.name);
+                }
             }
         }
     }
@@ -164,17 +191,20 @@ public class ItemManager : MonoBehaviour
 
     private void GenerateItemsForChunk(TerrainManager.TerrainChunk chunk)
     {
-        float itemChance = chunk.itemChance;
-
-        // Loop through each item position
-        foreach (TerrainManager.TerrainChunk.Item item in chunk.items)
+        if (spawnItemsWithWorldGeneration)
         {
-            // Check all the world items
-            if (worldObjectPrefabs.TryGetValue(item.name, out GameObject prefab))
+            float itemChance = chunk.itemChance;
+
+            // Loop through each item position
+            foreach (TerrainManager.TerrainChunk.Item item in chunk.items)
             {
-                if (random.Next(0, 1) <= itemChance)
+                // Check all the world items
+                if (worldObjectPrefabs.TryGetValue(item.name, out GameObject prefab))
                 {
-                    GameObject g = SpawnItem(prefab, item.centreOfTile, item.name.ToString());
+                    if (random.Next(0, 1) <= itemChance)
+                    {
+                        GameObject g = SpawnItem(prefab, item.centreOfTile, item.name.ToString());
+                    }
                 }
             }
         }
@@ -188,7 +218,7 @@ public class ItemManager : MonoBehaviour
         g.name = name;
 
         // Set the position precisely if it is a world item
-        if(WorldItem.ExtendsClass<WorldItem>(g))
+        if (WorldItem.ExtendsClass<WorldItem>(g))
         {
             WorldItem i = (WorldItem)WorldItem.GetClass<WorldItem>(g);
             i.SetPosition(position);

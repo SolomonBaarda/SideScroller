@@ -4,7 +4,6 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
 using System;
-using UnityEditor.Presets;
 
 public class Menu : MonoBehaviour
 {
@@ -75,19 +74,11 @@ public class Menu : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        // Only enable the slider if it is multiplayer mode
-        //map_length_slider_parent.SetActive(multiplayer_toggle.isOn);
-    }
-
 
     public void OnPlayPressed()
     {
         // Disable the button
         play_button.enabled = false;
-
-        presets.DoSinglePlayer = !multiplayer_toggle.isOn;
 
         // Check each entry and assign its value to the corresponding variable
         foreach (Presets.Conversion key in itemReferenceToVariable.Keys)
@@ -138,16 +129,18 @@ public class Menu : MonoBehaviour
         Transform t = preset_menu_item_frame.transform;
         presets = new Presets();
 
+        // Game rule settings
+        itemReferenceToVariable.Add(Presets.Conversion.Multiplayer, AddTogglePreset(t, presets.DoMultiplayer, "Multiplayer"));
+        itemReferenceToVariable.Add(Presets.Conversion.Random_Weapons, AddTogglePreset(t, presets.DoSpawnWithRandomWeapons, "Random Weapons"));
+        itemReferenceToVariable.Add(Presets.Conversion.Item_Drops, AddTogglePreset(t, presets.DoItemDrops, "Item Drops"));
+        itemReferenceToVariable.Add(Presets.Conversion.Item_Spawns, AddTogglePreset(t, presets.DoGenerateItemsWithWorld, "Spawn Items"));
+
         // Generation settings
         itemReferenceToVariable.Add(Presets.Conversion.Map_Length, AddDropdownPreset(t, Presets.DefaultValueStrings, "Map Length"));
-
-        itemReferenceToVariable.Add(Presets.Conversion.Single_Player, AddTogglePreset(t, presets.DoSinglePlayer, "Single Player"));
 
         // Player settings
         itemReferenceToVariable.Add(Presets.Conversion.Gravity_Modifier, AddDropdownPreset(t, Presets.DefaultValueStrings, "Gravity Scale"));
         itemReferenceToVariable.Add(Presets.Conversion.Player_Speed, AddDropdownPreset(t, Presets.DefaultValueStrings, "Player Speed"));
-
-        // Item settings
     }
 
 

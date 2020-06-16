@@ -236,12 +236,12 @@ public class PlayerManager : MonoBehaviour
 
 
 
-    public Player SpawnPlayer(Player.ID playerID, Payload.Direction directionToMove, bool canUseController, List<Chunk> nearbyChunks, Bounds cameraViewBounds)
+    public Player SpawnPlayer(Player.ID playerID, Payload.Direction directionToMove, bool canUseController, float playerSpeed, List<Chunk> nearbyChunks, Bounds cameraViewBounds)
     {
         try
         {
             // Try to spawn the player
-            return SpawnPlayer(GetBestRespawnPoint(directionToMove, nearbyChunks, cameraViewBounds), playerID, directionToMove, canUseController);
+            return SpawnPlayer(GetBestRespawnPoint(directionToMove, nearbyChunks, cameraViewBounds), playerID, directionToMove, canUseController, playerSpeed);
         }
         catch (Exception)
         {
@@ -250,13 +250,13 @@ public class PlayerManager : MonoBehaviour
     }
 
 
-    private Player SpawnPlayer(Vector2 position, Player.ID playerID, Payload.Direction directionToMove, bool canUseController)
+    private Player SpawnPlayer(Vector2 position, Player.ID playerID, Payload.Direction directionToMove, bool canUseController, float playerSpeed)
     {
         GameObject g = Instantiate(playerPrefab, transform);
         g.name = playerID.ToString();
 
         Player p = g.GetComponent<Player>();
-        p.SetPlayer(playerID, directionToMove, canUseController);
+        p.SetPlayer(playerID, directionToMove, canUseController, playerSpeed);
         AllPlayers.Add(p);
 
         RespawnPlayer(p, position);

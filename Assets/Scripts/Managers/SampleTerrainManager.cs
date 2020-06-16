@@ -58,6 +58,13 @@ public class SampleTerrainManager : MonoBehaviour
     public GameObject potPrefab;
     public GameObject chestPrefab;
 
+    public bool TerrainIsLoaded { get; private set; } = false;
+
+    private void Awake()
+    {
+        TerrainIsLoaded = false;
+    }
+
     public void LoadAllSampleTerrain()
     {
         // Add all the tiles to the list
@@ -98,5 +105,7 @@ public class SampleTerrainManager : MonoBehaviour
         finishArea = finish.GetComponentInChildren<SampleTerrain>();
         finishArea.LoadSample(0);
         finish.gameObject.SetActive(false);
+
+        TerrainIsLoaded = true;
     }
 }

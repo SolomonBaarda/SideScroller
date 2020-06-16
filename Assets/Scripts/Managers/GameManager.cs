@@ -56,6 +56,9 @@ public class GameManager : MonoBehaviour
 
     // Game rules
     public Presets presets;
+    public static Presets.VariableValue<float> GravityMultiplierPreset => new Presets.VariableValue<float>(1.0f, 0.5f, 1.5f, 0.25f, 2.0f);
+    public static Vector2 DefaultGravity => new Vector2(0, -9.8f);
+
 
     // FPS variables
     [Header("FPS Settings")]
@@ -107,19 +110,29 @@ public class GameManager : MonoBehaviour
         this.presets = presets;
         random = new System.Random(Seed);
 
+        // Set the gravity
+        Physics2D.gravity = DefaultGravity;
+        SetGravity(Presets.CalculateVariableValue(GravityMultiplierPreset, presets.GravityModifier, random));
+
+        // Initialise ItemManager
+        itemManager.Initialise(presets.DoGenerateItemsWithWorld, presets.DoItemDrops, presets.DoSpawnWithRandomWeapons, Seed);
+
         // Apply game rules
         int length = TerrainManager.WorldLengthPreset.Default;
-        if (presets.DoSinglePlayer)
+
+        // Singleplayer
+        if (!presets.DoMultiplayer)
         {
             presets.TerrainGenerationStyle = TerrainManager.Generation.Multidirectional_Endless;
         }
+        // Multiplayer
         else
         {
             presets.TerrainGenerationStyle = TerrainManager.Generation.Symmetrical_Limit;
-
             length = Presets.CalculateVariableValue(TerrainManager.WorldLengthPreset, presets.TerrainWorldLengthIfNotEndless, random);
         }
 
+        // Load all sample terrain
         terrainManager.LoadSampleTerrain(printDebug);
 
         // Generate spawn chunk
@@ -215,11 +228,14 @@ public class GameManager : MonoBehaviour
         // Add only the spawn for initial start
         List<Chunk> onlySpawnChunk = new List<Chunk> { chunkManager.GetChunk(ChunkManager.initialChunkID) };
 
+        // Calculate the player random speed
+        float playerSpeed = Presets.CalculateVariableValue(PlayerMovement.SpeedPreset, presets.PlayerSpeed, random);
+
         // Single player game
-        if (presets.DoSinglePlayer)
+        if (!presets.DoMultiplayer)
         {
             // Spawn player 1 
-            playerManager.SpawnPlayer(Player.ID.P1, Payload.Direction.None, true, onlySpawnChunk, movingCamera.ViewBounds);
+            playerManager.SpawnPlayer(Player.ID.P1, Payload.Direction.None, true, playerSpeed, onlySpawnChunk, movingCamera.ViewBounds);
 
             // Set up camera
             movingCamera.SetFollowingTarget(playerManager.GetPlayer(Player.ID.P1).gameObject);
@@ -229,8 +245,8 @@ public class GameManager : MonoBehaviour
         else
         {
             // Spawn players 
-            playerManager.SpawnPlayer(Player.ID.P1, Payload.Direction.Right, false, onlySpawnChunk, movingCamera.ViewBounds);
-            playerManager.SpawnPlayer(Player.ID.P2, Payload.Direction.Left, true, onlySpawnChunk, movingCamera.ViewBounds);
+            playerManager.SpawnPlayer(Player.ID.P1, Payload.Direction.Right, false, playerSpeed, onlySpawnChunk, movingCamera.ViewBounds);
+            playerManager.SpawnPlayer(Player.ID.P2, Payload.Direction.Left, true, playerSpeed, onlySpawnChunk, movingCamera.ViewBounds);
 
             // Spawn payload
             Vector2 payloadSpawn = playerManager.GetBestRespawnPoint(Payload.Direction.None, onlySpawnChunk, movingCamera.ViewBounds);
@@ -241,6 +257,8 @@ public class GameManager : MonoBehaviour
             movingCamera.direction = MovingCamera.Direction.Following;
         }
 
+
+        // Set all players to be alive
         foreach (Player p in playerManager.AllPlayers)
         {
             p.SetAlive();
@@ -249,6 +267,17 @@ public class GameManager : MonoBehaviour
         hud.SetVisible(true);
 
         isGameOver = false;
+    }
+
+
+    public void SetGravity(float gravityMultiplier)
+    {
+        // Update the global gravity
+        Vector2 newGrav = Physics2D.gravity * gravityMultiplier;
+        if (newGrav.y > 0)
+        {
+            Physics2D.gravity = newGrav;
+        }
     }
 
 

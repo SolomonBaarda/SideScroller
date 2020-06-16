@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
-using UnityEngine.UIElements;
 
 public class Presets
 {
     // Game rules
-    public bool DoSinglePlayer;
+    public bool DoMultiplayer;
     public bool DoEnemySpawning;
     public bool DoItemDrops;
     public bool DoGenerateItemsWithWorld;
@@ -39,14 +38,14 @@ public class Presets
 
 
 
-    public Presets() : this(false, false, true, true, true, TerrainManager.Generation.Symmetrical_Limit, Value.Default, Value.Default, Value.Default) { }
+    public Presets() : this(true, false, true, true, true, TerrainManager.Generation.Symmetrical_Limit, Value.Default, Value.Default, Value.Default) { }
 
 
-    private Presets(bool DoSinglePlayer, bool DoEnemySpawning, bool DoItemDrops, bool DoGenerateItemsWithWorld, bool DoSpawnWithRandomWeapons,
+    private Presets(bool DoMultiplayer, bool DoEnemySpawning, bool DoItemDrops, bool DoGenerateItemsWithWorld, bool DoSpawnWithRandomWeapons,
         TerrainManager.Generation TerrainGenerationStyle, Value TerrainWorldLengthIfNotEndless,
         Value GravityModifier, Value PlayerSpeed)
     {
-        this.DoSinglePlayer = DoSinglePlayer;
+        this.DoMultiplayer = DoMultiplayer;
         this.DoEnemySpawning = DoEnemySpawning;
         this.DoItemDrops = DoItemDrops;
         this.DoGenerateItemsWithWorld = DoGenerateItemsWithWorld;
@@ -60,22 +59,31 @@ public class Presets
     }
 
 
-    public void SetPreset(Conversion ID, object newValue)
+    public void SetPreset(Conversion ID, object o)
     {
         // Assign the correct variable
         switch (ID)
         {
+            case Conversion.Multiplayer:
+                DoMultiplayer = (bool)o;
+                break;
+            case Conversion.Item_Drops:
+                DoItemDrops = (bool)o;
+                break;
+            case Conversion.Item_Spawns:
+                DoGenerateItemsWithWorld = (bool)o;
+                break;
+            case Conversion.Random_Weapons:
+                DoSpawnWithRandomWeapons = (bool)o;
+                break;
             case Conversion.Map_Length:
-                TerrainWorldLengthIfNotEndless = (Value)newValue;
+                TerrainWorldLengthIfNotEndless = (Value)o;
                 break;
             case Conversion.Gravity_Modifier:
-                GravityModifier = (Value)newValue;
+                GravityModifier = (Value)o;
                 break;
             case Conversion.Player_Speed:
-                PlayerSpeed = (Value)newValue;
-                break;
-            case Conversion.Single_Player:
-                DoSinglePlayer = (bool)newValue;
+                PlayerSpeed = (Value)o;
                 break;
             default:
                 Debug.LogError("Conversion ID undefined for type " + ID.ToString() + ".");
@@ -87,10 +95,13 @@ public class Presets
 
     public enum Conversion
     {
+        Multiplayer,
+        Item_Drops,
+        Item_Spawns,
+        Random_Weapons,
         Map_Length,
         Gravity_Modifier,
         Player_Speed,
-        Single_Player,
     }
 
 
@@ -108,7 +119,7 @@ public class Presets
         Boolean,
         Value,
     }
-        
+
 
 
     public static T CalculateVariableValue<T>(VariableValue<T> variable, Value chosen, System.Random random)
@@ -119,9 +130,9 @@ public class Presets
             case Value.Default:
                 return variable.Default;
             case Value.Less:
-                return variable.Minimum;
+                return variable.Less;
             case Value.More:
-                return variable.Maximum;
+                return variable.More;
 
             // Calculate the random value
             case Value.Random:
@@ -158,12 +169,16 @@ public class Presets
     public class VariableValue<T>
     {
         public T Default;
+        public T Less;
+        public T More;
         public T Minimum;
         public T Maximum;
 
-        public VariableValue(T defaultValue, T minimum, T maximum)
+        public VariableValue(T defaultValue, T less, T more, T minimum, T maximum)
         {
             Default = defaultValue;
+            Less = less;
+            More = more;
             Minimum = minimum;
             Maximum = maximum;
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.PackageManager.UI;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Tilemaps;
@@ -15,7 +16,7 @@ public class TerrainManager : MonoBehaviour
 
     private System.Random Random;
 
-    public static Presets.VariableValue<int> WorldLengthPreset => new Presets.VariableValue<int>(8, 2, 16);
+    public static Presets.VariableValue<int> WorldLengthPreset => new Presets.VariableValue<int>(8, 4, 12, 1, 16);
     public int WorldLength { get; private set; }
 
     public Generation GenerationRule { get; private set; }
@@ -118,16 +119,18 @@ public class TerrainManager : MonoBehaviour
 
     public void LoadSampleTerrain(bool printDebug)
     {
-        // Load the sample terrain
-        DateTime before = DateTime.Now;
-
-        sampleTerrainManager.LoadAllSampleTerrain();
-
-        DateTime after = DateTime.Now;
-        TimeSpan time = after - before;
-        if (printDebug)
+        if(!sampleTerrainManager.TerrainIsLoaded)
         {
-            Debug.Log("It took " + time.Milliseconds + " ms to load the sample terrain.");
+            // Load the sample terrain
+            DateTime before = DateTime.Now;
+
+            sampleTerrainManager.LoadAllSampleTerrain();
+
+            TimeSpan time = DateTime.Now - before;
+            if (printDebug)
+            {
+                Debug.Log("It took " + time.Milliseconds + " ms to load the sample terrain.");
+            }
         }
     }
 

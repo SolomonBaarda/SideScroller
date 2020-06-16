@@ -120,7 +120,7 @@ public class Player : MonoBehaviour, ILocatable
     }
 
 
-    public void SetPlayer(ID PlayerID, Payload.Direction directionToMove, bool canUseController)
+    public void SetPlayer(ID PlayerID, Payload.Direction directionToMove, bool canUseController, float movementSpeed)
     {
         this.PlayerID = PlayerID;
         IdealDirection = directionToMove;
@@ -133,7 +133,6 @@ public class Player : MonoBehaviour, ILocatable
         // Controller reference
         Controller = GetComponent<PlayerController>();
         Controller.enabled = false;
-        Controller.SetDefaults(headPosition, feetPosition);
 
         Controller.SetControls(PLAYER_ID, canUseController);
 
@@ -143,7 +142,8 @@ public class Player : MonoBehaviour, ILocatable
         Inventory = GetComponent<PlayerInventory>();
 
         Movement = GetComponent<PlayerMovement>();
-        Movement.SetColliders(torsoCollider, feetCollider);
+        // Initialise the player movement
+        Movement.Initialise(movementSpeed, torsoCollider, headPosition, feetPosition);
 
         rigid = GetComponent<Rigidbody2D>();
 

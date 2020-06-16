@@ -40,11 +40,6 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    public void SetDefaults(Transform headPosition, Transform feetPosition)
-    {
-        movement.SetDefaults(headPosition, feetPosition);
-    }
-
     private bool GetButton(string prefix, string button)
     {
         return Input.GetButton(prefix + "_" + button);
