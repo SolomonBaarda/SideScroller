@@ -183,4 +183,17 @@ public class Presets
             Maximum = maximum;
         }
     }
+
+
+
+    public new string ToString()
+    {
+        string s = "Preset values: " +
+            "Multiplayer(" + DoMultiplayer + "), " +
+            "Item Drops(" + DoItemDrops + "), " +
+            "Item Spawn(" + DoGenerateItemsWithWorld + "), " +
+            "Random Weapons(" + DoSpawnWithRandomWeapons + ")";
+
+        return s;
+    }
 }

@@ -108,6 +108,7 @@ public class GameManager : MonoBehaviour
     private void Initialise(Presets presets)
     {
         this.presets = presets;
+        Debug.Log(presets.ToString());
         random = new System.Random(Seed);
 
         // Set the gravity
@@ -136,7 +137,6 @@ public class GameManager : MonoBehaviour
         terrainManager.LoadSampleTerrain(printDebug);
 
         // Generate spawn chunk
-        Debug.Log("here");
         terrainManager.GenerateSpawn(presets.TerrainGenerationStyle, length, Seed);
     }
 
