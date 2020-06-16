@@ -170,9 +170,9 @@ public class GameManager : MonoBehaviour
     }
 
 
-    private void CheckStartOfGame(Vector2Int chunkID)
+    private void CheckStartOfGame(Chunk c, TerrainManager.TerrainChunk t)
     {
-        if (chunkID.Equals(ChunkManager.initialChunkID))
+        if (c.chunkID.Equals(ChunkManager.initialChunkID))
         {
             StartCoroutine(WaitForStartOfGame(GAME_START_WAIT_SECONDS));
 

@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 public class ChunkManager : MonoBehaviour
 {
-    public static UnityAction<Vector2Int> OnChunkCreated;
+    public static UnityAction<Chunk, TerrainManager.TerrainChunk> OnChunkCreated;
     public static UnityAction<Vector2Int> OnChunkDestroyed;
 
     [Header("Chunk Prefab Reference")]
@@ -66,7 +66,8 @@ public class ChunkManager : MonoBehaviour
         // Add the new chunk
         chunks.Add(t.chunkID, c);
 
-        OnChunkCreated.Invoke(t.chunkID);
+        // Invoke the event
+        OnChunkCreated.Invoke(c, t);
     }
 
 

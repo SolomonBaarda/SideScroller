@@ -12,6 +12,23 @@ public class ItemManager : MonoBehaviour
     public static UnityAction<GameObject> OnGenerateLoot;
     public static UnityAction<GameObject> OnItemOutOfBounds;
 
+
+    public static Transform StaticItemParent
+    {
+        get
+        {
+            string name = "Static Item Parent";
+            GameObject itemParent = GameObject.Find(name);
+            if (itemParent == null)
+            {
+                itemParent = new GameObject(name);
+            }
+
+            return itemParent.transform;
+        }
+    }
+
+
     private System.Random random;
 
     private Dictionary<string, GameObject> worldObjectPrefabs;
@@ -21,7 +38,6 @@ public class ItemManager : MonoBehaviour
 
     public GameObject payloadPrefab;
     public GameObject Payload { get; private set; }
-
 
     private bool spawnItemsWithWorldGeneration;
     private bool doItemDrops;
@@ -35,7 +51,7 @@ public class ItemManager : MonoBehaviour
 
 
         // Assign event calls
-        TerrainManager.OnTerrainChunkGenerated += GenerateItemsForChunk;
+        ChunkManager.OnChunkCreated += GenerateItemsForChunk;
         OnGenerateLoot += GenerateLootForItem;
         // Give the player a random weapon when they spawn
         PlayerManager.OnPlayerRespawn += GivePlayerWeaponOnSpawn;
@@ -63,7 +79,7 @@ public class ItemManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        TerrainManager.OnTerrainChunkGenerated -= GenerateItemsForChunk;
+        ChunkManager.OnChunkCreated -= GenerateItemsForChunk;
         OnGenerateLoot -= GenerateLootForItem;
 
         PlayerManager.OnPlayerRespawn -= GivePlayerWeaponOnSpawn;
@@ -74,7 +90,7 @@ public class ItemManager : MonoBehaviour
     {
         Payload = SpawnItem(payloadPrefab, position, "Payload");
         Payload.GetComponent<Payload>().SetPosition(position);
-        Payload.transform.parent = null;
+        Payload.transform.parent = StaticItemParent;
         return Payload;
     }
 
@@ -189,14 +205,14 @@ public class ItemManager : MonoBehaviour
     }
 
 
-    private void GenerateItemsForChunk(TerrainManager.TerrainChunk chunk)
+    private void GenerateItemsForChunk(Chunk chunk, TerrainManager.TerrainChunk terrainChunk)
     {
         if (spawnItemsWithWorldGeneration)
         {
-            float itemChance = chunk.itemChance;
+            float itemChance = terrainChunk.itemChance;
 
             // Loop through each item position
-            foreach (TerrainManager.TerrainChunk.Item item in chunk.items)
+            foreach (TerrainManager.TerrainChunk.Item item in terrainChunk.items)
             {
                 // Check all the world items
                 if (worldObjectPrefabs.TryGetValue(item.name, out GameObject prefab))
@@ -204,6 +220,7 @@ public class ItemManager : MonoBehaviour
                     if (random.Next(0, 1) <= itemChance)
                     {
                         GameObject g = SpawnItem(prefab, item.centreOfTile, item.name.ToString());
+                        //g.transform.parent = chunk.ItemParent;
                     }
                 }
             }

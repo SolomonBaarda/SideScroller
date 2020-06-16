@@ -112,7 +112,7 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
         // Enable physics again
         rigid.isKinematic = false;
         trigger.enabled = true;
-        transform.parent = null;
+        transform.parent = ItemManager.StaticItemParent;
 
         // Set the direction
         IdealDirection = Direction.None;

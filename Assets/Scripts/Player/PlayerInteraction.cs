@@ -139,7 +139,6 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
                 }
             }
 
-
             // Ensure it is a valid time to interact
             if (interact1 && interact_timeout >= DEFAULT_INTERACT_TIMEOUT_SECONDS)
             {

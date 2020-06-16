@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 629841833206917049}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Items
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -102,13 +102,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 183f5b2b34ac9c2409e010b9d68d1426, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enteranceWorldSpace: {x: 0, y: 0, z: 0}
+  enteranceWorldSpace: {x: 0, y: 0}
   direction: 0
-  bounds: {x: 0, y: 0}
   chunkID: {x: 0, y: 0}
+  sampleTerrainIndex: 0
+  finish: {fileID: 0}
+  ItemParent: {fileID: 629841833206917049}
   cameraPathPrefab: {fileID: 3848663856503959680, guid: d247c94bdcc939241941cc204a1c1b49,
     type: 3}
   cameraPaths: []
+  Collider: {fileID: 7428907093167343081}
 --- !u!1 &9090394676269384055
 GameObject:
   m_ObjectHideFlags: 0

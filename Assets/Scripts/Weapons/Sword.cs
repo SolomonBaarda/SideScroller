@@ -130,7 +130,7 @@ public class Sword : MonoBehaviour, IWeapon, IInteractable, ICanBeHeld, IBlock
     {
         IsBeingHeld = false;
 
-        transform.parent = null;
+        transform.parent = ItemManager.StaticItemParent;
         transform.position = position;
 
         rigid.isKinematic = false;

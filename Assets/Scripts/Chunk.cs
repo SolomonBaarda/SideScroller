@@ -15,12 +15,14 @@ public class Chunk : MonoBehaviour
     public List<TerrainManager.TerrainChunk.Respawn> respawnPoints;
 
     public TerrainManager.Direction direction;
-    public Bounds Bounds { get { return boxCollider.bounds; } }
+    public Bounds Bounds { get { return Collider.bounds; } }
     private Vector2 cellSize;
     public Vector2Int chunkID;
     public int sampleTerrainIndex;
 
     public Finish finish;
+
+    public Transform ItemParent;
 
     [Header("Camera Path Prefab Reference")]
     public GameObject cameraPathPrefab;
@@ -28,14 +30,12 @@ public class Chunk : MonoBehaviour
     public List<CameraPath> cameraPaths;
     private Transform cameraPathChild;
 
-    private BoxCollider2D boxCollider;
+    public BoxCollider2D Collider;
 
     public void CreateChunk(Vector2 bounds, Vector2 cellSize, Vector2 centre, Vector2 enteranceWorldSpace,
         List<TerrainManager.TerrainChunk.Exit> exits, List<TerrainManager.TerrainChunk.Respawn> respawnPoints,
         TerrainManager.Direction direction, int sampleTerrainIndex, Vector2Int chunkID)
     {
-        boxCollider = GetComponent<BoxCollider2D>();
-
         // Assign variables 
         this.cellSize = cellSize;
         this.enteranceWorldSpace = enteranceWorldSpace;
@@ -49,7 +49,7 @@ public class Chunk : MonoBehaviour
         transform.name = ToString();
 
         // Exit collider
-        boxCollider.size = bounds;
+        Collider.size = bounds;
         transform.position = centre;
 
         // Get the camera paths
@@ -234,20 +234,26 @@ public class Chunk : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawCube(enteranceWorldSpace, 0.25f * Vector2.one);
 
-        // Exit markers
-        foreach (TerrainManager.TerrainChunk.Exit exit in exits)
+        if(exits != null)
         {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawCube(exit.exitPositionWorld, 0.25f * Vector2.one);
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawCube(exit.newChunkPositionWorld, 0.25f * Vector2.one);
+            // Exit markers
+            foreach (TerrainManager.TerrainChunk.Exit exit in exits)
+            {
+                Gizmos.color = Color.blue;
+                Gizmos.DrawCube(exit.exitPositionWorld, 0.25f * Vector2.one);
+                Gizmos.color = Color.cyan;
+                Gizmos.DrawCube(exit.newChunkPositionWorld, 0.25f * Vector2.one);
+            }
         }
 
-        // Draw all respawn points
-        foreach (TerrainManager.TerrainChunk.Respawn r in respawnPoints)
+        if(respawnPoints != null)
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(r.position, 0.25f);
+            // Draw all respawn points
+            foreach (TerrainManager.TerrainChunk.Respawn r in respawnPoints)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawSphere(r.position, 0.25f);
+            }
         }
     }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
+using TMPro.EditorUtilities;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -121,4 +122,6 @@ public class SceneLoader : MonoBehaviour
     public static void EMPTY() { }
 
     public static void EMPTY<T>(T _) { }
+
+    public static void EMPTY<T,U>(T _, U __) { }
 }

@@ -48,7 +48,6 @@ public class Chest : WorldItem, IInteractable, ILootable
             if (state.Equals(ChestState.Closed))
             {
                 state = ChestState.Open;
-                a.SetTrigger("Open");
             }
         }
         // CLose the chest
@@ -56,10 +55,12 @@ public class Chest : WorldItem, IInteractable, ILootable
         {
             if (state.Equals(ChestState.Open))
             {
-                a.SetTrigger("Close");
                 state = ChestState.Closed;
             }
         }
+
+        // Update the animations
+        a.SetBool("IsOpen", state == ChestState.Open);
 
         return true;
     }

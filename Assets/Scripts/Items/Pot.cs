@@ -93,7 +93,7 @@ public class Pot : WorldItem, IInteractable, ILootable, IAmLoot, ICanBeAttacked,
     {
         IsBeingHeld = false;
 
-        transform.parent = null;
+        transform.parent = ItemManager.StaticItemParent;
         transform.position = position;
 
         rigid.isKinematic = false;
