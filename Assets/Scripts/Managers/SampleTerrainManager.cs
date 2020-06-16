@@ -5,6 +5,8 @@ using UnityEngine.Tilemaps;
 
 public class SampleTerrainManager : MonoBehaviour
 {
+    public const string Name = "Sample Terrain Manager";
+
     // Arrays for storing the Sample Terrain
     [HideInInspector]
     public SampleTerrain[] allSamples;

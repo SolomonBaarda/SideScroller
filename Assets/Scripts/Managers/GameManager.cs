@@ -136,6 +136,7 @@ public class GameManager : MonoBehaviour
         terrainManager.LoadSampleTerrain(printDebug);
 
         // Generate spawn chunk
+        Debug.Log("here");
         terrainManager.GenerateSpawn(presets.TerrainGenerationStyle, length, Seed);
     }
 

@@ -13,15 +13,16 @@ public class ItemManager : MonoBehaviour
     public static UnityAction<GameObject> OnItemOutOfBounds;
 
 
+    private const string StaticItemParentName = "Static Item Parent";
     public static Transform StaticItemParent
     {
         get
         {
-            string name = "Static Item Parent";
-            GameObject itemParent = GameObject.Find(name);
+
+            GameObject itemParent = GameObject.Find(StaticItemParentName);
             if (itemParent == null)
             {
-                itemParent = new GameObject(name);
+                itemParent = new GameObject(StaticItemParentName);
             }
 
             return itemParent.transform;
@@ -79,10 +80,18 @@ public class ItemManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        // Remove all static event calls
         ChunkManager.OnChunkCreated -= GenerateItemsForChunk;
         OnGenerateLoot -= GenerateLootForItem;
 
         PlayerManager.OnPlayerRespawn -= GivePlayerWeaponOnSpawn;
+
+        // Destroy the parent if it is here
+        GameObject itemParent = GameObject.Find(StaticItemParentName);
+        if (itemParent != null)
+        {
+            Destroy(StaticItemParent.gameObject);
+        }
     }
 
 

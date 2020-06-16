@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.PackageManager.UI;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Tilemaps;
@@ -39,7 +38,7 @@ public class TerrainManager : MonoBehaviour
 
     [Header("Sample Terrain Manager Reference")]
     public GameObject sampleTerrainManagerObjectPrefab;
-    private SampleTerrainManager sampleTerrainManager;
+    private SampleTerrainManager Sample;
 
     [Header("Initial Tile Type")]
     public Tile groundTile;
@@ -53,8 +52,14 @@ public class TerrainManager : MonoBehaviour
         // Get the references
         grid = GetComponent<Grid>();
 
-        GameObject sampleGameObject = Instantiate(sampleTerrainManagerObjectPrefab);
-        sampleTerrainManager = sampleGameObject.GetComponent<SampleTerrainManager>();
+        // Get the sample terrain manager if there is not already one
+        GameObject sampleManagerObject = GameObject.Find(SampleTerrainManager.Name);
+        if(sampleManagerObject == null)
+        {
+            sampleManagerObject = Instantiate(sampleTerrainManagerObjectPrefab);
+            sampleManagerObject.name = SampleTerrainManager.Name;
+        }
+        Sample = sampleManagerObject.GetComponent<SampleTerrainManager>();
 
         // Assign the tilemaps 
         for (int i = 0; i < grid.transform.childCount; i++)
@@ -113,18 +118,20 @@ public class TerrainManager : MonoBehaviour
         GenerateInitialTile(initialTilePos);
 
         // Generate the spawn area
-        Generate(initialTilePos, Direction.Both, ChunkManager.initialChunkID, sampleTerrainManager.startingArea);
+        Debug.Log(Sample.startingArea.ground.tilesInThisLayer.Count);
+        Generate(initialTilePos, Direction.Both, ChunkManager.initialChunkID, Sample.startingArea);
+        
     }
 
 
     public void LoadSampleTerrain(bool printDebug)
     {
-        if(!sampleTerrainManager.TerrainIsLoaded)
+        if(!Sample.TerrainIsLoaded)
         {
             // Load the sample terrain
             DateTime before = DateTime.Now;
 
-            sampleTerrainManager.LoadAllSampleTerrain();
+            Sample.LoadAllSampleTerrain();
 
             TimeSpan time = DateTime.Now - before;
             if (printDebug)
@@ -142,7 +149,7 @@ public class TerrainManager : MonoBehaviour
         List<SampleTerrain> allValidSamples = new List<SampleTerrain>();
 
         // Get all possible terrain
-        foreach (SampleTerrain t in sampleTerrainManager.allSamples)
+        foreach (SampleTerrain t in Sample.allSamples)
         {
             if (IsValidDirection(directionToGenerate, t.direction))
             {
@@ -162,7 +169,7 @@ public class TerrainManager : MonoBehaviour
                 // Ensure it is only finishing areas that get generated
                 allValidSamples = new List<SampleTerrain>
                 {
-                    sampleTerrainManager.finishArea
+                    Sample.finishArea
                 };
             }
             // We have generated enough chunks
@@ -290,7 +297,7 @@ public class TerrainManager : MonoBehaviour
             if (invert < 0)
             {
                 // Check each tile that can be swapped 
-                foreach ((TileBase, TileBase) t in sampleTerrainManager.tilesToSwapWhenInverted)
+                foreach ((TileBase, TileBase) t in Sample.tilesToSwapWhenInverted)
                 {
                     if (tile.tileType.Equals(t.Item1))
                     {
@@ -359,7 +366,7 @@ public class TerrainManager : MonoBehaviour
             if (invert < 0)
             {
                 // Check each tile that can be swapped 
-                foreach ((TileBase, TileBase) t in sampleTerrainManager.tilesToSwapWhenInverted)
+                foreach ((TileBase, TileBase) t in Sample.tilesToSwapWhenInverted)
                 {
                     if (layer.tilesInThisLayer[i].tileType.Equals(t.Item1))
                     {
@@ -645,7 +652,7 @@ public class TerrainManager : MonoBehaviour
 
     public SampleTerrain GetSampleTerrain(int sampleTerrainID)
     {
-        return sampleTerrainManager.allSamples[sampleTerrainID];
+        return Sample.allSamples[sampleTerrainID];
     }
 
 

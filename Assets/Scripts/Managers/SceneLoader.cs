@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
-using TMPro.EditorUtilities;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -66,22 +65,14 @@ public class SceneLoader : MonoBehaviour
 
     public void UnloadGameToMenu()
     {
-        // Load the menu
         loadingScreen.SetActive(true);
-        if (SceneIsLoaded(MENU_SCENE))
-        {
-            scenesLoading.Add(SceneManager.LoadSceneAsync(MENU_SCENE, LoadSceneMode.Additive));
-        }
+
+        // Load the menu
+        scenesLoading.Add(SceneManager.LoadSceneAsync(MENU_SCENE, LoadSceneMode.Additive));
 
         // Unload the game
-        if (SceneIsLoaded(GAME_SCENE))
-        {
-            scenesLoading.Add(SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(GAME_SCENE)));
-        }
-        if (SceneIsLoaded(HUD_SCENE))
-        {
-            scenesLoading.Add(SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(HUD_SCENE)));
-        }
+        scenesLoading.Add(SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(GAME_SCENE)));
+        scenesLoading.Add(SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(HUD_SCENE)));
 
         StartCoroutine(WaitForLoadScenes());
     }
