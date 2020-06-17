@@ -14,7 +14,7 @@ public class SceneLoader : MonoBehaviour
 
     public GameObject loadingScreen;
 
-    List<AsyncOperation> scenesLoading = new List<AsyncOperation>();
+    private List<AsyncOperation> scenesLoading = new List<AsyncOperation>();
     public UnityAction OnScenesLoaded;
 
     private Presets lastPreset;
@@ -25,6 +25,8 @@ public class SceneLoader : MonoBehaviour
     {
         Instance = this;
 
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
         // Add an empty method to the event call to ensure never null
         OnScenesLoaded += EMPTY;
 
@@ -32,6 +34,12 @@ public class SceneLoader : MonoBehaviour
         loadingScreen.SetActive(true);
         scenesLoading.Add(SceneManager.LoadSceneAsync(MENU_SCENE, LoadSceneMode.Additive));
         StartCoroutine(WaitForLoadScenes());
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        OnScenesLoaded -= EMPTY;
     }
 
 
@@ -47,6 +55,7 @@ public class SceneLoader : MonoBehaviour
 
     public void LoadGame(Presets presets)
     {
+        // Update the presets
         lastPreset = presets;
 
         // Load the game and HUD
@@ -56,8 +65,6 @@ public class SceneLoader : MonoBehaviour
 
         // Unload the menu
         scenesLoading.Add(SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(MENU_SCENE)));
-
-        SceneManager.sceneLoaded += OnSceneLoaded;
 
         StartCoroutine(WaitForLoadScenes());
     }
@@ -80,8 +87,10 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator WaitForLoadScenes()
     {
+        // Loop through each scene that is loading
         for (int i = 0; i < scenesLoading.Count; i++)
         {
+            // Return null while it is still loading
             while (!scenesLoading[i].isDone)
             {
                 yield return null;
@@ -91,6 +100,7 @@ public class SceneLoader : MonoBehaviour
         // Hide the loading screen
         loadingScreen.SetActive(false);
 
+        // Event call
         OnScenesLoaded.Invoke();
     }
 
@@ -114,5 +124,5 @@ public class SceneLoader : MonoBehaviour
 
     public static void EMPTY<T>(T _) { }
 
-    public static void EMPTY<T,U>(T _, U __) { }
+    public static void EMPTY<T, U>(T _, U __) { }
 }

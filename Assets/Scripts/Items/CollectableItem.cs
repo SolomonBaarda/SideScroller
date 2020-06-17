@@ -74,7 +74,7 @@ public class CollectableItem : WorldItem, ICollidable, IInteractable, ICollectab
     public void Drop(Vector2 position, Vector2 velocity)
     {
         // Set position and velocity to throw the item
-        transform.parent = null;
+        transform.parent = ItemManager.StaticItemParent;
         SetPosition(position);
 
         rigid.velocity = velocity;

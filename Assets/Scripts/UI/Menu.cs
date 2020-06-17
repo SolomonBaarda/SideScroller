@@ -85,14 +85,16 @@ public class Menu : MonoBehaviour
         {
             itemReferenceToVariable.TryGetValue(key, out PresetItem i);
 
-            // Parse the enum type
+            // Get the preset value
             object value = i.GetValue();
 
-            if(i.type == Presets.Type.Value)
+            // Parse if it is the enum type
+            if (i.type == Presets.Type.Value)
             {
                 value = (Presets.Value)Enum.Parse(typeof(Presets.Value), i.GetDropdownOption());
             }
 
+            // Set the presets
             presets.SetPreset(key, value);
 
         }
