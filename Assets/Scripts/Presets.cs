@@ -12,10 +12,12 @@ public class Presets
     public bool DoItemDrops;
     public bool DoGenerateItemsWithWorld;
     public bool DoSpawnWithRandomWeapons;
+    public bool DoRandomSeed;
 
     // Map generation stuff
     public TerrainManager.Generation TerrainGenerationStyle;
     public Value TerrainWorldLengthIfNotEndless;
+    public string Seed = GameManager.DefaultSeed;
 
     // Objective stuff
 
@@ -38,10 +40,10 @@ public class Presets
 
 
 
-    public Presets() : this(true, false, true, true, true, TerrainManager.Generation.Symmetrical_Limit, Value.Default, Value.Default, Value.Default) { }
+    public Presets() : this(true, false, true, true, true, true, TerrainManager.Generation.Symmetrical_Limit, Value.Default, Value.Default, Value.Default) { }
 
 
-    private Presets(bool DoMultiplayer, bool DoEnemySpawning, bool DoItemDrops, bool DoGenerateItemsWithWorld, bool DoSpawnWithRandomWeapons,
+    private Presets(bool DoMultiplayer, bool DoEnemySpawning, bool DoItemDrops, bool DoGenerateItemsWithWorld, bool DoSpawnWithRandomWeapons, bool DoRandomSeed,
         TerrainManager.Generation TerrainGenerationStyle, Value TerrainWorldLengthIfNotEndless,
         Value GravityModifier, Value PlayerSpeed)
     {
@@ -50,6 +52,7 @@ public class Presets
         this.DoItemDrops = DoItemDrops;
         this.DoGenerateItemsWithWorld = DoGenerateItemsWithWorld;
         this.DoSpawnWithRandomWeapons = DoSpawnWithRandomWeapons;
+        this.DoRandomSeed = DoRandomSeed;
 
         this.TerrainGenerationStyle = TerrainGenerationStyle;
         this.TerrainWorldLengthIfNotEndless = TerrainWorldLengthIfNotEndless;
@@ -76,6 +79,9 @@ public class Presets
             case Conversion.Random_Weapons:
                 DoSpawnWithRandomWeapons = (bool)o;
                 break;
+            case Conversion.Random_Seed:
+                DoRandomSeed = (bool)o;
+                break;
             case Conversion.Map_Length:
                 TerrainWorldLengthIfNotEndless = (Value)o;
                 break;
@@ -99,6 +105,7 @@ public class Presets
         Item_Drops,
         Item_Spawns,
         Random_Weapons,
+        Random_Seed,
         Map_Length,
         Gravity_Modifier,
         Player_Speed,
@@ -192,7 +199,8 @@ public class Presets
             "Multiplayer(" + DoMultiplayer + "), " +
             "Item Drops(" + DoItemDrops + "), " +
             "Item Spawn(" + DoGenerateItemsWithWorld + "), " +
-            "Random Weapons(" + DoSpawnWithRandomWeapons + ")";
+            "Random Weapons(" + DoSpawnWithRandomWeapons + "), " +
+            "Random Seed(" + DoRandomSeed + ")";
 
         return s;
     }

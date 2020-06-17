@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -11,23 +12,11 @@ public class GameManager : MonoBehaviour
     public static UnityAction<Payload.Direction> OnGameEnd;
 
 
-    [Header("General Generation Settings")]
-    public string seed = "";
-    public bool useRandomSeed = false;
-    public int Seed
-    {
-        get
-        {
-            // Set up the random generator
-            int seedHash = seed.GetHashCode();
-            // Get a random seed
-            if (useRandomSeed)
-            {
-                seedHash = Environment.TickCount;
-            }
-            return seedHash;
-        }
-    }
+    public const string DefaultSeed = "";
+    public string Seed { get; private set; }
+    public int SeedHash => Seed.GetHashCode();
+
+    public string RandomSeed { get { return Environment.TickCount.ToString(); } }
     private System.Random random;
 
 
@@ -87,9 +76,14 @@ public class GameManager : MonoBehaviour
         ChunkManager.OnChunkCreated += CheckStartOfGame;
 
         // If the game scene is just open by its self, do default presets
+        // This is most likely because it was run in the editor
         if (SceneLoader.Instance == null)
         {
-            OnSetPresets.Invoke(new Presets());
+            Presets p = new Presets
+            {
+                DoRandomSeed = false
+            };
+            OnSetPresets.Invoke(p);
         }
 
         // Call the UpdatePayload method repeatedly
@@ -109,14 +103,21 @@ public class GameManager : MonoBehaviour
     {
         this.presets = presets;
         Debug.Log(presets.ToString());
-        random = new System.Random(Seed);
+
+        Seed = presets.Seed;
+        if (presets.DoRandomSeed)
+        {
+            Seed = RandomSeed;
+        }
+
+        random = new System.Random(SeedHash);
 
         // Set the gravity
         Physics2D.gravity = DefaultGravity;
         SetGravity(Presets.CalculateVariableValue(GravityMultiplierPreset, presets.GravityModifier, random));
 
         // Initialise ItemManager
-        itemManager.Initialise(presets.DoGenerateItemsWithWorld, presets.DoItemDrops, presets.DoSpawnWithRandomWeapons, Seed);
+        itemManager.Initialise(presets.DoGenerateItemsWithWorld, presets.DoItemDrops, presets.DoSpawnWithRandomWeapons, SeedHash);
 
         // Apply game rules
         int length = TerrainManager.WorldLengthPreset.Default;
@@ -137,7 +138,7 @@ public class GameManager : MonoBehaviour
         terrainManager.LoadSampleTerrain(printDebug);
 
         // Generate spawn chunk
-        terrainManager.GenerateSpawn(presets.TerrainGenerationStyle, length, Seed);
+        terrainManager.GenerateSpawn(presets.TerrainGenerationStyle, length, SeedHash);
     }
 
 
@@ -265,7 +266,10 @@ public class GameManager : MonoBehaviour
             p.SetAlive();
         }
 
-        hud.SetVisible(true);
+        if (hud != null)
+        {
+            hud.SetVisible(true);
+        }
 
         isGameOver = false;
     }
