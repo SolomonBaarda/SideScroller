@@ -55,9 +55,14 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-    private void OnDisable()
+    public void ResetVelocity()
     {
         rigid.velocity = Vector2.zero;
+    }
+
+    private void OnDisable()
+    {
+        ResetVelocity();
     }
 
 

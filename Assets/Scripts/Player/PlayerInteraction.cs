@@ -194,6 +194,7 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
             {
                 // Attack with the weapon
                 Weapon.Attack(player.RightHand.transform.position, rigid.velocity, player.DirectionFacing, ref inventory.HeldItemRight);
+                player.FreezeWhileAtacking();
 
                 // Reset the timer
                 interact_timeout = 0;

@@ -135,20 +135,6 @@ public class PlayerController : MonoBehaviour
     }
 
 
-
-    private void OnEnable()
-    {
-        movement.enabled = true;
-        interaction.enabled = true;
-    }
-
-    private void OnDisable()
-    {
-        movement.enabled = false;
-        interaction.enabled = false;
-    }
-
-
     private void UpdateAnimations()
     {
         // X velocity is always positive, just flipped x on local scale

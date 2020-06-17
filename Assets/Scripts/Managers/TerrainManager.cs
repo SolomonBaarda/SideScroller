@@ -119,7 +119,6 @@ public class TerrainManager : MonoBehaviour
 
         // Generate the spawn area
         Generate(initialTilePos, Direction.Both, ChunkManager.initialChunkID, Sample.startingArea);
-        Debug.Log("finished generating spawn.");
     }
 
 

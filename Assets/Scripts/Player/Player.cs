@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
 
@@ -75,23 +77,6 @@ public class Player : MonoBehaviour, ILocatable
 
     public HandPosition RightHandPosition { get; private set; } = HandPosition.Down;
 
-    public State CurrentState
-    {
-        get
-        {
-            // Freeze the player while they are attacking
-            IWeapon w = Inventory.GetPrimaryWeapon();
-            if (w != null)
-            {
-                if(w.IsAttacking)
-                {
-                    return State.Frozen;
-                }
-            }
-            return State.Interactable;
-        }
-    }
-
     public Collider2D torsoCollider, feetCollider, areaOfAttackCollider;
 
     public bool IsAlive { get; private set; } = false;
@@ -164,12 +149,66 @@ public class Player : MonoBehaviour, ILocatable
         }
     }
 
-    private void Update()
+
+
+    public IEnumerator FreezeFor(float seconds)
     {
-        // Disable the controler if the player is frozen
-        Controller.enabled = CurrentState == State.Interactable;
+        DateTime before = DateTime.Now;
+
+        // Freeze player while timer has not finished
+        while ((DateTime.Now - before).TotalSeconds < seconds)
+        {
+            Freeze(true);
+            yield return null;
+        }
+
+        Freeze(false);
     }
 
+
+
+    public void FreezeWhileAtacking()
+    {
+        // Force the coroutine to run on this script
+        StartCoroutine(WaitForFreezeWhileAttacking());
+    }
+
+
+    private IEnumerator WaitForFreezeWhileAttacking()
+    {
+        IWeapon w = Inventory.GetPrimaryWeapon();
+
+        // Ensure there is a weapon
+        while (w != null)
+        {
+            // Freeze the player while they are attacking
+            if (w.IsAttacking)
+            {
+                Freeze(true);
+                yield return null;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        Freeze(false);
+    }
+
+
+    private void Freeze(bool freeze)
+    {
+        // Disable the controller script
+        Controller.enabled = !freeze;
+        Interaction.enabled = !freeze;
+
+        // Disable the movement script if on the ground
+        if (freeze && Movement.IsOnGround)
+        {
+            Movement.ResetVelocity();
+        }
+    }
 
 
     public void SetPosition(Vector2 position)
@@ -192,6 +231,7 @@ public class Player : MonoBehaviour, ILocatable
             // Set dead and disable controls
             IsAlive = false;
             Controller.enabled = false;
+            Movement.enabled = false;
             gameObject.SetActive(false);
 
             // Count the deaths
@@ -208,6 +248,7 @@ public class Player : MonoBehaviour, ILocatable
         // Set player to be alive and enable controls
         IsAlive = true;
         Controller.enabled = true;
+        Movement.enabled = true;
         gameObject.SetActive(true);
     }
 
@@ -260,8 +301,10 @@ public class Player : MonoBehaviour, ILocatable
 
     public void UpdateCurrentChunk()
     {
+        // Update the chunk
         CurrentChunk = Chunk.UpdateCurrentChunk(CurrentChunk, Position);
 
+        // Get the closest respawn point
         Vector2 closest = CurrentChunk.respawnPoints[0].position;
         foreach (TerrainManager.TerrainChunk.Respawn r in CurrentChunk.respawnPoints)
         {
@@ -275,25 +318,12 @@ public class Player : MonoBehaviour, ILocatable
 
 
 
-    public static class Default
-    {
-        public const float SPEED = 40;
-        public const float SPEED_MINIMUM = 20;
-    }
-
-
     public enum HandPosition
     {
         Up,
         Down,
     }
 
-
-    public enum State
-    {
-        Interactable,
-        Frozen,
-    }
 
     public enum Facing
     {
