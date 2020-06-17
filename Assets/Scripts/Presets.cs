@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+using Pathfinding;
 
 public class Presets
 {
     // Game rules
     public bool DoMultiplayer;
+    public bool DoPathfinding;
     public bool DoEnemySpawning;
     public bool DoItemDrops;
     public bool DoGenerateItemsWithWorld;
@@ -40,14 +42,15 @@ public class Presets
 
 
 
-    public Presets() : this(true, false, true, true, true, true, TerrainManager.Generation.Symmetrical_Limit, Value.Default, Value.Default, Value.Default) { }
+    public Presets() : this(true, false, false, true, true, true, true, TerrainManager.Generation.Symmetrical_Limit, Value.Default, Value.Default, Value.Default) { }
 
 
-    private Presets(bool DoMultiplayer, bool DoEnemySpawning, bool DoItemDrops, bool DoGenerateItemsWithWorld, bool DoSpawnWithRandomWeapons, bool DoRandomSeed,
+    private Presets(bool DoMultiplayer, bool DoPathfinding, bool DoEnemySpawning, bool DoItemDrops, bool DoGenerateItemsWithWorld, bool DoSpawnWithRandomWeapons, bool DoRandomSeed,
         TerrainManager.Generation TerrainGenerationStyle, Value TerrainWorldLengthIfNotEndless,
         Value GravityModifier, Value PlayerSpeed)
     {
         this.DoMultiplayer = DoMultiplayer;
+        this.DoPathfinding = DoPathfinding;
         this.DoEnemySpawning = DoEnemySpawning;
         this.DoItemDrops = DoItemDrops;
         this.DoGenerateItemsWithWorld = DoGenerateItemsWithWorld;
@@ -69,6 +72,9 @@ public class Presets
         {
             case Conversion.Multiplayer:
                 DoMultiplayer = (bool)o;
+                break;
+            case Conversion.Pathfinding:
+                DoPathfinding = (bool)o;
                 break;
             case Conversion.Item_Drops:
                 DoItemDrops = (bool)o;
@@ -102,6 +108,7 @@ public class Presets
     public enum Conversion
     {
         Multiplayer,
+        Pathfinding,
         Item_Drops,
         Item_Spawns,
         Random_Weapons,

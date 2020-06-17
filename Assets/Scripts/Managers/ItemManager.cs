@@ -44,7 +44,7 @@ public class ItemManager : MonoBehaviour
     private bool doItemDrops;
     private bool respawnPlayerWithRandomWeapon;
 
-    public void Initialise(bool spawnItemsWithWorldGeneration, bool doItemDrops, bool respawnPlayerWithRandomWeapon, int seedHash)
+    public void Initialise(bool spawnItemsWithWorldGeneration, bool doItemDrops, bool respawnPlayerWithRandomWeapon, bool showDebug, int seedHash)
     {
         this.spawnItemsWithWorldGeneration = spawnItemsWithWorldGeneration;
         this.doItemDrops = doItemDrops;
@@ -71,10 +71,13 @@ public class ItemManager : MonoBehaviour
         LoadItemPrefabs(ref worldObjectPrefabs, "Prefabs/Items");
         LoadItemPrefabs(ref weaponPrefabs, "Prefabs/Weapons");
 
-        DateTime after = DateTime.Now;
-        TimeSpan time = after - before;
+        TimeSpan time = DateTime.Now - before;
 
-        Debug.Log("Loaded items in " + time.Milliseconds + "ms: (" + worldObjectPrefabs.Count + " world items), (" + weaponPrefabs.Count + " weapons)");
+
+        if (showDebug)
+        {
+            Debug.Log("Loaded items in " + time.Milliseconds + "ms: (" + worldObjectPrefabs.Count + " world items), (" + weaponPrefabs.Count + " weapons)");
+        }
     }
 
 

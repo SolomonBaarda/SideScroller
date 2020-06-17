@@ -133,6 +133,7 @@ public class Menu : MonoBehaviour
 
         // Game rule settings
         itemReferenceToVariable.Add(Presets.Conversion.Multiplayer, AddTogglePreset(t, presets.DoMultiplayer, "Multiplayer"));
+        itemReferenceToVariable.Add(Presets.Conversion.Pathfinding, AddTogglePreset(t, presets.DoPathfinding, "Pathfinding"));
         itemReferenceToVariable.Add(Presets.Conversion.Random_Weapons, AddTogglePreset(t, presets.DoSpawnWithRandomWeapons, "Random Weapons"));
         itemReferenceToVariable.Add(Presets.Conversion.Random_Seed, AddTogglePreset(t, presets.DoRandomSeed, "Random Seed"));
         itemReferenceToVariable.Add(Presets.Conversion.Item_Drops, AddTogglePreset(t, presets.DoItemDrops, "Item Drops"));

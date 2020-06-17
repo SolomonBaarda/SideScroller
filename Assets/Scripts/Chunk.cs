@@ -234,7 +234,7 @@ public class Chunk : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawCube(enteranceWorldSpace, 0.25f * Vector2.one);
 
-        if(exits != null)
+        if (exits != null)
         {
             // Exit markers
             foreach (TerrainManager.TerrainChunk.Exit exit in exits)
@@ -246,7 +246,7 @@ public class Chunk : MonoBehaviour
             }
         }
 
-        if(respawnPoints != null)
+        if (respawnPoints != null)
         {
             // Draw all respawn points
             foreach (TerrainManager.TerrainChunk.Respawn r in respawnPoints)
@@ -264,6 +264,42 @@ public class Chunk : MonoBehaviour
         return "(" + chunkID.x + "," + chunkID.y + ")";
     }
 
+
+
+    /// <summary>
+    /// Calculates the overall bounds of multiple chunks.
+    /// </summary>
+    /// <param name="chunks"></param>
+    /// <returns></returns>
+    public static Bounds CalculateBounds(List<Chunk> chunks)
+    {
+        Vector2 min = chunks[0].Bounds.min, max = chunks[0].Bounds.max;
+        // Get the min and max pos
+        foreach (Chunk c in chunks)
+        {
+            // Min
+            if (c.Bounds.min.x < min.x)
+            {
+                min.x = c.Bounds.min.x;
+            }
+            if (c.Bounds.min.y < min.y)
+            {
+                min.y = c.Bounds.min.y;
+            }
+            // Max
+            if (c.Bounds.max.x > max.x)
+            {
+                max.x = c.Bounds.max.x;
+            }
+            if (c.Bounds.max.y > max.y)
+            {
+                max.y = c.Bounds.max.y;
+            }
+        }
+
+        Vector2 size = max - min;
+        return new Bounds(min + (size / 2), size);
+    }
 
 
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -20,22 +19,21 @@ public class GameManager : MonoBehaviour
     private System.Random random;
 
 
-    [Header("Player")]
-    public PlayerManager playerManager;
 
     [Header("Camera")]
-    public MovingCamera movingCamera;
+    public MovingCamera MovingCamera;
 
     [Header("Managers")]
-    public TerrainManager terrainManager;
-    public ChunkManager chunkManager;
-    public ItemManager itemManager;
-    public InteractionManager interactionManager;
-    public EnemyManager enemyManager;
+    public TerrainManager TerrainManager;
+    public ChunkManager ChunkManager;
+    public PlayerManager PlayerManager;
+    public ItemManager ItemManager;
+    public InteractionManager InteractionManager;
+    public AIManager AIManager;
 
-    private HUD hud;
+    private HUD HUD;
 
-    public GameStats Stats { get { return new GameStats(GameTimeSeconds, fps_last_framerate, playerManager); } }
+    public GameStats Stats { get { return new GameStats(GameTimeSeconds, fps_last_framerate, PlayerManager); } }
 
 
     public float GameTimeSeconds { get; private set; }
@@ -58,7 +56,7 @@ public class GameManager : MonoBehaviour
     public static int FPS_IDEAL = 60;
 
     [Header("Debug")]
-    public bool printDebug = true;
+    public bool ShowDebug = true;
 
     private void Awake()
     {
@@ -81,7 +79,8 @@ public class GameManager : MonoBehaviour
         {
             Presets p = new Presets
             {
-                DoRandomSeed = false
+                DoRandomSeed = false,
+                DoEnemySpawning = true,
             };
             OnSetPresets.Invoke(p);
         }
@@ -102,22 +101,26 @@ public class GameManager : MonoBehaviour
     private void Initialise(Presets presets)
     {
         this.presets = presets;
-        Debug.Log(presets.ToString());
-
+        // Set the seed
         Seed = presets.Seed;
         if (presets.DoRandomSeed)
         {
             Seed = RandomSeed;
         }
-
         random = new System.Random(SeedHash);
+
+        if (ShowDebug)
+        {
+            Debug.Log(presets.ToString());
+            Debug.Log("Playing on seed: " + SeedHash);
+        }
 
         // Set the gravity
         Physics2D.gravity = DefaultGravity;
         SetGravity(Presets.CalculateVariableValue(GravityMultiplierPreset, presets.GravityModifier, random));
 
         // Initialise ItemManager
-        itemManager.Initialise(presets.DoGenerateItemsWithWorld, presets.DoItemDrops, presets.DoSpawnWithRandomWeapons, SeedHash);
+        ItemManager.Initialise(presets.DoGenerateItemsWithWorld, presets.DoItemDrops, presets.DoSpawnWithRandomWeapons, ShowDebug, SeedHash);
 
         // Apply game rules
         int length = TerrainManager.WorldLengthPreset.Default;
@@ -135,10 +138,10 @@ public class GameManager : MonoBehaviour
         }
 
         // Load all sample terrain
-        terrainManager.LoadSampleTerrain(printDebug);
+        TerrainManager.LoadSampleTerrain(ShowDebug);
 
         // Generate spawn chunk
-        terrainManager.GenerateSpawn(presets.TerrainGenerationStyle, length, SeedHash);
+        TerrainManager.GenerateSpawn(presets.TerrainGenerationStyle, length, SeedHash);
     }
 
 
@@ -150,7 +153,7 @@ public class GameManager : MonoBehaviour
 
             // Get a list of all the players meant to be moving in that direction
             List<Player> winningPlayers = new List<Player>();
-            foreach (Player p in playerManager.AllPlayers)
+            foreach (Player p in PlayerManager.AllPlayers)
             {
                 p.enabled = false;
 
@@ -166,8 +169,11 @@ public class GameManager : MonoBehaviour
                 winners += p.PlayerID + " ";
             }
 
-            Debug.Log(winners + "won!");
-            Debug.Log("The game lasted " + GameTimeSeconds.ToString("0.0") + " seconds.");
+            if (ShowDebug)
+            {
+                Debug.Log(winners + "won!");
+                Debug.Log("The game lasted " + GameTimeSeconds.ToString("0.0") + " seconds.");
+            }
         }
     }
 
@@ -191,7 +197,7 @@ public class GameManager : MonoBehaviour
 
         do
         {
-            if (terrainManager.IsGenerating)
+            if (TerrainManager.IsGenerating)
             {
                 consecutiveFramesWithNoGeneration = 0;
             }
@@ -220,15 +226,8 @@ public class GameManager : MonoBehaviour
 
     private void StartGame()
     {
-        Debug.Log("Game Starting!");
-
-        if (presets.DoEnemySpawning)
-        {
-            enemyManager.ScanWholeNavMesh();
-        }
-
         // Add only the spawn for initial start
-        List<Chunk> onlySpawnChunk = new List<Chunk> { chunkManager.GetChunk(ChunkManager.initialChunkID) };
+        List<Chunk> onlySpawnChunk = new List<Chunk> { ChunkManager.GetChunk(ChunkManager.initialChunkID) };
 
         // Calculate the player random speed
         float playerSpeed = Presets.CalculateVariableValue(PlayerMovement.SpeedPreset, presets.PlayerSpeed, random);
@@ -237,41 +236,52 @@ public class GameManager : MonoBehaviour
         if (!presets.DoMultiplayer)
         {
             // Spawn player 1 
-            playerManager.SpawnPlayer(Player.ID.P1, Payload.Direction.None, true, playerSpeed, onlySpawnChunk, movingCamera.ViewBounds);
+            Player p1 = PlayerManager.SpawnPlayer(Player.ID.P1, Payload.Direction.None, true, playerSpeed, onlySpawnChunk, MovingCamera.ViewBounds);
 
             // Set up camera
-            movingCamera.SetFollowingTarget(playerManager.GetPlayer(Player.ID.P1).gameObject);
-            movingCamera.direction = MovingCamera.Direction.Following;
+            MovingCamera.SetFollowingTarget(p1.gameObject);
+            MovingCamera.direction = MovingCamera.Direction.Following;
+            //AIManager.SetMeshUpdate(p1.transform);
         }
         // Multiplayer game
         else
         {
             // Spawn players 
-            playerManager.SpawnPlayer(Player.ID.P1, Payload.Direction.Right, false, playerSpeed, onlySpawnChunk, movingCamera.ViewBounds);
-            playerManager.SpawnPlayer(Player.ID.P2, Payload.Direction.Left, true, playerSpeed, onlySpawnChunk, movingCamera.ViewBounds);
+            PlayerManager.SpawnPlayer(Player.ID.P1, Payload.Direction.Right, false, playerSpeed, onlySpawnChunk, MovingCamera.ViewBounds);
+            PlayerManager.SpawnPlayer(Player.ID.P2, Payload.Direction.Left, true, playerSpeed, onlySpawnChunk, MovingCamera.ViewBounds);
 
             // Spawn payload
-            Vector2 payloadSpawn = playerManager.GetBestRespawnPoint(Payload.Direction.None, onlySpawnChunk, movingCamera.ViewBounds);
-            GameObject payload = itemManager.SpawnPayload(new Vector2(payloadSpawn.x, payloadSpawn.y + (terrainManager.CellSize.y)));
+            Vector2 payloadSpawn = PlayerManager.GetBestRespawnPoint(Payload.Direction.None, onlySpawnChunk, MovingCamera.ViewBounds);
+            GameObject payload = ItemManager.SpawnPayload(new Vector2(payloadSpawn.x, payloadSpawn.y + (TerrainManager.CellSize.y)));
 
             // Set up camera
-            movingCamera.SetFollowingTarget(payload);
-            movingCamera.direction = MovingCamera.Direction.Following;
+            MovingCamera.SetFollowingTarget(payload);
+            MovingCamera.direction = MovingCamera.Direction.Following;
+
+            // Set the graph to update
+            if(presets.DoPathfinding)
+            {
+                AIManager.SetMeshUpdate(payload.transform);
+            }
         }
 
-
         // Set all players to be alive
-        foreach (Player p in playerManager.AllPlayers)
+        foreach (Player p in PlayerManager.AllPlayers)
         {
             p.SetAlive();
         }
 
-        if (hud != null)
+        if (HUD != null)
         {
-            hud.SetVisible(true);
+            HUD.SetVisible(true);
         }
 
         isGameOver = false;
+
+        if (ShowDebug)
+        {
+            Debug.Log("Game Starting!");
+        }
     }
 
 
@@ -310,59 +320,29 @@ public class GameManager : MonoBehaviour
             GameTimeSeconds += Time.deltaTime;
 
             // Check if a player is outside the bounds
-            playerManager.CheckPlayersOutsideBounds(movingCamera.ViewBounds);
+            PlayerManager.CheckPlayersOutsideBounds(MovingCamera.ViewBounds);
             // Check if a player needs to be respawned
-            playerManager.CheckAllRespawns(chunkManager.LoadedChunks, movingCamera.ViewBounds);
+            PlayerManager.CheckAllRespawns(ChunkManager.LoadedChunks, MovingCamera.ViewBounds);
 
-            // Update the nav meshes
+
+            // Update the AIManager nav mesh
             if (presets.DoEnemySpawning)
             {
-                // Check if we need to update the nav mesh
-                foreach (Chunk c in chunkManager.LoadedChunks)
-                {
-                    UpdateNavMesh(c);
-                }
-
-                // Check if we need to update the size of the nav mesh
-                Vector2Int currentMaxTilesFromOrigin = Vector2Int.zero;
-                foreach (Chunk c in chunkManager.LoadedChunks)
-                {
-                    foreach (TerrainManager.TerrainChunk.Exit e in c.exits)
-                    {
-                        int x = Mathf.Abs(e.tilesFromOrigin.x);
-                        int y = Mathf.Abs(e.tilesFromOrigin.y);
-
-                        if (x > currentMaxTilesFromOrigin.x)
-                        {
-                            currentMaxTilesFromOrigin.x = x;
-                        }
-                        if (y > currentMaxTilesFromOrigin.y)
-                        {
-                            currentMaxTilesFromOrigin.y = y;
-                        }
-                    }
-                }
-
-                enemyManager.CheckUpdateSize(currentMaxTilesFromOrigin);
+                // Scan the bounds of the nav mesh
+                //AIManager.ScanBounds(Chunk.CalculateBounds(ChunkManager.LoadedChunks), TerrainManager.);
             }
         }
     }
 
 
 
+
     private void UpdateChunks()
     {
-        chunkManager.UpdateLoadedChunks(movingCamera.GetAllNearbyChunks());
+        ChunkManager.UpdateLoadedChunks(MovingCamera.GetAllNearbyChunks());
 
         // Check each chunk
-        CheckGenrateNewChunks(chunkManager.LoadedChunks);
-    }
-
-
-
-    private void UpdateNavMesh(Chunk chunk)
-    {
-        enemyManager.UpdateNavMesh(chunk.Bounds);
+        CheckGenrateNewChunks(ChunkManager.LoadedChunks);
     }
 
 
@@ -395,7 +375,7 @@ public class GameManager : MonoBehaviour
             try
             {
                 // Chunk already exists, do nothing
-                Chunk neighbour = chunkManager.GetChunk(exit.newChunkID);
+                Chunk neighbour = ChunkManager.GetChunk(exit.newChunkID);
             }
             catch (Exception)
             {
@@ -417,13 +397,13 @@ public class GameManager : MonoBehaviour
                             symmetricChunkID.x = ChunkManager.initialChunkID.x - Mathf.Abs(exit.newChunkID.x);
                         }
 
-                        Chunk symmetric = chunkManager.GetChunk(symmetricChunkID);
+                        Chunk symmetric = ChunkManager.GetChunk(symmetricChunkID);
                         if (symmetric.chunkID != ChunkManager.initialChunkID)
                         {
                             symmetricChunkIndex = symmetric.sampleTerrainIndex;
 
                             // Generate the symmetrical chunk
-                            terrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID, terrainManager.GetSampleTerrain(symmetricChunkIndex));
+                            TerrainManager.Generate(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID, TerrainManager.GetSampleTerrain(symmetricChunkIndex));
                             chunksAreGenerating = true;
                             continue;
                         }
@@ -431,7 +411,7 @@ public class GameManager : MonoBehaviour
                     catch (Exception)
                     {
                         // Check that the symmetric chunk has not already been chosen and is being generated now 
-                        if (terrainManager.ChunkAlreadyGenerating(symmetricChunkID))
+                        if (TerrainManager.ChunkAlreadyGenerating(symmetricChunkID))
                         {
                             chunksAreGenerating = true;
                             continue;
@@ -440,7 +420,7 @@ public class GameManager : MonoBehaviour
                 }
 
                 // Generate a new random chunk
-                terrainManager.GenerateRandom(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID);
+                TerrainManager.GenerateRandom(exit.newChunkPositionWorld, exit.exitDirection, exit.newChunkID);
                 chunksAreGenerating = true;
                 continue;
             }
@@ -461,7 +441,7 @@ public class GameManager : MonoBehaviour
                 // Get the best position on the screen
                 try
                 {
-                    Vector2 respawn = playerManager.GetBestRespawnPoint(Payload.Direction.None, chunkManager.LoadedChunks, movingCamera.ViewBounds);
+                    Vector2 respawn = PlayerManager.GetBestRespawnPoint(Payload.Direction.None, ChunkManager.LoadedChunks, MovingCamera.ViewBounds);
                     p.SetPosition(respawn);
                 }
                 catch (Exception)
@@ -476,8 +456,8 @@ public class GameManager : MonoBehaviour
 
     private void SetUpHUD(HUD hud)
     {
-        this.hud = hud;
-        this.hud.SetVisible(isGameOver);
+        HUD = hud;
+        HUD.SetVisible(isGameOver);
     }
 
 
@@ -486,11 +466,11 @@ public class GameManager : MonoBehaviour
     public void UpdateHUD(bool showScoreboard)
     {
         // Display the scoreboard 
-        if (hud != null)
+        if (HUD != null)
         {
-            hud.UpdateScoreboardStats(Stats);
+            HUD.UpdateScoreboardStats(Stats);
 
-            hud.SetScoreboardVisible(showScoreboard);
+            HUD.SetScoreboardVisible(showScoreboard);
         }
     }
 
