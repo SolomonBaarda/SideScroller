@@ -137,11 +137,8 @@ public class GameManager : MonoBehaviour
             length = Presets.CalculateVariableValue(TerrainManager.WorldLengthPreset, presets.TerrainWorldLengthIfNotEndless, random);
         }
 
-        // Load all sample terrain
-        TerrainManager.LoadSampleTerrain(ShowDebug);
-
         // Generate spawn chunk
-        TerrainManager.GenerateSpawn(presets.TerrainGenerationStyle, length, SeedHash);
+        TerrainManager.GenerateSpawn(ResourceLoader.Instance.SampleTerrainManager, presets.TerrainGenerationStyle, length, SeedHash);
     }
 
 

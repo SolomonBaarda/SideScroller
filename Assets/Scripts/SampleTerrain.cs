@@ -52,8 +52,6 @@ public class SampleTerrain : MonoBehaviour
     private void Awake()
     {
         // References 
-        manager = transform.root.GetComponent<SampleTerrainManager>();
-
         grid = GetComponentInChildren<Grid>();
 
         // Destroy all TilemapRenderers connected
@@ -78,9 +76,10 @@ public class SampleTerrain : MonoBehaviour
         }
     }
 
-    public void LoadSample(int index)
+    public void LoadSample(int index, SampleTerrainManager manager)
     {
         this.index = index;
+        this.manager = manager;
 
         exitTilePositions = new List<Exit>();
         items = new List<Item>();

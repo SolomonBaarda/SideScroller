@@ -92,20 +92,20 @@ public class SampleTerrainManager : MonoBehaviour
         allSamples = terrain.GetComponentsInChildren<SampleTerrain>();
         for (int i = 0; i < allSamples.Length; i++)
         {
-            allSamples[i].LoadSample(i);
+            allSamples[i].LoadSample(i, this);
         }
         terrain.gameObject.SetActive(false);
 
         // Load spawn
         Transform spawn = transform.Find("Spawn");
         startingArea = spawn.GetComponentInChildren<SampleTerrain>();
-        startingArea.LoadSample(0);
+        startingArea.LoadSample(0, this);
         spawn.gameObject.SetActive(false);
 
         // Load spawn
         Transform finish = transform.Find("Finish");
         finishArea = finish.GetComponentInChildren<SampleTerrain>();
-        finishArea.LoadSample(0);
+        finishArea.LoadSample(0, this);
         finish.gameObject.SetActive(false);
 
         TerrainIsLoaded = true;

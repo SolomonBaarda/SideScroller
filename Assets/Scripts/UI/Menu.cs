@@ -60,6 +60,11 @@ public class Menu : MonoBehaviour
     }
 
 
+    public void EnablePlayButton(bool enable)
+    {
+        play_button.enabled = enable;
+    }
+
 
     private void OnDestroy()
     {

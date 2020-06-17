@@ -36,11 +36,15 @@ public class SceneLoader : MonoBehaviour
         StartCoroutine(WaitForLoadScenes());
     }
 
+
+
+
     private void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
         OnScenesLoaded -= EMPTY;
     }
+
 
 
     private void Update()
@@ -110,6 +114,10 @@ public class SceneLoader : MonoBehaviour
         if (s.name.Equals(GAME_SCENE))
         {
             GameManager.OnSetPresets.Invoke(lastPreset);
+        }
+        if (s.name.Equals(MENU_SCENE))
+        {
+            ResourceLoader.Instance.LoadAll();
         }
     }
 

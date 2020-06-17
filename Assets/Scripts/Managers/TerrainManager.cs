@@ -36,8 +36,6 @@ public class TerrainManager : MonoBehaviour
     private Tilemap hazard;
     private Tilemap ground;
 
-    [Header("Sample Terrain Manager Reference")]
-    public GameObject sampleTerrainManagerObjectPrefab;
     private SampleTerrainManager Sample;
 
     [Header("Initial Tile Type")]
@@ -51,15 +49,6 @@ public class TerrainManager : MonoBehaviour
     {
         // Get the references
         grid = GetComponent<Grid>();
-
-        // Get the sample terrain manager if there is not already one
-        GameObject sampleManagerObject = GameObject.Find(SampleTerrainManager.Name);
-        if(sampleManagerObject == null)
-        {
-            sampleManagerObject = Instantiate(sampleTerrainManagerObjectPrefab);
-            sampleManagerObject.name = SampleTerrainManager.Name;
-        }
-        Sample = sampleManagerObject.GetComponent<SampleTerrainManager>();
 
         // Assign the tilemaps 
         for (int i = 0; i < grid.transform.childCount; i++)
@@ -101,8 +90,11 @@ public class TerrainManager : MonoBehaviour
 
 
 
-    public void GenerateSpawn(Generation worldgenerationType, int worldLength, int seedHash)
+    public void GenerateSpawn(SampleTerrainManager manager, Generation worldgenerationType, int worldLength, int seedHash)
     {
+        // Set the SampleTerrainManager
+        Sample = manager;
+
         Random = new System.Random(seedHash);
         GenerationRule = worldgenerationType;
 
@@ -121,23 +113,6 @@ public class TerrainManager : MonoBehaviour
         Generate(initialTilePos, Direction.Both, ChunkManager.initialChunkID, Sample.startingArea);
     }
 
-
-    public void LoadSampleTerrain(bool printDebug)
-    {
-        if(!Sample.TerrainIsLoaded)
-        {
-            // Load the sample terrain
-            DateTime before = DateTime.Now;
-
-            Sample.LoadAllSampleTerrain();
-
-            TimeSpan time = DateTime.Now - before;
-            if (printDebug)
-            {
-                Debug.Log("It took " + time.Milliseconds + " ms to load the sample terrain.");
-            }
-        }
-    }
 
 
 
