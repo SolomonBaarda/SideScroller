@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -67,7 +68,8 @@ public class SampleTerrainManager : MonoBehaviour
         TerrainIsLoaded = false;
     }
 
-    public void LoadAllSampleTerrain()
+
+    public IEnumerator LoadAllSampleTerrain()
     {
         // Add all the tiles to the list
         tilesToSwapWhenInverted = new List<(TileBase, TileBase)>
@@ -93,20 +95,25 @@ public class SampleTerrainManager : MonoBehaviour
         for (int i = 0; i < allSamples.Length; i++)
         {
             allSamples[i].LoadSample(i, this);
+            yield return null;
         }
         terrain.gameObject.SetActive(false);
+
 
         // Load spawn
         Transform spawn = transform.Find("Spawn");
         startingArea = spawn.GetComponentInChildren<SampleTerrain>();
         startingArea.LoadSample(0, this);
         spawn.gameObject.SetActive(false);
+        yield return null;
+
 
         // Load spawn
         Transform finish = transform.Find("Finish");
         finishArea = finish.GetComponentInChildren<SampleTerrain>();
         finishArea.LoadSample(0, this);
         finish.gameObject.SetActive(false);
+        yield return null;
 
         TerrainIsLoaded = true;
     }

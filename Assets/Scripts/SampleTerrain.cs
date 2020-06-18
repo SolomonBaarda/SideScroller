@@ -61,7 +61,6 @@ public class SampleTerrain : MonoBehaviour
         }
 
 
-
         extraObjectsParent = transform.Find("Extras").gameObject;
 
         // Disable all extras for now
@@ -224,6 +223,9 @@ public class SampleTerrain : MonoBehaviour
 
     private void LoadTiles(Tilemap tilemap, ref Layer layer)
     {
+        // Compress the bounds first to reduce unnecessary calls
+        tilemap.CompressBounds();
+
         // Get an iterator for the bounds of the tilemap 
         BoundsInt.PositionEnumerator p = tilemap.cellBounds.allPositionsWithin.GetEnumerator();
         while (p.MoveNext())

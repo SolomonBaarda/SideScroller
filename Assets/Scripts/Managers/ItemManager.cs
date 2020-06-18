@@ -29,7 +29,6 @@ public class ItemManager : MonoBehaviour
         }
     }
 
-
     private System.Random random;
 
     private Dictionary<string, GameObject> worldObjectPrefabs;
@@ -61,23 +60,9 @@ public class ItemManager : MonoBehaviour
         random = new System.Random(seedHash);
 
 
-        // Load all the items from the /Resources folder
-        DateTime before = DateTime.Now;
-
-        worldObjectPrefabs = new Dictionary<string, GameObject>();
-        weaponPrefabs = new Dictionary<string, GameObject>();
-
-        // Load all items 
-        LoadItemPrefabs(ref worldObjectPrefabs, "Prefabs/Items");
-        LoadItemPrefabs(ref weaponPrefabs, "Prefabs/Weapons");
-
-        TimeSpan time = DateTime.Now - before;
-
-
-        if (showDebug)
-        {
-            Debug.Log("Loaded items in " + time.Milliseconds + "ms: (" + worldObjectPrefabs.Count + " world items), (" + weaponPrefabs.Count + " weapons)");
-        }
+        // Assign the prefab dictionaries
+        worldObjectPrefabs = ResourceLoader.Instance.WorldItemPrefabs;
+        weaponPrefabs = ResourceLoader.Instance.WeaponPrefabs;
     }
 
 
@@ -196,25 +181,7 @@ public class ItemManager : MonoBehaviour
 
 
 
-    /// <summary>
-    /// Load all prefabs from "path" and put them into a Dictionary
-    /// </summary>
-    /// <typeparam name="TEnum"></typeparam>
-    /// <param name="prefabs"></param>
-    /// <param name="path"></param>
-    private void LoadItemPrefabs(ref Dictionary<string, GameObject> prefabs, string path)
-    {
-        // Load all objects from path
-        GameObject[] allItemPrefabs = Resources.LoadAll<GameObject>(path);
 
-        // Loop through each object
-        foreach (GameObject value in allItemPrefabs)
-        {
-            // Add it
-            string key = value.name;
-            prefabs.Add(key, value);
-        }
-    }
 
 
     private void GenerateItemsForChunk(Chunk chunk, TerrainManager.TerrainChunk terrainChunk)

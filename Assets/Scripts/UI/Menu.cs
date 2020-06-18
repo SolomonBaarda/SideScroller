@@ -54,15 +54,20 @@ public class Menu : MonoBehaviour
 
         OnCloseAllMenus();
 
+        // Disable the play button if resources have not been loaded yet
+        if(!ResourceLoader.Instance.ResourcesLoaded)
+        {
+            play_button.enabled = false;
+        }
 
         // Set up the preset window
         LoadPresetMenu();
     }
 
 
-    public void EnablePlayButton(bool enable)
+    public void EnablePlayButton()
     {
-        play_button.enabled = enable;
+        play_button.enabled = true;
     }
 
 

@@ -117,7 +117,18 @@ public class SceneLoader : MonoBehaviour
         }
         if (s.name.Equals(MENU_SCENE))
         {
-            ResourceLoader.Instance.LoadAll();
+            Menu m;
+            foreach(GameObject g in s.GetRootGameObjects())
+            {
+                m = g.GetComponent<Menu>();
+                if (m != null)
+                {
+                    ResourceLoader.Instance.LoadAllThenCall(m.EnablePlayButton);
+                    return;
+                }
+            }
+
+            Debug.LogError("Menu script could not be found in scene.");
         }
     }
 
