@@ -47,21 +47,21 @@ PolygonCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 3, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 1.50147, y: 0.06368178}
-      - {x: -1.3147005, y: 0.1877053}
-      - {x: -1.4986364, y: 0.061296053}
-      - {x: -1.5030643, y: -0.05571298}
-      - {x: -1.3118622, y: -0.18736039}
-      - {x: 1.5019202, y: -0.066485435}
+    - - {x: -1.4939861, y: -0.0679238}
+      - {x: -1.309209, y: -0.18139967}
+      - {x: 1.25, y: -0.0625}
+      - {x: 1.25, y: 0.0625}
+      - {x: -1.3092105, y: 0.19017142}
+      - {x: -1.4966971, y: 0.059788093}
 --- !u!1 &7642302496285722238
 GameObject:
   m_ObjectHideFlags: 0
@@ -174,8 +174,8 @@ PolygonCollider2D:
   m_Points:
     m_Paths:
     - - {x: -1.25, y: -0.0625}
-      - {x: 1.5, y: -0.0625}
-      - {x: 1.5, y: 0.0625}
+      - {x: 1.25, y: -0.0625}
+      - {x: 1.25, y: 0.0625}
       - {x: -1.25, y: 0.0625}
 --- !u!50 &7642302496285722226
 Rigidbody2D:

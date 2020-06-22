@@ -10,7 +10,7 @@ public class Menu : MonoBehaviour
     public static UnityAction OnMenuClose;
 
     public const int DefaultFadeRoundingDecimalPlaces = 2;
-    public const float DefaultFadeDurationSeconds = 2.0f;
+    public const float DefaultFadeDurationSeconds = 1.5f;
 
     public GameObject main_screen_frame;
 
@@ -68,7 +68,7 @@ public class Menu : MonoBehaviour
     }
 
 
-    private void OnEnable()
+    private void Start()
     {
         // Fade in the menu
         StartCoroutine(FadeUI(true, DefaultFadeDurationSeconds, main_screen_frame.GetComponent<CanvasGroup>()));

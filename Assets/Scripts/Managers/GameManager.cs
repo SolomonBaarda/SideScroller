@@ -171,6 +171,8 @@ public class GameManager : MonoBehaviour
                 Debug.Log(winners + "won!");
                 Debug.Log("The game lasted " + GameTimeSeconds.ToString("0.0") + " seconds.");
             }
+
+            UpdateHUD(true);
         }
     }
 
@@ -309,13 +311,13 @@ public class GameManager : MonoBehaviour
             fps_time_counter = 0;
         }
 
-        // Input.GetButton("Scoreboard")
-        UpdateHUD(Input.GetButton("Scoreboard"));
-
         if (!isGameOver)
         {
             // Update the game time
             GameTimeSeconds += Time.deltaTime;
+
+            // Input.GetButton("Scoreboard")
+            UpdateHUD(Input.GetButton("Scoreboard"));
 
             // Check if a player is outside the bounds
             PlayerManager.CheckPlayersOutsideBounds(MovingCamera.ViewBounds);
@@ -455,6 +457,7 @@ public class GameManager : MonoBehaviour
     private void SetUpHUD(HUD hud)
     {
         HUD = hud;
+        UpdateHUD(false);
         HUD.SetVisible(isGameOver);
     }
 
@@ -467,7 +470,6 @@ public class GameManager : MonoBehaviour
         if (HUD != null)
         {
             HUD.UpdateScoreboardStats(Stats);
-
             HUD.SetScoreboardVisible(showScoreboard);
         }
     }

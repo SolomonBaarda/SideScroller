@@ -252,7 +252,7 @@ GameObject:
   m_Layer: 0
   m_Name: Game Resources Loader
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -284,7 +284,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SampleTerrainManagerPrefab: {fileID: 5350793358878637442, guid: 51fdc561ba13a6c41a9753945affdbba,
     type: 3}
-  SampleTerrainManager: {fileID: 0}
 --- !u!1 &1979150915 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5692066888078842989, guid: 8a05a5d640f608f43ab068c62e7f189d,

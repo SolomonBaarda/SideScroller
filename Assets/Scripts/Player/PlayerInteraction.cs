@@ -9,7 +9,6 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
     private float interact_timeout = DEFAULT_INTERACT_TIMEOUT_SECONDS;
 
     private List<Collider2D> areaOfInteraction;
-    public Collider2D AreaOfAttack { get; private set; }
 
     public IWeapon Weapon => inventory.GetPrimaryWeapon();
 
@@ -19,10 +18,9 @@ public class PlayerInteraction : MonoBehaviour, IAttack, ICanBeAttacked
     private Player player;
     private Rigidbody2D rigid;
 
-    public void SetColliders(List<Collider2D> areaOfInteraction, Collider2D areaOfAttack)
+    public void SetColliders(List<Collider2D> areaOfInteraction)
     {
         this.areaOfInteraction = areaOfInteraction;
-        AreaOfAttack = areaOfAttack;
 
         inventory = GetComponent<PlayerInventory>();
         player = GetComponent<Player>();

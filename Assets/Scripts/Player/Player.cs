@@ -16,17 +16,7 @@ public class Player : MonoBehaviour, ILocatable
     public Transform headPosition, feetPosition, crouchingHeadPosition;
     public Transform Head
     {
-        get
-        {
-            if (Movement.IsCrouching)
-            {
-                return crouchingHeadPosition;
-            }
-            else
-            {
-                return headPosition;
-            }
-        }
+        get { if (Movement.IsCrouching) { return crouchingHeadPosition; } else { return headPosition; } }
     }
 
     public Transform leftHand, leftHandCrouching, rightHand, rightHandUp, rightHandCrouching;
@@ -37,17 +27,7 @@ public class Player : MonoBehaviour, ILocatable
     /// </summary>
     public Transform LeftHand
     {
-        get
-        {
-            if (Movement.IsCrouching)
-            {
-                return leftHandCrouching;
-            }
-            else
-            {
-                return leftHand;
-            }
-        }
+        get { if (Movement.IsCrouching) { return leftHandCrouching; } else { return leftHand; } }
     }
 
     /// <summary>
@@ -57,27 +37,14 @@ public class Player : MonoBehaviour, ILocatable
     {
         get
         {
-            if (Movement.IsCrouching)
-            {
-                return rightHandCrouching;
-            }
-            else
-            {
-                if (RightHandPosition == HandPosition.Up)
-                {
-                    return rightHandUp;
-                }
-                else
-                {
-                    return rightHand;
-                }
-            }
+            if (Movement.IsCrouching) { return rightHandCrouching; }
+            else { if (RightHandPosition == HandPosition.Up) { return rightHandUp; } else { return rightHand; } }
         }
     }
 
     public HandPosition RightHandPosition { get; private set; } = HandPosition.Down;
 
-    public Collider2D torsoCollider, feetCollider, areaOfAttackCollider;
+    public Collider2D torsoCollider, feetCollider;
 
     public bool IsAlive { get; private set; } = false;
     public int Deaths { get; private set; } = 0;
@@ -122,7 +89,7 @@ public class Player : MonoBehaviour, ILocatable
         Controller.SetControls(PLAYER_ID, canUseController);
 
         Interaction = GetComponent<PlayerInteraction>();
-        Interaction.SetColliders(new List<Collider2D>(new Collider2D[] { torsoCollider, feetCollider }), areaOfAttackCollider);
+        Interaction.SetColliders(new List<Collider2D>(new Collider2D[] { torsoCollider, feetCollider }));
 
         Inventory = GetComponent<PlayerInventory>();
 
@@ -249,6 +216,7 @@ public class Player : MonoBehaviour, ILocatable
         IsAlive = true;
         Controller.enabled = true;
         Movement.enabled = true;
+        Interaction.enabled = true;
         gameObject.SetActive(true);
     }
 
