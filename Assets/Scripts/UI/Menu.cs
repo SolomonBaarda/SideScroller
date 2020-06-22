@@ -1,13 +1,18 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using UnityEngine.Events;
 using System;
+using System.Collections;
 
 public class Menu : MonoBehaviour
 {
     public static UnityAction OnMenuClose;
+
+    public const int DefaultFadeRoundingDecimalPlaces = 2;
+    public const float DefaultFadeDurationSeconds = 2.0f;
+
+    public GameObject main_screen_frame;
 
     [Header("Play Button")]
     public Button play_button;
@@ -39,7 +44,10 @@ public class Menu : MonoBehaviour
         play_button.onClick.AddListener(OnPlayPressed);
         preset_menu_button.onClick.AddListener(OnShowPresetMenu);
         settings_menu_button.onClick.AddListener(OnShowSettingsMenu);
-        quit_button.onClick.AddListener(SceneLoader.Instance.Quit);
+        if (SceneLoader.Instance != null)
+        {
+            quit_button.onClick.AddListener(SceneLoader.Instance.Quit);
+        }
 
         // Set the close buttons
         foreach (Button b in all_close_menu_buttons)
@@ -50,7 +58,7 @@ public class Menu : MonoBehaviour
         OnCloseAllMenus();
 
         // Disable the play button if resources have not been loaded yet
-        if(!ResourceLoader.Instance.ResourcesLoaded)
+        if (ResourceLoader.Instance != null && !ResourceLoader.Instance.ResourcesLoaded)
         {
             play_button.enabled = false;
         }
@@ -58,6 +66,47 @@ public class Menu : MonoBehaviour
         // Set up the preset window
         LoadPresetMenu();
     }
+
+
+    private void OnEnable()
+    {
+        // Fade in the menu
+        StartCoroutine(FadeUI(true, DefaultFadeDurationSeconds, main_screen_frame.GetComponent<CanvasGroup>()));
+    }
+
+
+
+    private void OnDisable()
+    {
+
+    }
+
+
+    public static IEnumerator FadeUI(bool fadeIn, float durationSeconds, CanvasGroup g)
+    {
+        // Fade in
+        if (fadeIn)
+        {
+            for (float i = 0; i <= durationSeconds; i += Time.deltaTime)
+            {
+                g.alpha = (float)Math.Round(i / durationSeconds, DefaultFadeRoundingDecimalPlaces);
+                yield return null;
+            }
+            g.alpha = 1;
+        }
+        // Fade out
+        else
+        {
+            for (float i = durationSeconds; i >= 0; i -= Time.deltaTime)
+            {
+                g.alpha = (float)Math.Round(i / durationSeconds, DefaultFadeRoundingDecimalPlaces);
+                yield return null;
+            }
+            g.alpha = 0;
+        }
+    }
+
+
 
 
     public void EnablePlayButton()

@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -738,6 +738,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 920a2371f55b1c64aa8e429a7ee25f8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  main_screen_frame: {fileID: 1907301046}
   play_button: {fileID: 1675208894}
   allMenusParent: {fileID: 1795820936}
   all_close_menu_buttons:
@@ -1996,6 +1997,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1795820937}
+  - component: {fileID: 1795820938}
   m_Layer: 5
   m_Name: Extra Windows
   m_TagString: Untagged
@@ -2024,6 +2026,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -200, y: -200}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &1795820938
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1795820936}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1827157587
 GameObject:
   m_ObjectHideFlags: 0
@@ -2140,6 +2154,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1907301047}
   - component: {fileID: 1907301048}
+  - component: {fileID: 1907301051}
   m_Layer: 5
   m_Name: Main Screen Frame
   m_TagString: Untagged
@@ -2196,6 +2211,18 @@ MonoBehaviour:
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
+--- !u!225 &1907301051
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1907301046}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1952015894
 GameObject:
   m_ObjectHideFlags: 0
