@@ -115,7 +115,7 @@ public class ItemManager : MonoBehaviour
         // Give the player sword
         else
         {
-            weaponPrefabs.TryGetValue("Sword", out prefab);
+            weaponPrefabs.TryGetValue("Shuriken", out prefab);
         }
 
         // Spawn in that weapon
