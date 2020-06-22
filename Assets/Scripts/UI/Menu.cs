@@ -12,31 +12,25 @@ public class Menu : MonoBehaviour
     [Header("Play Button")]
     public Button play_button;
 
-    [Header("Multiplayer Toggle")]
-    public Toggle multiplayer_toggle;
-
     [Header("Menus")]
     public GameObject allMenusParent;
     public Button[] all_close_menu_buttons;
 
+    [Header("Extra Windows")]
     public Button preset_menu_button;
     public GameObject preset_menu;
     public GameObject preset_menu_item_frame;
     public GameObject preset_variable_item_prefab;
     public GameObject preset_bool_item_prefab;
-
-    [Space]
     public Button settings_menu_button;
     public GameObject settings_menu;
 
-    [Header("Slider")]
-    public GameObject map_length_slider_parent;
-    public Slider map_length_slider;
-
+    [Header("Exit Button")]
+    public Button quit_button;
 
 
     private Presets presets;
-    private Dictionary<Presets.Conversion, PresetItem> itemReferenceToVariable = new Dictionary<Presets.Conversion, PresetItem>();
+    private readonly Dictionary<Presets.Conversion, PresetItem> itemReferenceToVariable = new Dictionary<Presets.Conversion, PresetItem>();
 
 
     private void Awake()
@@ -45,6 +39,7 @@ public class Menu : MonoBehaviour
         play_button.onClick.AddListener(OnPlayPressed);
         preset_menu_button.onClick.AddListener(OnShowPresetMenu);
         settings_menu_button.onClick.AddListener(OnShowSettingsMenu);
+        quit_button.onClick.AddListener(SceneLoader.Instance.Quit);
 
         // Set the close buttons
         foreach (Button b in all_close_menu_buttons)
@@ -77,6 +72,7 @@ public class Menu : MonoBehaviour
         play_button.onClick.RemoveAllListeners();
         preset_menu_button.onClick.RemoveAllListeners();
         settings_menu_button.onClick.RemoveAllListeners();
+        quit_button.onClick.RemoveAllListeners();
 
         foreach (Button b in all_close_menu_buttons)
         {

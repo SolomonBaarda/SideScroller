@@ -50,12 +50,17 @@ public class SceneLoader : MonoBehaviour
     private void Update()
     {
         // Quit the build
-        if (Input.GetButton("Cancel"))
+        if (Input.GetButtonDown("Cancel"))
         {
-            Application.Quit();
+            
         }
     }
 
+
+    public void Quit()
+    {
+        Application.Quit();
+    }
 
     public void LoadGame(Presets presets)
     {
