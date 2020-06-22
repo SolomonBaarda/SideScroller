@@ -250,6 +250,7 @@ public class GameManager : MonoBehaviour
             // Spawn payload
             Vector2 payloadSpawn = PlayerManager.GetBestRespawnPoint(Payload.Direction.None, onlySpawnChunk, MovingCamera.ViewBounds);
             GameObject payload = ItemManager.SpawnPayload(new Vector2(payloadSpawn.x, payloadSpawn.y + (TerrainManager.CellSize.y)));
+            //payload.GetComponent<Payload>().SetFollowing(true, PlayerManager.GetPlayer(Player.ID.P1));
 
             // Set up camera
             MovingCamera.SetFollowingTarget(payload);

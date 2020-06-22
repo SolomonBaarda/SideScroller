@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5291220104402161031}
   - component: {fileID: 5291220104402161030}
+  - component: {fileID: 5060158018753078901}
   - component: {fileID: 5291220104402161032}
   - component: {fileID: 5291220104402161033}
   - component: {fileID: 5291220104402161035}
@@ -56,6 +57,20 @@ MonoBehaviour:
   interactToPickUp: 0
   groundPosition: {fileID: 1926676552870462114}
   onAttackMultiplier: 14
+--- !u!114 &5060158018753078901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5291220104402161028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 169b41f585b344b4c91d6c4f2df30a6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  speed: 100
 --- !u!212 &5291220104402161032
 SpriteRenderer:
   m_ObjectHideFlags: 0

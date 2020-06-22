@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
 
 public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
 {
@@ -21,6 +20,10 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
     public bool CanBeAttacked => !IsBeingHeld && (DateTime.Now - lastAttacked).TotalSeconds >= DEFAULT_ATTACKED_COOLDOWN_SECONDS;
 
 
+    private Follower follower;
+    private float gravityScale;
+
+
     [Range(0, 100)]
     public int onAttackMultiplier = 8;
 
@@ -31,6 +34,9 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
         trigger.enabled = true;
 
         lastAttacked = DateTime.Now;
+
+        follower = GetComponent<Follower>();
+        gravityScale = rigid.gravityScale;
 
         // Call the UpdatePayload method repeatedly
         InvokeRepeating("UpdatePayload", 1, Chunk.UPDATE_CHUNK_REPEATING_DEFAULT_TIME);
@@ -86,11 +92,22 @@ public class Payload : CollectableItem, ILocatable, ICanBeAttacked, ICanBeHeld
     }
 
 
+    public void SetFollowing(bool follow, Player p)
+    {
+        IdealDirection = p.IdealDirection;
+
+        follower.Target = p.transform;
+        follower.SetFollowing(follow, gravityScale);
+    }
+
+
 
 
     public void PickUp(GameObject player)
     {
         IsBeingHeld = true;
+
+        follower.SetFollowing(false, gravityScale);
 
         // Disable physics while picked up
         rigid.velocity = Vector2.zero;

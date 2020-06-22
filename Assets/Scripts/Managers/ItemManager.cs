@@ -61,8 +61,11 @@ public class ItemManager : MonoBehaviour
 
 
         // Assign the prefab dictionaries
-        worldObjectPrefabs = ResourceLoader.Instance.WorldItemPrefabs;
-        weaponPrefabs = ResourceLoader.Instance.WeaponPrefabs;
+        if(ResourceLoader.Instance != null)
+        {
+            worldObjectPrefabs = ResourceLoader.Instance.WorldItemPrefabs;
+            weaponPrefabs = ResourceLoader.Instance.WeaponPrefabs;
+        }
     }
 
 

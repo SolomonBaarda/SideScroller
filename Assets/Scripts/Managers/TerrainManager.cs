@@ -222,6 +222,13 @@ public class TerrainManager : MonoBehaviour
         CopySampleTerrainLayer(entryTile, flipAxisX, terrain.hazard, hazard);
         CopySampleTerrainLayer(entryTile, flipAxisX, terrain.ground, ground);
 
+        // Compress the bounds for all tilemaps
+        wall.CompressBounds();
+        wallDetail.CompressBounds();
+        background.CompressBounds();
+        hazard.CompressBounds();
+        ground.CompressBounds();
+
         IsGenerating = false;
 
         // Generate the chunk

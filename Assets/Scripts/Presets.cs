@@ -42,7 +42,7 @@ public class Presets
 
 
 
-    public Presets() : this(true, false, false, true, true, true, true, TerrainManager.Generation.Symmetrical_Limit, Value.Default, Value.Default, Value.Default) { }
+    public Presets() : this(true, true, false, true, true, true, true, TerrainManager.Generation.Symmetrical_Limit, Value.Default, Value.Default, Value.Default) { }
 
 
     private Presets(bool DoMultiplayer, bool DoPathfinding, bool DoEnemySpawning, bool DoItemDrops, bool DoGenerateItemsWithWorld, bool DoSpawnWithRandomWeapons, bool DoRandomSeed,

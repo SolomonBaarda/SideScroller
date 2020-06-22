@@ -76,12 +76,6 @@ public class Menu : MonoBehaviour
 
 
 
-    private void OnDisable()
-    {
-
-    }
-
-
     public static IEnumerator FadeUI(bool fadeIn, float durationSeconds, CanvasGroup g)
     {
         // Fade in
